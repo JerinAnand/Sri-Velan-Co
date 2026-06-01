@@ -97,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
                   {COMPANY_DETAILS.name}
                 </h1>
                 <p className="text-[10px] text-brand-gold-400 font-mono tracking-widest uppercase">
-                  Contractors & Dewatering
+                  Powered by Trust, Proven by Provision
                 </p>
               </div>
             </div>

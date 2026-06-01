@@ -68,21 +68,21 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const heroSlides = [
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ',
-      title: 'State PWD Administrative complexes & residential infrastructure',
+      title: 'State PWD Administrative Complexes & Residential Infrastructure',
       subtitle: 'Accredited Class I Construction',
       tagline: 'Meticulous engineering layouts, earthquake-resistant RCC frameworks, and certified governmental finishing codes.',
       badge: 'Infrastructure'
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAtF7lQsjygWGM_wckM4HW-z2nj4oRbJglwvqyPrBOopVct0FaNayNZmcV2KclNO_D91euKAKDATiy4EK6o8y08eifUUdU9GA78MFSpP7NkllTKFnMKwV2APckmltuCrXUOQ2QX-mPrSukG22c432b0rw_ra7cIVWQ5YMRbkiKoaxjYQSkKOA0fHzRDt2xaNGGRmo0bxs0IfA74U3H4Ui_SKCTZsfqfa5zC0T4xCPuTqFNiP7LpEsi5NCEKk8KnMbTz7GUcXkKOd5t1',
-      title: 'Water resources department irrigation networks',
+      title: 'Water Resources Department Irrigation Networks',
       subtitle: 'Hydraulic Flow Management',
       tagline: 'Erecting precise brick masonry weirs, retaining canal channel linings, and concrete stonepitched flow controllers.',
       badge: 'WRD Irrigation'
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYKfiwAnr8tSFNjZj_XSzajQQvnAVzDU79fw73VK9DcbcAJAz2le3lr5e6XhpkbK0bStuz2LU6hPoCoBytCVOO1Id0NA5xI_ye_kSutkyrbLNS86LKr68hdy6Z5EW5Chlp5Y4BhprAchhgtOexFV6eWL5-WSI7RYWV96iLGl5czosEa5AlEQR6Cro_id1zSO760qRM0awrOHnTn5aGlACqvBLkccoIBSTozM-SoG1s7yG5I_T_T7KbRDPh8-Tl0xs_QPlVrXdxEq8w',
-      title: 'High-volume vacuum dewatering response armadas',
+      title: 'High-Volume Vacuum Dewatering Response Armadas',
       subtitle: 'Disaster Relief Leader',
       tagline: 'Deploying robust 100 HP submersibles and multi-node diesel vacuum assist pumps during critical storm cycles.',
       badge: 'Emergency Ready'
@@ -156,7 +156,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
         </div>
 
         {/* Content Box */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-16 sm:pt-24 text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-32 sm:pt-40 lg:pt-44 text-left">
           <div className="max-w-4xl space-y-6">
             
             {/* Floating division header */}
@@ -190,7 +190,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 className="space-y-4"
               >
                 <p className="text-brand-gold-400 font-mono text-sm uppercase tracking-widest font-semibold">{heroSlides[currentSlide].subtitle}</p>
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight capitalize font-display">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight font-display">
                   {heroSlides[currentSlide].title}
                 </h1>
                 <p className="max-w-2xl text-neutral-300 font-sans font-light text-sm sm:text-base lg:text-lg leading-relaxed">
