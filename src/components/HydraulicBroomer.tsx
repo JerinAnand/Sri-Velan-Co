@@ -111,7 +111,7 @@ export const HydraulicBroomer: React.FC = () => {
             <span>Proprietary Sweeping Innovation</span>
           </div>
           
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight" style={{ color: '#bea937' }}>
             Tractor-Mounted Hydraulic Broomer
           </h1>
           <p className="max-w-2xl text-sm sm:text-base text-neutral-300 leading-relaxed font-sans font-light">

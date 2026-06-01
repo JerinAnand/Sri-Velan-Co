@@ -64,7 +64,7 @@ export const EquipmentsView: React.FC = () => {
           <span className="text-xs font-mono font-semibold tracking-widest text-brand-gold-400 uppercase">
             HEAVY MACHINERY FLEET
           </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight" style={{ color: '#bea937' }}>
             Advanced Operational Machineries & Fleet
           </h1>
           <p className="max-w-3xl text-sm sm:text-base text-neutral-300 leading-relaxed font-sans font-light">
