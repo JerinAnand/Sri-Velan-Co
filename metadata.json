@@ -1,0 +1,8 @@
+{
+  "name": "Sri Velan & Co",
+  "description": "Enterprise-grade public infrastructure and heavy-duty disaster dewatering contracting portal.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
