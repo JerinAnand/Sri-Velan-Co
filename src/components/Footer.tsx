@@ -50,7 +50,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView }) => {
               </div>
               <div>
                 <h3 className="font-display font-bold text-lg tracking-wide uppercase" style={{ color: '#bea937' }}>{COMPANY_DETAILS.name}</h3>
-                <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTD 2004</span>
+                <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTD 2006</span>
               </div>
             </div>
             

@@ -192,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
                     </div>
                     <div className="truncate">
                       <h3 className="font-display font-bold text-sm text-white tracking-wide uppercase truncate">{COMPANY_DETAILS.name}</h3>
-                      <span className="text-[9px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTD 2004</span>
+                      <span className="text-[9px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTD 2006</span>
                     </div>
                   </div>
                   <button

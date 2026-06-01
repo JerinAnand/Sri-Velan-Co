@@ -98,7 +98,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   }, []);
 
   // Triggering hooks for numbers
-  const yoeAnim = useCountUp(22, 1800);
+  const yoeAnim = useCountUp(20, 1800);
   const pumpCount = useCountUp(100, 1500);
 
   // Dewatering Speed Telemetry Simulator calculations
@@ -277,7 +277,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   Years of Structural Legacy
                 </p>
-                <p className="text-xs text-neutral-500 leading-tight">Founded 2004 in Villupuram</p>
+                <p className="text-xs text-neutral-500 leading-tight">Founded 2006 in Villupuram</p>
               </div>
             </div>
 

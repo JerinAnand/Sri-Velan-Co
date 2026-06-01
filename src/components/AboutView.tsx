@@ -28,7 +28,7 @@ export const AboutView: React.FC = () => {
   // Strategic milestones structured from the incorporation history
   const corporateMilestones = [
     {
-      year: '2004',
+      year: '2006',
       title: 'Company Inception & Initial Works',
       desc: 'Formed in Villupuram by Mr. G. Selva Kumar, specializing in localized micro-conduit paving, stormwater drains, and rural brick masonry.',
       tag: 'FOUNDATION'
@@ -76,7 +76,7 @@ export const AboutView: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4 text-left">
           <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase">
-            ESTABLISHED 2004
+            ESTABLISHED 2006
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight font-display text-white">
             {COMPANY_DETAILS.name} Corporate Profile
