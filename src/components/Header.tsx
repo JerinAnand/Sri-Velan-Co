@@ -89,8 +89,12 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
               id="header-logo-container"
             >
               {/* Symbolic Monogram */}
-              <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-brand-gold-400 via-brand-gold-500 to-brand-gold-600 rounded-lg flex items-center justify-center p-2.5 shadow-md group-hover:rotate-6 transition-transform duration-300">
-                <span className="text-brand-blue-900 font-display font-extrabold text-lg sm:text-xl tracking-tight">SVC</span>
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg overflow-hidden shadow-md group-hover:scale-110 transition-transform duration-300 shrink-0 bg-black">
+               <img
+                  src="/sri-velan-logo.png"
+                  alt="Sri Velan & Co"
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div className="flex flex-col">
                 <h1 className="text-white font-display font-bold text-base sm:text-lg lg:text-xl tracking-wide group-hover:text-brand-gold-400 transition-colors">
@@ -179,8 +183,12 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
                 {/* Drawer Header */}
                 <div className="flex items-center justify-between border-b border-brand-blue-900 pb-4">
                   <div className="flex items-center gap-2.5 flex-1 min-w-0" id="drawer-logo-block">
-                    <div className="h-9 w-9 bg-brand-gold-500 rounded flex items-center justify-center p-2 shrink-0">
-                      <span className="text-brand-blue-900 font-display font-extrabold text-sm">SVC</span>
+                    <div className="h-9 w-9 rounded overflow-hidden shrink-0 bg-black">
+                      <img
+                        src="/sri-velan-logo.png"
+                        alt="Sri Velan & Co"
+                        className="h-full w-full object-contain"
+                      />
                     </div>
                     <div className="truncate">
                       <h3 className="font-display font-bold text-sm text-white tracking-wide uppercase truncate">{COMPANY_DETAILS.name}</h3>

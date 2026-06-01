@@ -41,8 +41,12 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView }) => {
           {/* Column 1: Core Company and Regulatory Registry */}
           <div className="space-y-5" id="footer-col-company">
             <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 bg-brand-gold-500 rounded flex items-center justify-center p-2 shadow-inner">
-                <span className="text-brand-blue-900 font-display font-extrabold text-sm tracking-tighter">SVC</span>
+              <div className="h-9 w-9 rounded overflow-hidden shrink-0 bg-black shadow-inner">
+                <img
+                  src="/sri-velan-logo.png"
+                  alt="Sri Velan & Co"
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div>
                 <h3 className="font-display font-bold text-lg tracking-wide uppercase" style={{ color: '#bea937' }}>{COMPANY_DETAILS.name}</h3>
