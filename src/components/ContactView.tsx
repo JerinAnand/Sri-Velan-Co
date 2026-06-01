@@ -14,7 +14,8 @@ import {
   ExternalLink,
   MessageSquare,
   Award,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 
@@ -29,6 +30,79 @@ export const ContactView: React.FC = () => {
     serviceInterest: 'general',
     message: ''
   });
+
+  // AI Estimator state properties
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiResult, setAiResult] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+
+  const parseAiMarkdown = (text: string) => {
+    return text.split('\n').map((line, idx) => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('###')) {
+        return <h4 key={idx} className="font-display font-bold text-base sm:text-lg text-brand-gold-400 mt-5 mb-2">{trimmed.replace('###', '').trim()}</h4>;
+      }
+      if (trimmed.startsWith('##')) {
+        return <h4 key={idx} className="font-display font-bold text-lg text-white mt-6 mb-3 border-b border-white/10 pb-1">{trimmed.replace('##', '').trim()}</h4>;
+      }
+      if (trimmed.startsWith('#')) {
+        return <h3 key={idx} className="font-display font-black text-xl text-brand-gold-400 mt-7 mb-4">{trimmed.replace('#', '').trim()}</h3>;
+      }
+      if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+        return <h5 key={idx} className="font-display font-semibold text-sm sm:text-base text-white mt-4 mb-1.5">{trimmed.replace(/\*\*/g, '').trim()}</h5>;
+      }
+      if (trimmed.startsWith('*') || trimmed.startsWith('-')) {
+        const content = trimmed.substring(1).trim();
+        return (
+          <div key={idx} className="flex gap-2.5 items-start py-2 pl-3 border-l-2 border-brand-gold-500 bg-white/5 my-2 rounded-r">
+            <span className="text-brand-gold-500 select-none font-bold">✦</span>
+            <p className="text-xs sm:text-sm text-neutral-200 leading-relaxed">{content}</p>
+          </div>
+        );
+      }
+      if (trimmed) {
+        return <p key={idx} className="text-xs sm:text-sm text-neutral-300 leading-relaxed my-2">{trimmed}</p>;
+      }
+      return <div key={idx} className="h-2" />;
+    });
+  };
+
+  const handleAiEstimate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!aiPrompt.trim()) return;
+
+    setAiLoading(true);
+    setAiError('');
+    setAiResult('');
+
+    try {
+      const response = await fetch('/.netlify/functions/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: aiPrompt }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `Server responded with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.text) {
+        setAiResult(data.text);
+      } else {
+        throw new Error('Received empty text from the AI generation server.');
+      }
+    } catch (err: any) {
+      console.error('AI Estimator Fetch Error:', err);
+      setAiError(err.message || 'Failed to establish connection to Netlify serverless function.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const sendWhatsApp = () => {
     const defaultText = `Hello Sri Velan & Co, I would like to discuss a civil contract/dewatering project.`;
@@ -288,6 +362,131 @@ export const ContactView: React.FC = () => {
               </div>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* Corporate AI Estimator & Planning Assistant */}
+      <section className="py-20 bg-neutral-950 text-white border-t border-neutral-800 relative overflow-hidden" id="ai-estimator-portal">
+        <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-brand-gold-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-brand-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center space-y-3 mb-12">
+            <div className="inline-flex items-center gap-1.5 bg-brand-gold-500/15 border border-brand-gold-500/30 text-brand-gold-400 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider">
+              <Sparkles className="w-4 h-4" />
+              <span>Sri Velan AI™ Engineering Assistant</span>
+            </div>
+            <h2 className="text-2xl sm:text-4.5xl font-black font-display tracking-tight text-white leading-none">
+              Smart Tender Estimator & Planner
+            </h2>
+            <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl mx-auto leading-relaxed">
+              Input specifications about your construction project (such as site PWD coordinates, canal lengths, desired dewatering pumping flow capacities, or asphalt preplanning) to instant-generate operational action plans or assets blueprints.
+            </p>
+          </div>
+
+          <div id="ai-assistant-terminal" className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative">
+            <div className="absolute top-4 right-6 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+            </div>
+
+            <form onSubmit={handleAiEstimate} className="space-y-6">
+              <div className="space-y-2 text-xs">
+                <label className="text-neutral-400 font-bold uppercase tracking-widest block">Project Parameters / Site Specifications</label>
+                <textarea
+                  rows={4}
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  placeholder="e.g., We have a 4.5 MLD subway drainage contractor bid. Require technical dewatering setups, recommended pump units, and state PWD safety checklist compliance."
+                  className="w-full bg-neutral-950 border border-neutral-800 hover:border-neutral-700 focus:border-brand-gold-500 rounded-xl p-4 text-xs sm:text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-gold-500 transition-all font-sans leading-relaxed"
+                />
+                
+                {/* Empty prompt hint (Requirement 7) */}
+                {!aiPrompt.trim() && (
+                  <p className="text-brand-gold-500/80 font-mono text-[10px] sm:text-xs mt-2 flex items-center gap-1.5 animate-pulse">
+                    <span>💡 Hint: Input details about your site, dimensions, or fluid logging levels to unlock the estimation engine.</span>
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider">
+                  Model: Gemini 3.5 Flash Proxy · Compliant with PWD/WRD
+                </p>
+                <button
+                  type="submit"
+                  disabled={aiLoading || !aiPrompt.trim()}
+                  className={`inline-flex items-center gap-2 font-display font-extrabold text-xs uppercase tracking-wider py-3.5 px-8 rounded-xl shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-gold-500/50 w-full sm:w-auto justify-center ${
+                    !aiPrompt.trim()
+                      ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed border border-neutral-750'
+                      : 'bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 border border-brand-gold-600/35 active:scale-95'
+                  }`}
+                >
+                  {aiLoading ? (
+                    <Loader className="w-4 h-4 animate-spin text-brand-blue-950" />
+                  ) : (
+                    <Sparkles className="w-4 h-4" />
+                  )}
+                  <span>Generate AI Assessment</span>
+                </button>
+              </div>
+            </form>
+
+            {/* Loading state (Requirement 5) */}
+            {aiLoading && (
+              <div id="ai-loading-card" className="mt-8 pt-8 border-t border-neutral-800 flex flex-col items-center justify-center py-10 space-y-3">
+                <Loader className="w-8 h-8 animate-spin text-brand-gold-500 mr-2" />
+                <p className="text-xs sm:text-sm font-mono text-neutral-400 uppercase tracking-widest animate-pulse">
+                  Analyzing site parameters via Netlify Proxy...
+                </p>
+              </div>
+            )}
+
+            {/* Error state (Requirement 6) */}
+            {aiError && (
+              <div id="ai-error-banner" className="mt-8 p-6 bg-red-950/40 border border-red-500/50 text-red-100 rounded-2xl flex flex-col sm:flex-row items-start gap-4 animate-fade-in font-mono text-xs leading-relaxed">
+                <span className="text-xl shrink-0">⚠</span>
+                <div className="space-y-1.5 flex-1 select-text">
+                  <h4 className="font-bold text-red-300 uppercase tracking-wide">AI Estimation Retrieval Failed</h4>
+                  <p>{aiError}</p>
+                  <p className="text-[10px] text-red-400/80">Please check that the custom Netlify serverless function is compiled, or retry in a few seconds.</p>
+                  <button
+                    onClick={(e) => { handleAiEstimate(e); }}
+                    className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-200 font-semibold uppercase text-[10px] tracking-wide rounded-md transition-all active:scale-95"
+                  >
+                    <span>Attempt Connection Retry</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Success state display */}
+            {aiResult && (
+              <div id="ai-results-panel" className="mt-8 pt-8 border-t border-neutral-800 space-y-6 animate-fade-in select-text">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-5 bg-brand-gold-500 rounded-sm" />
+                    <h3 className="font-display font-bold text-sm sm:text-base uppercase tracking-wider text-brand-gold-400">
+                      Technical Assessment Report
+                    </h3>
+                  </div>
+                  <span className="text-[9px] sm:text-[10px] text-neutral-400 font-mono bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800">
+                    DATE: LIVE ADVISORY
+                  </span>
+                </div>
+
+                <div className="text-left bg-neutral-950/40 p-5 sm:p-8 rounded-2xl border border-neutral-800 space-y-3 overflow-hidden select-text">
+                  {parseAiMarkdown(aiResult)}
+                </div>
+
+                <p className="text-[10px] text-neutral-500 font-mono text-left leading-relaxed">
+                  *Disclaimer: Generated assessment reports are simulated matching PWD indices. Submit formal contract blueprints to Mr. G. Selva Kumar for authorized commercial bidding.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
