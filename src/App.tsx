@@ -15,12 +15,30 @@ import { ProjectsView } from './components/ProjectsView';
 import { HydraulicBroomer } from './components/HydraulicBroomer';
 import { ContactView } from './components/ContactView';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUp, Phone, Clock, MessageCircle } from 'lucide-react';
+import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
+import { ArrowUp, Phone, MessageCircle } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from './data';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<ActiveView>('home');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const pathMap: Record<string, ActiveView> = {
+    '/': 'home',
+    '/about': 'about',
+    '/services': 'services',
+    '/equipments': 'equipments',
+    '/projects': 'projects',
+    '/hydraulic-broomer': 'hydraulic-broomer',
+    '/contact': 'contact'
+  };
+
+  const activeView = pathMap[location.pathname] || 'home';
+
+  const setActiveView = (view: ActiveView) => {
+    navigate(view === 'home' ? '/' : '/' + view);
+  };
 
   // Synchronize SEO Meta Details & Document Titles Dynamically
   useEffect(() => {
@@ -108,52 +126,39 @@ export default function App() {
     document.head.appendChild(scriptElement);
   }, []);
 
-  // View Router Render Matrix
-  const renderActiveView = () => {
-    switch (activeView) {
-      case 'home':
-        return <HomeView setActiveView={setActiveView} />;
-      case 'about':
-        return <AboutView />;
-      case 'services':
-        return <ServicesView />;
-      case 'equipments':
-        return <EquipmentsView />;
-      case 'projects':
-        return <ProjectsView />;
-      case 'hydraulic-broomer':
-        return <HydraulicBroomer />;
-      case 'contact':
-        return <ContactView />;
-      default:
-        return <HomeView setActiveView={setActiveView} />;
-    }
-  };
-
   return (
     <div id="application-layout-root" className="min-h-screen bg-neutral-50 flex flex-col justify-between overflow-x-hidden font-sans relative">
       
       {/* Sticky High Density Header */}
-      <Header activeView={activeView} setActiveView={setActiveView} />
+      <Header />
 
       {/* Main Structural Frame with beautiful fade transitions on view swap */}
       <main className="flex-grow">
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeView}
+            key={location.pathname}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
             className="w-full"
           >
-            {renderActiveView()}
+            <Routes location={location}>
+              <Route path="/" element={<HomeView setActiveView={setActiveView} />} />
+              <Route path="/about" element={<AboutView />} />
+              <Route path="/services" element={<ServicesView />} />
+              <Route path="/equipments" element={<EquipmentsView />} />
+              <Route path="/projects" element={<ProjectsView />} />
+              <Route path="/hydraulic-broomer" element={<HydraulicBroomer />} />
+              <Route path="/contact" element={<ContactView />} />
+              <Route path="*" element={<HomeView setActiveView={setActiveView} />} />
+            </Routes>
           </motion.div>
         </AnimatePresence>
       </main>
 
       {/* Corporate Multi-Tier Footer */}
-      <Footer setActiveView={setActiveView} />
+      <Footer />
 
       {/* Floating Action Utilities: Instant Call Trigger + Back-To-Top Button */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3">

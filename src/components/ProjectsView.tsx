@@ -176,6 +176,7 @@ export const ProjectsView: React.FC = () => {
                           alt={p.title}
                           className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 filter brightness-95"
                           referrerPolicy="no-referrer"
+                          onError={(e) => { (e.target as HTMLImageElement).src = '/sri-velan-logo.png'; }}
                         />
                         {/* Dynamic category label */}
                         <div className="absolute top-4 left-4 bg-brand-blue-900/90 text-brand-gold-400 font-mono text-[9px] font-bold py-1.5 px-3.5 rounded-full uppercase border border-brand-blue-800/40 backdrop-blur-md">
@@ -264,6 +265,7 @@ export const ProjectsView: React.FC = () => {
                   alt={activeCaseStudy.title}
                   className="w-full h-full object-cover filter brightness-[0.72]"
                   referrerPolicy="no-referrer"
+                  onError={(e) => { (e.target as HTMLImageElement).src = '/sri-velan-logo.png'; }}
                 />
                 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />

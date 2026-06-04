@@ -5,15 +5,13 @@
 
 import React from 'react';
 import { Phone, Mail, MapPin, Award, ArrowUpRight, Instagram, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ActiveView } from '../types';
 
-interface FooterProps {
-  setActiveView: (view: ActiveView) => void;
-}
-
-export const Footer: React.FC<FooterProps> = ({ setActiveView }) => {
-  const currentYear = 2026;
+export const Footer: React.FC = () => {
+  const navigate = useNavigate();
+  const currentYear = new Date().getFullYear();
 
   const quickLinks = [
     { label: 'Home Page', view: 'home' as ActiveView },
@@ -26,7 +24,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView }) => {
   ];
 
   const handleLinkClick = (view: ActiveView) => {
-    setActiveView(view);
+    navigate(view === 'home' ? '/' : '/' + view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

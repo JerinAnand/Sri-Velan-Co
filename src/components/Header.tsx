@@ -6,17 +6,26 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, Mail, Award, Clock, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { COMPANY_DETAILS } from '../data';
 import { ActiveView } from '../types';
 
-interface HeaderProps {
-  activeView: ActiveView;
-  setActiveView: (view: ActiveView) => void;
-}
-
-export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => {
+export const Header: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const activeViewMap: Record<string, ActiveView> = {
+    '/': 'home',
+    '/about': 'about',
+    '/services': 'services',
+    '/equipments': 'equipments',
+    '/projects': 'projects',
+    '/hydraulic-broomer': 'hydraulic-broomer',
+    '/contact': 'contact'
+  };
+  const activeView = activeViewMap[location.pathname] || 'home';
 
   // Scroll visibility indicator
   useEffect(() => {
@@ -42,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
   ];
 
   const handleNavClick = (view: ActiveView) => {
-    setActiveView(view);
+    navigate(view === 'home' ? '/' : '/' + view);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -75,11 +84,14 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
       </div>
 
       {/* Primary Navigation Shell */}
-      <nav className={`w-full transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-brand-blue-900/95 backdrop-blur-md py-3 shadow-lg border-b border-brand-blue-800/40' 
-          : 'bg-brand-blue-800/90 backdrop-blur-sm py-4 border-b border-brand-blue-700/20'
-      }`}>
+      <nav 
+        aria-label="Main navigation"
+        className={`w-full transition-all duration-300 ${
+          isScrolled 
+            ? 'bg-brand-blue-900/95 backdrop-blur-md py-3 shadow-lg border-b border-brand-blue-800/40' 
+            : 'bg-brand-blue-800/90 backdrop-blur-sm py-4 border-b border-brand-blue-700/20'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Elegant Corporate Title Logo */}
@@ -107,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
             </div>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center gap-1 py-1">
+            <div className="hidden lg:flex items-center gap-1 py-1" role="menubar">
               {navItems.map((item) => {
                 const isActive = activeView === item.view;
                 return (
@@ -115,6 +127,8 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
                     key={item.view}
                     id={`nav-item-${item.view}`}
                     onClick={() => handleNavClick(item.view)}
+                    aria-current={isActive ? 'page' : undefined}
+                    role="menuitem"
                     className={`px-4 py-2 rounded-md font-display text-sm font-medium transition-all duration-300 relative overflow-hidden group ${
                       isActive 
                         ? 'text-brand-gold-400' 
@@ -146,6 +160,8 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 id="mobile-menu-toggle"
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
                 className="p-2 rounded-lg text-neutral-200 hover:text-white hover:bg-brand-blue-700/40 transition-colors focus:outline-none"
                 aria-label="Toggle Navigation Menu"
               >
@@ -176,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({ activeView, setActiveView }) => 
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="lg:hidden fixed top-0 right-0 h-full w-full sm:max-w-md bg-brand-blue-950 shadow-2xl z-50 flex flex-col justify-between border-l border-brand-blue-800/60 overflow-y-auto"
-              id="mobile-drawer"
+              id="mobile-menu"
             >
               <div className="p-6 space-y-6">
                 
