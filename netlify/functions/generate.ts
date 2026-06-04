@@ -3,7 +3,7 @@
  * Sri Velan & Co Corporate PWD AI Estimator & Specification Planner.
  */
 
-exports.handler = async (event, context) => {
+export const handler = async (event: any, context: any) => {
   // Set headers for CORS and JSON response
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -94,7 +94,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const data = await response.json();
+    const data: any = await response.json();
     
     // Extract text representation safely compatible with candidates structure
     const generatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -113,7 +113,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ text: generatedText })
     };
 
-  } catch (err) {
+  } catch (err: any) {
     console.error("Netlify serverless generator function crash:", err);
     return {
       statusCode: 500,
