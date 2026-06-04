@@ -23,7 +23,9 @@ import {
   Sliders,
   Compass,
   ArrowUpRight,
-  Activity
+  Activity,
+  Play,
+  Pause
 } from 'lucide-react';
 import { COMPANY_DETAILS, SERVICE_CATEGORIES, PROJECTS } from '../data';
 import { ActiveView } from '../types';
@@ -61,6 +63,7 @@ const useCountUp = (target: number, duration: number = 2000, trigger: boolean = 
 
 export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [activeCompetency, setActiveCompetency] = useState(0);
   const [simVolume, setSimVolume] = useState<number>(30); // 30 million liters default
 
@@ -91,11 +94,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
   // Auto-advance slides
   useEffect(() => {
+    if (isCarouselPaused) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isCarouselPaused, heroSlides.length]);
 
   // Triggering hooks for numbers
   const yoeAnim = useCountUp(20, 1800);
@@ -257,6 +261,20 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Play/Pause slideshow toggle */}
+        <button
+          onClick={() => setIsCarouselPaused((prev) => !prev)}
+          className="absolute bottom-4 left-4 z-20 p-2 text-white bg-black/40 hover:bg-black/60 transition-all rounded-lg flex items-center justify-center border border-white/10 hover:border-white/20 active:scale-95 shadow-md"
+          aria-label={isCarouselPaused ? "Play slideshow" : "Pause slideshow"}
+          title={isCarouselPaused ? "Play slideshow" : "Pause slideshow"}
+        >
+          {isCarouselPaused ? (
+            <Play className="w-4 h-4 fill-white" />
+          ) : (
+            <Pause className="w-4 h-4" />
+          )}
+        </button>
 
       </section>
 

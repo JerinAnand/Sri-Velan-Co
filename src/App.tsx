@@ -15,7 +15,7 @@ import { ProjectsView } from './components/ProjectsView';
 import { HydraulicBroomer } from './components/HydraulicBroomer';
 import { ContactView } from './components/ContactView';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUp, Phone, Clock } from 'lucide-react';
+import { ArrowUp, Phone, Clock, MessageCircle } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from './data';
 
 export default function App() {
@@ -168,6 +168,22 @@ export default function App() {
           <Phone className="w-5 h-5 shrink-0" />
           <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-display text-xs font-bold uppercase tracking-wider whitespace-nowrap pl-0 group-hover:pl-1">
             Call Duty Desk
+          </span>
+        </a>
+
+        {/* Floating WhatsApp Quick Contact Button */}
+        <a
+          href="https://wa.me/919894218243?text=Hello%20Sri%20Velan%20%26%20Co%2C%20I%20would%20like%20to%20enquire%20about%20your%20services."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-green-600 hover:bg-green-500 text-white p-3.5 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all group flex items-center gap-2"
+          id="floating-whatsapp-button"
+          aria-label="Contact on WhatsApp"
+          title="WhatsApp Us"
+        >
+          <MessageCircle className="w-5 h-5 shrink-0" />
+          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-display text-xs font-bold uppercase tracking-wider whitespace-nowrap pl-0 group-hover:pl-1">
+            WhatsApp Us
           </span>
         </a>
 

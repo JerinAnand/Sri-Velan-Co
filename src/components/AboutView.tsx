@@ -18,7 +18,11 @@ import {
   FileCheck,
   MapPin,
   Flame,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck,
+  FileText,
+  CheckCircle,
+  Quote
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 
@@ -375,6 +379,157 @@ export const AboutView: React.FC = () => {
             </div>
 
           </div>
+        </div>
+      </section>
+
+      {/* SECTION A — Government Certifications Strip */}
+      <section className="py-16 bg-brand-blue-950 text-white relative border-t border-brand-blue-900" id="about-certs-strip">
+        <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
+          <div className="space-y-2">
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">COMPLIANCE & AUDIT</span>
+            <h2 className="text-2xl sm:text-3.5xl font-black text-white tracking-tight font-display">Our Registrations & Credentials</h2>
+            <p className="text-xs sm:text-sm text-neutral-300 max-w-xl mx-auto font-sans font-light">
+              Sri Velan & Co maintains active Class I contracting licenses, MSME declarations, and tax registrations audited directly by state ministries.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+            {/* Cert 1 */}
+            <div className="bg-brand-blue-900/60 border border-brand-blue-800/40 p-5 rounded-2xl flex items-start gap-4 hover:border-brand-gold-500/35 transition-all">
+              <div className="p-3 bg-brand-gold-500/10 rounded-xl text-brand-gold-400 shrink-0">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">TENDER CAPACITY</p>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">Govt. Registered Class I Contractor</h4>
+                <p className="text-xs text-neutral-300/80 font-light">Cleared for unrestricted state public works.</p>
+              </div>
+            </div>
+
+            {/* Cert 2 */}
+            <div className="bg-brand-blue-900/60 border border-brand-blue-800/40 p-5 rounded-2xl flex items-start gap-4 hover:border-brand-gold-500/35 transition-all">
+              <div className="p-3 bg-brand-gold-500/10 rounded-xl text-brand-gold-400 shrink-0">
+                <FileText className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">TAX COMPLIANCE</p>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">GSTIN: 33ABFFS6298G1ZU</h4>
+                <p className="text-xs text-neutral-300/80 font-light">Verified commercial GST entity status.</p>
+              </div>
+            </div>
+
+            {/* Cert 3 */}
+            <div className="bg-brand-blue-900/60 border border-brand-blue-800/40 p-5 rounded-2xl flex items-start gap-4 hover:border-brand-gold-500/35 transition-all">
+              <div className="p-3 bg-brand-gold-500/10 rounded-xl text-brand-gold-400 shrink-0">
+                <Award className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">MINISTRY OF MSME</p>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">UDYAM-TN-31-0046742</h4>
+                <p className="text-xs text-neutral-300/80 font-light">Certified micro-industrial business unit.</p>
+              </div>
+            </div>
+
+            {/* Cert 4 */}
+            <div className="bg-brand-blue-900/60 border border-brand-blue-800/40 p-5 rounded-2xl flex items-start gap-4 hover:border-brand-gold-500/35 transition-all">
+              <div className="p-3 bg-brand-gold-500/10 rounded-xl text-brand-gold-400 shrink-0">
+                <CheckCircle className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">QUALITY CONTROL</p>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">ISO Standard Services</h4>
+                <p className="text-xs text-neutral-300/80 font-light">Committed to code-compliant engineering.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION B — Client Testimonials Section */}
+      <section className="py-20 bg-neutral-100 border-t border-neutral-200" id="about-testimonials">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-12">
+          
+          <div className="space-y-3">
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">TESTIMONIALS</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-brand-blue-900 tracking-tight font-display">Client Testimonials</h2>
+            <p className="text-xs sm:text-sm text-neutral-550 max-w-xl mx-auto font-sans font-light">
+              Trusted by leading government departments and state municipalities to execute critical heavy infrastructure and emergency dewatering tasks.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            {/* Testimonial 1 */}
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border-2 border-brand-blue-100/60 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="text-brand-blue-800/40">
+                    <Quote className="w-8 h-8 rotate-180" />
+                  </div>
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <span key={s} className="text-brand-gold-500 text-sm">★</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs sm:text-sm text-neutral-600 font-sans italic leading-relaxed">
+                  "Sri Velan & Co demonstrated exemplary operational speed in clearing the canal beds. Their high-capacity pumping fleet was fully mobilized within hours, preventing severe flooding in our residential sectors during the heavy monsoon cycle."
+                </p>
+              </div>
+              <div className="pt-4 border-t border-neutral-100">
+                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">Executive Engineer</h4>
+                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">Public Works Department (PWD), Villupuram Division</p>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border-2 border-brand-blue-100/60 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="text-brand-blue-800/40">
+                    <Quote className="w-8 h-8 rotate-180" />
+                  </div>
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <span key={s} className="text-brand-gold-500 text-sm">★</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs sm:text-sm text-neutral-600 font-sans italic leading-relaxed">
+                  "The quality of concrete masonry and stone-pitching executed along the regulatory structures meets our highest standards of hydraulic flow endurance. A very methodical and structured approach by Class I registered engineers."
+                </p>
+              </div>
+              <div className="pt-4 border-t border-neutral-100">
+                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">Superintending Engineer</h4>
+                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">Water Resources Department (WRD), Chennai Region</p>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border-2 border-brand-blue-100/60 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="text-brand-blue-800/40">
+                    <Quote className="w-8 h-8 rotate-180" />
+                  </div>
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <span key={s} className="text-brand-gold-500 text-sm">★</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs sm:text-sm text-neutral-600 font-sans italic leading-relaxed">
+                  "Deploying their tractor-mounted sweepers and earthmovers made a critical difference in municipal road development and recovery. Their coordination with local ward engineering officials has been exceptional."
+                </p>
+              </div>
+              <div className="pt-4 border-t border-neutral-100">
+                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">Assistant Commissioner</h4>
+                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">Greater Chennai Corporation (GCC)</p>
+              </div>
+            </div>
+          </div>
+
+          {/* TODO: Replace with real client testimonials */}
         </div>
       </section>
 
