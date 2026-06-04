@@ -157,8 +157,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
         {/* Content Box */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-32 sm:pt-40 lg:pt-44 text-left">
-          <div className="max-w-4xl space-y-6">
-            
+          <div className="max-w-4xl space-y-6 overflow-visible">
+
             {/* Floating division header */}
             <AnimatePresence mode="wait">
               <motion.div 
