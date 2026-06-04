@@ -97,6 +97,9 @@ export const ProjectsView: React.FC = () => {
             alt="Executed Projects portfolio background engineering"
             className="w-full h-full object-cover opacity-[0.14] filter grayscale mix-blend-color-burn"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            width="1920"
+            height="400"
           />
           <div className="absolute inset-x-0 bottom-0 top-0 bg-gradient-to-r from-brand-blue-950 via-brand-blue-900/60 to-transparent" />
         </div>
@@ -177,6 +180,9 @@ export const ProjectsView: React.FC = () => {
                           className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 filter brightness-95"
                           referrerPolicy="no-referrer"
                           onError={(e) => { (e.target as HTMLImageElement).src = '/sri-velan-logo.png'; }}
+                          loading="lazy"
+                          width="600"
+                          height="400"
                         />
                         {/* Dynamic category label */}
                         <div className="absolute top-4 left-4 bg-brand-blue-900/90 text-brand-gold-400 font-mono text-[9px] font-bold py-1.5 px-3.5 rounded-full uppercase border border-brand-blue-800/40 backdrop-blur-md">
@@ -266,6 +272,9 @@ export const ProjectsView: React.FC = () => {
                   className="w-full h-full object-cover filter brightness-[0.72]"
                   referrerPolicy="no-referrer"
                   onError={(e) => { (e.target as HTMLImageElement).src = '/sri-velan-logo.png'; }}
+                  loading="lazy"
+                  width="1000"
+                  height="600"
                 />
                 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />

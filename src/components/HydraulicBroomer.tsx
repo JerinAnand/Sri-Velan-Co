@@ -98,6 +98,9 @@ export const HydraulicBroomer: React.FC = () => {
             alt="Hydraulic Broomer close detail"
             className="w-full h-full object-cover opacity-15 filter saturate-50"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            width="1920"
+            height="500"
           />
           <div className="absolute inset-x-0 bottom-0 top-0 bg-gradient-to-r from-brand-blue-950 via-brand-blue-900/60 to-transparent" />
         </div>

@@ -106,6 +106,9 @@ export const Header: React.FC = () => {
                   src="/sri-velan-logo.png"
                   alt="Sri Velan & Co"
                   className="h-full w-full object-contain"
+                  loading="lazy"
+                  width="48"
+                  height="48"
                 />
               </div>
               <div className="flex flex-col">
@@ -204,6 +207,9 @@ export const Header: React.FC = () => {
                         src="/sri-velan-logo.png"
                         alt="Sri Velan & Co"
                         className="h-full w-full object-contain"
+                        loading="lazy"
+                        width="36"
+                        height="36"
                       />
                     </div>
                     <div className="truncate">

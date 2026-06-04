@@ -52,6 +52,9 @@ export const ServicesView: React.FC = () => {
             alt="Services background structural grid"
             className="w-full h-full object-cover opacity-15 filter saturate-50"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            width="1920"
+            height="400"
           />
           <div className="absolute inset-x-0 bottom-0 top-0 bg-gradient-to-r from-brand-blue-950 via-brand-blue-900/60 to-transparent" />
         </div>
@@ -130,6 +133,9 @@ export const ServicesView: React.FC = () => {
                       alt={activeSvc.title}
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
+                      loading="lazy"
+                      width="800"
+                      height="530"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent" />
                   </div>

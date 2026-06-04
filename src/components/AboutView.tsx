@@ -68,6 +68,9 @@ export const AboutView: React.FC = () => {
             alt="About us structural background scaffolding"
             className="w-full h-full object-cover opacity-[0.14] filter grayscale mix-blend-luminosity"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            width="1920"
+            height="400"
           />
           {/* Circular drafting coordinates design overlay */}
           <div className="absolute top-1/2 left-1/3 w-96 h-96 border border-white/5 rounded-full pointer-events-none -translate-y-1/2 -translate-x-1/2" />
@@ -346,6 +349,9 @@ export const AboutView: React.FC = () => {
                 alt={COMPANY_DETAILS.leadership.governingPartner.name}
                 className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 filter brightness-95"
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                width="600"
+                height="800"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent md:hidden" />
             </div>

@@ -126,7 +126,7 @@ export const PROJECTS: ProjectItem[] = [
     title: 'PWD Administrative Office Complex & Quarters',
     category: 'infrastructure',
     description: 'A multi-story Reinforced Concrete Framed structure built to harbor municipal administrative bureaus with top-tier finishing standards and materials.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuByChSCbaHuzLiyF4g_ttwxK4IAuAOtKMVWVCYkFP_yKUlRHVww3B8_qxzUAhh1tRaO96_OdlpK3YL_noLV5-jnLkX4okVcQ13FcjArdHc4FPvBFTS51siyiuFnAVQtsbxFRhUyQx9XAV0cgzxWuM1SrbzRaw3pW09j1140tbRNQuK1dQuExnHNxJUzjA1HYEfwRmMIkBbFrPJcRCKoTBV5gnx4C1Piyv8Sfj7IYKLGvVR0gyp4pAKv9sUSU1Sx5qmLFt0lBklGLg', 
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuByChSCbaHuzLiyF4g_ttwxK4IAuAOtKMVWVCYkFP_yKUlRHVww3B8_qxzUAhh1tRaO96_OdlpK3YL_noLV5-jnLkX4okVcQ13FcjArdHc4FPvBFTS51siyiuFnAVQtsbxFRhUyQx9XAV0cgzxWuM1SrbzRaw3pW09j1140tbRNQuK1dQuExnHNxJUzjA1HYEfwRmMIkBbFrPJcRCKoTBV5gnx4C1Piyv8Sfj7IYKLGvVR0gyp4pAKv9sUSU1Sx5qmLFt0lBklGLg',
     details: [
       'Completed over 45,000 sq ft of high-finishing workspaces on time',
       'Executed earthquake-resistant structural designs verified by chief PWD engineers',

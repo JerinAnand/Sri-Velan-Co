@@ -195,9 +195,57 @@ async function startServer() {
     }
   };
 
+  // Server-side EmailJS forward proxy to bypass client-side CORS and ad blockers
+  const handleEmailSending = async (req: express.Request, res: express.Response) => {
+    try {
+      const { serviceId, templateId, publicKey, templateParams } = req.body;
+      
+      const finalServiceId = serviceId || process.env.VITE_EMAILJS_SERVICE_ID;
+      const finalTemplateId = templateId || process.env.VITE_EMAILJS_TEMPLATE_ID;
+      const finalPublicKey = publicKey || process.env.VITE_EMAILJS_PUBLIC_KEY;
+
+      if (!finalServiceId || !finalTemplateId || !finalPublicKey) {
+        res.status(400).json({ error: "Missing EmailJS configuration properties (Service ID, Template ID, or Public Key)." });
+        return;
+      }
+
+      console.log(`[Proxy Express SendEmail] Dispatching EmailJS construct for: ${finalServiceId}`);
+
+      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "aistudio-build"
+        },
+        body: JSON.stringify({
+          service_id: finalServiceId,
+          template_id: finalTemplateId,
+          user_id: finalPublicKey,
+          template_params: templateParams
+        })
+      });
+
+      const resText = await response.text();
+      console.log(`[Proxy Express SendEmail] Status: ${response.status}, text: ${resText}`);
+
+      if (!response.ok) {
+        res.status(response.status || 500).json({ error: resText || "EmailJS failed to deliver the message." });
+        return;
+      }
+
+      res.status(200).json({ success: true, text: resText });
+    } catch (err: any) {
+      console.error("[Proxy Express SendEmail] Severe dispatch failure:", err);
+      res.status(500).json({ error: err.message || "Internal server error during email dispatch." });
+    }
+  };
+
   // Support both endpoint paths to ensure complete backwards compatibility
   app.post("/.netlify/functions/generate", handleAiGeneration);
   app.post("/api/generate", handleAiGeneration);
+
+  app.post("/.netlify/functions/send-email", handleEmailSending);
+  app.post("/api/send-email", handleEmailSending);
 
   // Health check endpoint
   app.get("/api/health", (req, res) => {

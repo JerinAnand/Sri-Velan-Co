@@ -142,6 +142,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               alt={heroSlides[currentSlide].title}
               className="w-full h-full object-cover filter brightness-[0.22] saturate-[0.65]"
               referrerPolicy="no-referrer"
+              loading="lazy"
+              width="1920"
+              height="1080"
               onError={(e) => { (e.target as HTMLImageElement).src = '/sri-velan-logo.png'; }}
             />
             {/* Dark elegant blue radial gradient to give a cinematic corporate fade */}
@@ -503,6 +506,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                     alt={svc.title} 
                     className="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    width="600"
+                    height="400"
                     onError={(e) => { (e.target as HTMLImageElement).src = '/sri-velan-logo.png'; }}
                   />
                   {/* Subtle technical ribbon indicator */}

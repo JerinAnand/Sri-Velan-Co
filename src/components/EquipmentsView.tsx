@@ -53,6 +53,9 @@ export const EquipmentsView: React.FC = () => {
             alt="Heavy equipment blueprint machinery scaffolding"
             className="w-full h-full object-cover opacity-15 filter grayscale"
             referrerPolicy="no-referrer"
+            loading="lazy"
+            width="1920"
+            height="500"
           />
           <div className="absolute inset-y-0 right-0 left-0 bg-gradient-to-t from-brand-blue-950 via-brand-blue-900/60 to-transparent" />
         </div>
