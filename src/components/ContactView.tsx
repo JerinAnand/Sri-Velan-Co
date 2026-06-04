@@ -509,11 +509,16 @@ export const ContactView: React.FC = () => {
                 id={`office-loc-card-${idx}`}
               >
                 {/* Simulated map frame matching physical screenshots from ZIP assets */}
-                <div className="h-64 sm:h-72 w-full bg-neutral-200 relative border-b border-neutral-200">
+                <a
+                  href={office.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block h-64 sm:h-72 w-full bg-neutral-200 relative border-b border-neutral-200 overflow-hidden cursor-pointer"
+                >
                   <img 
                     src={office.mapImage}
                     alt={`${office.name} satellite grid coordinate outline`}
-                    className="w-full h-full object-cover filter brightness-[0.97]"
+                    className="w-full h-full object-cover filter brightness-[0.97] hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-neutral-900/15 pointer-events-none" />
@@ -522,7 +527,7 @@ export const ContactView: React.FC = () => {
                   <div className="absolute top-4 right-4 bg-brand-blue-900/90 text-white font-mono text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-wider border border-brand-blue-800">
                     {office.type}
                   </div>
-                </div>
+                </a>
 
                 <div className="p-6 flex flex-col justify-between flex-1 space-y-6">
                   <div className="space-y-2.5">
