@@ -77,13 +77,31 @@ export const ContactView: React.FC = () => {
     setAiResult('');
 
     try {
-      const response = await fetch('/.netlify/functions/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt: aiPrompt }),
-      });
+      let response;
+      try {
+        // Try calling the universal API endpoint first (works on Vercel and Express)
+        response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt: aiPrompt }),
+        });
+
+        // If returned 404, we are probably in a pure Netlify environment, triggering fallback
+        if (response.status === 404) {
+          throw new Error('Not Found - Triggering fallback endpoint');
+        }
+      } catch (err) {
+        console.warn('Primary /api/generate endpoint was not found or failed, attempting Netlify fallback...');
+        response = await fetch('/.netlify/functions/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt: aiPrompt }),
+        });
+      }
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
@@ -98,7 +116,7 @@ export const ContactView: React.FC = () => {
       }
     } catch (err: any) {
       console.error('AI Estimator Fetch Error:', err);
-      setAiError(err.message || 'Failed to establish connection to Netlify serverless function.');
+      setAiError(err.message || 'Failed to establish connection to AI serverless function.');
     } finally {
       setAiLoading(false);
     }
@@ -440,7 +458,7 @@ export const ContactView: React.FC = () => {
               <div id="ai-loading-card" className="mt-8 pt-8 border-t border-neutral-800 flex flex-col items-center justify-center py-10 space-y-3">
                 <Loader className="w-8 h-8 animate-spin text-brand-gold-500 mr-2" />
                 <p className="text-xs sm:text-sm font-mono text-neutral-400 uppercase tracking-widest animate-pulse">
-                  Analyzing site parameters via Netlify Proxy...
+                  Analyzing site parameters via Secure AI Proxy...
                 </p>
               </div>
             )}
@@ -452,7 +470,7 @@ export const ContactView: React.FC = () => {
                 <div className="space-y-1.5 flex-1 select-text">
                   <h4 className="font-bold text-red-300 uppercase tracking-wide">AI Estimation Retrieval Failed</h4>
                   <p>{aiError}</p>
-                  <p className="text-[10px] text-red-400/80">Please check that the custom Netlify serverless function is compiled, or retry in a few seconds.</p>
+                  <p className="text-[10px] text-red-400/80">Please check that your GEMINI_API_KEY environment variable is configured in your project settings, or retry in a few seconds.</p>
                   <button
                     onClick={(e) => { handleAiEstimate(e); }}
                     className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-200 font-semibold uppercase text-[10px] tracking-wide rounded-md transition-all active:scale-95"
