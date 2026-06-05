@@ -156,13 +156,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
         {/* Blueprint lines layout background overlay */}
         <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none z-0" />
 
-        {/* Tech decorative coordinates bar in margins */}
-        <div className="absolute left-8 bottom-32 hidden xl:flex flex-col gap-2 font-mono text-[10px] text-neutral-500 tracking-widest uppercase origin-left select-none pointer-events-none">
-          <p className="flex items-center gap-1.5"><Compass className="w-3.5 h-3.5 text-brand-gold-500" /> REGISTERED OFFICE OUTLINE: PILLUR HQ GRID</p>
-          <p>GEO LATITUDE: 11° 56' 31.9" N | GEO LONGITUDE: 79° 29' 46.1" E</p>
-          <p>INFRASTRUCTURE LICENSE STATUS: LEVEL-A CLASS I CERTIFIED</p>
-        </div>
-
         {/* Content Box */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-32 sm:pt-40 lg:pt-44 text-left">
           <div className="max-w-4xl space-y-6 overflow-visible">

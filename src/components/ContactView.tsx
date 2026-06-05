@@ -16,7 +16,9 @@ import {
   MessageSquare,
   Award,
   BookOpen,
-  Sparkles
+  Sparkles,
+  ShieldCheck,
+  Code
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 
@@ -25,6 +27,7 @@ export const ContactView: React.FC = () => {
   const [complete, setComplete] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSandbox, setIsSandbox] = useState(false);
+  const [activeTab, setActiveTab] = useState<'channels' | 'board'>('channels');
   const [msgDetails, setMsgDetails] = useState({
     name: '',
     phone: '',
@@ -334,73 +337,166 @@ export const ContactView: React.FC = () => {
                 </p>
               </div>
 
-              {/* Instant Call CTA Cards */}
-              <div className="grid grid-cols-1 gap-4" id="contact-tel-whatsapp">
-                
-                {/* Click-To-Call */}
-                <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-200/80 hover:border-brand-blue-700 transition-all flex items-start gap-4 shadow-xs">
-                  <div className="p-3 bg-brand-blue-900 text-white rounded-xl">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <div className="space-y-1 text-left">
-                    <p className="text-[10px] text-neutral-400 uppercase font-mono tracking-widest">General Inquiries & Operations</p>
-                    {COMPANY_DETAILS.phones.map(p => (
-                      <a 
-                        key={p}
-                        href={`tel:${p.replace(/\s+/g, '')}`} 
-                        className="block font-display font-semibold text-lg text-brand-blue-900 hover:text-brand-gold-600 transition-colors"
-                      >
-                        {p}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Instant WhatsApp */}
+              {/* Modern Tab Selector */}
+              <div className="flex border-b border-neutral-200 gap-1" id="contact-tab-selectors">
                 <button
-                  onClick={sendWhatsApp}
-                  className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 p-6 rounded-2xl transition-all flex items-start gap-4 text-left shadow-xs group"
+                  type="button"
+                  onClick={() => setActiveTab('channels')}
+                  className={`flex-1 pb-3 text-sm font-display font-bold tracking-wide transition-all border-b-2 text-center cursor-pointer ${
+                    activeTab === 'channels'
+                      ? 'border-brand-blue-900 text-brand-blue-900 font-extrabold'
+                      : 'border-transparent text-neutral-400 hover:text-neutral-600'
+                  }`}
+                  id="tab-channels-trigger"
                 >
-                  <div className="p-3 bg-emerald-600 text-white rounded-xl">
-                    <MessageSquare className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] text-emerald-600 uppercase font-mono tracking-widest font-semibold flex items-center gap-1">
-                      <span>WhatsApp Portal</span>
-                      <ExternalLink className="w-3 h-3 text-emerald-500" />
-                    </p>
-                    <p className="font-display font-bold text-lg text-emerald-950 group-hover:text-emerald-700 transition-colors">
-                      Inquire on WhatsApp Chat
-                    </p>
-                    <p className="text-xs text-emerald-600/80 font-sans leading-relaxed">
-                      Tap to open an instant secure messaging chat directly with our Estimating Officer.
-                    </p>
-                  </div>
+                  Direct Channels
                 </button>
-
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('board')}
+                  className={`flex-1 pb-3 text-sm font-display font-bold tracking-wide transition-all border-b-2 text-center cursor-pointer ${
+                    activeTab === 'board'
+                      ? 'border-brand-blue-900 text-brand-blue-900 font-extrabold'
+                      : 'border-transparent text-neutral-400 hover:text-neutral-600'
+                  }`}
+                  id="tab-board-trigger"
+                >
+                  Executive Board
+                </button>
               </div>
 
-              {/* Admin emails list */}
-              <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-200/80 space-y-4 shadow-xs">
-                <div className="flex items-center gap-2 border-b border-neutral-200 pb-2">
-                  <Mail className="w-5 h-5 text-brand-gold-500 shrink-0" />
-                  <h4 className="font-display font-bold text-sm tracking-wide text-brand-blue-900">Email Correspondence</h4>
-                </div>
-                
-                <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm font-sans" id="contact-emails-list">
-                  {COMPANY_DETAILS.emails.map(email => (
-                    <a 
-                      key={email}
-                      href={`mailto:${email}`} 
-                      className="block text-neutral-600 hover:text-brand-blue-700 hover:underline py-1 truncate"
-                      title={email}
+              {activeTab === 'channels' ? (
+                <div className="space-y-8 animate-fade-in" id="contact-channels-content">
+                  {/* Instant Call CTA Cards */}
+                  <div className="grid grid-cols-1 gap-4" id="contact-tel-whatsapp">
+                    
+                    {/* Click-To-Call */}
+                    <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-200/80 hover:border-brand-blue-700 transition-all flex items-start gap-4 shadow-xs">
+                      <div className="p-3 bg-brand-blue-900 text-white rounded-xl">
+                        <Phone className="w-5 h-5" />
+                      </div>
+                      <div className="space-y-1 text-left">
+                        <p className="text-[10px] text-neutral-400 uppercase font-mono tracking-widest">General Inquiries & Operations</p>
+                        {COMPANY_DETAILS.phones.map(p => (
+                          <a 
+                            key={p}
+                            href={`tel:${p.replace(/\s+/g, '')}`} 
+                            className="block font-display font-semibold text-lg text-brand-blue-900 hover:text-brand-gold-600 transition-colors"
+                          >
+                            {p}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Instant WhatsApp */}
+                    <button
+                      onClick={sendWhatsApp}
+                      className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 p-6 rounded-2xl transition-all flex items-start gap-4 text-left shadow-xs group cursor-pointer"
                     >
-                      {email}
-                    </a>
-                  ))}
-                </div>
-              </div>
+                      <div className="p-3 bg-emerald-600 text-white rounded-xl">
+                        <MessageSquare className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[10px] text-emerald-600 uppercase font-mono tracking-widest font-semibold flex items-center gap-1">
+                          <span>WhatsApp Portal</span>
+                          <ExternalLink className="w-3 h-3 text-emerald-500" />
+                        </p>
+                        <p className="font-display font-bold text-lg text-emerald-950 group-hover:text-emerald-700 transition-colors">
+                          Inquire on WhatsApp Chat
+                        </p>
+                        <p className="text-xs text-emerald-600/80 font-sans leading-relaxed">
+                          Tap to open an instant secure messaging chat directly with our Estimating Officer.
+                        </p>
+                      </div>
+                    </button>
 
+                  </div>
+
+                  {/* Admin emails list */}
+                  <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-200/80 space-y-4 shadow-xs">
+                    <div className="flex items-center gap-2 border-b border-neutral-200 pb-2">
+                      <Mail className="w-5 h-5 text-brand-gold-500 shrink-0" />
+                      <h4 className="font-display font-bold text-sm tracking-wide text-brand-blue-900">Email Correspondence</h4>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm font-sans" id="contact-emails-list">
+                      {COMPANY_DETAILS.emails.map(email => (
+                        <a 
+                          key={email}
+                          href={`mailto:${email}`} 
+                          className="block text-neutral-600 hover:text-brand-blue-700 hover:underline py-1 truncate"
+                          title={email}
+                        >
+                          {email}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 animate-fade-in" id="contact-executive-board">
+                  <div className="bg-neutral-50 p-4 rounded-2xl border border-neutral-200 divide-y divide-neutral-200/60 shadow-xs">
+                    
+                    {/* Mr. Selva Kumar */}
+                    <div className="pb-4 flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-sm border border-brand-blue-800">
+                        SK
+                      </div>
+                      <div className="space-y-0.5 text-left">
+                        <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Selva Kumar</h4>
+                        <div className="flex items-center gap-1.5 text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-semibold">
+                          <Award className="w-3.5 h-3.5" />
+                          <span>Founder</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mr. Vetrivel */}
+                    <div className="py-4 flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-sm border border-brand-blue-800">
+                        VV
+                      </div>
+                      <div className="space-y-0.5 text-left">
+                        <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Vetrivel</h4>
+                        <div className="flex items-center gap-1.5 text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-semibold">
+                          <ShieldCheck className="w-3.5 h-3.5 text-brand-blue-700" />
+                          <span>Managing Director</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mr. Dhinakaravel */}
+                    <div className="py-4 flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-sm border border-brand-blue-800">
+                        DK
+                      </div>
+                      <div className="space-y-0.5 text-left">
+                        <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Dhinakaravel</h4>
+                        <div className="flex items-center gap-1.5 text-xs text-neutral-500 font-mono uppercase tracking-wide font-semibold">
+                          <BookOpen className="w-3.5 h-3.5 text-neutral-500" />
+                          <span>Auditor & Accountant</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mr. Jerin */}
+                    <div className="pt-4 flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-sm border border-brand-blue-800">
+                        JR
+                      </div>
+                      <div className="space-y-0.5 text-left">
+                        <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Jerin</h4>
+                        <div className="flex items-center gap-1.5 text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-semibold">
+                          <Code className="w-3.5 h-3.5 text-brand-blue-600" />
+                          <span>Web Developer</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right Column: Contact Inquiry Form (7/12 width) */}
