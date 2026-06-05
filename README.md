@@ -1,1 +1,1 @@
-Official weapp of Sri Velan & Co
+Official webapp of Sri Velan & Co
