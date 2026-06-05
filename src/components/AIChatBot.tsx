@@ -81,7 +81,11 @@ const renderBoldText = (text: string) => {
   });
 };
 
-export const AIChatBot: React.FC = () => {
+interface AIChatBotProps {
+  showScrollTop?: boolean;
+}
+
+export const AIChatBot: React.FC<AIChatBotProps> = ({ showScrollTop = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -151,16 +155,35 @@ export const AIChatBot: React.FC = () => {
         text: m.text
       }));
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: trimmed,
-          history: historyPayload
-        })
-      });
+      let response;
+      try {
+        response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: trimmed,
+            history: historyPayload
+          })
+        });
+
+        if (response.status === 404) {
+          throw new Error('Not Found - Triggering fallback endpoint');
+        }
+      } catch (err) {
+        console.warn('Primary /api/chat endpoint was not found or failed, attempting Netlify fallback...');
+        response = await fetch('/.netlify/functions/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: trimmed,
+            history: historyPayload
+          })
+        });
+      }
 
       if (!response.ok) {
         throw new Error(`Server returned error code ${response.status}`);
@@ -196,7 +219,10 @@ export const AIChatBot: React.FC = () => {
   };
 
   return (
-    <div id="ai-chatbot-widget-container" className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 font-sans">
+    <div 
+      id="ai-chatbot-widget-container" 
+      className={`fixed ${showScrollTop ? 'bottom-[88px]' : 'bottom-[24px]'} right-6 z-50 flex flex-col items-end gap-3 font-sans transition-all duration-300`}
+    >
       
       {/* Expanded Chat Box Window Frame */}
       <AnimatePresence>

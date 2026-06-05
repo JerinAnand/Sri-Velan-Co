@@ -161,8 +161,8 @@ export default function App() {
       {/* Corporate Multi-Tier Footer */}
       <Footer />
 
-      {/* Floating Action Utilities: Instant Call Trigger + Back-To-Top Button */}
-      <div className="fixed bottom-24 right-6 z-40 flex flex-col gap-3">
+      {/* Floating Action Utilities: Instant Call Trigger & WhatsApp Buttons */}
+      <div className={`fixed ${showScrollTop ? 'bottom-[152px]' : 'bottom-[88px]'} right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300`}>
         
         {/* Floating Quick Emergency Dial Button */}
         <a
@@ -192,8 +192,10 @@ export default function App() {
             WhatsApp Us
           </span>
         </a>
+      </div>
 
-        {/* Dynamic Back to top key */}
+      {/* Dynamic Back to top key isolated at bottom corner */}
+      <div className="fixed bottom-6 right-6 z-40">
         <AnimatePresence>
           {showScrollTop && (
             <motion.button
@@ -212,7 +214,7 @@ export default function App() {
       </div>
 
       {/* Interactive AI Coaching & Helpdesk Chatbot */}
-      <AIChatBot />
+      <AIChatBot showScrollTop={showScrollTop} />
 
     </div>
   );

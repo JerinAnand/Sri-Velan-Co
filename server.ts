@@ -390,6 +390,7 @@ Write your request below, or connect with Mr. Selva Kumar directly at **+91 9894
 
   app.post("/.netlify/functions/send-email", handleEmailSending);
   app.post("/api/send-email", handleEmailSending);
+  app.post("/.netlify/functions/chat", handleChatBotQuery);
   app.post("/api/chat", handleChatBotQuery);
 
   // Health check endpoint
