@@ -14,6 +14,7 @@ import { EquipmentsView } from './components/EquipmentsView';
 import { ProjectsView } from './components/ProjectsView';
 import { HydraulicBroomer } from './components/HydraulicBroomer';
 import { ContactView } from './components/ContactView';
+import { VelanChatBot } from './components/VelanChatBot';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle } from 'lucide-react';
@@ -161,7 +162,7 @@ export default function App() {
       <Footer />
 
       {/* Floating Action Utilities: Instant Call Trigger & WhatsApp Buttons */}
-      <div className="fixed bottom-24 right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300">
+      <div className="fixed bottom-[88px] right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300">
         
          {/* Floating Quick Emergency Dial Button */}
          <a
@@ -193,8 +194,8 @@ export default function App() {
          </a>
        </div>
  
-       {/* Dynamic Back to top key isolated at bottom corner */}
-       <div className="fixed bottom-6 right-6 z-40">
+       {/* Dynamic Back to top key isolated at left bottom corner to balance layout of the application */}
+       <div className="fixed bottom-6 left-6 z-40">
          <AnimatePresence>
            {showScrollTop && (
              <motion.button
@@ -211,6 +212,9 @@ export default function App() {
            )}
          </AnimatePresence>
        </div>
+
+       {/* Offline Intelligent AI Assistant */}
+       <VelanChatBot showScrollTop={showScrollTop} />
 
     </div>
   );
