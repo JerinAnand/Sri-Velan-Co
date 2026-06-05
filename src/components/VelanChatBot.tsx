@@ -1,7 +1,7 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.5
- * Velan - Fully Offline AI Assistant Client (Sri Velan & Co)
+ * Sri Velan & Co - VELAN AI Client
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -35,17 +35,99 @@ const VELAN_GREETINGS_PATTERN = /^(hello|hi|hey|greetings|good\s+morning|good\s+
 const getVelanResponse = (query: string): string => {
   const q = (query || "").toLowerCase().trim();
 
+  // 1. DIRECT OPTION SERIAL NUMBER LOOKUPS
+  if (q === '1' || q.includes('option 1') || q.includes('option1') || q.includes('opt 1') || q.includes('opt1') || q === 'one') {
+    return `### **Option 1: Disaster Dewatering & Heavy Emergency Relief Fleet**
+
+Sri Velan & Co is recognized nationwide as a premier emergency response operator during major monsoon inundation and structural crises.
+
+**Our Specialized Pumping Assets:**
+* **Air-Assist Vacuum Pumps:** Heavy-duty **4" and 6" custom pump units** paired with reliable, water-cooled diesel standby engines.
+* **Vertical Electrical Submersibles:** High-power **100 HP submersible units** designed to drain metropolitan highway underpasses and deep underground transit nodes.
+* **Peak Discharge Potential:** Scaled to pump over **80,000,000 to 120,000,000 Liters per day** during active stormwater peak phases.
+* **Emergency Track Record:** High-volume drainage execution praised by regulatory heads during **Cycone Fengal (2024)**, **Cyclone Michaung (2023)**, **Cyclone Gulab (2021)**, and **Cyclone Nivar (2020)**.
+
+*To register emergency rental queries or immediate logistical dispatch, contact Governing Partner G. Selva Kumar on **+91 98942 18243**.*`;
+  }
+
+  if (q === '2' || q.includes('option 2') || q.includes('option2') || q.includes('opt 2') || q.includes('opt2') || q === 'two') {
+    return `### **Option 2: Tractor-Mounted Hydraulic Broomer Configurations**
+
+Sri Velan & Co manufactures and distributes high-durability **Tractor-Mounted Highway Broomers** designed for heavy cleanups and highway maintenance in strict adherence to MoRTH guidelines.
+
+**Key Engineering Specifications:**
+* **Sweeping Path Capacity:** Adjustable layout from **1800 mm to 2200 mm** sweeping widths.
+* **Abrasive Double-Bristles:** Interwoven high-wear nylon filaments and heavy abrasive steel core wires.
+* **Operational Hyd Pressure:** Heavy duty **160 to 180 Bar** integrated directly with tractor hydraulic take-offs.
+* **Clearing Output:** Swiftest active clearing speeds of up to **10,000 Square Meters per Hour**.
+* **3-Point Fitment:** Universal implementation compatible with all major utility tractors of **40 HP or larger** using Cat-II hitches.
+
+*Would you like to generate a detailed catalog price estimate? Use our interactive Broomer tab to trigger an instant estimation report!*`;
+  }
+
+  if (q === '3' || q.includes('option 3') || q.includes('option3') || q.includes('opt 3') || q.includes('opt3') || q === 'three') {
+    return `### **Option 3: Registered Civil Infrastructure Services**
+
+Armed with standard Class I Gov. registrations, we lead high-budget infrastructure undertakings with audited precision:
+
+1. **PWD Public Buildings & Complexes:** Multilevel earthquake-resistant institutional facilities, administrative offices, and model educational structures.
+2. **WRD Irrigation Infrastructure:** Heavy earthmoving, canal branch alignments, reinforced stone-pitch embankment structures, and spillway repairs.
+3. **High-Strength Concrete Roads & Bridges:** Industrial rigid bituminized pavements, stormwater concrete chambers, and structural box culvert installations.
+4. **Machinery & Fleet Hire:** Fast mobilization of high-capacity vacuum dewatering setups and tractor broomer assemblies.
+
+*All structural materials undergo rigorous site-level audits under leading QA standards.*`;
+  }
+
+  if (q === '4' || q.includes('option 4') || q.includes('option4') || q.includes('opt 4') || q.includes('opt4') || q === 'four') {
+    return `### **Option 4: Corporate Connection Channels**
+
+Connect directly with Sri Velan & Co’s central management and engineering estimators:
+
+* **Primary High-Priority Hotline:** **+91 98942 18243** (Mr. G. Selva Kumar, Managing Director & Partner)
+* **Secondary Customer Desk:** **+91 98427 18243**
+* **Direct Corporate Correspondence:** **srivelan2004@gmail.com** or **pgselva45@gmail.com**
+* **In-app Quote Routing:** Submit an inquiry via our forms to dispatch instant automated SMS alerts straight to our team.`;
+  }
+
+  if (q === '5' || q.includes('option 5') || q.includes('option5') || q.includes('opt 5') || q.includes('opt5') || q === 'five') {
+    return `### **Option 5: Our Corporate Locations & Address Hubs**
+
+We maintain dual corporate facilities to ensure efficient machinery transport and state government liaison:
+
+1. **Head Office (Villupuram):**
+   2/112 Post Office Street,
+   Pillur, Viluppuram, Tamilnadu - 605103.
+   
+2. **Chennai Corporate Office:**
+   S2, Second Floor, A Block, 8th Cross Street,
+   Ram Nagar South, Madipakkam, Chennai, Tamilnadu - 600091.
+
+*Both branches support active machinery depots, rapid mobilization units, and bid coordination desks.*`;
+  }
+
+  if (q === '6' || q.includes('option 6') || q.includes('option6') || q.includes('opt 6') || q.includes('opt6') || q === 'six') {
+    return `### **Option 6: Accreditations & Government Credentials**
+
+Sri Velan & Co is fully accredited for industrial-scale government operations:
+* **Contractor Rank:** Registered **Class I Government Contractor** (state's highest-tier accreditation).
+* **GSTIN:** **33ABFFS6298G1ZU**
+* **MSME Registry:** **UDYAM-TN-31-0046742**
+* **Standards Compliance:** Fully compliant with ISO quality and safety protocols.`;
+  }
+
   // HELLO / GREETINGS
   if (VELAN_GREETINGS_PATTERN.test(q)) {
-    return `### **Vanakkam & Welcome! I am Velan (Enterprise AI Agent)** ⚡
+    return `### **Vanakkam & Welcome! I am VELAN AI** ⚡
 
 I am the cognitive intelligence workspace core representing **Sri Velan & Co** (Accredited Class I Govt. Civil Contractors, Estd. 2006). 
 
-How can I assist your engineering project or inquiry today? Select a shortcut query below or type directly:
-* **Disaster Dewatering & Emergency Pumping Fleet** 💧
-* **Tractor-Attached Hydraulic Broomers & Highway Sweepers** 🧹
-* **PWD Buildings, WRD Canals & Rigid CC Roads** 🏗️
-* **Corporate Offices & Direct Liaison Hotlines** 📞`;
+Please query by serial number, click a suggestion chip, or ask me directly:
+* **[1] Disaster Dewatering & Emergency Pumping Fleet** 💧
+* **[2] Tractor-Attached Hydraulic Broomers & highway sweepers** 🧹
+* **[3] PWD Buildings, WRD Canals & Rigid CC Roads** 🏗️
+* **[4] Corporate Connection Channels & Liaison** 📞
+* **[5] Corporate Offices & Field Location Hubs** 📍
+* **[6] Accreditations & Government Credentials** 🎖️`;
   }
 
   // DEWATERING / FLOOD / EMERGENCY / CYCLONE / PUMPS
@@ -148,14 +230,16 @@ Sri Velan & Co is fully accredited for industrial-scale government operations:
   // DEFAULT INTELLIGENT BOT RESPONSE WITH ACCREDITED TRUTHS
   return `### **Sri Velan & Co • Intelligent AI System Core**
 
-How can I help you construct or support your next infrastructure project? Select a focal point below or reply, and our neural model will search our active databases:
+How can I help you construct or support your next infrastructure project? Select a focal point by serial number or type your message here:
 
-* **Civil Projects:** Class I State Builder (PWD / WRD).
-* **Emergency Fleet:** Mega dewatering pumps (up to 120 Million Liters/day capacity).
-* **Highway Broomers:** Tractor-Attached sweepers clearing 10,000 sq m/hour output.
-* **Direct Liaison:** Mr. G. Selva Kumar (**+91 98942 18243**).
+* **[1] Disaster Dewatering & Emergency Pumping Fleet** 💧
+* **[2] Tractor-Attached Hydraulic Broomers & Highways** 🧹
+* **[3] Registered Civil Infrastructure Services** 🏗️
+* **[4] Corporate Connection Channels & Hotlines** 📞
+* **[5] Corporate Offices & Address Locations** 📍
+* **[6] Accreditations & Government Credentials** 🎖️
 
-State your specific prompt or type simple requests like **"pumps specs"** or **"quote options"** to query our core systems.`;
+Please reply with any options above (e.g. **1**, **2**, **3**) or write your queries freely.`;
 };
 
 // Custom simple markdown renderer
@@ -226,7 +310,7 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'model',
-      text: "### Sri Velan & Co • VELAN AI\n\nHello! I am **VELAN AI**, your real-time intelligent helper. I can answer any questions about our Class I civil engineering services, disaster relief pumping setups, customized hydraulic sweepers, or quotation details. How can I guide you today?",
+      text: "### Sri Velan & Co • VELAN AI\n\nHello! I am **VELAN AI**, your real-time intelligent helper. I can answer any questions about our Class I civil engineering services, disaster relief pumping setups, customized hydraulic sweepers, or quotation details.\n\nType any option number below or ask me directly:\n\n* **[1] Disaster Dewatering & Emergency Pumping Fleet** 💧\n* **[2] Tractor-Attached Hydraulic Broomers & Highways** 🧹\n* **[3] Registered Civil Infrastructure Services** 🏗️\n* **[4] Corporate Connection Channels & Liaison** 📞\n* **[5] Corporate Offices & Field Location Hubs** 📍\n* **[6] Accreditations & Government Credentials** 🎖️",
       timestamp: new Date()
     }
   ]);
@@ -282,10 +366,10 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
   };
 
   const suggestionChips = [
-    { label: '💧 Heavy Dewatering Fleet', prompt: 'Tell me about Sri Velan & Co\'s disaster dewatering pumps and relief fleet.' },
-    { label: '🧹 Highway Sweeper Specs', prompt: 'What are the technical specs for the Tractor-Mounted Hydraulic Broomer?' },
-    { label: '🏗️ State Civil Services', prompt: 'Explain your registered PWD Buildings and WRD Canal services.' },
-    { label: '📞 Direct Corporate Contacts', prompt: 'How do I contact Governing Partner Mr. Selva Kumar?' }
+    { label: 'Option 1: Dewatering', prompt: '1' },
+    { label: 'Option 2: Broomer', prompt: '2' },
+    { label: 'Option 3: Civil Services', prompt: '3' },
+    { label: 'Option 4: Help Desk', prompt: '4' }
   ];
 
   return (
@@ -405,7 +489,7 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
                         <div className="w-2 h-2 rounded-full bg-brand-blue-800 animate-bounce" style={{ animationDelay: '150ms' }} />
                         <div className="w-2 h-2 rounded-full bg-brand-blue-800 animate-bounce" style={{ animationDelay: '300ms' }} />
                       </div>
-                      <span className="text-xs text-neutral-500 italic">Velan is generating response...</span>
+                      <span className="text-xs text-neutral-500 italic">VELAN AI is generating response...</span>
                     </div>
                   </div>
                 </div>
@@ -489,7 +573,7 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
               : 'bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 border border-brand-gold-600/30 hover:scale-110 active:scale-95'
           }`}
           id="velan-chatbot-trigger-btn"
-          title={isOpen ? "Minimize Desk" : "Talk to Velan (Cloud AI)"}
+          title={isOpen ? "Minimize Desk" : "Talk to VELAN AI (Cloud AI)"}
         >
           {isOpen ? (
             <X className="w-5.5 h-5.5" />
