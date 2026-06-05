@@ -62,23 +62,11 @@ export const Header: React.FC = () => {
       <div className={`bg-brand-blue-900 border-b border-brand-blue-800/60 text-white py-2.5 px-4 sm:px-6 lg:px-8 text-xs transition-all duration-350 ${
         isScrolled ? 'h-0 py-0 overflow-hidden border-none' : 'h-auto'
       }`}>
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-2">
           {/* Quality Tag */}
-          <div className="flex items-center gap-2 text-brand-gold-400 font-medium">
+          <div className="flex items-center gap-2 text-brand-gold-400 font-medium text-center">
             <Award className="w-3.5 h-3.5" />
             <span>Govt. Registered Class I Contractor & ISO Standard Service</span>
-          </div>
-          {/* Quick contact nodes */}
-          <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-1 text-neutral-300">
-            <a href="tel:+919894218243" className="flex items-center gap-1.5 hover:text-brand-gold-400 transition-colors">
-              <Phone className="w-3.5 h-3.5 text-brand-gold-500" />
-              <span>+91 98942 18243</span>
-            </a>
-            <span className="text-brand-blue-700 hidden sm:inline">|</span>
-            <a href="mailto:srivelan2004@gmail.com" className="flex items-center gap-1.5 hover:text-brand-gold-400 transition-colors">
-              <Mail className="w-3.5 h-3.5 text-brand-gold-500" />
-              <span>srivelan2004@gmail.com</span>
-            </a>
           </div>
         </div>
       </div>
