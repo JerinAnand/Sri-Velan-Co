@@ -187,6 +187,19 @@ export const ContactView: React.FC = () => {
       return;
     }
 
+    // Direct user-action triggered redirect to WhatsApp
+    const waText = `Hello Sri Velan & Co,
+
+*New Contact Inquiry:*
+*Name:* ${msgDetails.name}
+*Phone:* ${msgDetails.phone}
+*Email:* ${msgDetails.email || 'N/A'}
+*Service/Project Interest:* ${msgDetails.serviceInterest}
+*Message:* ${msgDetails.message}`;
+
+    const encodedText = encodeURIComponent(waText);
+    window.open(`https://wa.me/919894218243?text=${encodedText}`, '_blank');
+
     setLoading(true);
 
     const serviceId = (import.meta as any).env.VITE_EMAILJS_SERVICE_ID;
@@ -489,7 +502,7 @@ export const ContactView: React.FC = () => {
                         <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Jerin</h4>
                         <div className="flex items-center gap-1.5 text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-semibold">
                           <Code className="w-3.5 h-3.5 text-brand-blue-600" />
-                          <span>Web Developer</span>
+                          <span>ADMIN & WEB DEVELOPER</span>
                         </div>
                       </div>
                     </div>

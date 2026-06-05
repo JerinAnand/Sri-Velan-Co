@@ -29,7 +29,8 @@ export const HydraulicBroomer: React.FC = () => {
     name: '',
     phone: '',
     tractorModel: '',
-    customNotes: ''
+    customNotes: '',
+    width: '1.8m'
   });
 
   const broomSpecs = [
@@ -79,6 +80,19 @@ export const HydraulicBroomer: React.FC = () => {
       alert('Please provide your name and contact phone.');
       return;
     }
+    
+    // Construct WhatsApp message details
+    const waText = `Hello Sri Velan & Co,
+
+*New Custom Broom Quotation Request:*
+*Name/Contractor:* ${clientSpecs.name}
+*Phone:* ${clientSpecs.phone}
+*Tractor Model/HP:* ${clientSpecs.tractorModel || 'N/A'}
+*Sweeping Surface Width Choice:* ${clientSpecs.width || '1.8m'}
+*Custom Notes:* ${clientSpecs.customNotes || 'N/A'}`;
+
+    const encodedText = encodeURIComponent(waText);
+    window.open(`https://wa.me/919894218243?text=${encodedText}`, '_blank');
     
     setFormLoading(true);
     setTimeout(() => {
@@ -347,7 +361,8 @@ export const HydraulicBroomer: React.FC = () => {
                       <label className="text-neutral-300 font-semibold font-display">Sweeping Surface Width Choice</label>
                       <select 
                         className="w-full bg-neutral-800 border border-neutral-700 hover:border-neutral-600 focus:border-brand-gold-500 rounded-lg p-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-gold-500 transition-colors font-sans"
-                        defaultValue="1.8m"
+                        value={clientSpecs.width}
+                        onChange={(e) => setClientSpecs({...clientSpecs, width: e.target.value})}
                       >
                         <option value="1.8m">1.8 Meter Standard Broomer</option>
                         <option value="2.0m">2.0 Meter Heavy Duty Broomer</option>
