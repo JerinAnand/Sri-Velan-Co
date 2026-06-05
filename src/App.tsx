@@ -14,7 +14,6 @@ import { EquipmentsView } from './components/EquipmentsView';
 import { ProjectsView } from './components/ProjectsView';
 import { HydraulicBroomer } from './components/HydraulicBroomer';
 import { ContactView } from './components/ContactView';
-import { AIChatBot } from './components/AIChatBot';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle } from 'lucide-react';
@@ -162,59 +161,56 @@ export default function App() {
       <Footer />
 
       {/* Floating Action Utilities: Instant Call Trigger & WhatsApp Buttons */}
-      <div className={`fixed ${showScrollTop ? 'bottom-[152px]' : 'bottom-[88px]'} right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300`}>
+      <div className="fixed bottom-24 right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300">
         
-        {/* Floating Quick Emergency Dial Button */}
-        <a
-          href="tel:+919894218243"
-          className="bg-brand-blue-700 hover:bg-brand-blue-900 border border-brand-blue-700 text-white p-3.5 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all group flex items-center gap-2"
-          id="floating-emergency-dial"
-          title="Call Duty Officer"
-        >
-          <Phone className="w-5 h-5 shrink-0" />
-          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-display text-xs font-bold uppercase tracking-wider whitespace-nowrap pl-0 group-hover:pl-1">
-            Call Duty Desk
-          </span>
-        </a>
-
-        {/* Floating WhatsApp Quick Contact Button */}
-        <a
-          href="https://wa.me/919894218243?text=Hello%20Sri%20Velan%20%26%20Co%2C%20I%20would%20like%20to%20enquire%20about%20your%20services."
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-green-600 hover:bg-green-500 text-white p-3.5 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all group flex items-center gap-2"
-          id="floating-whatsapp-button"
-          aria-label="Contact on WhatsApp"
-          title="WhatsApp Us"
-        >
-          <MessageCircle className="w-5 h-5 shrink-0" />
-          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-display text-xs font-bold uppercase tracking-wider whitespace-nowrap pl-0 group-hover:pl-1">
-            WhatsApp Us
-          </span>
-        </a>
-      </div>
-
-      {/* Dynamic Back to top key isolated at bottom corner */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <AnimatePresence>
-          {showScrollTop && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0.7 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.7 }}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 p-3.5 rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all text-shadow-sm flex items-center justify-center border border-brand-gold-600/20"
-              id="back-to-top-button"
-              aria-label="Back to Top Coordinates"
-            >
-              <ArrowUp className="w-5 h-5" />
-            </motion.button>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Interactive AI Coaching & Helpdesk Chatbot */}
-      <AIChatBot showScrollTop={showScrollTop} />
+         {/* Floating Quick Emergency Dial Button */}
+         <a
+           href="tel:+919894218243"
+           className="bg-brand-blue-700 hover:bg-brand-blue-900 border border-brand-blue-700 text-white p-3.5 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all group flex items-center gap-2"
+           id="floating-emergency-dial"
+           title="Call Duty Officer"
+         >
+           <Phone className="w-5 h-5 shrink-0" />
+           <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-display text-xs font-bold uppercase tracking-wider whitespace-nowrap pl-0 group-hover:pl-1">
+             Call Duty Desk
+           </span>
+         </a>
+ 
+         {/* Floating WhatsApp Quick Contact Button */}
+         <a
+           href="https://wa.me/919894218243?text=Hello%20Sri%20Velan%20%26%20Co%2C%20I%20would%20like%20to%20enquire%20about%20your%20services."
+           target="_blank"
+           rel="noopener noreferrer"
+           className="bg-green-600 hover:bg-green-500 text-white p-3.5 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all group flex items-center gap-2"
+           id="floating-whatsapp-button"
+           aria-label="Contact on WhatsApp"
+           title="WhatsApp Us"
+         >
+           <MessageCircle className="w-5 h-5 shrink-0" />
+           <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-display text-xs font-bold uppercase tracking-wider whitespace-nowrap pl-0 group-hover:pl-1">
+             WhatsApp Us
+           </span>
+         </a>
+       </div>
+ 
+       {/* Dynamic Back to top key isolated at bottom corner */}
+       <div className="fixed bottom-6 right-6 z-40">
+         <AnimatePresence>
+           {showScrollTop && (
+             <motion.button
+               initial={{ opacity: 0, scale: 0.7 }}
+               animate={{ opacity: 1, scale: 1 }}
+               exit={{ opacity: 0, scale: 0.7 }}
+               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+               className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 p-3.5 rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all text-shadow-sm flex items-center justify-center border border-brand-gold-600/20"
+               id="back-to-top-button"
+               aria-label="Back to Top Coordinates"
+             >
+               <ArrowUp className="w-5 h-5" />
+             </motion.button>
+           )}
+         </AnimatePresence>
+       </div>
 
     </div>
   );
