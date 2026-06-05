@@ -113,7 +113,7 @@ export const PROJECTS: ProjectItem[] = [
     title: 'HR & CE Temple Masonry and Reconstruction',
     category: 'government',
     description: 'Heritage restoration, structural lining, and brick-masonry works executed under the Tamil Nadu Government Hindu Religious and Charitable Endowments (HR & CE) standards.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCbDz8dtJQ3wif3DAFukJAjl2QTLX9w2t-uJr3YK7GFJQuWRVlRGsJHy3Oa6hSl3FAVojes45EV4kzgCrtZOBmIZYhS4lCsWomkfJsloBYv2z132GkiNbmyCOE6uQHVhKipdm1DxBIYM-frY4SueBorIeQ8DlAbY7LW7mJN_yMVNGpG-8tFIEeAFLeFCZvAGIXg62P_BWFwh79kHKTGjxw0S9nF92K2wFkLqqJoRzx8dLvaHVkgzxTzUJ2-gTki8Th2I5lmkWj5jA',
+    image: new URL('./assets/images/temple_restoration_masonry_1780693655082.png', import.meta.url).href,
     details: [
       'Preserved centuries-old load-bearing masonry walls',
       'Employed custom mortar compositions meeting strict governmental conservation directives',

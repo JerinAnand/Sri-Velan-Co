@@ -14,6 +14,7 @@ import { EquipmentsView } from './components/EquipmentsView';
 import { ProjectsView } from './components/ProjectsView';
 import { HydraulicBroomer } from './components/HydraulicBroomer';
 import { ContactView } from './components/ContactView';
+import { AIChatBot } from './components/AIChatBot';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle } from 'lucide-react';
@@ -161,7 +162,7 @@ export default function App() {
       <Footer />
 
       {/* Floating Action Utilities: Instant Call Trigger + Back-To-Top Button */}
-      <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
+      <div className="fixed bottom-24 right-6 z-40 flex flex-col gap-3">
         
         {/* Floating Quick Emergency Dial Button */}
         <a
@@ -209,6 +210,9 @@ export default function App() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Interactive AI Coaching & Helpdesk Chatbot */}
+      <AIChatBot />
 
     </div>
   );
