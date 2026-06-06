@@ -33,7 +33,7 @@ export const COMPANY_DETAILS = {
 
 export const OFFICES: OfficeLocation[] = [
   {
-    name: 'Head Office (Villupuram)',
+    name: 'VILLUPURAM HQ',
     addressLines: [
       '2/112 Post Office Street,',
       'Pillur, Viluppuram,',
@@ -44,7 +44,7 @@ export const OFFICES: OfficeLocation[] = [
     type: 'Head Office'
   },
   {
-    name: 'Chennai Corporate Office',
+    name: 'Chennai HQ',
     addressLines: [
       'S2, Second Floor, A Block, 8th Cross Street,',
       'Ram Nagar South, Madipakkam,',

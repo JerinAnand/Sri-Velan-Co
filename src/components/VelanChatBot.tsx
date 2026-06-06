@@ -94,11 +94,11 @@ Connect directly with Sri Velan & Co’s central management and engineering esti
 
 We maintain dual corporate facilities to ensure efficient machinery transport and state government liaison:
 
-1. **Head Office (Villupuram):**
+1. **VILLUPURAM HQ:**
    2/112 Post Office Street,
    Pillur, Viluppuram, Tamilnadu - 605103.
    
-2. **Chennai Corporate Office:**
+2. **Chennai HQ:**
    S2, Second Floor, A Block, 8th Cross Street,
    Ram Nagar South, Madipakkam, Chennai, Tamilnadu - 600091.
 
@@ -205,11 +205,11 @@ Connect directly with Sri Velan & Co’s central management and engineering esti
 
 We maintain dual corporate facilities to ensure efficient machinery transport and state government liaison:
 
-1. **Head Office (Villupuram):**
+1. **VILLUPURAM HQ:**
    2/112 Post Office Street,
    Pillur, Viluppuram, Tamilnadu - 605103.
    
-2. **Chennai Corporate Office:**
+2. **Chennai HQ:**
    S2, Second Floor, A Block, 8th Cross Street,
    Ram Nagar South, Madipakkam, Chennai, Tamilnadu - 600091.
 

@@ -144,7 +144,7 @@ export const Footer: React.FC = () => {
               <div className="flex gap-3 text-sm text-neutral-300">
                 <MapPin className="w-5 h-5 text-brand-gold-500 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium text-white text-xs uppercase font-mono">Head Office (Villupuram)</p>
+                  <p className="font-medium text-white text-xs uppercase font-mono">Villupuram HQ</p>
                   <p className="text-xs text-neutral-400 leading-relaxed mt-1">
                     {OFFICES[0].addressLines.join(' ')}
                   </p>
