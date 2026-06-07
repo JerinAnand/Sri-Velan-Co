@@ -36,6 +36,20 @@
   transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* High-end interactive rising & depth shadow transition for all section containers */
+section {
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 500ms cubic-bezier(0.16, 1, 0.3, 1), z-index 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+  position: relative;
+  z-index: 10;
+}
+
+section:hover {
+  transform: scale(1.003);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 8px 24px -8px rgba(0, 0, 0, 0.04);
+  z-index: 20;
+}
+
 /* Engineering blueprints subtle background overlay pattern */
 .grid-overlay {
   background-size: 40px 40px;

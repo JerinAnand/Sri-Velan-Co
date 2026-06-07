@@ -119,7 +119,7 @@ Sri Velan & Co is fully accredited for industrial-scale government operations:
   if (VELAN_GREETINGS_PATTERN.test(q)) {
     return `### Vanakkam & Welcome! I am VELAN AI ⚡
 
-I am the cognitive intelligence workspace core representing Sri Velan & Co (Accredited Government Civil Contractors, Estd. 2006). 
+I am the cognitive intelligence workspace core representing Sri Velan & Co (Accredited Government Civil Contractors, Established in 2006). 
 
 Please query by serial number, click a suggestion chip, or ask me directly:
 - [1] Disaster Dewatering & Emergency Pumping Fleet 💧
@@ -414,6 +414,7 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
                 onClick={handleOpenToggle}
                 className="text-neutral-400 hover:text-white hover:bg-white/10 p-1.5 rounded-full transition-all duration-200 cursor-pointer"
                 aria-label="Close Chat Window"
+                title="Close Chat Window"
                 id="velan-chat-btn-close"
               >
                 <X className="w-5 h-5" />
@@ -510,6 +511,8 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
                       key={i}
                       onClick={() => handleSendMessage(chip.prompt)}
                       disabled={isLoading}
+                      aria-label={`Inquire about contracting parameters: ${chip.label}`}
+                      title={`Inquire about ${chip.label}`}
                       className="text-left text-[11px] font-medium text-neutral-700 bg-white hover:bg-neutral-50 hover:text-brand-blue-900 hover:border-brand-blue-800/40 border border-neutral-200/80 rounded-xl px-2.5 py-2 cursor-pointer shadow-xs transition-all flex items-center justify-between group active:scale-98"
                     >
                       <span className="truncate mr-1">{chip.label}</span>
@@ -540,6 +543,7 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
                 className="bg-brand-blue-900 text-white hover:bg-brand-blue-950 disabled:bg-neutral-100 disabled:text-neutral-400 p-2.5 rounded-xl transition-all shadow-md hover:scale-105 active:scale-95 shrink-0 flex items-center justify-center cursor-pointer border border-brand-blue-950/25"
                 id="velan-chatbot-btn-submit"
                 title="Send Inquiry"
+                aria-label="Send Inquiry to Velan AI"
               >
                 <Send className="w-4 h-4" />
               </button>
@@ -573,6 +577,7 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
               : 'bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 border border-brand-gold-600/30 hover:scale-110 active:scale-95'
           }`}
           id="velan-chatbot-trigger-btn"
+          aria-label={isOpen ? "Minimize Velan AI help desk window" : "Open Sri Velan AI cognitive engineering specifications assistant"}
           title={isOpen ? "Minimize Desk" : "Talk to VELAN AI (Cloud AI)"}
         >
           {isOpen ? (

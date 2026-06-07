@@ -108,6 +108,23 @@ export const ContactView: React.FC = () => {
     });
   };
 
+  const isQueryRelevant = (prompt: string): boolean => {
+    const p = prompt.toLowerCase().trim();
+    if (p.length < 15) return false;
+    
+    const relevantTerms = [
+      'dewatering', 'pump', 'mld', 'drain', 'flood', 'water', 'subway', 'canal', 'discharge', 'rain', 
+      'broom', 'sweeper', 'sweeping', 'road', 'asphalt', 'pave', 'dust', 'highway', 'clean', 
+      'civil', 'build', 'foundation', 'construction', 'infra', 'site', 'soil', 'trench', 
+      'earth', 'concrete', 'contract', 'tender', 'bid', 'pwd', 'wrd', 'morth', 'municipal', 
+      'safety', 'excavat', 'jcb', 'fleet', 'selva', 'velan', 'heavy', 'machinery', 'engineering', 
+      'blueprint', 'estimation', 'spec', 'hydro', 'flow', 'cyclone', 'rescue', 'paving', 
+      'bridge', 'structure', 'retaining', 'survey', 'grading', 'pumping', 'hose', 'suction', 'generator'
+    ];
+    
+    return relevantTerms.some(term => p.includes(term));
+  };
+
   const handleAiEstimate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!aiPrompt.trim()) return;
@@ -115,6 +132,21 @@ export const ContactView: React.FC = () => {
     setAiLoading(true);
     setAiError('');
     setAiResult('');
+
+    if (!isQueryRelevant(aiPrompt)) {
+      setTimeout(() => {
+        setAiResult(
+          "Your query does not appear to contain civil contracting, dewatering, road sweeping, or PWD/WRD-related engineering parameters.\n\n" +
+          "Sri Velan AI™ Engineering Assistant specializes in analyzing specifications about civil construction, fluid drainage control, and high-wear hydraulic broomers.\n\n" +
+          "### Suggestions for valid inputs:\n" +
+          "- Dewatering Setups: Need high-capacity pump specifications for a 4.5 MLD subway drainage project.\n" +
+          "- Road Sweeper Cleans: Tractor-attached highway sweeping broomer brush requirements for NHAI road maintenance.\n" +
+          "- Civil Construction: PWD concrete foundation guidelines and soil bearing load calculations."
+        );
+        setAiLoading(false);
+      }, 500);
+      return;
+    }
 
     try {
       let response;
@@ -394,6 +426,8 @@ export const ContactView: React.FC = () => {
                           <a 
                             key={p}
                             href={`tel:${p.replace(/\s+/g, '')}`} 
+                            aria-label={`Call general inquiries and rapid operations desk at mobile number ${p}`}
+                            title={`Call operations representative at ${p}`}
                             className="block font-display font-semibold text-lg text-brand-blue-900 hover:text-brand-gold-600 transition-colors"
                           >
                             {p}
@@ -405,6 +439,8 @@ export const ContactView: React.FC = () => {
                     {/* Instant WhatsApp */}
                     <button
                       onClick={sendWhatsApp}
+                      aria-label="Launch secure encrypted WhatsApp Chat panel directly to inquire with our Estimating Officer"
+                      title="Open instant WhatsApp chat inquiries"
                       className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 p-6 rounded-2xl transition-all flex items-start gap-4 text-left shadow-xs group cursor-pointer"
                     >
                       <div className="p-3 bg-emerald-600 text-white rounded-xl">
@@ -449,7 +485,7 @@ export const ContactView: React.FC = () => {
                 </div>
               ) : (
                 <div className="space-y-4 animate-fade-in" id="contact-executive-board">
-                  <div className="bg-neutral-50 p-4 rounded-2xl border border-neutral-200 divide-y divide-neutral-200/60 shadow-xs">
+                  <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200 divide-y divide-neutral-200/60 shadow-xs transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-neutral-300">
                     
                     {/* Mr. Selva Kumar */}
                     <div className="pb-4 flex items-center gap-4">
@@ -663,6 +699,81 @@ export const ContactView: React.FC = () => {
         </div>
       </section>
 
+      {/* 3. Operational Coordinates & Static Maps Section */}
+      <section className="py-20 sm:py-24 bg-neutral-50 border-t border-neutral-200/60" id="contact-office-coordinates">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-xl mx-auto space-y-3 mb-16">
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">GEOGRAPHICAL NETWORK</span>
+            <h2 className="text-3xl font-black text-brand-blue-900 tracking-tight">Registered Hubs & Maps</h2>
+            <p className="text-xs sm:text-sm text-neutral-500">Coordinate mapping for our corporate offices in Villupuram and metro Chennai transit sectors.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {OFFICES.map((office, idx) => (
+              <div 
+                key={office.name} 
+                className="bg-white rounded-2xl border border-neutral-200 shadow-xs overflow-hidden hover:shadow-lg transition-all flex flex-col group h-full"
+                id={`office-loc-card-${idx}`}
+              >
+                {/* Simulated map frame matching physical screenshots from ZIP assets */}
+                <a
+                  href={office.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block h-64 sm:h-72 w-full bg-neutral-200 relative border-b border-neutral-200 overflow-hidden cursor-pointer"
+                >
+                  <img 
+                    src={office.mapImage}
+                    alt={`${office.name} satellite grid coordinate outline`}
+                    className="w-full h-full object-cover filter brightness-[0.97] hover:scale-105 transition-transform duration-500"
+                    referrerPolicy="no-referrer"
+                    loading="lazy"
+                    width="800"
+                    height="500"
+                  />
+                  <div className="absolute inset-0 bg-neutral-900/15 pointer-events-none" />
+                  
+                  {/* Dynamic location PIN float label */}
+                  <div className="absolute top-4 right-4 bg-brand-blue-900/90 text-white font-mono text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-wider border border-brand-blue-800">
+                    {office.type}
+                  </div>
+                </a>
+
+                <div className="p-6 flex flex-col justify-between flex-1 space-y-6">
+                  <div className="space-y-2.5">
+                    <h3 className="font-display font-bold text-lg text-brand-blue-950 group-hover:text-brand-blue-700 transition-colors">
+                      {office.name}
+                    </h3>
+                    <div className="flex gap-2.5 items-start text-xs sm:text-sm text-neutral-600 font-sans leading-relaxed">
+                      <MapPin className="w-5 h-5 text-brand-gold-500 mt-0.5 shrink-0" />
+                      <div>
+                        {office.addressLines.map(line => (
+                          <p key={line}>{line}</p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+                    <a
+                      href={office.mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-neutral-600 hover:text-brand-blue-700 text-xs font-semibold group/link"
+                    >
+                      <span>Show Driving Coordinates</span>
+                      <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
       {/* Corporate AI Estimator & Planning Assistant */}
       <section className="py-20 bg-neutral-950 text-white border-t border-neutral-800 relative overflow-hidden" id="ai-estimator-portal">
         <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
@@ -780,86 +891,11 @@ export const ContactView: React.FC = () => {
                 </div>
 
                 <p className="text-[10px] text-neutral-500 font-mono text-left leading-relaxed">
-                  *Disclaimer: Generated assessment reports are simulated matching PWD indices. Submit formal contract blueprints to Mr. G. Selva Kumar for authorized commercial bidding.
+                  Disclaimer: Generated assessment reports are simulated matching PWD indices. Submit formal contract blueprints to Mr. G. Selva Kumar for authorized commercial bidding.
                 </p>
               </div>
             )}
           </div>
-        </div>
-      </section>
-
-      {/* 3. Operational Coordinates & Static Maps Section */}
-      <section className="py-20 sm:py-24 bg-neutral-50 border-t border-neutral-200/60" id="contact-office-coordinates">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center max-w-xl mx-auto space-y-3 mb-16">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">GEOGRAPHICAL NETWORK</span>
-            <h2 className="text-3xl font-black text-brand-blue-900 tracking-tight">Registered Hubs & Maps</h2>
-            <p className="text-xs sm:text-sm text-neutral-500">Coordinate mapping for our corporate offices in Villupuram and metro Chennai transit sectors.</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {OFFICES.map((office, idx) => (
-              <div 
-                key={office.name} 
-                className="bg-white rounded-2xl border border-neutral-200 shadow-xs overflow-hidden hover:shadow-lg transition-all flex flex-col group h-full"
-                id={`office-loc-card-${idx}`}
-              >
-                {/* Simulated map frame matching physical screenshots from ZIP assets */}
-                <a
-                  href={office.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block h-64 sm:h-72 w-full bg-neutral-200 relative border-b border-neutral-200 overflow-hidden cursor-pointer"
-                >
-                  <img 
-                    src={office.mapImage}
-                    alt={`${office.name} satellite grid coordinate outline`}
-                    className="w-full h-full object-cover filter brightness-[0.97] hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                    width="800"
-                    height="500"
-                  />
-                  <div className="absolute inset-0 bg-neutral-900/15 pointer-events-none" />
-                  
-                  {/* Dynamic location PIN float label */}
-                  <div className="absolute top-4 right-4 bg-brand-blue-900/90 text-white font-mono text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-wider border border-brand-blue-800">
-                    {office.type}
-                  </div>
-                </a>
-
-                <div className="p-6 flex flex-col justify-between flex-1 space-y-6">
-                  <div className="space-y-2.5">
-                    <h3 className="font-display font-bold text-lg text-brand-blue-950 group-hover:text-brand-blue-700 transition-colors">
-                      {office.name}
-                    </h3>
-                    <div className="flex gap-2.5 items-start text-xs sm:text-sm text-neutral-600 font-sans leading-relaxed">
-                      <MapPin className="w-5 h-5 text-brand-gold-500 mt-0.5 shrink-0" />
-                      <div>
-                        {office.addressLines.map(line => (
-                          <p key={line}>{line}</p>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
-                    <a
-                      href={office.mapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-neutral-600 hover:text-brand-blue-700 text-xs font-semibold group/link"
-                    >
-                      <span>Show Driving Coordinates</span>
-                      <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
         </div>
       </section>
 

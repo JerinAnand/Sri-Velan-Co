@@ -33,7 +33,7 @@ export const COMPANY_DETAILS = {
 
 export const OFFICES: OfficeLocation[] = [
   {
-    name: 'VILLUPURAM HQ',
+    name: 'Villupuram HQ',
     addressLines: [
       '2/112 Post Office Street,',
       'Pillur, Viluppuram,',

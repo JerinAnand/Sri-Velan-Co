@@ -83,7 +83,7 @@ export const AboutView: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4 text-left">
           <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase">
-            ESTABLISHED 2006
+            ESTABLISHED IN 2006
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight font-display text-white">
             {COMPANY_DETAILS.name} Corporate Profile

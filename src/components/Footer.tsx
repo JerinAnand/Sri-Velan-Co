@@ -51,7 +51,7 @@ export const Footer: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-display font-bold text-lg tracking-wide uppercase" style={{ color: '#bea937' }}>{COMPANY_DETAILS.name}</h3>
-                <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTD 2006</span>
+                <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTABLISHED IN 2006</span>
               </div>
             </div>
             
@@ -107,6 +107,8 @@ export const Footer: React.FC = () => {
                   <a
                     key={phone}
                     href={`tel:${phone.replace(/\s+/g, '')}`}
+                    aria-label={`Call emergency duty hotline at ${phone}`}
+                    title={`Call Emergency Duty Hotline: ${phone}`}
                     className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors font-medium text-white"
                   >
                     <Phone className="w-4 h-4 text-brand-gold-500 shrink-0" />
@@ -122,8 +124,9 @@ export const Footer: React.FC = () => {
                     <a
                       key={email}
                       href={`mailto:${email}`}
+                      aria-label={`Email Sri Velan and Co administration office at ${email}`}
                       className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors truncate"
-                      title={email}
+                      title={`Email administration: ${email}`}
                     >
                       <Mail className="w-4 h-4 text-brand-gold-500 shrink-0" />
                       <span className="truncate">{email}</span>
@@ -167,6 +170,8 @@ export const Footer: React.FC = () => {
                   href={COMPANY_DETAILS.brochureLink}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Download corporate credentials presentation brochure document in PDF format"
+                  title="Download Corporate Credentials PDF Brochure"
                   className="flex items-center justify-between w-full bg-brand-blue-900 hover:bg-brand-blue-800 text-white font-medium text-xs py-2.5 px-3.5 border border-brand-blue-800 rounded-lg transition-colors group"
                 >
                   <div className="flex items-center gap-2">
@@ -181,6 +186,8 @@ export const Footer: React.FC = () => {
                   href={COMPANY_DETAILS.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Visit Sri Velan and Co administrative Instagram page profile"
+                  title="Visit Instagram Page Profile"
                   className="flex items-center gap-2.5 text-xs text-neutral-300 hover:text-brand-gold-400 transition-colors pl-1"
                 >
                   <Instagram className="w-4 h-4 text-brand-gold-500" />

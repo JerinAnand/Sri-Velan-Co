@@ -202,7 +202,7 @@ export const Header: React.FC = () => {
                     </div>
                     <div className="truncate">
                       <h3 className="font-display font-bold text-sm text-white tracking-wide uppercase truncate">{COMPANY_DETAILS.name}</h3>
-                      <span className="text-[9px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTD 2006</span>
+                      <span className="text-[9px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTABLISHED IN 2006</span>
                     </div>
                   </div>
                   <button
@@ -249,6 +249,8 @@ export const Header: React.FC = () => {
                 <div className="flex flex-col gap-2.5">
                   <a 
                     href="tel:+919894218243" 
+                    aria-label="Call Emergency Dewatering Duty Representative fast coordinate mobilization at +919894218243"
+                    title="Call Emergency Dewatering Duty Representative"
                     className="flex justify-center items-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 hover:from-brand-gold-400 hover:to-brand-gold-500 text-brand-blue-950 font-display font-extrabold text-xs tracking-wider uppercase py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95"
                   >
                     <Phone className="w-4 h-4 text-brand-blue-950" />
@@ -256,6 +258,8 @@ export const Header: React.FC = () => {
                   </a>
                   <a 
                     href="mailto:srivelan2004@gmail.com" 
+                    aria-label="Email Sri Velan and Co administrative headquarters at srivelan2004@gmail.com"
+                    title="Email Headquarters Office"
                     className="flex justify-center items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-display font-bold text-xs py-3.5 px-4 rounded-xl transition-colors"
                   >
                     <Mail className="w-4 h-4 text-brand-gold-400" />

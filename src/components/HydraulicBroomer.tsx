@@ -250,6 +250,8 @@ export const HydraulicBroomer: React.FC = () => {
                   <button
                     key={hpRange.id}
                     onClick={() => setTractorHp(hpRange.id)}
+                    aria-label={`Select tractor power category ${hpRange.label} to filter compatible broom parameters`}
+                    title={`Select ${hpRange.label}`}
                     className={`p-3 rounded-lg text-xs font-display font-semibold transition-all ${
                       tractorHp === hpRange.id 
                         ? 'bg-brand-blue-700 text-white shadow-xs' 
@@ -387,6 +389,8 @@ export const HydraulicBroomer: React.FC = () => {
                     <button
                       type="submit"
                       disabled={formLoading}
+                      aria-label="Submit client specs form for an official commercial broom quotation proposal from Sri Velan & Co"
+                      title="Submit Spec Form for Quote"
                       className="inline-flex items-center gap-2 bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-sm uppercase py-3.5 px-10 rounded-lg shadow-md active:scale-95 transition-all w-full sm:w-auto"
                       id="sweep-spec-submit"
                     >
