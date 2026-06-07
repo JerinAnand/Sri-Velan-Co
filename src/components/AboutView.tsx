@@ -241,7 +241,7 @@ export const AboutView: React.FC = () => {
                   <div className="space-y-4">
                     <div className="inline-flex bg-brand-gold-500/20 text-brand-gold-400 border border-brand-gold-400/30 font-mono text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold">MSME registered</div>
                     <h3 className="font-display font-bold text-xl text-brand-gold-400">Micro, Small and Medium Enterprises Registry</h3>
-                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans font-light">Classified under the Ministry of MSME, Govt of India, enabling high institutional backing and tender leverage.</p>
+                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans font-light">Classified under the Ministry of MSME, Government of India, enabling high institutional backing and tender leverage.</p>
                   </div>
                   
                   <div className="pt-6 border-t border-brand-blue-900/60 flex justify-between items-end">
@@ -408,7 +408,7 @@ export const AboutView: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">TENDER CAPACITY</p>
-                <h4 className="font-display font-medium text-sm sm:text-base text-white">Govt. Registered Contractor</h4>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">Government Registered Contractor</h4>
                 <p className="text-xs text-neutral-300/80 font-light">Cleared for state public works.</p>
               </div>
             </div>

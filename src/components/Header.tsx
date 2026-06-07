@@ -66,7 +66,7 @@ export const Header: React.FC = () => {
           {/* Quality Tag */}
           <div className="flex items-center gap-2 text-brand-gold-400 font-medium text-center">
             <Award className="w-3.5 h-3.5" />
-            <span>Govt. Registered Contractor</span>
+            <span>Government Registered Contractor</span>
           </div>
         </div>
       </div>

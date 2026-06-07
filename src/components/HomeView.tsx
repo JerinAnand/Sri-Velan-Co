@@ -306,7 +306,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   PWD
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Govt Registration Code
+                  Government Registration Code
                 </p>
                 <p className="text-xs text-neutral-500 leading-tight">State WRD & PWD Accredited</p>
               </div>
