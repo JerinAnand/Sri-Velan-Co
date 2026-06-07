@@ -3,7 +3,7 @@
  * Sri Velan & Co Corporate PWD AI Estimator & Specification Planner.
  */
 
-// High-fidelity fallback generator matching PWD Class I specifications
+// High-fidelity fallback generator matching PWD specifications
 function generateFallbackResponse(prompt: string): string {
   const p = (prompt || "").toLowerCase();
   
@@ -30,7 +30,7 @@ function generateFallbackResponse(prompt: string): string {
 
 ### **3. Regulatory Accreditations & WRD Clearances**
 * **Administrative Liaison**: Rapidly request emergency WRD permissions for temporary trunk line routing. Prepare structural site elevation indexes for PWD Chief Engineer authorization.
-* **Contractor Classification**: Sri Velan & Co maintains Class I PWD Certification. All hydraulic lines and diesel engine decibel limits comply with local pollution standards (TNPCB norms) and district municipal corporation laws.
+* **Contractor Classification**: Sri Velan & Co maintains PWD Certification. All hydraulic lines and diesel engine decibel limits comply with local pollution standards (TNPCB norms) and district municipal corporation laws.
 
 ### **4. Strict Safety & PWD Compliance Protocols**
 * **Site Zoning**: Position clear high-contrast physical barriers, hazard indicator tape, and warning signboards. Site staff must be equipped with Level C personal protection gear (high-visibility jackets, rubber boots, and industrial harness ropes).
@@ -74,9 +74,9 @@ function generateFallbackResponse(prompt: string): string {
 * **Excavation Fleet**: Deploy reliable hydraulic earthmovers including JCB 3CX Backhoe Loaders and Tata Hitachi EX200 heavy excavators for high-volume trenching and structural cut-offs.
 * **Auxiliary Assets**: Integrate trailer-attached Mahindra Arjun 4WD tractor units for flexible on-site haulage and structural aggregate transports.
 
-### **3. Administrative Clearances & PWD Class I Liaison**
+### **3. Administrative Clearances & PWD Liaison**
 * **Regulatory Compliance**: All designs conform strictly to National Building Codes (NBC) and IS standards. Compile blueprint drawings for rapid local PWD Executive Engineering circle review.
-* **Sri Velan Contractor Standing**: Sri Velan & Co operates with Class I Registered Civil Contractor authority, enabling fast-tracked administrative approvals for municipal, agricultural, and industrial infrastructure works.
+* **Sri Velan Contractor Standing**: Sri Velan & Co operates with Registered Civil Contractor authority, enabling fast-tracked administrative approvals for municipal, agricultural, and industrial infrastructure works.
 
 ### **4. Multi-Layer Safety & Protective Engineering Protocols**
 * **Zoning Controls**: Secure the full construction grid with high-strength galvanized iron barricading curtains. Implement reflective night-glow indicator tapes and automated LED solar warning flashers.
@@ -120,7 +120,7 @@ export default async function handler(req: any, res: any) {
 
     const systemInstruction = 
       "You are an elite, highly professional PWD/WRD civil contracting consultant representing " +
-      "Sri Velan & Co (Class I Contractors). " +
+      "Sri Velan & Co (Government Registered Contractors). " +
       "Analyze the client's engineering request. Generate a structured plan with 3 to 4 clear, elegant, markdown-bullet-pointed steps, " +
       "covering tactical solutions, recommended fleet machineries (e.g., Tractor-Mounted Hydraulic Broomer, Vacuum Suction Pumps, " +
       "Hydraulic Earthmovers, dewatering setups), and administrative/regulatory compliance (PWD registration, safety codes, WRD approvals). " +

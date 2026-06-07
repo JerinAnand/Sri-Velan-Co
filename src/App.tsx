@@ -46,7 +46,7 @@ export default function App() {
     let title = `${COMPANY_DETAILS.name} | ${COMPANY_DETAILS.tagline}`;
     switch (activeView) {
       case 'about':
-        title = `About Us | ${COMPANY_DETAILS.name} Class I Contractor`;
+        title = `About Us | ${COMPANY_DETAILS.name} Contractor`;
         break;
       case 'services':
         title = `Our Services | State PWD & WRD Contracts`;

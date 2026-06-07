@@ -66,7 +66,7 @@ export const Header: React.FC = () => {
           {/* Quality Tag */}
           <div className="flex items-center gap-2 text-brand-gold-400 font-medium text-center">
             <Award className="w-3.5 h-3.5" />
-            <span>Govt. Registered Class I Contractor & ISO Standard Service</span>
+            <span>Govt. Registered Contractor</span>
           </div>
         </div>
       </div>
@@ -100,10 +100,10 @@ export const Header: React.FC = () => {
                 />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-white font-display font-bold text-base sm:text-lg lg:text-xl tracking-wide group-hover:text-brand-gold-400 transition-colors">
+                <h1 className="text-white font-display font-bold text-[23px] leading-[32px] uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors">
                   {COMPANY_DETAILS.name}
                 </h1>
-                <p className="text-[10px] text-brand-gold-400 font-mono tracking-widest uppercase">
+                <p className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase whitespace-nowrap">
                   Powered by Trust, Proven by Provision
                 </p>
               </div>
@@ -243,7 +243,7 @@ export const Header: React.FC = () => {
               <div className="p-6 bg-brand-blue-900/40 border-t border-brand-blue-900/80 space-y-4">
                 <div className="space-y-1 text-xs text-neutral-400">
                   <p className="font-semibold text-white uppercase font-mono text-[9px] tracking-wider text-brand-gold-400">EMERGENCY DEWATERING DIVISION</p>
-                  <p className="font-sans font-light">Class I registered state partners maintaining localized vertical pump networks 24/7 during seasonal warning events.</p>
+                  <p className="font-sans font-light">Registered state partners maintaining localized vertical pump networks 24/7 during seasonal warning events.</p>
                 </div>
                 
                 <div className="flex flex-col gap-2.5">

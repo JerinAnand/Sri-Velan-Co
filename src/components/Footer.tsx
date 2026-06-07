@@ -203,7 +203,7 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-4 flex-wrap justify-center text-neutral-400">
             <span className="flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-brand-gold-500" />
-              <span>Registered Class I PWD Contractor</span>
+              <span>Registered PWD Contractor</span>
             </span>
             <span>•</span>
             <button onClick={() => handleLinkClick('contact')} className="hover:text-brand-gold-400 transition-colors">

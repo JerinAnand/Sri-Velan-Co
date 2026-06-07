@@ -45,8 +45,8 @@ export const AboutView: React.FC = () => {
     },
     {
       year: '2018',
-      title: 'State Class I Contractor Licensing',
-      desc: 'Attained high-status Class I licensing permitting unlimited tender bounds under Tamil Nadu Public Works and Irrigation departments.',
+      title: 'State Contractor Licensing Registration',
+      desc: 'Attained high-status contracting licensing permitting tender bounds under Tamil Nadu Public Works and Irrigation departments.',
       tag: 'LEADERSHIP'
     },
     {
@@ -89,7 +89,7 @@ export const AboutView: React.FC = () => {
             {COMPANY_DETAILS.name} Corporate Profile
           </h1>
           <p className="max-w-3xl text-sm sm:text-base text-neutral-300 font-sans font-light leading-relaxed">
-            Pistons of the civic engineering wheel in Tamil Nadu. Government Registered Class I Contractors driven by quality, operational readiness, and community public service.
+            Pistons of the civic engineering wheel in Tamil Nadu. Government Registered Contractors driven by quality, operational readiness, and community public service.
           </p>
         </div>
       </section>
@@ -146,7 +146,7 @@ export const AboutView: React.FC = () => {
                 </p>
 
                 <p className="text-sm text-neutral-500 leading-relaxed font-sans">
-                  By leveraging strong relationships with public entities and utilizing proprietary machinery assets, we deliver Class I building plans, complex flood channels, retaining structures, and asphalt corridors that withstand decades of structural loads.
+                  By leveraging strong relationships with public entities and utilizing proprietary machinery assets, we deliver robust building plans, complex flood channels, retaining structures, and asphalt corridors that withstand decades of structural loads.
                 </p>
 
                 {/* Grid checklist of values */}
@@ -161,7 +161,7 @@ export const AboutView: React.FC = () => {
                   </div>
                   <div className="flex gap-2.5">
                     <CheckCircle2 className="w-5 h-5 text-brand-gold-500 shrink-0" />
-                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">ISO Quality Audited Standard</p>
+                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">PWD Standards Audited Execution</p>
                   </div>
                   <div className="flex gap-2.5">
                     <CheckCircle2 className="w-5 h-5 text-brand-gold-500 shrink-0" />
@@ -178,15 +178,15 @@ export const AboutView: React.FC = () => {
 
                 <div className="space-y-4">
                   
-                  {/* Class I Accreditation Card */}
+                  {/* Accreditation Card */}
                   <div className="bg-white p-5 border border-neutral-200 rounded-2xl flex items-start gap-4">
                     <div className="p-3 bg-brand-gold-500/10 rounded-xl text-brand-gold-600">
                       <Award className="w-6 h-6" />
                     </div>
                     <div>
                       <p className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider">Classification Status</p>
-                      <h4 className="font-display font-bold text-base text-brand-blue-950">Registered Class I Contractors</h4>
-                      <p className="text-xs text-neutral-500 mt-0.5 font-light">Accredited to pitch unrestricted water, land development, and administrative tenders state-wide.</p>
+                      <h4 className="font-display font-bold text-base text-brand-blue-950">Registered Civil Contractors</h4>
+                      <p className="text-xs text-neutral-500 mt-0.5 font-light">Accredited to pitch water, land development, and administrative tenders state-wide.</p>
                     </div>
                   </div>
 
@@ -197,8 +197,8 @@ export const AboutView: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider">Quality Management</p>
-                      <h4 className="font-display font-bold text-base text-brand-blue-950">ISO Certified Blueprints</h4>
-                      <p className="text-xs text-neutral-500 mt-0.5 font-light">Our execution checklists follow ISO 9001:2015 specifications covering dual pavement and dewatering blocks.</p>
+                      <h4 className="font-display font-bold text-base text-brand-blue-950">Engineered Specifications</h4>
+                      <p className="text-xs text-neutral-500 mt-0.5 font-light">Our execution checklists follow state department and MoRTH specifications covering dual pavement and dewatering blocks.</p>
                     </div>
                   </div>
 
@@ -396,7 +396,7 @@ export const AboutView: React.FC = () => {
             <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">COMPLIANCE & AUDIT</span>
             <h2 className="text-2xl sm:text-3.5xl font-black text-white tracking-tight font-display">Our Registrations & Credentials</h2>
             <p className="text-xs sm:text-sm text-neutral-300 max-w-xl mx-auto font-sans font-light">
-              Sri Velan & Co maintains active Class I contracting licenses, MSME declarations, and tax registrations audited directly by state ministries.
+              Sri Velan & Co maintains active contracting licenses, MSME declarations, and tax registrations audited directly by state ministries.
             </p>
           </div>
 
@@ -408,8 +408,8 @@ export const AboutView: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">TENDER CAPACITY</p>
-                <h4 className="font-display font-medium text-sm sm:text-base text-white">Govt. Registered Class I Contractor</h4>
-                <p className="text-xs text-neutral-300/80 font-light">Cleared for unrestricted state public works.</p>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">Govt. Registered Contractor</h4>
+                <p className="text-xs text-neutral-300/80 font-light">Cleared for state public works.</p>
               </div>
             </div>
 
@@ -444,7 +444,7 @@ export const AboutView: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">QUALITY CONTROL</p>
-                <h4 className="font-display font-medium text-sm sm:text-base text-white">ISO Standard Services</h4>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">Engineered Quality Services</h4>
                 <p className="text-xs text-neutral-300/80 font-light">Committed to code-compliant engineering.</p>
               </div>
             </div>
@@ -502,7 +502,7 @@ export const AboutView: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-neutral-600 font-sans italic leading-relaxed">
-                  "The quality of concrete masonry and stone-pitching executed along the regulatory structures meets our highest standards of hydraulic flow endurance. A very methodical and structured approach by Class I registered engineers."
+                  "The quality of concrete masonry and stone-pitching executed along the regulatory structures meets our highest standards of hydraulic flow endurance. A very methodical and structured approach by experienced registered engineers."
                 </p>
               </div>
               <div className="pt-4 border-t border-neutral-100">

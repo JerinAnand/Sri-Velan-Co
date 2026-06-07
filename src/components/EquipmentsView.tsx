@@ -223,7 +223,7 @@ export const EquipmentsView: React.FC = () => {
       <section className="bg-brand-blue-900 text-white py-14" id="equip-dispatch-callout">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-4">
           <p className="text-brand-gold-400 font-mono text-xs uppercase tracking-widest font-bold">24/7 Operations Duty</p>
-          <h2 className="text-xl sm:text-2xl font-black font-display">Need Immediate Water Dewatering Pumps Dispatch?</h2>
+          <h2 className="text-xl sm:text-2xl font-black font-display" style={{ color: '#bda72d' }}>Need Immediate Water Dewatering Pumps Dispatch?</h2>
           <p className="text-xs sm:text-sm text-neutral-300">Our diesel pump configurations and drivers are registered with emergency PWD panels and fully operational in any extreme cyclone environment.</p>
           <div className="pt-2">
             <a href="tel:+919894218243" className="inline-block bg-brand-gold-500 text-brand-blue-950 font-display font-extrabold text-sm py-3 px-6 rounded-lg uppercase tracking-wider hover:bg-brand-gold-400 shadow-lg active:scale-95 transition-all">

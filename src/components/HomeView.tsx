@@ -72,7 +72,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ',
       title: 'State PWD Administrative Complexes & Residential Infrastructure',
-      subtitle: 'Accredited Class I Construction',
+      subtitle: 'Accredited Civil Construction',
       tagline: 'Meticulous engineering layouts, earthquake-resistant RCC frameworks, and certified governmental finishing codes.',
       badge: 'Infrastructure'
     },
@@ -292,7 +292,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   Years of Structural Legacy
                 </p>
-                <p className="text-xs text-neutral-500 leading-tight">Founded 2006 in Villupuram</p>
+                <p className="text-xs text-neutral-500 leading-tight">Founded in 2006 in Villupuram</p>
               </div>
             </div>
 
@@ -303,7 +303,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  Class I
+                  PWD
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   Govt Registration Code
@@ -366,7 +366,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </h2>
               
               <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans font-light">
-                Our approach as a **Class I contracting group** is guided by precision raw material procurement, structural concrete verification standard PWD aggregates, and complete mechanical command over dual dewatering operations to assure state networks have continuous security.
+                Our approach as a <strong className="font-semibold">contracting group</strong> is guided by precise raw-material procurement, robust structural concrete verification against standard PWD aggregates, and complete mechanical command over dual-dewatering operations to ensure continuous security for state networks.
               </p>
 
               <div className="h-px bg-neutral-200 w-full" />
@@ -375,7 +375,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 {[
                   'Strict compliance with IS-code grade parameters (M30/M40 concrete matrix validation)',
                   'Extensive direct relationships with leading steel and heavy aggregate quarries',
-                  'ISO 9001:2015 compliant execution checklists on block masonry works'
+                  'Rigorous quality execution checklists on block masonry works'
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-neutral-600">
                     <span className="h-4.5 w-4.5 rounded-full bg-brand-blue-50 text-brand-blue-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
@@ -473,7 +473,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">OPERATIONAL CAPACITY</span>
               <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">Corporate Infrastructure Services</h2>
               <p className="text-xs sm:text-sm text-neutral-400 font-sans font-light leading-relaxed">
-                As licensed Class I construction partners, our division operations are vetted for extreme load capacities and public safety clearances across Tamil Nadu.
+                As licensed construction partners, our division operations are vetted for extreme load capacities and public safety clearances across Tamil Nadu.
               </p>
             </div>
             
@@ -555,7 +555,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </h2>
               
               <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed font-sans font-light">
-                Sri Velan & Co maintains South India's largest localized mobilization dewatering network. Dynamic relief setups operate at a maximum collective discharge flow of **80 Million Liters Per Day (MLD)**. Adjust the calculator slider to test our discharge clearing parameters:
+                Sri Velan & Co maintains South India's largest localized mobilization dewatering network. Dynamic relief setups operate at a maximum collective discharge flow of <strong className="font-semibold text-brand-blue-900">80 Million Liters Per Day (MLD)</strong>. Adjust the calculator slider to test our discharge clearing parameters:
               </p>
 
               {/* Slider Input */}
@@ -621,7 +621,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 mt-6 text-left space-y-3">
                 <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">Cyclone Response Deployment Layout</span>
                 <p className="text-xs text-neutral-300 leading-relaxed font-sans font-light">
-                  During emergency storm peaks (Cyclone Fengal/Michaung), dewatering fleets are split into continuous **8-hour shift teams** utilizing multi-cylinder heavy diesel motors capable of handling up to **75mm compressible mud solids** with no downtime.
+                  During emergency storm peaks (such as Cyclone Fengal or Cyclone Michaung), dewatering fleets are split into continuous <strong className="font-semibold text-brand-gold-400">8-hour shift teams</strong> utilizing multi-cylinder heavy diesel motors capable of handling up to <strong className="font-semibold text-brand-gold-400">75mm compressible mud solids</strong> with no downtime.
                 </p>
                 
                 <div className="h-px bg-neutral-800 w-full" />
@@ -661,7 +661,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   Ready to partner on municipal tenders?
                 </h2>
                 <p className="text-sm text-neutral-300 max-w-3xl leading-relaxed">
-                  Connect with Mr. G. Selva Kumar’s regional estimating desk to gain verified ISO/class-status credentials, request specialized equipment hiring blocks, or organize rapid storm relief backups.
+                  Connect with Mr. G. Selva Kumar’s regional estimating desk to gain verified class-status credentials, request specialized equipment hiring blocks, or organize rapid storm relief backups.
                 </p>
               </div>
 

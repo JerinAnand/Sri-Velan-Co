@@ -37,209 +37,209 @@ const getVelanResponse = (query: string): string => {
 
   // 1. DIRECT OPTION SERIAL NUMBER LOOKUPS
   if (q === '1' || q.includes('option 1') || q.includes('option1') || q.includes('opt 1') || q.includes('opt1') || q === 'one') {
-    return `### **Option 1: Disaster Dewatering & Heavy Emergency Relief Fleet**
+    return `### Option 1: Disaster Dewatering & Heavy Emergency Relief Fleet
 
-Sri Velan & Co is recognized nationwide as a premier emergency response operator during major monsoon inundation and structural crises.
+Sri Velan & Co is recognized as a premier emergency response operator during major monsoon inundation and structural crises.
 
-**Our Specialized Pumping Assets:**
-* **Air-Assist Vacuum Pumps:** Heavy-duty **4" and 6" custom pump units** paired with reliable, water-cooled diesel standby engines.
-* **Vertical Electrical Submersibles:** High-power **100 HP submersible units** designed to drain metropolitan highway underpasses and deep underground transit nodes.
-* **Peak Discharge Potential:** Scaled to pump over **80,000,000 to 120,000,000 Liters per day** during active stormwater peak phases.
-* **Emergency Track Record:** High-volume drainage execution praised by regulatory heads during **Cycone Fengal (2024)**, **Cyclone Michaung (2023)**, **Cyclone Gulab (2021)**, and **Cyclone Nivar (2020)**.
+Our Specialized Pumping Assets:
+- Air-Assist Vacuum Pumps: Heavy-duty 4" and 6" custom pump units paired with reliable, water-cooled diesel standby engines.
+- Vertical Electrical Submersibles: High-power 100 HP submersible units designed to drain metropolitan highway underpasses and deep underground transit nodes.
+- Peak Discharge Potential: Scaled to pump over 80,000,000 to 120,000,000 liters per day during active stormwater peak phases.
+- Emergency Track Record: High-volume drainage execution praised by regulatory heads during Cyclone Fengal (2024), Cyclone Michaung (2023), Cyclone Gulab (2021), and Cyclone Nivar (2020).
 
-*To register emergency rental queries or immediate logistical dispatch, contact Governing Partner G. Selva Kumar on **+91 98942 18243**.*`;
+To register emergency rental queries or immediate logistical dispatch, contact Governing Partner Mr. G. Selva Kumar on +91 98942 18243.`;
   }
 
   if (q === '2' || q.includes('option 2') || q.includes('option2') || q.includes('opt 2') || q.includes('opt2') || q === 'two') {
-    return `### **Option 2: Tractor-Mounted Hydraulic Broomer Configurations**
+    return `### Option 2: Tractor-Mounted Hydraulic Broomer Configurations
 
-Sri Velan & Co manufactures and distributes high-durability **Tractor-Mounted Highway Broomers** designed for heavy cleanups and highway maintenance in strict adherence to MoRTH guidelines.
+Sri Velan & Co manufactures and distributes high-durability Tractor-Mounted Highway Broomers designed for heavy cleanups and highway maintenance in strict adherence to MoRTH guidelines.
 
-**Key Engineering Specifications:**
-* **Sweeping Path Capacity:** Adjustable layout from **1800 mm to 2200 mm** sweeping widths.
-* **Abrasive Double-Bristles:** Interwoven high-wear nylon filaments and heavy abrasive steel core wires.
-* **Operational Hyd Pressure:** Heavy duty **160 to 180 Bar** integrated directly with tractor hydraulic take-offs.
-* **Clearing Output:** Swiftest active clearing speeds of up to **10,000 Square Meters per Hour**.
-* **3-Point Fitment:** Universal implementation compatible with all major utility tractors of **40 HP or larger** using Cat-II hitches.
+Key Engineering Specifications:
+- Sweeping Path Capacity: Adjustable layout from 1800 mm to 2200 mm sweeping widths.
+- Abrasive Double-Bristles: Interwoven high-wear nylon filaments and heavy abrasive steel core wires.
+- Operational Hydraulic Pressure: Heavy-duty 160 to 180 Bar integrated directly with tractor hydraulic take-offs.
+- Clearing Output: Swiftest active clearing speeds of up to 10,000 square meters per hour.
+- 3-Point Fitment: Universal implementation compatible with all major utility tractors of 40 HP or larger using Cat-II hitches.
 
-*Would you like to generate a detailed catalog price estimate? Use our interactive Broomer tab to trigger an instant estimation report!*`;
+Would you like to generate a detailed catalog price estimate? Use our interactive Broomer tab to trigger an instant estimation report!`;
   }
 
   if (q === '3' || q.includes('option 3') || q.includes('option3') || q.includes('opt 3') || q.includes('opt3') || q === 'three') {
-    return `### **Option 3: Registered Civil Infrastructure Services**
+    return `### Option 3: Registered Civil Infrastructure Services
 
-Armed with standard Class I Gov. registrations, we lead high-budget infrastructure undertakings with audited precision:
+Armed with corporate government registrations, we lead high-budget infrastructure undertakings with audited precision:
 
-1. **PWD Public Buildings & Complexes:** Multilevel earthquake-resistant institutional facilities, administrative offices, and model educational structures.
-2. **WRD Irrigation Infrastructure:** Heavy earthmoving, canal branch alignments, reinforced stone-pitch embankment structures, and spillway repairs.
-3. **High-Strength Concrete Roads & Bridges:** Industrial rigid bituminized pavements, stormwater concrete chambers, and structural box culvert installations.
-4. **Machinery & Fleet Hire:** Fast mobilization of high-capacity vacuum dewatering setups and tractor broomer assemblies.
+1. PWD Public Buildings & Complexes: Multilevel earthquake-resistant institutional facilities, administrative offices, and model educational structures.
+2. WRD Irrigation Infrastructure: Heavy earthmoving, canal branch alignments, reinforced stone-pitch embankment structures, and spillway repairs.
+3. High-Strength Concrete Roads & Bridges: Industrial rigid bituminized pavements, stormwater concrete chambers, and structural box culvert installations.
+4. Machinery & Fleet Hire: Fast mobilization of high-capacity vacuum dewatering setups and tractor broomer assemblies.
 
-*All structural materials undergo rigorous site-level audits under leading QA standards.*`;
+All structural materials undergo rigorous site-level audits under leading quality assurance standards.`;
   }
 
   if (q === '4' || q.includes('option 4') || q.includes('option4') || q.includes('opt 4') || q.includes('opt4') || q === 'four') {
-    return `### **Option 4: Corporate Connection Channels**
+    return `### Option 4: Corporate Connection Channels
 
 Connect directly with Sri Velan & Co’s central management and engineering estimators:
 
-* **Primary High-Priority Hotline:** **+91 98942 18243** (Mr. G. Selva Kumar, Managing Director & Partner)
-* **Secondary Customer Desk:** **+91 98427 18243**
-* **Direct Corporate Correspondence:** **srivelan2004@gmail.com** or **pgselva45@gmail.com**
-* **In-app Quote Routing:** Submit an inquiry via our forms to dispatch instant automated SMS alerts straight to our team.`;
+- Primary High-Priority Hotline: +91 98942 18243 (Mr. G. Selva Kumar, Managing Director & Partner)
+- Secondary Customer Desk: +91 98427 18243
+- Direct Corporate Correspondence: srivelan2004@gmail.com or pgselva45@gmail.com
+- In-app Quote Routing: Submit an inquiry via our forms to dispatch instant automated SMS alerts straight to our team.`;
   }
 
   if (q === '5' || q.includes('option 5') || q.includes('option5') || q.includes('opt 5') || q.includes('opt5') || q === 'five') {
-    return `### **Option 5: Our Corporate Locations & Address Hubs**
+    return `### Option 5: Our Corporate Locations & Address Hubs
 
 We maintain dual corporate facilities to ensure efficient machinery transport and state government liaison:
 
-1. **VILLUPURAM HQ:**
+1. VILLUPURAM HQ:
    2/112 Post Office Street,
    Pillur, Viluppuram, Tamilnadu - 605103.
    
-2. **Chennai HQ:**
+2. Chennai HQ:
    S2, Second Floor, A Block, 8th Cross Street,
    Ram Nagar South, Madipakkam, Chennai, Tamilnadu - 600091.
 
-*Both branches support active machinery depots, rapid mobilization units, and bid coordination desks.*`;
+Both branches support active machinery depots, rapid mobilization units, and bid coordination desks.`;
   }
 
   if (q === '6' || q.includes('option 6') || q.includes('option6') || q.includes('opt 6') || q.includes('opt6') || q === 'six') {
-    return `### **Option 6: Accreditations & Government Credentials**
+    return `### Option 6: Accreditations & Government Credentials
 
 Sri Velan & Co is fully accredited for industrial-scale government operations:
-* **Contractor Rank:** Registered **Class I Government Contractor** (state's highest-tier accreditation).
-* **GSTIN:** **33ABFFS6298G1ZU**
-* **MSME Registry:** **UDYAM-TN-31-0046742**
-* **Standards Compliance:** Fully compliant with ISO quality and safety protocols.`;
+- Contractor Rank: Registered Government Contractor (civil engineering accreditation).
+- GSTIN: 33ABFFS6298G1ZU
+- MSME Registry: UDYAM-TN-31-0046742
+- Standards Compliance: Fully compliant with PWD safety and state engineering protocols.`;
   }
 
   // HELLO / GREETINGS
   if (VELAN_GREETINGS_PATTERN.test(q)) {
-    return `### **Vanakkam & Welcome! I am VELAN AI** ⚡
+    return `### Vanakkam & Welcome! I am VELAN AI ⚡
 
-I am the cognitive intelligence workspace core representing **Sri Velan & Co** (Accredited Class I Govt. Civil Contractors, Estd. 2006). 
+I am the cognitive intelligence workspace core representing Sri Velan & Co (Accredited Government Civil Contractors, Estd. 2006). 
 
 Please query by serial number, click a suggestion chip, or ask me directly:
-* **[1] Disaster Dewatering & Emergency Pumping Fleet** 💧
-* **[2] Tractor-Attached Hydraulic Broomers & highway sweepers** 🧹
-* **[3] PWD Buildings, WRD Canals & Rigid CC Roads** 🏗️
-* **[4] Corporate Connection Channels & Liaison** 📞
-* **[5] Corporate Offices & Field Location Hubs** 📍
-* **[6] Accreditations & Government Credentials** 🎖️`;
+- [1] Disaster Dewatering & Emergency Pumping Fleet 💧
+- [2] Tractor-Attached Hydraulic Broomers & Highway Sweepers 🧹
+- [3] PWD Buildings, WRD Canals & Rigid CC Roads 🏗️
+- [4] Corporate Connection Channels & Liaison 📞
+- [5] Corporate Offices & Field Location Hubs 📍
+- [6] Accreditations & Government Credentials 🎖️`;
   }
 
   // DEWATERING / FLOOD / EMERGENCY / CYCLONE / PUMPS
   if (q.includes('dewater') || q.includes('pump') || q.includes('flood') || q.includes('cyclone') || q.includes('submersible') || q.includes('fengal') || q.includes('michaung') || q.includes('vacuum') || q.includes('diesel') || q.includes('discharge') || q.includes('relief') || q.includes('rescue')) {
-    return `### **Disaster Dewatering & Heavy Emergency Relief Fleet**
+    return `### Disaster Dewatering & Heavy Emergency Relief Fleet
 
-Sri Velan & Co is recognized nationwide as a premier emergency response operator during major monsoon inundation and structural crises.
+Sri Velan & Co is recognized as a premier emergency response operator during major monsoon inundation and structural crises.
 
-**Our Specialized Pumping Assets:**
-* **Air-Assist Vacuum Pumps:** Heavy-duty **4" and 6" custom pump units** paired with reliable, water-cooled diesel standby engines.
-* **Vertical Electrical Submersibles:** High-power **100 HP submersible units** designed to drain metropolitan highway underpasses and deep underground transit nodes.
-* **Peak Discharge Potential:** Scaled to pump over **80,000,000 to 120,000,000 Liters per day** during active stormwater peak phases.
-* **Emergency Track Record:** High-volume drainage execution praised by regulatory heads during **Cycone Fengal (2024)**, **Cyclone Michaung (2023)**, **Cyclone Gulab (2021)**, and **Cyclone Nivar (2020)**.
+Our Specialized Pumping Assets:
+- Air-Assist Vacuum Pumps: Heavy-duty 4" and 6" custom pump units paired with reliable, water-cooled diesel standby engines.
+- Vertical Electrical Submersibles: High-power 100 HP submersible units designed to drain metropolitan highway underpasses and deep underground transit nodes.
+- Peak Discharge Potential: Scaled to pump over 80,000,000 to 120,000,000 liters per day during active stormwater peak phases.
+- Emergency Track Record: High-volume drainage execution praised by regulatory heads during Cyclone Fengal (2024), Cyclone Michaung (2023), Cyclone Gulab (2021), and Cyclone Nivar (2020).
 
-*To register emergency rental queries or immediate logistical dispatch, contact Governing Partner G. Selva Kumar on **+91 98942 18243**.*`;
+To register emergency rental queries or immediate logistical dispatch, contact Governing Partner Mr. G. Selva Kumar on +91 98942 18243.`;
   }
 
   // BROOMER / SWEEPER / ROADS / RECONSTRUCTION
   if (q.includes('broom') || q.includes('sweep') || q.includes('tractor') || q.includes('pavement') || q.includes('highway') || q.includes('clean') || q.includes('attachment') || q.includes('bristle') || q.includes('spec') || q.includes('quotation')) {
-    return `### **Tractor-Mounted Hydraulic Broomer Configurations**
+    return `### Tractor-Mounted Hydraulic Broomer Configurations
 
-Sri Velan & Co manufactures and distributes high-durability **Tractor-Mounted Highway Broomers** designed for heavy cleanups and highway maintenance in strict adherence to MoRTH guidelines.
+Sri Velan & Co manufactures and distributes high-durability Tractor-Mounted Highway Broomers designed for heavy cleanups and highway maintenance in strict adherence to MoRTH guidelines.
 
-**Key Engineering Specifications:**
-* **Sweeping Path Capacity:** Adjustable layout from **1800 mm to 2200 mm** sweeping widths.
-* **Abrasive Double-Bristles:** Engineered using ultra-tough steel core wires interwoven with high-wear nylon filaments.
-* **Operational Hyd Pressure:** Heavy duty **160 to 180 Bar** integrated directly with tractor hydraulic take-offs.
-* **Clearing Output:** Swiftest active clearing speeds of up to **10,000 Square Meters per Hour**.
-* **3-Point Fitment:** Universal implementation compatible with all major utility tractors of **40 HP or larger** using Cat-II hitches.
+Key Engineering Specifications:
+- Sweeping Path Capacity: Adjustable layout from 1800 mm to 2200 mm sweeping widths.
+- Abrasive Double-Bristles: Engineered using ultra-tough steel core wires interwoven with high-wear nylon filaments.
+- Operational Hydraulic Pressure: Heavy-duty 160 to 180 Bar integrated directly with tractor hydraulic take-offs.
+- Clearing Output: Swiftest active clearing speeds of up to 10,000 square meters per hour.
+- 3-Point Fitment: Universal implementation compatible with all major utility tractors of 40 HP or larger using Cat-II hitches.
 
-*Would you like to generate a detailed catalog price estimate? Use our interactive Broomer tab to trigger an instant estimation report!*`;
+Would you like to generate a detailed catalog price estimate? Use our interactive Broomer tab to trigger an instant estimation report!`;
   }
 
   // SERVICES / CAPABILITIES / CIVIL WORKS
   if (q.includes('service') || q.includes('capability') || q.includes('works') || q.includes('tenders') || q.includes('contract') || q.includes('civil') || q.includes('canal') || q.includes('drain') || q.includes('structural') || q.includes('build')) {
-    return `### **Our Registered Civil Infrastructure Services**
+    return `### Our Registered Civil Infrastructure Services
 
-Armed with standard Class I Gov. registrations, we lead high-budget infrastructure undertakings with audited precision:
+Armed with corporate government registrations, we lead high-budget infrastructure undertakings with audited precision:
 
-1. **PWD Public Buildings & Complexes:** Multilevel earthquake-resistant institutional facilities, administrative offices, and model educational structures.
-2. **WRD Irrigation Infrastructure:** Heavy earthmoving, canal branch alignments, reinforced stone-pitch embankment structures, and spillway repairs.
-3. **High-Strength Concrete Roads & Bridges:** Industrial rigid bituminized pavements, stormwater concrete chambers, and structural box culvert installations.
-4. **Machinery & Fleet Hire:** Fast mobilization of high-capacity vacuum dewatering setups and tractor broomer assemblies.
+1. PWD Public Buildings & Complexes: Multilevel earthquake-resistant institutional facilities, administrative offices, and model educational structures.
+2. WRD Irrigation Infrastructure: Heavy earthmoving, canal branch alignments, reinforced stone-pitch embankment structures, and spillway repairs.
+3. High-Strength Concrete Roads & Bridges: Industrial rigid bituminized pavements, stormwater concrete chambers, and structural box culvert installations.
+4. Machinery & Fleet Hire: Fast mobilization of high-capacity vacuum dewatering setups and tractor broomer assemblies.
 
-*All structural materials undergo rigorous site-level audits under leading QA standards.*`;
+All structural materials undergo rigorous site-level audits under leading quality assurance standards.`;
   }
 
   // PROJECTS / EXPERIENCE / PAST WORK
   if (q.includes('project') || q.includes('experience') || q.includes('done') || q.includes('restor') || q.includes('temple') || q.includes('history') || q.includes('portfolio')) {
-    return `### **Milestone Projects & Civil Portfolios**
+    return `### Milestone Projects & Civil Portfolios
 
 Covering over 18+ years of engineering execution, Sri Velan & Co has handled critical municipal contracts:
 
-* **Heritage Restoration Works:** Intricate structural brick repair and sacred water basin (Theertha Kulam) structural restoration for the Hindu Religious & Charitable Endowments (HR&CE) department.
-* **PWD Structural Complexes:** Designed and finished key state administrative offices exceeding 45,000 sq ft with integrated rainwater cells.
-* **Irrigation Embankments:** Finished over **12 Kilometers** of WRD protective stone pitching on volatile river basins, ensuring localized agricultural security.
-* **Cyclone Dewatering Support:** Seamless deployment of high-speed dewatering pump blocks to resolve emergency water logging across arterial city subways.`;
+- Heritage Restoration Works: Intricate structural brick repair and sacred water basin (Theertha Kulam) structural restoration for the Hindu Religious & Charitable Endowments (HR&CE) department.
+- PWD Structural Complexes: Designed and finished key state administrative offices exceeding 45,000 sq ft with integrated rainwater cells.
+- Irrigation Embankments: Rebuilt over 12 kilometers of WRD protective stone pitching on volatile river basins, ensuring localized agricultural security.
+- Cyclone Dewatering Support: Deployed high-speed dewatering pump blocks to resolve emergency waterlogging across arterial city subways.`;
   }
 
   // CONTACT / PHONE / WHATSAPP / EMAILS
   if (q.includes('contact') || q.includes('phone') || q.includes('email') || q.includes('whatsapp') || q.includes('call') || q.includes('reach') || q.includes('number') || q.includes('mail') || q.includes('selva') || q.includes('kumar')) {
-    return `### **Corporate Connection Channels**
+    return `### Corporate Connection Channels
 
 Connect directly with Sri Velan & Co’s central management and engineering estimators:
 
-* **Primary High-Priority Hotline:** **+91 98942 18243** (Mr. G. Selva Kumar, Managing Director & Partner)
-* **Secondary Customer Desk:** **+91 98427 18243**
-* **Direct Corporate Correspondence:** **srivelan2004@gmail.com** or **pgselva45@gmail.com**
-* **In-app Quote Routing:** Submit an inquiry via our forms to dispatch instant automated SMS alerts straight to our team.`;
+- Primary High-Priority Hotline: +91 98942 18243 (Mr. G. Selva Kumar, Managing Director & Partner)
+- Secondary Customer Desk: +91 98427 18243
+- Direct Corporate Correspondence: srivelan2004@gmail.com or pgselva45@gmail.com
+- In-app Quote Routing: Submit an inquiry via our forms to dispatch instant automated SMS alerts straight to our team.`;
   }
 
   // OFFICE / LOCATION / ADDRESS / VILLUPURAM / CHENNAI
   if (q.includes('office') || q.includes('address') || q.includes('where') || q.includes('location') || q.includes('map') || q.includes('chennai') || q.includes('villupuram') || q.includes('branch')) {
-    return `### **Our Corporate Locations**
+    return `### Our Corporate Locations
 
 We maintain dual corporate facilities to ensure efficient machinery transport and state government liaison:
 
-1. **VILLUPURAM HQ:**
+1. VILLUPURAM HQ:
    2/112 Post Office Street,
    Pillur, Viluppuram, Tamilnadu - 605103.
    
-2. **Chennai HQ:**
+2. Chennai HQ:
    S2, Second Floor, A Block, 8th Cross Street,
    Ram Nagar South, Madipakkam, Chennai, Tamilnadu - 600091.
 
-*Both branches support active machinery depots, rapid mobilization units, and bid coordination desks.*`;
+Both branches support active machinery depots, rapid mobilization units, and bid coordination desks.`;
   }
 
   // TAX / GSTIN / MSME / REGISTRATION
   if (q.includes('gst') || q.includes('msme') || q.includes('tax') || q.includes('regist') || q.includes('license') || q.includes('accreditation') || q.includes('class i')) {
-    return `### **Accreditations & Government Credentials**
+    return `### Accreditations & Government Credentials
 
 Sri Velan & Co is fully accredited for industrial-scale government operations:
-* **Contractor Rank:** Registered **Class I Government Contractor** (state's highest-tier accreditation).
-* **GSTIN:** **33ABFFS6298G1ZU**
-* **MSME Registry:** **UDYAM-TN-31-0046742**
-* **Standards Compliance:** Fully compliant with ISO quality and safety protocols.`;
+- Contractor Rank: Registered Government Contractor (civil engineering accreditation).
+- GSTIN: 33ABFFS6298G1ZU
+- MSME Registry: UDYAM-TN-31-0046742
+- Standards Compliance: Fully compliant with PWD safety and state engineering protocols.`;
   }
 
   // DEFAULT INTELLIGENT BOT RESPONSE WITH ACCREDITED TRUTHS
-  return `### **Sri Velan & Co • Intelligent AI System Core**
+  return `### Sri Velan & Co • Intelligent AI System Core
 
 How can I help you construct or support your next infrastructure project? Select a focal point by serial number or type your message here:
 
-* **[1] Disaster Dewatering & Emergency Pumping Fleet** 💧
-* **[2] Tractor-Attached Hydraulic Broomers & Highways** 🧹
-* **[3] Registered Civil Infrastructure Services** 🏗️
-* **[4] Corporate Connection Channels & Hotlines** 📞
-* **[5] Corporate Offices & Address Locations** 📍
-* **[6] Accreditations & Government Credentials** 🎖️
+- [1] Disaster Dewatering & Emergency Pumping Fleet 💧
+- [2] Tractor-Attached Hydraulic Broomers & Highways 🧹
+- [3] Registered Civil Infrastructure Services 🏗️
+- [4] Corporate Connection Channels & Hotlines 📞
+- [5] Corporate Offices & Address Locations 📍
+- [6] Accreditations & Government Credentials 🎖️
 
-Please reply with any options above (e.g. **1**, **2**, **3**) or write your queries freely.`;
+Please reply with any options above (e.g. 1, 2, 3) or write your queries freely.`;
 };
 
 // Custom simple markdown renderer
@@ -310,7 +310,7 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'model',
-      text: "### Sri Velan & Co • VELAN AI\n\nHello! I am **VELAN AI**, your real-time intelligent helper. I can answer any questions about our Class I civil engineering services, disaster relief pumping setups, customized hydraulic sweepers, or quotation details.\n\nType any option number below or ask me directly:\n\n* **[1] Disaster Dewatering & Emergency Pumping Fleet** 💧\n* **[2] Tractor-Attached Hydraulic Broomers & Highways** 🧹\n* **[3] Registered Civil Infrastructure Services** 🏗️\n* **[4] Corporate Connection Channels & Liaison** 📞\n* **[5] Corporate Offices & Field Location Hubs** 📍\n* **[6] Accreditations & Government Credentials** 🎖️",
+      text: "### Sri Velan & Co • VELAN AI\n\nHello! I am VELAN AI, your real-time intelligent helper. I can answer any questions about our civil engineering services, disaster relief pumping setups, customized hydraulic sweepers, or quotation details.\n\nType any option number below or ask me directly:\n\n- [1] Disaster Dewatering & Emergency Pumping Fleet 💧\n- [2] Tractor-Attached Hydraulic Broomers & Highways 🧹\n- [3] Registered Civil Infrastructure Services 🏗️\n- [4] Corporate Connection Channels & Liaison 📞\n- [5] Corporate Offices & Field Location Hubs 📍\n- [6] Accreditations & Government Credentials 🎖️",
       timestamp: new Date()
     }
   ]);
