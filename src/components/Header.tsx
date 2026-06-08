@@ -9,10 +9,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { COMPANY_DETAILS } from '../data';
 import { ActiveView } from '../types';
+import { useEasterEgg } from '../context/EasterEggContext';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { registerClick } = useEasterEgg();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -249,6 +251,7 @@ export const Header: React.FC = () => {
                 <div className="flex flex-col gap-2.5">
                   <a 
                     href="tel:+919894218243" 
+                    onClick={() => registerClick('emergency-dial')}
                     aria-label="Call Emergency Dewatering Duty Representative fast coordinate mobilization at +919894218243"
                     title="Call Emergency Dewatering Duty Representative"
                     className="flex justify-center items-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 hover:from-brand-gold-400 hover:to-brand-gold-500 text-brand-blue-950 font-display font-extrabold text-xs tracking-wider uppercase py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95"

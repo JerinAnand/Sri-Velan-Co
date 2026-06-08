@@ -179,7 +179,7 @@ export const ServicesView: React.FC = () => {
       {/* Corporate Capability Section */}
       <section className="bg-brand-blue-950 text-white py-16" id="services-guarantee">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold font-display">Tender Compliance & Vetted Resource Pools</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold font-display" style={{ color: '#e5e125' }}>Tender Compliance & Vetted Resource Pools</h2>
           <p className="text-sm text-neutral-300 max-w-2xl mx-auto leading-relaxed">
             All our operational segments are fully insured/licensed, compliant with the Hindu Religious Charitable Endowments (HR&CE), Water Resources Department (WRD), and Public Works Department (PWD) specifications.
           </p>

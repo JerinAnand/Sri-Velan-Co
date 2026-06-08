@@ -21,8 +21,10 @@ import {
   Code
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
+import { useEasterEgg } from '../context/EasterEggContext';
 
 export const ContactView: React.FC = () => {
+  const { registerClick } = useEasterEgg();
   const [loading, setLoading] = useState(false);
   const [complete, setComplete] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -426,6 +428,7 @@ export const ContactView: React.FC = () => {
                           <a 
                             key={p}
                             href={`tel:${p.replace(/\s+/g, '')}`} 
+                            onClick={() => registerClick('emergency-dial')}
                             aria-label={`Call general inquiries and rapid operations desk at mobile number ${p}`}
                             title={`Call operations representative at ${p}`}
                             className="block font-display font-semibold text-lg text-brand-blue-900 hover:text-brand-gold-600 transition-colors"
@@ -438,7 +441,10 @@ export const ContactView: React.FC = () => {
 
                     {/* Instant WhatsApp */}
                     <button
-                      onClick={sendWhatsApp}
+                      onClick={() => {
+                        registerClick('whatsapp');
+                        sendWhatsApp();
+                      }}
                       aria-label="Launch secure encrypted WhatsApp Chat panel directly to inquire with our Estimating Officer"
                       title="Open instant WhatsApp chat inquiries"
                       className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 p-6 rounded-2xl transition-all flex items-start gap-4 text-left shadow-xs group cursor-pointer"

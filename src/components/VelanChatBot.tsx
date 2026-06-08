@@ -21,6 +21,7 @@ import {
   ThumbsUp,
   Award
 } from 'lucide-react';
+import { useEasterEgg } from '../context/EasterEggContext';
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -304,6 +305,7 @@ interface VelanChatBotProps {
 }
 
 export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = false }) => {
+  const { registerClick } = useEasterEgg();
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -325,6 +327,7 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
   }, [messages, isLoading]);
 
   const handleOpenToggle = () => {
+    registerClick('ai-assistant');
     setIsOpen(!isOpen);
   };
 
