@@ -131,22 +131,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
         <AnimatePresence mode="wait">
           <motion.div 
             key={currentSlide}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute inset-0 z-0"
           >
-            <img 
-              src={heroSlides[currentSlide].image}
-              alt={heroSlides[currentSlide].title}
-              className="w-full h-full object-cover filter brightness-[0.22] saturate-[0.65]"
-              referrerPolicy="no-referrer"
-              loading="lazy"
-              width="1920"
-              height="1080"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/sri-velan-logo.png'; }}
-            />
             {/* Dark elegant blue radial gradient to give a cinematic corporate fade */}
             <div className="absolute inset-0 bg-gradient-to-r from-brand-blue-950/90 via-brand-blue-900/40 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-neutral-900 via-neutral-900/60 to-transparent" />

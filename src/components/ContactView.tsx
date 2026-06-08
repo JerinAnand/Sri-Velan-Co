@@ -22,9 +22,11 @@ import {
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useEasterEgg } from '../context/EasterEggContext';
+import { useLoading } from '../context/LoadingContext';
 
 export const ContactView: React.FC = () => {
   const { registerClick } = useEasterEgg();
+  const { runWithLoader } = useLoading();
   const [loading, setLoading] = useState(false);
   const [complete, setComplete] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -131,12 +133,13 @@ export const ContactView: React.FC = () => {
     e.preventDefault();
     if (!aiPrompt.trim()) return;
 
-    setAiLoading(true);
     setAiError('');
     setAiResult('');
 
     if (!isQueryRelevant(aiPrompt)) {
-      setTimeout(() => {
+      setAiLoading(true);
+      await runWithLoader('Checking project parameters matching alignment...', async () => {
+        await new Promise(resolve => setTimeout(resolve, 800));
         setAiResult(
           "Your query does not appear to contain civil contracting, dewatering, road sweeping, or PWD/WRD-related engineering parameters.\n\n" +
           "Sri Velan AI™ Engineering Assistant specializes in analyzing specifications about civil construction, fluid drainage control, and high-wear hydraulic broomers.\n\n" +
@@ -145,49 +148,52 @@ export const ContactView: React.FC = () => {
           "- Road Sweeper Cleans: Tractor-attached highway sweeping broomer brush requirements for NHAI road maintenance.\n" +
           "- Civil Construction: PWD concrete foundation guidelines and soil bearing load calculations."
         );
-        setAiLoading(false);
-      }, 500);
+      });
+      setAiLoading(false);
       return;
     }
 
+    setAiLoading(true);
     try {
-      let response;
-      try {
-        // Try calling the universal API endpoint first (works on Vercel and Express)
-        response = await fetch('/api/generate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ prompt: aiPrompt }),
-        });
+      await runWithLoader('Analyzing blueprints and generating smart AI estimate...', async () => {
+        let response;
+        try {
+          // Try calling the universal API endpoint first (works on Vercel and Express)
+          response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: aiPrompt }),
+          });
 
-        // If returned 404, we are probably in a pure Netlify environment, triggering fallback
-        if (response.status === 404) {
-          throw new Error('Not Found - Triggering fallback endpoint');
+          // If returned 404, we are probably in a pure Netlify environment, triggering fallback
+          if (response.status === 404) {
+            throw new Error('Not Found - Triggering fallback endpoint');
+          }
+        } catch (err) {
+          console.warn('Primary /api/generate endpoint was not found or failed, attempting Netlify fallback...');
+          response = await fetch('/.netlify/functions/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: aiPrompt }),
+          });
         }
-      } catch (err) {
-        console.warn('Primary /api/generate endpoint was not found or failed, attempting Netlify fallback...');
-        response = await fetch('/.netlify/functions/generate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ prompt: aiPrompt }),
-        });
-      }
 
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || `Server responded with status ${response.status}`);
-      }
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || `Server responded with status ${response.status}`);
+        }
 
-      const data = await response.json();
-      if (data.text) {
-        setAiResult(data.text);
-      } else {
-        throw new Error('Received empty text from the AI generation server.');
-      }
+        const data = await response.json();
+        if (data.text) {
+          setAiResult(data.text);
+        } else {
+          throw new Error('Received empty text from the AI generation server.');
+        }
+      });
     } catch (err: any) {
       console.error('AI Estimator Fetch Error:', err);
       setAiError(err.message || 'Failed to establish connection to AI serverless function.');
@@ -236,100 +242,100 @@ export const ContactView: React.FC = () => {
 
     setLoading(true);
 
-    const serviceId = (import.meta as any).env.VITE_EMAILJS_SERVICE_ID;
-    const templateId = (import.meta as any).env.VITE_EMAILJS_TEMPLATE_ID;
-    const publicKey = (import.meta as any).env.VITE_EMAILJS_PUBLIC_KEY;
-
-    const isMock = isMockOrGeminiKey(serviceId) || isMockOrGeminiKey(templateId) || isMockOrGeminiKey(publicKey);
-
-    const templateParams = {
-      name: msgDetails.name,
-      phone: msgDetails.phone,
-      email: msgDetails.email || 'N/A',
-      serviceInterest: msgDetails.serviceInterest,
-      message: msgDetails.message
-    };
-
-    if (isMock) {
-      console.warn('[Contact Sandbox] Simulated sandbox submission activated: EmailJS credentials contain placeholders or copied Gemini keys.');
-      setTimeout(() => {
-        setIsSandbox(true);
-        setComplete(true);
-        setLoading(false);
-      }, 1000);
-      return;
-    }
-
     try {
-      // 1. Primary path: client-side direct EmailJS delivery
-      console.log('Attempting primary client-side direct EmailJS delivery...');
-      await emailjs.send(serviceId, templateId, templateParams, publicKey);
-      setComplete(true);
-    } catch (err: any) {
-      console.warn('Primary client-side EmailJS delivery failed or got blocked. Deploying server-side SMTP proxy fallback...', err);
-      
-      const errMsgStr = err?.text || err?.message || '';
-      const isCredentialError = errMsgStr.toLowerCase().includes('public key') || 
-                                errMsgStr.toLowerCase().includes('user id') || 
-                                errMsgStr.toLowerCase().includes('invalid') ||
-                                errMsgStr.toLowerCase().includes('credential');
+      await runWithLoader('Submitting inquiry and establishing secure dockets...', async () => {
+        const serviceId = (import.meta as any).env.VITE_EMAILJS_SERVICE_ID;
+        const templateId = (import.meta as any).env.VITE_EMAILJS_TEMPLATE_ID;
+        const publicKey = (import.meta as any).env.VITE_EMAILJS_PUBLIC_KEY;
 
-      if (isCredentialError) {
-        console.warn('[Contact Sandbox Fallback] Detected invalid/unauthorized credentials callback. Completing via high-fidelity sandbox session.');
-        setTimeout(() => {
+        const isMock = isMockOrGeminiKey(serviceId) || isMockOrGeminiKey(templateId) || isMockOrGeminiKey(publicKey);
+
+        const templateParams = {
+          name: msgDetails.name,
+          phone: msgDetails.phone,
+          email: msgDetails.email || 'N/A',
+          serviceInterest: msgDetails.serviceInterest,
+          message: msgDetails.message
+        };
+
+        if (isMock) {
+          console.warn('[Contact Sandbox] Simulated sandbox submission activated: EmailJS credentials contain placeholders or copied Gemini keys.');
+          await new Promise(resolve => setTimeout(resolve, 1500));
           setIsSandbox(true);
           setComplete(true);
-          setLoading(false);
-        }, 1000);
-        return;
-      }
-
-      try {
-        // 2. Secondary path: invoke the full-stack server proxy
-        let response = await fetch('/api/send-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            serviceId,
-            templateId,
-            publicKey,
-            templateParams
-          }),
-        });
-
-        // 3. Alternative Netlify check if 404
-        if (response.status === 404) {
-          console.warn('Primary proxy /api/send-email not found. Trying Netlify serverless fallback...');
-          response = await fetch('/.netlify/functions/send-email', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              serviceId,
-              templateId,
-              publicKey,
-              templateParams
-            }),
-          });
+          return;
         }
 
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.error || `Server responded with status ${response.status}`);
-        }
+        try {
+          // 1. Primary path: client-side direct EmailJS delivery
+          console.log('Attempting primary client-side direct EmailJS delivery...');
+          await emailjs.send(serviceId, templateId, templateParams, publicKey);
+          setComplete(true);
+        } catch (err: any) {
+          console.warn('Primary client-side EmailJS delivery failed or got blocked. Deploying server-side SMTP proxy fallback...', err);
+          
+          const errMsgStr = err?.text || err?.message || '';
+          const isCredentialError = errMsgStr.toLowerCase().includes('public key') || 
+                                    errMsgStr.toLowerCase().includes('user id') || 
+                                    errMsgStr.toLowerCase().includes('invalid') ||
+                                    errMsgStr.toLowerCase().includes('credential');
 
-        setComplete(true);
-      } catch (proxyErr: any) {
-        console.error('EmailJS Submission & Proxy Fallback both failed:', proxyErr);
-        
-        // Final fallback: proceed in sandbox mode so the application remains robust and interactive
-        console.warn('[Contact Sandbox Extreme Fallback] Completing via offline sandbox logging to ensure app functional fidelity.');
-        setIsSandbox(true);
-        setComplete(true);
-      }
+          if (isCredentialError) {
+            console.warn('[Contact Sandbox Fallback] Detected invalid/unauthorized credentials callback. Completing via high-fidelity sandbox session.');
+            await new Promise(resolve => setTimeout(resolve, 1200));
+            setIsSandbox(true);
+            setComplete(true);
+            return;
+          }
+
+          try {
+            // 2. Secondary path: invoke the full-stack server proxy
+            let response = await fetch('/api/send-email', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                serviceId,
+                templateId,
+                publicKey,
+                templateParams
+              }),
+            });
+
+            // 3. Alternative Netlify check if 404
+            if (response.status === 404) {
+              console.warn('Primary proxy /api/send-email not found. Trying Netlify serverless fallback...');
+              response = await fetch('/.netlify/functions/send-email', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  serviceId,
+                  templateId,
+                  publicKey,
+                  templateParams
+                }),
+              });
+            }
+
+            if (!response.ok) {
+              const errData = await response.json().catch(() => ({}));
+              throw new Error(errData.error || `Server responded with status ${response.status}`);
+            }
+
+            setComplete(true);
+          } catch (proxyErr: any) {
+            console.error('EmailJS Submission & Proxy Fallback both failed:', proxyErr);
+            
+            // Final fallback: proceed in sandbox mode so the application remains robust and interactive
+            console.warn('[Contact Sandbox Extreme Fallback] Completing via offline sandbox logging to ensure app functional fidelity.');
+            setIsSandbox(true);
+            setComplete(true);
+          }
+        }
+      });
     } finally {
       setLoading(false);
     }

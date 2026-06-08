@@ -15,6 +15,7 @@ import { ProjectsView } from './components/ProjectsView';
 import { HydraulicBroomer } from './components/HydraulicBroomer';
 import { ContactView } from './components/ContactView';
 import { VelanChatBot } from './components/VelanChatBot';
+import { BrandedLoader } from './components/BrandedLoader';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle, ShieldCheck, Award } from 'lucide-react';
@@ -132,6 +133,9 @@ export default function App() {
 
   return (
     <div id="application-layout-root" className="min-h-screen bg-neutral-50 flex flex-col justify-between overflow-x-hidden font-sans relative">
+      
+      {/* Premium Cinematic Branded Loader Overlay */}
+      <BrandedLoader />
       
       {/* Sticky High Density Header */}
       <Header />
