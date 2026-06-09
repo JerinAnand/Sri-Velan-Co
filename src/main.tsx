@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import { EasterEggProvider } from './context/EasterEggContext.tsx';
 import { LoadingProvider } from './context/LoadingContext.tsx';
+import { ThemeProvider } from './context/ThemeContext.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -11,7 +12,9 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <LoadingProvider>
         <EasterEggProvider>
-          <App />
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
         </EasterEggProvider>
       </LoadingProvider>
     </BrowserRouter>

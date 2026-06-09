@@ -4,17 +4,19 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, Mail, Award, Clock, ChevronRight } from 'lucide-react';
+import { Menu, X, Phone, Mail, Award, Clock, ChevronRight, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { COMPANY_DETAILS } from '../data';
 import { ActiveView } from '../types';
 import { useEasterEgg } from '../context/EasterEggContext';
+import { useTheme } from '../context/ThemeContext';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { registerClick } = useEasterEgg();
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -139,7 +141,21 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Quick Consultation CTA - Desktop */}
-            <div className="hidden lg:block">
+            <div className="hidden lg:flex items-center gap-4">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="p-2.5 rounded-lg text-neutral-300 hover:text-brand-gold-400 hover:bg-white/10 transition-all flex items-center justify-center cursor-pointer"
+                title={theme === 'light' ? 'Switch to High-Contrast Dark Mode' : 'Switch to Clean Light Theme'}
+                aria-label="Theme toggle button"
+                id="header-theme-toggle-desktop"
+              >
+                {theme === 'light' ? (
+                  <Moon className="w-5 h-5 text-brand-gold-400" />
+                ) : (
+                  <Sun className="w-5 h-5 text-yellow-300" />
+                )}
+              </button>
               <button 
                 onClick={() => handleNavClick('contact')}
                 className="bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 font-display font-semibold text-sm px-5 py-2.5 rounded-lg shadow-md hover:from-brand-gold-400 hover:to-brand-gold-500 hover:shadow-lg active:scale-95 transition-all duration-200"
@@ -148,8 +164,22 @@ export const Header: React.FC = () => {
               </button>
             </div>
 
-            {/* Mobile Hamburger Trigger */}
-            <div className="lg:hidden flex items-center">
+            {/* Mobile Actions: Theme Toggle & Hamburger Trigger */}
+            <div className="lg:hidden flex items-center gap-2">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer"
+                title={theme === 'light' ? 'Switch to High-Contrast Dark Mode' : 'Switch to Clean Light Theme'}
+                aria-label="Theme toggle button"
+                id="header-theme-toggle-mobile"
+              >
+                {theme === 'light' ? (
+                  <Moon className="w-5 h-5 text-brand-gold-400" />
+                ) : (
+                  <Sun className="w-5 h-5 text-yellow-300" />
+                )}
+              </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 id="mobile-menu-toggle"

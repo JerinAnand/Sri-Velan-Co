@@ -102,3 +102,111 @@ section:hover {
   will-change: background-position;
 }
 
+/* ==========================================================================
+   HIGH-CONTRAST DARK MODE SYSTEM (CSS VARIABLES & GLOBAL OVERRIDES)
+   ========================================================================== */
+
+/* 1. Global Backgrounds and Shell overrides */
+html.dark-high-contrast,
+html.dark-high-contrast body,
+html.dark-high-contrast #application-layout-root {
+  background-color: #000000 !important;
+  color: #f3f4f6 !important;
+}
+
+/* 2. Neutral Background Colors */
+html.dark-high-contrast .bg-white,
+html.dark-high-contrast .bg-neutral-50,
+html.dark-high-contrast .bg-neutral-50\/40,
+html.dark-high-contrast .bg-neutral-50\/50,
+html.dark-high-contrast .bg-neutral-50\/70,
+html.dark-high-contrast .bg-neutral-100,
+html.dark-high-contrast .bg-gray-100,
+html.dark-high-contrast .bg-neutral-100\/50,
+html.dark-high-contrast .bg-neutral-100\/60,
+html.dark-high-contrast .bg-neutral-150 {
+  background-color: #050b14 !important;
+  color: #ffffff !important;
+}
+
+/* 3. Text and Headings Colors */
+html.dark-high-contrast h1,
+html.dark-high-contrast h2,
+html.dark-high-contrast h3,
+html.dark-high-contrast h4,
+html.dark-high-contrast h5,
+html.dark-high-contrast h6,
+html.dark-high-contrast .text-neutral-900,
+html.dark-high-contrast .text-brand-blue-950,
+html.dark-high-contrast .text-brand-blue-900,
+html.dark-high-contrast .text-brand-blue-800 {
+  color: #ffffff !important;
+}
+
+html.dark-high-contrast p,
+html.dark-high-contrast span,
+html.dark-high-contrast li,
+html.dark-high-contrast label,
+html.dark-high-contrast .text-neutral-800,
+html.dark-high-contrast .text-neutral-700,
+html.dark-high-contrast .text-neutral-600,
+html.dark-high-contrast .text-neutral-500 {
+  color: #e5e7eb !important;
+}
+
+/* 4. Keep Brand Accents Bright & High Contrast */
+html.dark-high-contrast .text-brand-gold-400,
+html.dark-high-contrast .text-brand-gold-500,
+html.dark-high-contrast .text-brand-gold-600 {
+  color: #f3ce6b !important;
+}
+
+/* 5. Input Fields and Forms Controls */
+html.dark-high-contrast input,
+html.dark-high-contrast textarea,
+html.dark-high-contrast select {
+  background-color: #0c1524 !important;
+  color: #ffffff !important;
+  border-color: #4b5563 !important;
+}
+
+html.dark-high-contrast input::placeholder,
+html.dark-high-contrast textarea::placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+/* 6. Standard Borders and Dividers */
+html.dark-high-contrast .border,
+html.dark-high-contrast .border-neutral-200,
+html.dark-high-contrast .border-neutral-200\/80,
+html.dark-high-contrast .border-neutral-200\/60,
+html.dark-high-contrast .border-neutral-250\/70 {
+  border-color: #374151 !important;
+}
+
+html.dark-high-contrast .divide-y > :not([hidden]) ~ :not([hidden]) {
+  border-color: #374151 !important;
+}
+
+/* 7. Accessbility Preservation: Gold background elements must keep dark text labels */
+html.dark-high-contrast .bg-brand-gold-500,
+html.dark-high-contrast .bg-brand-gold-400,
+html.dark-high-contrast .bg-brand-gold-600,
+html.dark-high-contrast .bg-brand-gold-500 *,
+html.dark-high-contrast .bg-brand-gold-400 *,
+html.dark-high-contrast .bg-brand-gold-600 * {
+  color: #030a17 !important;
+}
+
+/* 8. Chat bubble corrections */
+html.dark-high-contrast .bg-emerald-50,
+html.dark-high-contrast .bg-emerald-100 {
+  background-color: #064e3b !important;
+}
+html.dark-high-contrast .bg-emerald-50 *,
+html.dark-high-contrast .bg-emerald-100 * {
+  color: #e0f2fe !important;
+}
+
+

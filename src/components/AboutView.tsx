@@ -88,9 +88,15 @@ export const AboutView: React.FC = () => {
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight font-display text-white">
             {COMPANY_DETAILS.name} Corporate Profile
           </h1>
-          <p className="max-w-3xl text-sm sm:text-base text-neutral-300 font-sans font-light leading-relaxed">
-            Pistons of the civic engineering wheel in Tamil Nadu. Government Registered Contractors driven by quality, operational readiness, and community public service.
-          </p>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-3xl text-sm sm:text-base text-neutral-300 font-sans font-light leading-relaxed"
+          >
+            An integral driving force of civil engineering in Tamil Nadu, we are Government Registered Contractors driven by quality, operational readiness, and community public service.
+          </motion.p>
         </div>
       </section>
 
