@@ -382,9 +382,9 @@ export const ContactView: React.FC = () => {
             
             {/* Left Column: Direct Call, WhatsApp, and Executive Board (5/12 width) */}
             <div className="lg:col-span-5 space-y-8" id="contact-quick-touch">
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase">DIRECT DISPATCH</span>
-                <h2 className="text-2xl sm:text-3xl font-black text-brand-blue-900 tracking-tight leading-none">Reach Out to our Executives</h2>
+                <h2 className="text-2xl sm:text-3xl font-black text-brand-blue-900 tracking-tight leading-tight">Reach Out to our Executives</h2>
                 <p className="text-neutral-500 text-sm leading-relaxed font-sans font-light">
                   Our team maintains redundant communications to monitor high-volume flood relief networks and municipal developments across Tamil Nadu boundaries.
                 </p>
@@ -397,13 +397,13 @@ export const ContactView: React.FC = () => {
                   Direct Channels
                 </h3>
                 
-                <div className="grid grid-cols-1 gap-4" id="contact-tel-whatsapp">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4" id="contact-tel-whatsapp">
                   {/* Click-To-Call */}
-                  <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-200/80 hover:border-brand-blue-700 transition-all flex items-start gap-4 shadow-xs">
-                    <div className="p-3 bg-brand-blue-900 text-white rounded-xl">
-                      <Phone className="w-5 h-5" />
+                  <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200/80 hover:border-brand-blue-700 transition-all flex items-start gap-4 shadow-xs">
+                    <div className="p-2.5 bg-brand-blue-900 text-white rounded-lg shrink-0">
+                      <Phone className="w-4 h-4" />
                     </div>
-                    <div className="space-y-1 text-left">
+                    <div className="space-y-1 text-left min-w-0">
                       <p className="text-[10px] text-neutral-400 uppercase font-mono tracking-widest">General Inquiries & Operations</p>
                       {COMPANY_DETAILS.phones.map(p => (
                         <a 
@@ -412,7 +412,7 @@ export const ContactView: React.FC = () => {
                           onClick={() => registerClick('emergency-dial')}
                           aria-label={`Call general inquiries and rapid operations desk at mobile number ${p}`}
                           title={`Call operations representative at ${p}`}
-                          className="block font-display font-semibold text-lg text-brand-blue-900 hover:text-brand-gold-600 transition-colors"
+                          className="block font-display font-semibold text-base text-brand-blue-900 hover:text-brand-gold-600 transition-colors truncate"
                         >
                           {p}
                         </a>
@@ -428,17 +428,17 @@ export const ContactView: React.FC = () => {
                     }}
                     aria-label="Launch secure encrypted WhatsApp Chat panel directly to inquire with our Estimating Officer"
                     title="Open instant WhatsApp chat inquiries"
-                    className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 p-6 rounded-2xl transition-all flex items-start gap-4 text-left shadow-xs group cursor-pointer"
+                    className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 p-5 rounded-xl transition-all flex items-start gap-4 text-left shadow-xs group cursor-pointer"
                   >
-                    <div className="p-3 bg-emerald-600 text-white rounded-xl">
-                      <MessageSquare className="w-5 h-5 text-white" />
+                    <div className="p-2.5 bg-emerald-600 text-white rounded-lg shrink-0">
+                      <MessageSquare className="w-4 h-4 text-white" />
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 min-w-0">
                       <p className="text-[10px] text-emerald-600 uppercase font-mono tracking-widest font-semibold flex items-center gap-1">
                         <span>WhatsApp Portal</span>
                         <ExternalLink className="w-3 h-3 text-emerald-500" />
                       </p>
-                      <p className="font-display font-bold text-lg text-emerald-950 group-hover:text-emerald-700 transition-colors">
+                      <p className="font-display font-bold text-base text-emerald-950 group-hover:text-emerald-700 transition-colors">
                         Inquire on WhatsApp Chat
                       </p>
                       <p className="text-xs text-emerald-600/80 font-sans leading-relaxed">
@@ -449,10 +449,10 @@ export const ContactView: React.FC = () => {
                 </div>
 
                 {/* Admin emails list */}
-                <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-200/80 space-y-4 shadow-xs">
+                <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200/80 space-y-4 shadow-xs">
                   <div className="flex items-center gap-2 border-b border-neutral-200 pb-2">
-                    <Mail className="w-5 h-5 text-brand-gold-500 shrink-0" />
-                    <h4 className="font-display font-bold text-sm tracking-wide text-brand-blue-900">Email Correspondence</h4>
+                    <Mail className="w-4 h-4 text-brand-gold-500 shrink-0" />
+                    <h4 className="font-display font-bold text-xs uppercase tracking-wider text-brand-blue-900">Email Correspondence</h4>
                   </div>
                   
                   <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm font-sans" id="contact-emails-list">
@@ -478,16 +478,16 @@ export const ContactView: React.FC = () => {
                 </h3>
 
                 <div className="space-y-4" id="contact-executive-board">
-                  <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200 divide-y divide-neutral-200/60 shadow-xs">
+                  <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200 divide-y divide-neutral-200/60 shadow-xs">
                     
                     {/* Mr. Selva Kumar */}
                     <div className="pb-4 flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-sm border border-brand-blue-800">
+                      <div className="w-10 h-10 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-xs border border-brand-blue-800">
                         SK
                       </div>
                       <div className="space-y-0.5 text-left">
-                        <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Selva Kumar</h4>
-                        <div className="flex items-center gap-1.5 text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-semibold">
+                        <h4 className="font-display font-bold text-sm text-brand-blue-950">Mr. Selva Kumar</h4>
+                        <div className="flex items-center gap-1.5 text-[11px] text-brand-gold-600 font-mono uppercase tracking-wide font-semibold">
                           <Award className="w-3.5 h-3.5" />
                           <span>Founder</span>
                         </div>
@@ -496,12 +496,12 @@ export const ContactView: React.FC = () => {
 
                     {/* Mr. Vetrivel */}
                     <div className="py-4 flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-sm border border-brand-blue-800">
+                      <div className="w-10 h-10 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-xs border border-brand-blue-800">
                         VV
                       </div>
                       <div className="space-y-0.5 text-left">
-                        <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Vetrivel</h4>
-                        <div className="flex items-center gap-1.5 text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-semibold">
+                        <h4 className="font-display font-bold text-sm text-brand-blue-950">Mr. Vetrivel</h4>
+                        <div className="flex items-center gap-1.5 text-[11px] text-brand-blue-700 font-mono uppercase tracking-wide font-semibold">
                           <ShieldCheck className="w-3.5 h-3.5 text-brand-blue-700" />
                           <span>Managing Director</span>
                         </div>
@@ -510,12 +510,12 @@ export const ContactView: React.FC = () => {
 
                     {/* Mr. Dhinakaravel */}
                     <div className="py-4 flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-sm border border-brand-blue-800">
+                      <div className="w-10 h-10 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-xs border border-brand-blue-800">
                         DK
                       </div>
                       <div className="space-y-0.5 text-left">
-                        <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Dhinakaravel</h4>
-                        <div className="flex items-center gap-1.5 text-xs text-neutral-500 font-mono uppercase tracking-wide font-semibold">
+                        <h4 className="font-display font-bold text-sm text-brand-blue-950">Mr. Dhinakaravel</h4>
+                        <div className="flex items-center gap-1.5 text-[11px] text-neutral-500 font-mono uppercase tracking-wide font-semibold">
                           <BookOpen className="w-3.5 h-3.5 text-neutral-500" />
                           <span>Auditor & Accountant</span>
                         </div>
@@ -524,12 +524,12 @@ export const ContactView: React.FC = () => {
 
                     {/* Mr. Jerin Anand */}
                     <div className="pt-4 flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-sm border border-brand-blue-800">
+                      <div className="w-10 h-10 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-xs border border-brand-blue-800">
                         JA
                       </div>
                       <div className="space-y-0.5 text-left">
-                        <h4 className="font-display font-bold text-base text-brand-blue-950">Mr. Jerin Anand</h4>
-                        <div className="flex items-center gap-1.5 text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-semibold">
+                        <h4 className="font-display font-bold text-sm text-brand-blue-950">Mr. Jerin Anand</h4>
+                        <div className="flex items-center gap-1.5 text-[11px] text-brand-blue-600 font-mono uppercase tracking-wide font-semibold">
                           <Code className="w-3.5 h-3.5 text-brand-blue-600" />
                           <span>ADMIN & WEB DEVELOPER</span>
                         </div>

@@ -104,10 +104,16 @@ export const Header: React.FC = () => {
                 />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-white font-display font-bold text-[23px] leading-[32px] uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors">
+                <h1 
+                  className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors"
+                  style={{ width: '189.359px', fontSize: '22px', lineHeight: '32px' }}
+                >
                   {COMPANY_DETAILS.name}
                 </h1>
-                <p className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase whitespace-nowrap">
+                <p 
+                  className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase whitespace-nowrap"
+                  style={{ width: '189.359px' }}
+                >
                   Powered by Trust, Proven by Provision
                 </p>
               </div>

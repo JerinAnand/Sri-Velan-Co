@@ -65,7 +65,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [activeCompetency, setActiveCompetency] = useState(0);
-  const [simVolume, setSimVolume] = useState<number>(30); // 30 million liters default
+  const [simVolume, setSimVolume] = useState<number>(45000); // 45,000 Liters default
+  const [simPumps, setSimPumps] = useState<number>(6); // Default 6 pumps matching 45,000 Liters recommended deployment
 
   // Hero slideshow content using high-quality authenticated links
   const heroSlides = [
@@ -103,22 +104,41 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
   // Triggering hooks for numbers
   const yoeAnim = useCountUp(20, 1800);
-  const pumpCount = useCountUp(100, 1500);
+  const pumpCount = useCountUp(400, 1500);
 
   // Dewatering Speed Telemetry Simulator calculations
-  // Max discharge is roughly 80 million liters/day (80 MLD) with full fleet of 34 major diesel pumps.
-  // 1 MLD = approx 41.6 thousand liters per hour. Let's calculate the hours to clear
-  const calcClearanceDuration = (vol: number) => {
-    const dailyCapacity = 80; // 80 Million Liters
-    const hours = (vol / dailyCapacity) * 24;
-    return hours.toFixed(1);
+  // Sri Velan & Co can discharge on average 3,000 Liters of water per hour with a 4-inch pump.
+  const calcClearanceDuration = (vol: number, pumps: number) => {
+    const hourlyCapacityPerPump = 3000; // 3000 Liters/hour
+    const totalHourlyCapacity = pumps * hourlyCapacityPerPump;
+    const hoursDecimal = vol / totalHourlyCapacity;
+    
+    const hours = Math.floor(hoursDecimal);
+    const minutes = Math.round((hoursDecimal - hours) * 60);
+    
+    if (hours === 0) {
+      return `${minutes} Min${minutes !== 1 ? 's' : ''}`;
+    } else if (minutes === 0) {
+      return `${hours} Hour${hours !== 1 ? 's' : ''}`;
+    } else {
+      return `${hours} Hr${hours !== 1 ? 's' : ''} ${minutes} Min${minutes !== 1 ? 's' : ''}`;
+    }
   };
 
-  const calcPumpsNeeded = (vol: number) => {
-    if (vol < 20) return 8;
-    if (vol < 50) return 18;
-    if (vol < 80) return 28;
-    return 34; // Maximum major units
+  const calcDieselUnits = (vol: number, pumps: number) => {
+    const hourlyCapacityPerPump = 3000; // 3000 Liters/hour
+    const totalHourlyCapacity = pumps * hourlyCapacityPerPump;
+    const hoursDecimal = vol / totalHourlyCapacity;
+    const units = pumps * hoursDecimal * 2.5;
+    return units.toFixed(2);
+  };
+
+  const getRecommendedPumps = (vol: number) => {
+    if (vol <= 15000) return 2;
+    if (vol <= 45000) return 4;
+    if (vol <= 90000) return 6;
+    if (vol <= 180000) return 12;
+    return 24; // Multi-node response for severe volumes
   };
 
   return (
@@ -545,30 +565,63 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </h2>
               
               <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed font-sans font-light">
-                Sri Velan & Co maintains South India's largest localized mobilization dewatering network. Dynamic relief setups operate at a maximum collective discharge flow of <strong className="font-semibold text-brand-blue-900">80 Million Liters Per Day (MLD)</strong>. Adjust the calculator slider to test our discharge clearing parameters:
+                Sri Velan & Co maintains South India's largest localized mobilization dewatering network. On average, a standard 4-inch pump can discharge <strong className="font-semibold text-brand-blue-900">3,000 Liters of water per hour</strong>. Adjust the calculator sliders to test our discharge clearing parameters:
               </p>
 
-              {/* Slider Input */}
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200/80 space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">Flood Fluid Volume</span>
-                  <span className="font-display font-extrabold text-brand-blue-900 text-lg font-mono">
-                    {simVolume} Million Liters
-                  </span>
+              {/* Sliders */}
+              <div className="space-y-4">
+                {/* Slider Input 1: Volume */}
+                <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200/80 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">Flood Fluid Volume</span>
+                    <span className="font-display font-extrabold text-brand-blue-900 text-lg font-mono">
+                      {simVolume.toLocaleString()} Liters
+                    </span>
+                  </div>
+
+                  <input 
+                    type="range" 
+                    min="3000" 
+                    max="300000" 
+                    step="3000"
+                    value={simVolume} 
+                    onChange={(e) => {
+                      const vol = Number(e.target.value);
+                      setSimVolume(vol);
+                      setSimPumps(getRecommendedPumps(vol));
+                    }}
+                    className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-brand-blue-700"
+                  />
+
+                  <div className="flex justify-between text-[10px] font-mono text-neutral-400">
+                    <span>3,000 Liters (Minor Waterlogging)</span>
+                    <span>300,000 Liters (Subway Flooding Grid)</span>
+                  </div>
                 </div>
 
-                <input 
-                  type="range" 
-                  min="5" 
-                  max="120" 
-                  value={simVolume} 
-                  onChange={(e) => setSimVolume(Number(e.target.value))}
-                  className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-brand-blue-700"
-                />
+                {/* Slider Input 2: Pumps */}
+                <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200/80 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">Active 4-Inch Pumps</span>
+                    <span className="font-display font-extrabold text-brand-blue-900 text-lg font-mono">
+                      {simPumps} pump{simPumps !== 1 ? 's' : ''}
+                    </span>
+                  </div>
 
-                <div className="flex justify-between text-[10px] font-mono text-neutral-400">
-                  <span>5 ML (Minor Street)</span>
-                  <span>120 ML (Severe Subway/Basin Grid)</span>
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="30" 
+                    step="1"
+                    value={simPumps} 
+                    onChange={(e) => setSimPumps(Number(e.target.value))}
+                    className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-brand-blue-700"
+                  />
+
+                  <div className="flex justify-between text-[10px] font-mono text-neutral-400">
+                    <span>1 Pump (3,000 L/hr)</span>
+                    <span>30 Pumps (90,000 L/hr)</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -585,26 +638,61 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 <span className="text-[10px] bg-emerald-950 text-emerald-400 font-mono px-2 py-0.5 rounded border border-emerald-800">SIMULATIVE MATRIX V2.5</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
                 
                 {/* Duration spec */}
-                <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 space-y-1 text-left">
-                  <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest">Calculated Clearance Time</span>
-                  <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none">
-                    {calcClearanceDuration(simVolume)} Hours
-                  </p>
-                  <p className="text-xs text-neutral-400 mt-1 leading-tight">Continuous flow matching pressure outputs with direct PTO power plants</p>
+                <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 space-y-1 text-left flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">Calculated Clearance Time</span>
+                    <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none">
+                      {calcClearanceDuration(simVolume, simPumps)}
+                    </p>
+                  </div>
+                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">Continuous flow matching pressure outputs with direct PTO power plants</p>
                 </div>
 
-                {/* Pumps Required spec */}
-                <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 space-y-1 text-left">
-                  <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest">Recommended Diesel Pumps</span>
-                  <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none">
-                    {calcPumpsNeeded(simVolume)} Units
-                  </p>
-                  <p className="text-xs text-neutral-400 mt-1 leading-tight">From our 6-Inch air-assist self-priming fleet</p>
+                {/* Diesel Fuel Units spec */}
+                <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 space-y-1 text-left flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">Estimated Diesel fuel</span>
+                    <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none">
+                      {calcDieselUnits(simVolume, simPumps)} Liters
+                    </p>
+                  </div>
+                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">Based on 2.5 Liters of diesel per active pump-hour running</p>
                 </div>
 
+              </div>
+
+              {/* Formula and rate verification card */}
+              <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 mt-6 text-left space-y-3">
+                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">Discharge Equation & Rate Verification</span>
+                <div className="bg-neutral-900 p-3 rounded-lg border border-neutral-800/60 text-xs font-mono text-neutral-300 space-y-2">
+                  <div className="flex justify-between border-b border-neutral-800/55 pb-1">
+                    <span className="text-neutral-500">Average Rate per Pump:</span>
+                    <span className="text-white">3,000 Liters / Hour</span>
+                  </div>
+                  <div className="flex justify-between border-b border-neutral-800/55 pb-1 flex-wrap">
+                    <span className="text-neutral-500">Cumulative Deployed rate ({simPumps} pump{simPumps !== 1 ? 's' : ''}):</span>
+                    <span className="text-emerald-400 font-extrabold">{(simPumps * 3000).toLocaleString()} Liters / Hour</span>
+                  </div>
+                  <div className="flex justify-between border-b border-neutral-800/55 pb-1 flex-wrap">
+                    <span className="text-neutral-500">Discharge Equation:</span>
+                    <span className="text-brand-gold-400 font-bold">
+                      {simVolume.toLocaleString()} Liters ÷ {(simPumps * 3000).toLocaleString()} L/Hr = {calcClearanceDuration(simVolume, simPumps)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-b border-neutral-800/55 pb-1">
+                    <span className="text-neutral-500">Diesel Consumption Rate:</span>
+                    <span className="text-white">2.5 Liters / Pump-Hour</span>
+                  </div>
+                  <div className="flex justify-between pt-1 flex-wrap">
+                    <span className="text-neutral-500">Diesel Consumption Equation:</span>
+                    <span className="text-brand-gold-400 font-bold">
+                      {simPumps} Pump{simPumps !== 1 ? 's' : ''} × {(simVolume / (simPumps * 3000)).toFixed(2)} Hrs × 2.5 Liters/Hr = {calcDieselUnits(simVolume, simPumps)} Liters
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Comparison details banner inside output */}
