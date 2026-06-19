@@ -213,6 +213,49 @@ html.dark-high-contrast .bg-emerald-100 * {
    PRINT OPTIMIZATIONS (PRINT-FRIENDLY STYLING & MEDIA QUERIES)
    ========================================================================== */
 @media print {
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+
+  /* Force browsers to print background colors and images in full color */
+  html, body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+    font-family: Georgia, 'Times New Roman', serif !important;
+  }
+
+  /* Watermark for official documentation security */
+  body::after {
+    content: "SRI VELAN & CO";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 60pt;
+    font-weight: 900;
+    color: rgba(0, 0, 0, 0.06) !important;
+    z-index: 9999;
+    pointer-events: none;
+    font-family: 'Helvetica Neue', Arial, sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 12px;
+    display: block !important;
+  }
+
+  /* Consistent text scale for standard document printing on A4 */
+  body, p, li, span, td, th, div:not([class*="text-"]) {
+    font-size: 12pt !important;
+    font-family: Georgia, 'Times New Roman', serif !important;
+  }
+
+  h1 { font-size: 24pt !important; font-weight: bold !important; line-height: 1.2 !important; margin-bottom: 12pt !important; }
+  h2 { font-size: 18pt !important; font-weight: bold !important; line-height: 1.3 !important; margin-bottom: 10pt !important; }
+  h3 { font-size: 14pt !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 8pt !important; }
+  h4, h5, h6 { font-size: 12pt !important; font-weight: bold !important; line-height: 1.4 !important; margin-bottom: 6pt !important; }
+
   /* Hide non-essential floating / interactive / chat-related elements */
   #velan-chatbot-widget-container,
   #velan-chatbot-panel,
@@ -232,18 +275,24 @@ html.dark-high-contrast .bg-emerald-100 * {
     display: none !important;
   }
 
-  /* Make background clean white and text dark black for ink-friendly print */
+  /* Maintain layout colors and background photos correctly */
   body, 
   #application-layout-root,
-  main,
-  section,
-  div,
-  article {
+  main {
     background-color: #ffffff !important;
-    background-image: none !important;
-    color: #000000 !important;
+    color: #111827 !important;
     box-shadow: none !important;
     text-shadow: none !important;
+  }
+
+  /* Ensure all image elements, pictures, and background images are visible */
+  img, svg, picture {
+    max-width: 100% !important;
+    height: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 
   /* Optimize layout structure, margins and page breaks */
@@ -256,23 +305,17 @@ html.dark-high-contrast .bg-emerald-100 * {
     page-break-inside: avoid;
     break-inside: avoid;
     transform: none !important;
-    border-color: #e5e7eb !important;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: #111827 !important;
     page-break-after: avoid;
     break-after: avoid;
-  }
-
-  p, span, li, td, th {
-    color: #374151 !important;
   }
 
   a[href]::after {
     content: " (" attr(href) ")";
     font-size: 80%;
-    color: #6b7280;
+    color: #4b5563;
   }
 
   /* Do not display hrefs for hash or javascript links */
