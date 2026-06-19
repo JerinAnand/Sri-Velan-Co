@@ -39,7 +39,7 @@ export const OFFICES: OfficeLocation[] = [
       'Pillur, Viluppuram,',
       'Tamilnadu - 605103.'
     ],
-    mapsUrl: 'https://maps.app.goo.gl/88AVP6JFJQgCKwfn6',
+    mapsUrl: 'https://maps.app.goo.gl/FMZm4V2gH58GMbud8?g_st=ic',
     mapImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCWaZ5j0JQa_hMaiCKyeQve24BFVG5pM8-47WVIGaZMPzxL0NzAEb4HS1YpGk0tmZ2QfaUXkcMfs_QeX50BBR4FF1j_ZClAJU9iBTyJcoYcDFYyspjBlT3IeHNGvAQ6XzIOxl4E8gAuY3ceiiUMWhLEmknQA6htHnYYA62oTYFoUp-QyrULQJBdvv8XjKIiaqfu_r3A-hAGgM81ngZP7N56T0gbhLIarEDGUt5fpsMqJ3ASk-uHA-TQseLbPoaawNi_4J_-baZrBKWN',
     type: 'Head Office'
   },
@@ -50,7 +50,7 @@ export const OFFICES: OfficeLocation[] = [
       'Ram Nagar South, Madipakkam,',
       'Chennai, Tamilnadu - 600091.'
     ],
-    mapsUrl: 'https://maps.app.goo.gl/HUiiXXi5owq35epS7',
+    mapsUrl: 'https://maps.app.goo.gl/tWhAFR9uRrUeQiLX6?g_st=ic',
     mapImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC2nREEnf-Km7RwARa7rHq0dbyzwpgHU27GkuTXW77MB7IO5NCKFqu5GIL5RyZ-bDbNlphJFil7fB9ewappZM28v0Yr6Bnti-J2_eYe7NXTeTJchwQFEDKCQ20XVGLlly4wSqgF8G97G0xJZS3s7xMW-TbiU_h91Qwjhn-wUBdcNDiT17fIHaP4tbDewpuk8AAG6rVLj0pfLj8uEotODxpzvXZHXKehW5XWMc1piA2N5zVMpRr9fKzzZdWjorUYwdXDj_4pKmletWZg',
     type: 'Chennai Office'
   }

@@ -209,4 +209,78 @@ html.dark-high-contrast .bg-emerald-100 * {
   color: #e0f2fe !important;
 }
 
+/* ==========================================================================
+   PRINT OPTIMIZATIONS (PRINT-FRIENDLY STYLING & MEDIA QUERIES)
+   ========================================================================== */
+@media print {
+  /* Hide non-essential floating / interactive / chat-related elements */
+  #velan-chatbot-widget-container,
+  #velan-chatbot-panel,
+  #back-to-top-button,
+  #back-to-top-container,
+  #floating-emergency-dial,
+  #floating-whatsapp-button,
+  #floating-action-utilities,
+  .no-print,
+  button,
+  [role="button"],
+  /* Hide header nav bar and social triggers on hard copies */
+  header,
+  iframe,
+  .fixed,
+  .sticky {
+    display: none !important;
+  }
+
+  /* Make background clean white and text dark black for ink-friendly print */
+  body, 
+  #application-layout-root,
+  main,
+  section,
+  div,
+  article {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Optimize layout structure, margins and page breaks */
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    transform: none !important;
+    border-color: #e5e7eb !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #111827 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p, span, li, td, th {
+    color: #374151 !important;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 80%;
+    color: #6b7280;
+  }
+
+  /* Do not display hrefs for hash or javascript links */
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "";
+  }
+}
+
+
 

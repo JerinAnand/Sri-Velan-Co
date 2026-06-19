@@ -169,7 +169,7 @@ export default function App() {
       <Footer />
 
       {/* Floating Action Utilities: Instant Call Trigger & WhatsApp Buttons */}
-      <div className="fixed bottom-[88px] right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300">
+      <div id="floating-action-utilities" className="fixed bottom-[88px] right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300">
         
          {/* Floating Quick Emergency Dial Button */}
          <a
