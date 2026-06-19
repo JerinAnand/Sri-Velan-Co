@@ -189,7 +189,38 @@ export const EQUIPMENTS: EquipmentItem[] = [
       'Priming Speed': 'Less than 12 seconds (Dry vacuum assist technology)',
       'Solid Handling Diameter': 'Up to 75 mm compressible solids',
       'Prime Mover Engine': 'Multi-cylinder water-cooled heavy duty diesel engine (45 HP)',
-      'Fuel Autonomy': 'Up to 24 hours of continuous peak pumping per fill'
+      'Fuel Autonomy': 'Up to 24 hours of continuous peak pumping per fill',
+      'Total Dynamic Head (TDH)': 'Up to 32 meters vertical lift'
+    }
+  },
+  {
+    id: 'eq-pump-4',
+    name: 'Compact 4-Inch Diesel Dewatering Pump',
+    category: 'tractor-mounted',
+    iconName: 'PumpIcon',
+    description: 'High-maneuverability self-priming pump sets engineered for rapid deployable utility pumping on congested urban streets and narrow residential sewers.',
+    specs: {
+      'Maximum Discharge Capacity': 'Up to 160 cubic meters per hour',
+      'Priming Speed': 'Less than 10 seconds (Vacuum assist technology)',
+      'Solid Handling Diameter': 'Up to 45 mm compressible solids',
+      'Prime Mover Engine': 'Single-cylinder air-cooled industrial diesel engine (18 HP)',
+      'Fuel Autonomy': 'Up to 16 hours of continuous pumping per fill',
+      'Total Dynamic Head (TDH)': 'Up to 28 meters vertical lift'
+    }
+  },
+  {
+    id: 'eq-pump-10',
+    name: 'Super-Capacity 10-Inch Vacuum Assisted Dewatering Pump',
+    category: 'earth-moving',
+    iconName: 'PumpIcon',
+    description: 'Our largest high-volume vacuum assisted dynamic bypass pump, built for heavy-duty canal diversion, river overflows, and mass industrial flooding bypass.',
+    specs: {
+      'Maximum Discharge Capacity': 'Up to 850 cubic meters per hour',
+      'Priming Speed': 'Less than 15 seconds (High-airflow dry vacuum pump)',
+      'Solid Handling Diameter': 'Up to 90 mm compressible solids',
+      'Prime Mover Engine': 'Turbocharged multi-cylinder liquid-cooled diesel engine (95 HP)',
+      'Fuel Autonomy': 'Up to 30 hours of continuous heavy load dewatering',
+      'Total Dynamic Head (TDH)': 'Up to 38 meters vertical lift'
     }
   },
   {
