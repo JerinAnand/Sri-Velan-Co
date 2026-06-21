@@ -72,9 +72,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const heroSlides = [
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ',
-      title: 'State PWD Administrative Complexes & Residential Infrastructure',
+      title: "Frim specializing in constructing modern government buildings and upgrading essential public infrastructure.",
       subtitle: 'Accredited Civil Construction',
-      tagline: 'Meticulous engineering layouts, earthquake-resistant RCC frameworks, and certified governmental finishing codes.',
+      tagline: 'Developing and renovating of educational and public facilities such as schools, colleges, laboratories, hostels, and public facilities with engineering excellence, quality workmanship, and timely execution.',
       badge: 'Infrastructure'
     },
     {
@@ -186,7 +186,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 </span>
                 <span>{heroSlides[currentSlide].badge}</span>
                 <span className="text-neutral-500">|</span>
-                <span className="text-[10px] tracking-normal font-semibold">SRI VELAN & CO GROUP</span>
+                <span className="text-[10px] tracking-normal font-semibold">SRI VELAN & CO</span>
               </motion.div>
             </AnimatePresence>
 
@@ -201,7 +201,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 className="space-y-4"
               >
                 <p className="text-brand-gold-400 font-mono text-sm uppercase tracking-widest font-semibold">{heroSlides[currentSlide].subtitle}</p>
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight font-display">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight font-display whitespace-pre-line">
                   {heroSlides[currentSlide].title}
                 </h1>
                 <p className="max-w-2xl text-neutral-300 font-sans font-light text-sm sm:text-base lg:text-lg leading-relaxed">
