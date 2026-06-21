@@ -72,7 +72,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const heroSlides = [
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ',
-      title: "Frim specializing in constructing modern government buildings and upgrading essential public infrastructure.",
+      title: "Government Buildings &\nPublic Infrastructure",
       subtitle: 'Accredited Civil Construction',
       tagline: 'Developing and renovating of educational and public facilities such as schools, colleges, laboratories, hostels, and public facilities with engineering excellence, quality workmanship, and timely execution.',
       badge: 'Infrastructure'
