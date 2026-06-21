@@ -79,16 +79,16 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAtF7lQsjygWGM_wckM4HW-z2nj4oRbJglwvqyPrBOopVct0FaNayNZmcV2KclNO_D91euKAKDATiy4EK6o8y08eifUUdU9GA78MFSpP7NkllTKFnMKwV2APckmltuCrXUOQ2QX-mPrSukG22c432b0rw_ra7cIVWQ5YMRbkiKoaxjYQSkKOA0fHzRDt2xaNGGRmo0bxs0IfA74U3H4Ui_SKCTZsfqfa5zC0T4xCPuTqFNiP7LpEsi5NCEKk8KnMbTz7GUcXkKOd5t1',
-      title: 'Water Resources Department Irrigation Networks',
+      title: "Roads, Water Resources &\nRural Development",
       subtitle: 'Hydraulic Flow Management',
-      tagline: 'Erecting precise brick masonry weirs, retaining canal channel linings, and concrete stonepitched flow controllers.',
+      tagline: 'Executing roads, culverts, dredging works, retaining walls, under-sluices, and water resource projects that strengthen communities and support sustainable growth.',
       badge: 'WRD Irrigation'
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYKfiwAnr8tSFNjZj_XSzajQQvnAVzDU79fw73VK9DcbcAJAz2le3lr5e6XhpkbK0bStuz2LU6hPoCoBytCVOO1Id0NA5xI_ye_kSutkyrbLNS86LKr68hdy6Z5EW5Chlp5Y4BhprAchhgtOexFV6eWL5-WSI7RYWV96iLGl5czosEa5AlEQR6Cro_id1zSO760qRM0awrOHnTn5aGlACqvBLkccoIBSTozM-SoG1s7yG5I_T_T7KbRDPh8-Tl0xs_QPlVrXdxEq8w',
-      title: 'High-Volume Vacuum Dewatering Response Armadas',
-      subtitle: 'Disaster Relief Leader',
-      tagline: 'Deploying robust 100 HP submersibles and multi-node diesel vacuum assist pumps during critical storm cycles.',
+      title: "Tractor-Driven Pumps &\nHigh-Capacity 100 HP Pumping Solutions",
+      subtitle: 'Disaster Relief Management',
+      tagline: 'Providing reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping services for construction, infrastructure, and government projects',
       badge: 'Emergency Ready'
     }
   ];
@@ -313,12 +313,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  PWD
+                  5+
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Government Registration Code
+                  Government Registered Contractor
                 </p>
-                <p className="text-xs text-neutral-500 leading-tight">State WRD & PWD Accredited</p>
+                <p className="text-xs text-neutral-500 leading-tight">State PWD, WRD, RD, TNCSC & GCC</p>
               </div>
             </div>
 
@@ -334,7 +334,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   Heavy Machineries & Fleet
                 </p>
-                <p className="text-xs text-neutral-500 leading-tight">High volume dewatering & movers</p>
+                <p className="text-xs text-neutral-500 leading-tight">Dewatering & Earth moving equipment</p>
               </div>
             </div>
 
