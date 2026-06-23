@@ -21,6 +21,7 @@ import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle, ShieldCheck, Award } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from './data';
 import { useEasterEgg } from './context/EasterEggContext';
+import confetti from 'canvas-confetti';
 
 export default function App() {
   const navigate = useNavigate();
@@ -292,7 +293,15 @@ export default function App() {
                           Sri Velan & Co's aria integrations are optimized for procurement standards. Apply official validation stamp to pre-qualify mock bidding rosters:
                         </p>
                         <button
-                          onClick={() => setStamped(true)}
+                          onClick={() => {
+                            setStamped(true);
+                            confetti({
+                              particleCount: 150,
+                              spread: 80,
+                              origin: { y: 0.6 },
+                              colors: ['#ca8a04', '#1e3a8a', '#eab308', '#3b82f6', '#ffffff']
+                            });
+                          }}
                           className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase py-2.5 px-6 rounded-lg active:scale-95 transition-all cursor-pointer shadow-md inline-flex items-center gap-1.5"
                           aria-label="Validation Stamp Clearance Button"
                         >

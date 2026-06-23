@@ -201,7 +201,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 className="space-y-4"
               >
                 <p className="text-brand-gold-400 font-mono text-sm uppercase tracking-widest font-semibold">{heroSlides[currentSlide].subtitle}</p>
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight font-display whitespace-pre-line">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-[41.84px] tracking-tight font-display whitespace-pre-line">
                   {heroSlides[currentSlide].title}
                 </h1>
                 <p className="max-w-2xl text-neutral-300 font-sans font-light text-sm sm:text-base lg:text-lg leading-relaxed">

@@ -25,6 +25,7 @@ import {
   Quote
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
+import { ServiceAreaMap } from './ServiceAreaMap';
 
 export const AboutView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'credentials' | 'milestones'>('profile');
@@ -293,6 +294,13 @@ export const AboutView: React.FC = () => {
             </div>
           )}
 
+        </div>
+      </section>
+
+      {/* Service-Area Map Section */}
+      <section className="py-12 bg-white border-t border-neutral-200" id="service-area-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ServiceAreaMap />
         </div>
       </section>
 
