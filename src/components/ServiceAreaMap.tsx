@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.5
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShieldAlert, Flame, MapPin, CheckCircle, Droplet, User, Settings, Info } from 'lucide-react';
 
@@ -49,12 +49,12 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     id: 'chennai',
     name: 'Chennai',
     isActive: true,
-    status: 'active-node',
+    status: 'active-hq',
     pumpsDeployed: 32,
     activeStaff: 90,
     floodsManaged: 14,
-    description: 'Capital corporate municipal support division. Heavily engaged with the Greater Chennai Corporation (GCC) for subway clearance and neighborhood drainage logs during severe storm cycles.',
-    facilities: ['Metro Liaison Office', 'Basement Extraction Division', 'High-HP Submersibles Base'],
+    description: 'Capital corporate municipal support division and Primary Yard Command. Heavily engaged with the Greater Chennai Corporation (GCC) for subway clearance and neighborhood drainage logs during severe storm cycles.',
+    facilities: ['Metro Liaison Office', 'Basement Extraction Division', 'High-HP Submersibles Base', 'North-Eastern Express Maintenance Hub'],
     coordinateLabel: { x: 295, y: 55 }
   },
   chengalpattu: {
@@ -119,10 +119,53 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   }
 };
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.015
+    }
+  }
+};
+
+const districtVariants = {
+  hidden: { 
+    opacity: 0, 
+    scale: 0.9,
+    transformOrigin: '50% 50%'
+  },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    transformOrigin: '50% 50%',
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+      damping: 14
+    }
+  }
+};
+
 export const ServiceAreaMap: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 350, height: 460 });
   const [selectedDistrict, setSelectedDistrict] = useState<string>('villupuram');
   const [hoveredDistrict, setHoveredDistrict] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      if (!entries || !entries[0]) return;
+      const { width, height } = entries[0].contentRect;
+      setDimensions({
+        width: width || 350,
+        height: height || 460
+      });
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const activeRegions = Object.values(DISTRICT_RECORDS).filter(d => d.isActive);
   const currentRecord = DISTRICT_RECORDS[selectedDistrict];
@@ -191,7 +234,8 @@ export const ServiceAreaMap: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-2">
         {/* Left Grid: SVG Scaled state map representation (lg:col-span-6) */}
         <div 
-          className="lg:col-span-6 bg-white border border-neutral-200 rounded-2xl p-4 sm:p-6 flex flex-col justify-between items-center relative overflow-hidden min-h-[380px] sm:min-h-[460px]"
+          ref={containerRef}
+          className="lg:col-span-6 bg-white border border-neutral-200 rounded-2xl p-4 sm:p-6 flex flex-col justify-between items-center relative overflow-visible z-20 min-h-[380px] sm:min-h-[460px] w-full"
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             setTooltipPos({
@@ -201,7 +245,7 @@ export const ServiceAreaMap: React.FC = () => {
           }}
         >
           {/* Subtle blueprint coordinate background */}
-          <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
+          <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none rounded-2xl" />
           
           <div className="w-full text-center py-2 absolute top-4 z-10">
             <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-450 bg-neutral-100/80 px-2.5 py-1 rounded-md border border-neutral-200/50">
@@ -209,14 +253,24 @@ export const ServiceAreaMap: React.FC = () => {
             </span>
           </div>
 
-          <div className="w-full h-full flex items-center justify-center pt-8">
+          <div className="w-full h-full flex items-center justify-center pt-8 overflow-visible">
             <svg 
               viewBox="0 0 350 500" 
-              className="w-auto h-[320px] sm:h-[400px] select-none filter drop-shadow-md"
-              style={{ maxHeight: '100%' }}
+              className="w-full select-none filter drop-shadow-md duration-350 transition-all overflow-visible"
+              style={{ 
+                maxWidth: `${Math.min(dimensions.width - 48, 350)}px`,
+                aspectRatio: '350/500',
+                height: 'auto'
+              }}
             >
               {/* Regional outlines */}
-              <g id="state-districts">
+              <motion.g 
+                id="state-districts"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-40px" }}
+              >
                 {districtPaths.map((path) => {
                   const data = DISTRICT_RECORDS[path.id];
                   const hasData = !!data;
@@ -251,8 +305,9 @@ export const ServiceAreaMap: React.FC = () => {
                   }
 
                   return (
-                    <g 
-                      key={path.id} 
+                    <motion.g 
+                      key={path.id}
+                      variants={districtVariants}
                       className="cursor-pointer transition-all duration-300"
                       onClick={() => {
                         if (hasData) {
@@ -262,12 +317,23 @@ export const ServiceAreaMap: React.FC = () => {
                       onMouseEnter={() => setHoveredDistrict(path.id)}
                       onMouseLeave={() => setHoveredDistrict(null)}
                     >
-                      <path 
+                      <motion.path 
                         d={path.d}
-                        fill={fill}
-                        stroke={stroke}
-                        strokeWidth={strokeWidth}
-                        className="transition-all duration-300 hover:opacity-95"
+                        animate={{ 
+                          fill, 
+                          stroke, 
+                          strokeWidth: Number(strokeWidth) 
+                        }}
+                        transition={{ 
+                          duration: 0.35,
+                          ease: "easeInOut"
+                        }}
+                        whileHover={{ 
+                          scale: 1.018,
+                          filter: hasData ? "brightness(1.06) drop-shadow(0px 4px 8px rgba(0,0,0,0.15))" : "brightness(1.02)",
+                        }}
+                        style={{ transformOrigin: 'center' }}
+                        className="transition-all cursor-pointer"
                       />
                       
                       {/* Active Hub Locator Ring Beacon */}
@@ -281,10 +347,10 @@ export const ServiceAreaMap: React.FC = () => {
                           style={{ transformOrigin: `${data.coordinateLabel.x}px ${data.coordinateLabel.y}px` }}
                         />
                       )}
-                    </g>
+                    </motion.g>
                   );
                 })}
-              </g>
+              </motion.g>
 
               {/* Major District Labels */}
               <g id="district-labels" className="pointer-events-none">
@@ -333,17 +399,26 @@ export const ServiceAreaMap: React.FC = () => {
               const hoveredData = DISTRICT_RECORDS[hoveredDistrict];
               const name = hoveredData ? hoveredData.name : (districtPaths.find(p => p.id === hoveredDistrict)?.name || hoveredDistrict);
               const projectCount = hoveredData ? hoveredData.floodsManaged : 0;
+              
+              // Smart quadrant positioning to prevent tooltip from clipping or hiding outside the parent container
+              const showBelow = tooltipPos.y < 165;
+              const showLeft = tooltipPos.x > 175;
+              
+              const xOffset = showLeft ? -236 : 12;
+              const yOffset = showBelow ? 12 : -12;
+              const transformValue = showBelow ? 'none' : 'translateY(-100%)';
+
               return (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.12 }}
-                  className="absolute bg-neutral-900 border border-neutral-800 text-white p-3.5 rounded-xl shadow-xl pointer-events-none z-40 w-56 text-left"
+                  className="absolute bg-neutral-900 border border-neutral-800 text-white p-3.5 rounded-xl shadow-2xl pointer-events-none z-[100] w-56 text-left overflow-visible"
                   style={{
-                    left: `${tooltipPos.x + 12}px`,
-                    top: `${tooltipPos.y - 12}px`,
-                    transform: 'translateY(-100%)'
+                    left: `${tooltipPos.x + xOffset}px`,
+                    top: `${tooltipPos.y + yOffset}px`,
+                    transform: transformValue
                   }}
                 >
                   <div className="flex items-center justify-between gap-2 border-b border-neutral-800 pb-2 mb-2">
