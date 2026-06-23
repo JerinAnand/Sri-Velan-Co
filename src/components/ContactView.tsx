@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Phone, 
   Mail, 
@@ -18,7 +19,13 @@ import {
   BookOpen,
   Sparkles,
   ShieldCheck,
-  Code
+  Code,
+  X,
+  Route,
+  Copy,
+  Check,
+  Compass,
+  Navigation
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useEasterEgg } from '../context/EasterEggContext';
@@ -50,6 +57,9 @@ export const ContactView: React.FC = () => {
     'Villupuram HQ': 'interactive',
     'Chennai HQ': 'interactive'
   });
+
+  const [selectedDirectionsOffice, setSelectedDirectionsOffice] = useState<typeof OFFICES[0] | null>(null);
+  const [copiedAddress, setCopiedAddress] = useState(false);
 
   const getOfficeEmbedUrl = (name: string) => {
     if (name.toLowerCase().includes('villupuram')) {
@@ -723,37 +733,52 @@ export const ContactView: React.FC = () => {
                   className="bg-white rounded-2xl border border-neutral-200 shadow-xs overflow-hidden hover:shadow-lg transition-all flex flex-col group h-full"
                   id={`office-loc-card-${idx}`}
                 >
-                  <div className="h-64 sm:h-72 w-full bg-neutral-100 relative border-b border-neutral-200 overflow-hidden">
+                  {/* Map area container - clicking this triggers the driving overlay modal */}
+                  <div 
+                    onClick={() => setSelectedDirectionsOffice(office)}
+                    className="h-64 sm:h-72 w-full bg-neutral-100 relative border-b border-neutral-200 overflow-hidden cursor-pointer group/map"
+                    title="Click to open driving directions & routing options"
+                  >
                     {isInteractive ? (
-                      <iframe
-                        src={getOfficeEmbedUrl(office.name)}
-                        className="w-full h-full border-0"
-                        allowFullScreen={false}
-                        loading="lazy"
-                        title={`${office.name} Google Maps Location`}
-                      />
+                      <div className="w-full h-full relative pointer-events-none">
+                        <iframe
+                          src={getOfficeEmbedUrl(office.name)}
+                          className="w-full h-full border-0"
+                          allowFullScreen={false}
+                          loading="lazy"
+                          title={`${office.name} Google Maps Location`}
+                        />
+                      </div>
                     ) : (
-                      <a
-                        href={office.mapsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full h-full cursor-pointer relative"
-                      >
+                      <div className="w-full h-full relative">
                         <img 
                           src={office.mapImage}
                           alt={`${office.name} satellite grid coordinate outline`}
-                          className="w-full h-full object-cover filter brightness-[0.97] hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-cover filter brightness-[0.97] group-hover/map:scale-103 transition-transform duration-500"
                           referrerPolicy="no-referrer"
                           loading="lazy"
                           width="800"
                           height="500"
                         />
-                        <div className="absolute inset-0 bg-neutral-900/15 pointer-events-none" />
-                      </a>
+                        <div className="absolute inset-0 bg-neutral-900/10" />
+                      </div>
                     )}
 
+                    {/* Hover Overlay informing of routing option */}
+                    <div className="absolute inset-0 bg-brand-blue-950/40 opacity-0 group-hover/map:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center z-10 backdrop-blur-xs">
+                      <div className="bg-white text-brand-blue-950 p-3 rounded-full shadow-lg mb-2 transform scale-75 group-hover/map:scale-100 duration-300 transition-transform">
+                        <Route className="w-6 h-6 text-brand-gold-500" />
+                      </div>
+                      <span className="text-white text-xs sm:text-sm font-bold tracking-wide">
+                        Click Map for Driving Routes & Directions
+                      </span>
+                      <p className="text-neutral-200 text-[11px] mt-1 max-w-xs">
+                        View landmark proximity, highway access, and direct routing details
+                      </p>
+                    </div>
+
                     {/* Floating Toggle Controls */}
-                    <div className="absolute bottom-3 left-3 bg-neutral-900/90 text-[10px] sm:text-xs text-white rounded-lg p-1 flex gap-1 z-10 border border-neutral-800 shadow-lg">
+                    <div className="absolute bottom-3 left-3 bg-neutral-900/90 text-[10px] sm:text-xs text-white rounded-lg p-1 flex gap-1 z-20 border border-neutral-800 shadow-lg" onClick={(e) => e.stopPropagation()}>
                       <button 
                         type="button"
                         onClick={(e) => { e.preventDefault(); setMapViewModes({ ...mapViewModes, [office.name]: 'interactive' }); }}
@@ -770,8 +795,14 @@ export const ContactView: React.FC = () => {
                       </button>
                     </div>
 
+                    {/* Quick overlay badge to trigger modal on tap */}
+                    <div className="absolute top-3 left-3 bg-brand-blue-900/85 text-[10px] text-white font-mono uppercase tracking-widest pl-2 pr-2.5 py-1.5 rounded-md flex items-center gap-1.5 border border-brand-blue-700/50 backdrop-blur-xs shadow-md">
+                      <Compass className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '8s' }} />
+                      <span>Get Routes</span>
+                    </div>
+
                     {/* Dynamic location PIN float label */}
-                    <div className="absolute top-4 right-4 bg-brand-blue-900/90 text-white font-mono text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-wider border border-brand-blue-800 z-10">
+                    <div className="absolute top-3 right-3 bg-brand-blue-950/90 text-white font-mono text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-wider border border-brand-blue-800 z-10">
                       {office.type}
                     </div>
                   </div>
@@ -793,12 +824,21 @@ export const ContactView: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+                    <div className="pt-4 border-t border-neutral-100 flex items-center justify-between gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDirectionsOffice(office)}
+                        className="inline-flex items-center gap-1.5 text-brand-blue-900 hover:text-brand-gold-600 text-xs font-bold transition-colors"
+                      >
+                        <Route className="w-4 h-4" />
+                        <span>Show Detailed Drive Routes</span>
+                      </button>
+
                       <a
                         href={office.mapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-neutral-600 hover:text-brand-blue-700 text-xs font-semibold group/link"
+                        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-brand-blue-700 text-xs font-semibold group/link"
                       >
                         <span>Navigate in Google Maps</span>
                         <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
@@ -809,6 +849,199 @@ export const ContactView: React.FC = () => {
               );
             })}
           </div>
+
+          {/* driving direction overlay modal portal */}
+          <AnimatePresence>
+            {selectedDirectionsOffice && (() => {
+              const office = selectedDirectionsOffice;
+              const hasChennai = office.name.toLowerCase().includes('chennai');
+              const directions = hasChennai ? {
+                landmark: 'Ram Nagar South Lake Park / Sri Sankara Multi-Speciality Clinic',
+                highwayRoute: 'Drive via Velachery-Tambaram High Road. Head west onto Ram Nagar Main Road, and turn left onto 8th Cross Street junction from the lake park side road corner.',
+                transitOption: '3 km from the Velachery MRTS Railway Station. 8 km from Chennai International Airport. Cab/auto access is immediate from Madipakkam bus stand.',
+                keyInstructions: [
+                  'From Velachery MRTS, take 100 feet bypass road to Madipakkam.',
+                  'Turn onto Ram Nagar South 8th Cross Street.',
+                  'The block entrance is S2, 2nd floor, A Block with reserved space for mobile pump deployment armadas.'
+                ]
+              } : {
+                landmark: 'Pillur Main Post Office Junction (Adjacent to Post Office premises)',
+                highwayRoute: 'Take Chennai-Theni Highway (NH45 / GST Road). Exit at Viluppuram Bypass or Vikravandi Toll Plaza. Proceed towards Koliyanur cross on state highway 4, then take Pillur Post Office Link Road directly.',
+                transitOption: '14 km from the major Villupuram Junction Railway Station. Local de-flooding transit buses and sub-district vehicles stop right at Pillur Post Office stop.',
+                keyInstructions: [
+                  'Exit national highway at Koliyanur cross point.',
+                  'Head East for 3.5 km onto Pillur Main Road.',
+                  'HQ is located exactly opposite to the public sub-post office block styled with the corporate blue board.'
+                ]
+              };
+
+              const fullAddressStr = office.addressLines.join(' ');
+
+              const copyToClipboard = () => {
+                navigator.clipboard.writeText(fullAddressStr);
+                setCopiedAddress(true);
+                setTimeout(() => setCopiedAddress(false), 2000);
+              };
+
+              return (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-6 md:p-10">
+                  {/* Backdrop */}
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setSelectedDirectionsOffice(null)}
+                    className="absolute inset-0 bg-neutral-950/65 backdrop-blur-sm"
+                  />
+
+                  {/* Modal Body */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                    transition={{ type: "spring", duration: 0.35, bounce: 0.15 }}
+                    className="relative bg-white text-neutral-900 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-neutral-200"
+                  >
+                    {/* Header Banner */}
+                    <div className="bg-brand-blue-950 text-white p-6 sm:p-8 relative">
+                      <div className="absolute top-6 right-6">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDirectionsOffice(null)}
+                          className="bg-white/10 hover:bg-white/20 text-white hover:scale-105 p-2 rounded-full transition-all"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2 mb-2">
+                        <Route className="w-5 h-5 text-brand-gold-400" />
+                        <span className="text-xs font-mono font-bold uppercase tracking-widest text-brand-gold-400">
+                          DIRECTIONS & ROUTING GUIDE
+                        </span>
+                      </div>
+
+                      <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-tight pr-8">
+                        {office.name}
+                      </h3>
+                      <p className="text-neutral-300 font-sans text-xs sm:text-sm mt-1 max-w-lg">
+                        Step-by-step coordinates and navigational instructions to our Tamil Nadu support base.
+                      </p>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6 sm:p-8 space-y-6 max-h-[70vh] overflow-y-auto font-sans">
+                      
+                      {/* Copyable Address Grid */}
+                      <div className="bg-neutral-50 rounded-2xl p-4 border border-neutral-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-450 block">Official Yard Address</span>
+                          <div className="text-xs sm:text-sm font-semibold text-neutral-800">
+                            {office.addressLines.map((line, lIdx) => (
+                              <p key={lIdx}>{line}</p>
+                            ))}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={copyToClipboard}
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-neutral-50 active:scale-98 text-neutral-700 hover:text-brand-blue-900 border border-neutral-200 shadow-xs px-3.5 py-2 rounded-xl text-xs sm:text-xs font-bold transition-all shrink-0"
+                        >
+                          {copiedAddress ? (
+                            <>
+                              <Check className="w-4 h-4 text-green-600" />
+                              <span className="text-green-600 font-bold">Address Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-4 h-4 text-neutral-500" />
+                              <span>Copy Address Parameters</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Route Details Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        
+                        {/* Major Highway Access */}
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-brand-blue-900 font-semibold text-sm">
+                            <Navigation className="w-4.5 h-4.5 text-brand-gold-500" />
+                            <span>Highway Access & Road Route</span>
+                          </div>
+                          <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed bg-neutral-50/50 p-3 rounded-xl border border-neutral-100">
+                            {directions.highwayRoute}
+                          </p>
+                        </div>
+
+                        {/* Nearest Landmark */}
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-brand-blue-900 font-semibold text-sm">
+                            <MapPin className="w-4.5 h-4.5 text-brand-gold-500" />
+                            <span>Primary Proximity Landmark</span>
+                          </div>
+                          <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed bg-neutral-50/50 p-3 rounded-xl border border-neutral-100">
+                            {directions.landmark}
+                          </p>
+                        </div>
+
+                      </div>
+
+                      {/* Train & Transit Connectivity */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-brand-blue-900 font-semibold text-sm">
+                          <Compass className="w-4.5 h-4.5 text-brand-gold-500" />
+                          <span>Rail & Transit Connectivity</span>
+                        </div>
+                        <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed bg-neutral-50/50 p-4 rounded-xl border border-neutral-100">
+                          {directions.transitOption}
+                        </p>
+                      </div>
+
+                      {/* Transit sequence checklist */}
+                      <div className="space-y-3">
+                        <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-neutral-450 block">Navigational Checkpoints</span>
+                        <div className="space-y-2.5">
+                          {directions.keyInstructions.map((inst, iIdx) => (
+                            <div key={iIdx} className="flex gap-3 items-start text-xs sm:text-sm text-neutral-600 bg-neutral-50/30 px-3 py-2 rounded-lg border border-neutral-200/40">
+                              <span className="bg-brand-blue-100 text-brand-blue-900 font-mono text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                {iIdx + 1}
+                              </span>
+                              <span>{inst}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                    </div>
+
+                    {/* Footer Navigators */}
+                    <div className="bg-neutral-50 border-t border-neutral-150 p-6 flex flex-col sm:flex-row justify-end items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDirectionsOffice(null)}
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-neutral-700 hover:bg-neutral-100 text-xs sm:text-sm font-semibold transition-all order-2 sm:order-1"
+                      >
+                        Dismiss Route Map
+                      </button>
+                      <a
+                        href={office.mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-gold-500 hover:bg-brand-gold-600 text-brand-blue-950 font-black px-6 py-2.5 rounded-xl text-xs sm:text-sm shadow-md hover:shadow-lg transition-all order-1 sm:order-2"
+                      >
+                        <Route className="w-4.5 h-4.5 text-brand-blue-950" />
+                        <span>Launch Realtime Navigation Overlay</span>
+                        <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                      </a>
+                    </div>
+
+                  </motion.div>
+                </div>
+              );
+            })()}
+          </AnimatePresence>
 
         </div>
       </section>
