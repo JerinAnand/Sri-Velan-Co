@@ -22,7 +22,9 @@ import {
   ShieldCheck,
   FileText,
   CheckCircle,
-  Quote
+  Quote,
+  BookOpen,
+  Code
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ServiceAreaMap } from './ServiceAreaMap';
@@ -401,6 +403,89 @@ export const AboutView: React.FC = () => {
               </div>
             </div>
 
+          </div>
+
+          {/* Executive Board Roles Subsection */}
+          <div className="mt-20 pt-16 border-t border-neutral-200">
+            <div className="text-center max-w-xl mx-auto space-y-2 mb-12">
+              <span className="text-[10px] font-mono font-bold tracking-widest text-brand-gold-600 uppercase block">ADMINISTRATING OFFICERS</span>
+              <h3 className="text-2xl font-black font-display text-brand-blue-950 tracking-tight">Executive Board Roles</h3>
+              <p className="text-xs text-neutral-500 font-sans">
+                The governing directors and auditing consultants managing Sri Velan & Co's regional infrastructure deployment.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="about-executive-board">
+              
+              {/* Mr. Selva Kumar */}
+              <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-gold-500/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-gold-500/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  SK
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">Mr. Selva Kumar</h4>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
+                    <Award className="w-3.5 h-3.5" />
+                    <span>Founder</span>
+                  </div>
+                </div>
+                <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                  Directs strategic multi-district rescue logistics and civil contracts in Tamil Nadu.
+                </p>
+              </div>
+
+              {/* Mr. Vetrivel */}
+              <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
+                  VV
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">Mr. Vetrivel</h4>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Managing Director</span>
+                  </div>
+                </div>
+                <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                  Oversees active fleet engineering, team mobilizations, and regional yards management.
+                </p>
+              </div>
+
+              {/* Mr. Dhinakaravel */}
+              <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-neutral-400/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-neutral-300 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  DK
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">Mr. Dhinakaravel</h4>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-neutral-600 font-mono uppercase tracking-wide font-bold bg-neutral-100 px-2.5 py-1 rounded-full border border-neutral-200">
+                    <BookOpen className="w-3.5 h-3.5 text-neutral-600" />
+                    <span>Auditor & Accountant</span>
+                  </div>
+                </div>
+                <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                  Manages regulatory financial audits, GST submissions compliance, and budget planning.
+                </p>
+              </div>
+
+              {/* Mr. Jerin Anand */}
+              <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
+                  JA
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">Mr. Jerin Anand</h4>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
+                    <Code className="w-3.5 h-3.5" />
+                    <span>Admin & Developer</span>
+                  </div>
+                </div>
+                <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                  Maintains enterprise tech portals, secure digital records, and digital identity.
+                </p>
+              </div>
+
+            </div>
           </div>
         </div>
       </section>

@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { motion, AnimatePresence } from 'motion/react';
+import { QRCodeSVG } from 'qrcode.react';
 import { 
   Phone, 
   Mail, 
@@ -25,11 +26,83 @@ import {
   Copy,
   Check,
   Compass,
-  Navigation
+  Navigation,
+  QrCode,
+  Download,
+  Users,
+  User
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useEasterEgg } from '../context/EasterEggContext';
 import { useLoading } from '../context/LoadingContext';
+
+interface VCardContact {
+  id: string;
+  title: string;
+  subtitle: string;
+  shortLabel: string;
+  displayName: string;
+  name: string;
+  role: string;
+  phone: string;
+  email: string;
+  office: string;
+  bgColor: string;
+  borderColor: string;
+  iconBgColor: string;
+  vcard: string;
+}
+
+const VCARD_CONTACTS: VCardContact[] = [
+  {
+    id: 'corporate',
+    title: 'Sri Velan & Co (Official)',
+    subtitle: 'Full HQ Enterprise Contact',
+    shortLabel: 'SVC',
+    displayName: 'Corporate',
+    name: 'Sri Velan & Co',
+    role: 'Civil Engineering Contractors',
+    phone: '+91 98942 18243',
+    email: 'srivelan2004@gmail.com',
+    office: 'Villupuram & Chennai HQ',
+    bgColor: 'from-brand-blue-900/10 to-brand-blue-950/20',
+    borderColor: 'border-brand-blue-900/40',
+    iconBgColor: 'bg-brand-blue-900 text-brand-gold-400',
+    vcard: `BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Sri Velan & Co\r\nORG:Sri Velan & Co\r\nTITLE:PWD Civil Engineering & Disaster Response Contractor\r\nTEL;TYPE=WORK,VOICE:+919894218243\r\nTEL;TYPE=CELL,VOICE:+919842718243\r\nEMAIL;TYPE=PREF,INTERNET:srivelan2004@gmail.com\r\nADR;TYPE=WORK;PARCEL:;;2/112 Post Office Street, Pillur;Viluppuram;Tamilnadu;605103;India\r\nNOTE:State-Registered Class-1 Civil Engineering Contractor since 2006.\r\nURL:https://srivelanandco.com\r\nEND:VCARD`
+  },
+  {
+    id: 'selvakumar',
+    title: 'Mr. G. Selva Kumar',
+    subtitle: 'Founder and Governing Partner',
+    shortLabel: 'GS',
+    displayName: 'Selva kumar',
+    name: 'G. Selva Kumar',
+    role: 'Founder and Governing Partner',
+    phone: '+91 98942 18243',
+    email: 'pgselva45@gmail.com',
+    office: 'Villupuram Headquarters',
+    bgColor: 'from-brand-gold-950/10 to-brand-gold-900/5',
+    borderColor: 'border-brand-gold-200/50',
+    iconBgColor: 'bg-brand-blue-900 text-brand-gold-400 border border-brand-gold-200/30',
+    vcard: `BEGIN:VCARD\r\nVERSION:3.0\r\nN:Selva Kumar;G.;;Mr.;\r\nFN:Mr. G. Selva Kumar\r\nORG:Sri Velan & Co\r\nTITLE:Founder and Governing Partner\r\nTEL;TYPE=CELL,VOICE:+919894218243\r\nEMAIL;TYPE=PREF,INTERNET:pgselva45@gmail.com\r\nADR;TYPE=WORK:;;2/112 Post Office Street, Pillur;Viluppuram;Tamilnadu;605103;India\r\nNOTE:Founder and Governing Partner of Sri Velan & Co.\r\nURL:https://srivelanandco.com\r\nEND:VCARD`
+  },
+  {
+    id: 'vetrivel',
+    title: 'Mr. Vetrivel',
+    subtitle: 'Managing Director & Chennai Lead',
+    shortLabel: 'VV',
+    displayName: 'Vetrivel',
+    name: 'Vetrivel',
+    role: 'Managing Director',
+    phone: '+91 98427 18243',
+    email: 'srivelan2004@gmail.com',
+    office: 'Chennai Branch Office',
+    bgColor: 'from-brand-blue-950/10 to-brand-blue-900/5',
+    borderColor: 'border-brand-blue-200/30',
+    iconBgColor: 'bg-brand-blue-900 text-brand-gold-400',
+    vcard: `BEGIN:VCARD\r\nVERSION:3.0\r\nN:Vetrivel;;;;Mr.\r\nFN:Mr. Vetrivel\r\nORG:Sri Velan & Co\r\nTITLE:Managing Director\r\nTEL;TYPE=CELL,VOICE:+919842718243\r\nEMAIL;TYPE=PREF,INTERNET:srivelan2004@gmail.com\r\nADR;TYPE=WORK:;;S2, A Block, Ram Nagar South, Madipakkam;Chennai;Tamilnadu;600091;India\r\nNOTE:Managing Director of Sri Velan & Co directing fleet operations.\r\nURL:https://srivelanandco.com\r\nEND:VCARD`
+  }
+];
 
 export const ContactView: React.FC = () => {
   const { registerClick } = useEasterEgg();
@@ -38,6 +111,8 @@ export const ContactView: React.FC = () => {
   const [complete, setComplete] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSandbox, setIsSandbox] = useState(false);
+  const [selectedVcardId, setSelectedVcardId] = useState<string>('corporate');
+  const [copiedVcard, setCopiedVcard] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'channels' | 'board'>('board');
   const [msgDetails, setMsgDetails] = useState({
     name: '',
@@ -60,6 +135,27 @@ export const ContactView: React.FC = () => {
 
   const [selectedDirectionsOffice, setSelectedDirectionsOffice] = useState<typeof OFFICES[0] | null>(null);
   const [copiedAddress, setCopiedAddress] = useState(false);
+
+  const copyVcardToClipboard = (vcardText: string) => {
+    navigator.clipboard.writeText(vcardText);
+    setCopiedVcard(true);
+    setTimeout(() => setCopiedVcard(false), 2000);
+  };
+
+  const downloadVcardFile = (filename: string, vcardText: string) => {
+    try {
+      const blob = new Blob([vcardText], { type: 'text/vcard;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${filename}.vcf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error("VCard download failure", e);
+    }
+  };
 
   const getOfficeEmbedUrl = (name: string) => {
     if (name.toLowerCase().includes('villupuram')) {
@@ -421,7 +517,7 @@ export const ContactView: React.FC = () => {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4" id="contact-tel-whatsapp">
                   {/* Click-To-Call */}
-                  <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200/80 hover:border-brand-blue-700 transition-all flex items-start gap-4 shadow-xs">
+                  <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200/80 hover:border-brand-blue-700 hover:shadow-lg hover:shadow-brand-blue-900/5 hover:-translate-y-1 transition-all duration-300 flex items-start gap-4 shadow-xs">
                     <div className="p-2.5 bg-brand-blue-900 text-white rounded-lg shrink-0">
                       <Phone className="w-4 h-4" />
                     </div>
@@ -450,7 +546,7 @@ export const ContactView: React.FC = () => {
                     }}
                     aria-label="Launch secure encrypted WhatsApp Chat panel directly to inquire with our Estimating Officer"
                     title="Open instant WhatsApp chat inquiries"
-                    className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 p-5 rounded-xl transition-all flex items-start gap-4 text-left shadow-xs group cursor-pointer"
+                    className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 hover:border-emerald-450 hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-1 transition-all duration-300 flex items-start gap-4 text-left shadow-xs group cursor-pointer"
                   >
                     <div className="p-2.5 bg-emerald-600 text-white rounded-lg shrink-0">
                       <MessageSquare className="w-4 h-4 text-white" />
@@ -471,7 +567,7 @@ export const ContactView: React.FC = () => {
                 </div>
 
                 {/* Admin emails list */}
-                <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200/80 space-y-4 shadow-xs">
+                <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200/80 hover:border-brand-blue-900/25 hover:shadow-lg hover:shadow-brand-blue-900/5 hover:-translate-y-1 transition-all duration-300 space-y-4 shadow-xs">
                   <div className="flex items-center gap-2 border-b border-neutral-200 pb-2">
                     <Mail className="w-4 h-4 text-brand-gold-500 shrink-0" />
                     <h4 className="font-display font-bold text-xs uppercase tracking-wider text-brand-blue-900">Email Correspondence</h4>
@@ -492,75 +588,146 @@ export const ContactView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Section 2: Executive Board */}
-              <div className="space-y-4">
-                <h3 className="font-display font-extrabold text-xs uppercase tracking-wider text-brand-blue-950 flex items-center gap-2 pt-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-gold-500"></span>
-                  Executive Board Roles
-                </h3>
 
-                <div className="space-y-4" id="contact-executive-board">
-                  <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200 divide-y divide-neutral-200/60 shadow-xs">
-                    
-                    {/* Mr. Selva Kumar */}
-                    <div className="pb-4 flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-xs border border-brand-blue-800">
-                        SK
-                      </div>
-                      <div className="space-y-0.5 text-left">
-                        <h4 className="font-display font-bold text-sm text-brand-blue-950">Mr. Selva Kumar</h4>
-                        <div className="flex items-center gap-1.5 text-[11px] text-brand-gold-600 font-mono uppercase tracking-wide font-semibold">
-                          <Award className="w-3.5 h-3.5" />
-                          <span>Founder</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Mr. Vetrivel */}
-                    <div className="py-4 flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-xs border border-brand-blue-800">
-                        VV
-                      </div>
-                      <div className="space-y-0.5 text-left">
-                        <h4 className="font-display font-bold text-sm text-brand-blue-950">Mr. Vetrivel</h4>
-                        <div className="flex items-center gap-1.5 text-[11px] text-brand-blue-700 font-mono uppercase tracking-wide font-semibold">
-                          <ShieldCheck className="w-3.5 h-3.5 text-brand-blue-700" />
-                          <span>Managing Director</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Mr. Dhinakaravel */}
-                    <div className="py-4 flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-xs border border-brand-blue-800">
-                        DK
-                      </div>
-                      <div className="space-y-0.5 text-left">
-                        <h4 className="font-display font-bold text-sm text-brand-blue-950">Mr. Dhinakaravel</h4>
-                        <div className="flex items-center gap-1.5 text-[11px] text-neutral-500 font-mono uppercase tracking-wide font-semibold">
-                          <BookOpen className="w-3.5 h-3.5 text-neutral-500" />
-                          <span>Auditor & Accountant</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Mr. Jerin Anand */}
-                    <div className="pt-4 flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-bold tracking-wider shrink-0 text-xs border border-brand-blue-800">
-                        JA
-                      </div>
-                      <div className="space-y-0.5 text-left">
-                        <h4 className="font-display font-bold text-sm text-brand-blue-950">Mr. Jerin Anand</h4>
-                        <div className="flex items-center gap-1.5 text-[11px] text-brand-blue-600 font-mono uppercase tracking-wide font-semibold">
-                          <Code className="w-3.5 h-3.5 text-brand-blue-600" />
-                          <span>ADMIN & WEB DEVELOPER</span>
-                        </div>
-                      </div>
-                    </div>
-
+              {/* Section 2: Quick-Share vCard QR Generator */}
+              <div className="bg-neutral-50/50 border border-neutral-200/80 hover:border-brand-blue-900/20 hover:shadow-lg hover:shadow-brand-blue-900/5 hover:-translate-y-1 rounded-2xl p-6 space-y-6 shadow-xs mt-6 transition-all duration-300" id="vcard-qr-generator">
+                <div className="space-y-1.5 text-left">
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-brand-gold-600 uppercase block">OFFICIAL DIRECTORY</span>
+                  <div className="flex items-center gap-2">
+                    <QrCode className="w-5 h-5 text-brand-blue-900 shrink-0" />
+                    <h3 className="font-display font-extrabold text-base text-brand-blue-950">Quick-Share Contact QR Card</h3>
                   </div>
+                  <p className="text-xs text-neutral-500 leading-relaxed font-sans font-light">
+                    For government officials and site officers: select an entry below to generate an instant vCard. Scan with your mobile device camera to save the office number, email, and address directly to your device directory, or download the VCF file.
+                  </p>
+                </div>
+
+                {/* Directory Selector tabs */}
+                <div className="grid grid-cols-3 gap-1 px-1 py-1 bg-neutral-100 rounded-lg" id="vcard-selector-tabs">
+                  {VCARD_CONTACTS.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setSelectedVcardId(c.id);
+                        registerClick(`vcard-select-${c.id}`);
+                      }}
+                      className={`text-center py-2 rounded-md transition-all font-display font-semibold text-xs leading-none relative cursor-pointer ${
+                        selectedVcardId === c.id
+                          ? 'bg-white text-brand-blue-950 shadow-xs border border-neutral-200/50'
+                          : 'text-neutral-500 hover:text-brand-blue-950 hover:bg-white/40'
+                      }`}
+                    >
+                      <span className="block font-sans text-[9px] font-bold text-neutral-400 uppercase tracking-tight scale-90 mb-0.5">{c.shortLabel}</span>
+                      <span className="truncate block max-w-full px-1">{c.displayName}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Dynamic QR Display & Card details */}
+                {(() => {
+                  const activeContact = VCARD_CONTACTS.find(c => c.id === selectedVcardId) || VCARD_CONTACTS[0];
+                  return (
+                    <div className="space-y-5" id="vcard-dynamic-panel">
+                      
+                      {/* Active Contact Information */}
+                      <div className="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-xl bg-neutral-50 border border-neutral-200/50">
+                        
+                        {/* Interactive QR box */}
+                        <div className="bg-white p-3 rounded-xl border border-neutral-200 shadow-inner flex flex-col items-center justify-center shrink-0">
+                          <QRCodeSVG 
+                            value={activeContact.vcard}
+                            size={120}
+                            level="M"
+                            fgColor="#0a1a30"
+                            bgColor="#ffffff"
+                            includeMargin={false}
+                          />
+                          <span className="text-[9px] font-mono font-medium text-neutral-400 mt-1.5 select-none uppercase tracking-wide">
+                            Scan with camera
+                          </span>
+                        </div>
+
+                        {/* Text Meta info */}
+                        <div className="space-y-2 text-left min-w-0 flex-1 w-full">
+                          <div className="space-y-0.5">
+                            <h4 className="font-display font-black text-sm text-brand-blue-950 tracking-tight truncate">
+                              {activeContact.title}
+                            </h4>
+                            <p className="text-[11px] text-brand-gold-600 font-mono font-bold uppercase tracking-wider">
+                              {activeContact.role}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1.5 text-xs text-neutral-600 font-sans">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <Phone className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
+                              <span className="font-medium text-neutral-800 truncate">{activeContact.phone}</span>
+                            </div>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <Mail className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
+                              <span className="truncate">{activeContact.email}</span>
+                            </div>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <MapPin className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
+                              <span className="truncate">{activeContact.office}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* Share Controls and triggers */}
+                      <div className="grid grid-cols-2 gap-3" id="vcard-actions">
+                        {/* Download VFC file */}
+                        <button
+                          onClick={() => {
+                            registerClick(`vcard-download-${activeContact.id}`);
+                            downloadVcardFile(activeContact.id, activeContact.vcard);
+                          }}
+                          className="flex items-center justify-center gap-2 bg-brand-blue-900 hover:bg-brand-blue-850 text-white font-display font-semibold text-xs py-3 px-3 rounded-xl border border-brand-blue-800 shadow-xs transition-colors cursor-pointer group"
+                        >
+                          <Download className="w-4 h-4 text-brand-gold-400 group-hover:scale-110 transition-transform" />
+                          <span>Download VCF</span>
+                        </button>
+
+                        {/* Copy raw code */}
+                        <button
+                          onClick={() => {
+                            registerClick(`vcard-copy-${activeContact.id}`);
+                            copyVcardToClipboard(activeContact.vcard);
+                          }}
+                          className={`flex items-center justify-center gap-2 font-display font-semibold text-xs py-3 px-3 rounded-xl border transition-all cursor-pointer ${
+                            copiedVcard 
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                              : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-300'
+                          }`}
+                        >
+                          {copiedVcard ? (
+                            <>
+                              <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                              <span className="truncate">Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-4 h-4 text-neutral-500 shrink-0" />
+                              <span className="truncate">Copy Text</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                    </div>
+                  );
+                })()}
+
+                <div className="bg-neutral-100/60 rounded-xl p-3 border border-neutral-200/40 text-center">
+                  <p className="text-[10px] text-neutral-500 leading-relaxed font-sans font-light">
+                    Tip: Scan the code above directly with your iPhone or Android camera to instantly prefill a new contact form with all company details loaded in one tap.
+                  </p>
                 </div>
               </div>
+
+
             </div>
 
             {/* Right Column: Contact Inquiry Form (7/12 width) */}
