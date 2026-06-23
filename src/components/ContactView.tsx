@@ -46,6 +46,18 @@ export const ContactView: React.FC = () => {
     message: ''
   });
 
+  const [mapViewModes, setMapViewModes] = useState<Record<string, 'static' | 'interactive'>>({
+    'Villupuram HQ': 'interactive',
+    'Chennai HQ': 'interactive'
+  });
+
+  const getOfficeEmbedUrl = (name: string) => {
+    if (name.toLowerCase().includes('villupuram')) {
+      return `https://maps.google.com/maps?q=2%2F112%20Post%20Office%20Street%2C%20Pillur%2C%20Viluppuram%2C%20Tamilnadu%20-%20605103&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+    }
+    return `https://maps.google.com/maps?q=S2%2C%20Second%20Floor%2C%20A%20Block%2C%208th%20Cross%20Street%2C%20Ram%20Nagar%20South%2C%2520Madipakkam%2C%20Chennai%2C%20Tamilnadu%20-%20600091&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+  };
+
   // Basic inline validation
   const validateFields = (): boolean => {
     const newErrors = {
@@ -703,65 +715,99 @@ export const ContactView: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {OFFICES.map((office, idx) => (
-              <div 
-                key={office.name} 
-                className="bg-white rounded-2xl border border-neutral-200 shadow-xs overflow-hidden hover:shadow-lg transition-all flex flex-col group h-full"
-                id={`office-loc-card-${idx}`}
-              >
-                {/* Simulated map frame matching physical screenshots from ZIP assets */}
-                <a
-                  href={office.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block h-64 sm:h-72 w-full bg-neutral-200 relative border-b border-neutral-200 overflow-hidden cursor-pointer"
+            {OFFICES.map((office, idx) => {
+              const isInteractive = mapViewModes[office.name] === 'interactive';
+              return (
+                <div 
+                  key={office.name} 
+                  className="bg-white rounded-2xl border border-neutral-200 shadow-xs overflow-hidden hover:shadow-lg transition-all flex flex-col group h-full"
+                  id={`office-loc-card-${idx}`}
                 >
-                  <img 
-                    src={office.mapImage}
-                    alt={`${office.name} satellite grid coordinate outline`}
-                    className="w-full h-full object-cover filter brightness-[0.97] hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                    width="800"
-                    height="500"
-                  />
-                  <div className="absolute inset-0 bg-neutral-900/15 pointer-events-none" />
-                  
-                  {/* Dynamic location PIN float label */}
-                  <div className="absolute top-4 right-4 bg-brand-blue-900/90 text-white font-mono text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-wider border border-brand-blue-800">
-                    {office.type}
-                  </div>
-                </a>
+                  <div className="h-64 sm:h-72 w-full bg-neutral-100 relative border-b border-neutral-200 overflow-hidden">
+                    {isInteractive ? (
+                      <iframe
+                        src={getOfficeEmbedUrl(office.name)}
+                        className="w-full h-full border-0"
+                        allowFullScreen={false}
+                        loading="lazy"
+                        title={`${office.name} Google Maps Location`}
+                      />
+                    ) : (
+                      <a
+                        href={office.mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full h-full cursor-pointer relative"
+                      >
+                        <img 
+                          src={office.mapImage}
+                          alt={`${office.name} satellite grid coordinate outline`}
+                          className="w-full h-full object-cover filter brightness-[0.97] hover:scale-105 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
+                          width="800"
+                          height="500"
+                        />
+                        <div className="absolute inset-0 bg-neutral-900/15 pointer-events-none" />
+                      </a>
+                    )}
 
-                <div className="p-6 flex flex-col justify-between flex-1 space-y-6">
-                  <div className="space-y-2.5">
-                    <h3 className="font-display font-bold text-lg text-brand-blue-950 group-hover:text-brand-blue-700 transition-colors">
-                      {office.name}
-                    </h3>
-                    <div className="flex gap-2.5 items-start text-xs sm:text-sm text-neutral-600 font-sans leading-relaxed">
-                      <MapPin className="w-5 h-5 text-brand-gold-500 mt-0.5 shrink-0" />
-                      <div>
-                        {office.addressLines.map(line => (
-                          <p key={line}>{line}</p>
-                        ))}
-                      </div>
+                    {/* Floating Toggle Controls */}
+                    <div className="absolute bottom-3 left-3 bg-neutral-900/90 text-[10px] sm:text-xs text-white rounded-lg p-1 flex gap-1 z-10 border border-neutral-800 shadow-lg">
+                      <button 
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); setMapViewModes({ ...mapViewModes, [office.name]: 'interactive' }); }}
+                        className={`px-2 py-1 rounded transition-all font-medium ${isInteractive ? 'bg-brand-gold-500 text-brand-blue-950 font-bold' : 'text-neutral-400 hover:text-white'}`}
+                      >
+                        Interactive Map
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); setMapViewModes({ ...mapViewModes, [office.name]: 'static' }); }}
+                        className={`px-2 py-1 rounded transition-all font-medium ${!isInteractive ? 'bg-brand-gold-500 text-brand-blue-950 font-bold' : 'text-neutral-400 hover:text-white'}`}
+                      >
+                        Satellite Blueprint
+                      </button>
+                    </div>
+
+                    {/* Dynamic location PIN float label */}
+                    <div className="absolute top-4 right-4 bg-brand-blue-900/90 text-white font-mono text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-wider border border-brand-blue-800 z-10">
+                      {office.type}
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
-                    <a
-                      href={office.mapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-neutral-600 hover:text-brand-blue-700 text-xs font-semibold group/link"
-                    >
-                      <span>Show Driving Coordinates</span>
-                      <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
-                    </a>
+                  <div className="p-6 flex flex-col justify-between flex-1 space-y-6">
+                    <div className="space-y-2.5">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-display font-bold text-lg text-brand-blue-950 group-hover:text-brand-blue-700 transition-colors">
+                          {office.name}
+                        </h3>
+                      </div>
+                      <div className="flex gap-2.5 items-start text-xs sm:text-sm text-neutral-600 font-sans leading-relaxed">
+                        <MapPin className="w-5 h-5 text-brand-gold-500 mt-0.5 shrink-0" />
+                        <div>
+                          {office.addressLines.map(line => (
+                            <p key={line}>{line}</p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+                      <a
+                        href={office.mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-neutral-600 hover:text-brand-blue-700 text-xs font-semibold group/link"
+                      >
+                        <span>Navigate in Google Maps</span>
+                        <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
         </div>

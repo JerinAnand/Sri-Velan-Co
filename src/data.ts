@@ -39,7 +39,7 @@ export const OFFICES: OfficeLocation[] = [
       'Pillur, Viluppuram,',
       'Tamilnadu - 605103.'
     ],
-    mapsUrl: 'https://maps.app.goo.gl/FMZm4V2gH58GMbud8?g_st=ic',
+    mapsUrl: 'https://maps.app.goo.gl/gL4WAmBNQnqxbdBD7',
     mapImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCWaZ5j0JQa_hMaiCKyeQve24BFVG5pM8-47WVIGaZMPzxL0NzAEb4HS1YpGk0tmZ2QfaUXkcMfs_QeX50BBR4FF1j_ZClAJU9iBTyJcoYcDFYyspjBlT3IeHNGvAQ6XzIOxl4E8gAuY3ceiiUMWhLEmknQA6htHnYYA62oTYFoUp-QyrULQJBdvv8XjKIiaqfu_r3A-hAGgM81ngZP7N56T0gbhLIarEDGUt5fpsMqJ3ASk-uHA-TQseLbPoaawNi_4J_-baZrBKWN',
     type: 'Head Office'
   },

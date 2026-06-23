@@ -349,7 +349,10 @@ export const AboutView: React.FC = () => {
           
           <div className="text-center max-w-xl mx-auto space-y-3 mb-16">
             <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">ADMINISTRATION</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-brand-blue-900 tracking-tight font-display">Governing Board</h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-brand-blue-900 tracking-tight font-display flex items-center justify-center gap-2.5">
+              <Award className="w-8 h-8 sm:w-10 sm:h-10 text-brand-gold-500 shrink-0 filter drop-shadow-sm" />
+              <span>Governing Board</span>
+            </h2>
             <p className="text-xs sm:text-sm text-neutral-500 font-sans">Represented by a legacy of dedicated civil contractors leading water and land development networks in Tamil Nadu.</p>
           </div>
 
