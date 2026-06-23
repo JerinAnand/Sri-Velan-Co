@@ -145,7 +145,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
     <div className="w-full bg-neutral-900 text-neutral-100" id="home-view-container">
       
       {/* 1. Cinematic Slideshow Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-brand-blue-950">
+      <section className="relative min-h-screen md:h-screen flex items-center justify-center overflow-hidden bg-brand-blue-950 py-16 md:py-0">
         
         {/* Animated Slide Frame */}
         <AnimatePresence mode="wait">
@@ -167,7 +167,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
         <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none z-0" />
 
         {/* Content Box */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-32 sm:pt-40 lg:pt-44 text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-20 pb-24 md:py-0 text-left">
           <div className="max-w-4xl space-y-6 overflow-visible">
 
             {/* Floating division header */}
@@ -201,7 +201,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 className="space-y-4"
               >
                 <p className="text-brand-gold-400 font-mono text-sm uppercase tracking-widest font-semibold">{heroSlides[currentSlide].subtitle}</p>
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-[43.84px] tracking-tight font-display whitespace-pre-line">
+                <h1 className="text-[42px] font-bold text-white text-left leading-[50.84px] tracking-tight font-display whitespace-pre-line">
                   {heroSlides[currentSlide].title}
                 </h1>
                 <p className="max-w-2xl text-neutral-300 font-sans font-light text-sm sm:text-base lg:text-lg leading-relaxed">
