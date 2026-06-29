@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { COMPANY_DETAILS, SERVICE_CATEGORIES, PROJECTS } from '../data';
 import { ActiveView } from '../types';
+import { WeatherAlertBanner } from './WeatherAlertBanner';
 
 interface HomeViewProps {
   setActiveView: (view: ActiveView) => void;
@@ -768,6 +769,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
         </div>
       </section>
+
+      {/* 7. Real-Time Disaster Weather Alert Panel */}
+      <WeatherAlertBanner />
 
     </div>
   );
