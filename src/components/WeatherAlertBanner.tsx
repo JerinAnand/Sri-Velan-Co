@@ -54,10 +54,22 @@ export const WeatherAlertBanner: React.FC = () => {
     try {
       setIsRefreshing(true);
       setError(null);
-      const res = await fetch('/api/weather-alerts');
+      
+      let res;
+      try {
+        res = await fetch('/api/weather-alerts');
+        if (res.status === 404) {
+          throw new Error('Not Found - Triggering Netlify fallback');
+        }
+      } catch (err) {
+        console.warn('Primary /api/weather-alerts failed, attempting Netlify fallback...');
+        res = await fetch('/.netlify/functions/weather-alerts');
+      }
+
       if (!res.ok) {
         throw new Error(`Failed to retrieve weather alerts: HTTP ${res.status}`);
       }
+
       const json = await res.json();
       setData(json);
     } catch (err: any) {
