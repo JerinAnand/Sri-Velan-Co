@@ -101,21 +101,42 @@ export default async function handler(req: any, res: any) {
           httpOptions: { headers: { "User-Agent": "aistudio-build" } }
         });
 
-        const response = await ai.models.generateContent({
-          model: "gemini-3.5-flash",
-          contents: "Search and synthesize current real-time heavy rainfall, active cyclone alerts, IMD storm warnings, or flood warnings in Tamil Nadu (focusing on Villupuram, Cuddalore, Chennai, Pondicherry) for late June 2026. Provide a concise, clear 3-sentence risk summary for dewatering, drainage and pumping contractors. Do not use any markdown bolding with asterisks or list bullet asterisks.",
-          config: {
-            tools: [{ googleSearch: {} }],
-            temperature: 0.4
-          }
-        });
+        try {
+          const response = await ai.models.generateContent({
+            model: "gemini-3.5-flash",
+            contents: "Search and synthesize current real-time heavy rainfall, active cyclone alerts, IMD storm warnings, or flood warnings in Tamil Nadu (focusing on Villupuram, Cuddalore, Chennai, Pondicherry) for late June 2026. Provide a concise, clear 3-sentence risk summary for dewatering, drainage and pumping contractors. Do not use any markdown bolding with asterisks or list bullet asterisks.",
+            config: {
+              tools: [{ googleSearch: {} }],
+              temperature: 0.4
+            }
+          });
 
-        if (response.text) {
-          aiBriefing = response.text;
-          hasAiWarning = true;
+          if (response.text) {
+            aiBriefing = response.text;
+            hasAiWarning = true;
+          }
+        } catch (searchErr: any) {
+          console.warn("[Vercel Weather Alerts API] Gemini search grounding failed, retrying with telemetry-grounded prompt without search tool:", searchErr.message);
+          
+          const telemetrySummary = weatherData.map(w => 
+            `${w.name}: Temp ${w.temp}°C, Humidity ${w.humidity}%, Rain ${w.precipitation}mm/h, 24h Forecast ${w.forecast24hPrecipitation}mm, Wind ${w.windSpeed}km/h, Risk: ${w.riskLevel}`
+          ).join("; ");
+
+          const retryResponse = await ai.models.generateContent({
+            model: "gemini-3.5-flash",
+            contents: `Analyze the following real-time weather telemetry for Tamil Nadu regions and synthesize a professional 3-sentence risk summary and operational advice for disaster dewatering, drainage, and pumping contractors. Do not use any markdown bolding with asterisks or list bullet asterisks. Telemetry: ${telemetrySummary}`,
+            config: {
+              temperature: 0.4
+            }
+          });
+
+          if (retryResponse.text) {
+            aiBriefing = retryResponse.text;
+            hasAiWarning = true;
+          }
         }
       } catch (aiErr: any) {
-        console.warn("[Vercel Weather Alerts API] Gemini search grounding failed:", aiErr.message);
+        console.warn("[Vercel Weather Alerts API] Gemini call failed completely, using backup text:", aiErr.message);
         aiBriefing = "Regional IMD advisory reports localized convective monsoon developments across coastal Tamil Nadu corridors. Clients in low-lying industrial or municipal zones should run routine fuel level verification on backup standby pumping generators.";
       }
     } else {

@@ -17,7 +17,9 @@ import {
   Compass,
   ArrowRight,
   Sun,
-  CloudLightning
+  CloudLightning,
+  Sliders,
+  Settings
 } from 'lucide-react';
 
 interface WeatherAlert {
@@ -49,6 +51,9 @@ export const WeatherAlertBanner: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
   const [countdown, setCountdown] = useState<number>(300); // 5 minutes in seconds
+  const [rainThreshold, setRainThreshold] = useState<number>(15.0);
+  const [thresholdType, setThresholdType] = useState<'forecast' | 'realtime'>('forecast');
+  const [showConfig, setShowConfig] = useState<boolean>(false);
 
   const fetchAlerts = async () => {
     try {
@@ -223,6 +228,20 @@ export const WeatherAlertBanner: React.FC = () => {
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
               <span>{isRefreshing ? 'Syncing...' : 'Sync Feeds'}</span>
             </button>
+
+            <button
+              onClick={() => setShowConfig(!showConfig)}
+              className={`px-3 py-1.5 border rounded-lg text-xs font-mono flex items-center gap-1.5 transition-all ${
+                showConfig 
+                  ? 'bg-amber-950/40 border-amber-800/60 text-amber-400' 
+                  : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white'
+              }`}
+              title="Toggle Custom Threshold Config"
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>Threshold Config</span>
+            </button>
+
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className="p-2 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-all flex items-center justify-center"
@@ -233,9 +252,78 @@ export const WeatherAlertBanner: React.FC = () => {
           </div>
         </div>
 
+        {/* Interactive Threshold Configurator Panel */}
+        <AnimatePresence>
+          {showConfig && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl text-left grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div className="lg:col-span-5 space-y-1.5">
+                  <h3 className="text-sm font-bold font-display text-white flex items-center gap-2">
+                    <Settings className="w-4 h-4 text-brand-gold-400" />
+                    Dewatering Alarm Threshold Configurator
+                  </h3>
+                  <p className="text-xs text-neutral-400 font-sans">
+                    Calibrate limits for high-flow suction pump dispatches. Region cards will visually trigger an active alarm state when local values exceed these numbers.
+                  </p>
+                </div>
+                
+                <div className="lg:col-span-3 space-y-2">
+                  <label className="text-[10px] font-mono font-bold text-neutral-400 block uppercase tracking-wider">
+                    Telemetry Metric
+                  </label>
+                  <select
+                    value={thresholdType}
+                    onChange={(e) => setThresholdType(e.target.value as 'forecast' | 'realtime')}
+                    className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-neutral-300 focus:outline-none focus:border-amber-500 cursor-pointer"
+                  >
+                    <option value="forecast">24h Forecast Total Rain (mm)</option>
+                    <option value="realtime">Real-time Hourly Rate (mm/h)</option>
+                  </select>
+                </div>
+
+                <div className="lg:col-span-4 space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-mono font-bold text-neutral-400">
+                    <span className="uppercase tracking-wider">Alarm Limit</span>
+                    <span className="text-brand-gold-400 font-extrabold text-xs">{rainThreshold.toFixed(1)} mm</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="range"
+                      min="0.5"
+                      max="100"
+                      step="0.5"
+                      value={rainThreshold}
+                      onChange={(e) => setRainThreshold(parseFloat(e.target.value))}
+                      className="w-full h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                    />
+                    <input
+                      type="number"
+                      min="0.5"
+                      max="500"
+                      step="0.5"
+                      value={rainThreshold}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value);
+                        if (!isNaN(val)) setRainThreshold(val);
+                      }}
+                      className="w-20 bg-neutral-950 border border-neutral-800 rounded-lg px-2 py-1 text-center text-xs font-mono text-brand-gold-400 focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Loading Skeleton */}
         {loading && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-neutral-900/60 border border-neutral-800/60 p-6 rounded-2xl space-y-4 animate-pulse">
                 <div className="h-4 bg-neutral-800 rounded w-1/3" />
@@ -285,14 +373,28 @@ export const WeatherAlertBanner: React.FC = () => {
             >
               
               {/* Region-wise Hydrology Risk Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data.weatherData.map((loc) => {
                   const isRiskAlert = loc.riskLevel === 'Severe' || loc.riskLevel === 'Extreme';
+                  const isThresholdExceeded = thresholdType === 'forecast'
+                    ? loc.forecast24hPrecipitation >= rainThreshold
+                    : loc.precipitation >= rainThreshold;
                   return (
                     <div 
                       key={loc.name}
-                      className="bg-neutral-900/40 border border-neutral-800 rounded-2xl p-6 text-left flex flex-col justify-between hover:border-neutral-700/60 transition-all shadow-md group relative overflow-hidden"
+                      className={`bg-neutral-900/40 border p-6 rounded-2xl text-left flex flex-col justify-between hover:border-neutral-700/60 transition-all duration-300 shadow-md group relative overflow-hidden ${
+                        isThresholdExceeded 
+                          ? 'border-amber-500 ring-2 ring-amber-500/30 bg-neutral-950/80 shadow-[0_0_25px_rgba(245,158,11,0.2)] pt-10' 
+                          : 'border-neutral-800'
+                      }`}
                     >
+                      {/* Top Exceeded Highlight Banner */}
+                      {isThresholdExceeded && (
+                        <div className="absolute top-0 inset-x-0 bg-gradient-to-r from-amber-500 to-orange-600 text-[9px] font-mono font-bold tracking-widest text-center py-1 text-black uppercase animate-pulse">
+                          ⚠️ Custom limit exceeded ({rainThreshold.toFixed(1)} mm)
+                        </div>
+                      )}
+
                       {/* Live status bar */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
