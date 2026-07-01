@@ -39,7 +39,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 24,
-    activeStaff: 55,
+    activeStaff: 38,
     floodsManaged: 11,
     description: 'Petrochemical industrial complex zone. Specializes in managing refinery surface runoff and deploying heavy-duty chemical-resistant bypass pumping rigs for rapid stormwater transfer.',
     facilities: ['Manali Industrial Bypass Yard', 'High-Inflow Submersibles Unit', 'Heavy De-clogging Fleet C'],
@@ -63,7 +63,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 20,
-    activeStaff: 48,
+    activeStaff: 40,
     floodsManaged: 13,
     description: 'Densely populated historic North Chennai area. Characterized by narrow alleys and complex drainage lines; heavily relies on high-capacity truck-mounted vacuum pumps and manual desilt actions.',
     facilities: ['Tondiarpet Vacuum Pump Station', 'North Chennai Response Base'],
@@ -75,7 +75,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     isActive: true,
     status: 'active-hq',
     pumpsDeployed: 35,
-    activeStaff: 95,
+    activeStaff: 45,
     floodsManaged: 22,
     description: 'Command center for North-Eastern Chennai. Direct liaison for harbor operations, Central railway station underpasses, and major subway dewatering tasks during high storm-surge scenarios.',
     facilities: ['Royapuram Deep-Well Command Base', 'Central Underpass Pump Array', 'Expressway Response Unit'],
@@ -87,7 +87,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 22,
-    activeStaff: 50,
+    activeStaff: 42,
     floodsManaged: 15,
     description: 'Vulnerable basin containing the Otteri Nullah canal feed. Demands continuous suction coverage to prevent storm overflow into nearby low-elevation housing colonies.',
     facilities: ['Otteri Nullah Channel Pumping Station', 'Standby Diesel Pump Fleet F'],
@@ -99,7 +99,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 26,
-    activeStaff: 62,
+    activeStaff: 43,
     floodsManaged: 12,
     description: 'Industrial estate zone with large lake inflows. Partners with state PWD to run high-capacity tractor-driven pumps to relieve water accumulation on major industrial roadways and subways.',
     facilities: ['Ambattur Industrial Pump Reserve', 'Lake Outflow Control Hub'],
@@ -123,7 +123,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     isActive: true,
     status: 'active-hq',
     pumpsDeployed: 40,
-    activeStaff: 110,
+    activeStaff: 45,
     floodsManaged: 26,
     description: 'Corporate headquarters and central command yard for Chennai dewatering division. Operates 24/7 GCC liaison desks, supervising primary subway suction pumps and emergency power generators.',
     facilities: ['Central Teynampet HQ Base', 'VVIP Underpasses Suction Fleet', '24/7 GCC Emergency Liaison Desk', 'Standby Trailer Pump Hub A'],
@@ -135,7 +135,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 25,
-    activeStaff: 58,
+    activeStaff: 44,
     floodsManaged: 18,
     description: 'Legacy inundation zone carrying the crucial Mambalam Canal. Focused on maintaining smooth channel flow and preventing waterlogging in low-elevation central hubs.',
     facilities: ['Mambalam Canal Pumping Array', 'Subway Emergency Suction Team'],
@@ -171,7 +171,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     isActive: true,
     status: 'active-hq',
     pumpsDeployed: 30,
-    activeStaff: 80,
+    activeStaff: 45,
     floodsManaged: 17,
     description: 'Command center for South Chennai. Safeguards the Adyar estuary, Buckingham Canal confluence, and high-density residential developments through automated high-volume marine-grade pumps.',
     facilities: ['Adyar Estuary High-Flow Station', 'South Chennai Response Hub', 'Buckingham Canal Suction Division'],
@@ -236,6 +236,7 @@ export const ServiceAreaMap: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<string>('zone9');
   const [hoveredDistrict, setHoveredDistrict] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [zonalRecords, setZonalRecords] = useState<Record<string, DistrictData>>(DISTRICT_RECORDS);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -251,8 +252,8 @@ export const ServiceAreaMap: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  const activeRegions = Object.values(DISTRICT_RECORDS).filter(d => d.isActive);
-  const currentRecord = DISTRICT_RECORDS[selectedDistrict];
+  const activeRegions = (Object.values(zonalRecords) as DistrictData[]).filter(d => d.isActive);
+  const currentRecord = zonalRecords[selectedDistrict];
 
   // SVG Render paths representing stylized Chennai City zones
   const districtPaths = [
@@ -342,7 +343,7 @@ export const ServiceAreaMap: React.FC = () => {
                 viewport={{ once: true, margin: "-40px" }}
               >
                 {districtPaths.map((path) => {
-                  const data = DISTRICT_RECORDS[path.id];
+                  const data = zonalRecords[path.id];
                   const hasData = !!data;
                   const isActive = data?.isActive;
                   const isSelected = selectedDistrict === path.id;
@@ -354,7 +355,11 @@ export const ServiceAreaMap: React.FC = () => {
                   let strokeWidth = '1';
 
                   if (hasData) {
-                    if (data.status === 'active-hq') {
+                    if (data.activeStaff > 45 && data.isActive) {
+                      fill = isSelected ? '#991b1b' : (isHovered ? '#dc2626' : '#f87171');
+                      stroke = '#991b1b';
+                      strokeWidth = isSelected ? '2.5' : '2';
+                    } else if (data.status === 'active-hq') {
                       fill = isSelected ? '#1e3a8a' : (isHovered ? '#1d4ed8' : '#3b82f6');
                       stroke = '#1e3a8a';
                       strokeWidth = isSelected ? '2' : '1.5';
@@ -424,8 +429,9 @@ export const ServiceAreaMap: React.FC = () => {
 
               {/* Major District Labels */}
               <g id="district-labels" className="pointer-events-none">
-                {Object.values(DISTRICT_RECORDS).map((dist) => {
+                {(Object.values(zonalRecords) as DistrictData[]).map((dist) => {
                   const isSelected = selectedDistrict === dist.id;
+                  const isOverLimit = dist.activeStaff > 45 && dist.isActive;
                   
                   return (
                     <g key={dist.id} className="transition-all duration-300">
@@ -434,7 +440,7 @@ export const ServiceAreaMap: React.FC = () => {
                         cx={dist.coordinateLabel.x} 
                         cy={dist.coordinateLabel.y} 
                         r={isSelected ? '3.5' : '2'} 
-                        fill={dist.status === 'active-hq' ? '#ca8a04' : '#1d4ed8'}
+                        fill={isOverLimit ? '#dc2626' : dist.status === 'active-hq' ? '#ca8a04' : '#1d4ed8'}
                         className="transition-transform duration-300"
                       />
                       {/* Label Text */}
@@ -442,7 +448,13 @@ export const ServiceAreaMap: React.FC = () => {
                         x={dist.coordinateLabel.x + 6}
                         y={dist.coordinateLabel.y + 3}
                         className={`font-mono text-[8px] font-bold ${
-                          isSelected ? 'fill-neutral-900 font-black' : 'fill-neutral-500'
+                          isSelected 
+                            ? isOverLimit 
+                              ? 'fill-red-600 font-black' 
+                              : 'fill-neutral-900 font-black' 
+                            : isOverLimit 
+                              ? 'fill-red-500 font-bold' 
+                              : 'fill-neutral-500'
                         }`}
                       >
                         {dist.name.split(': ')[1] || dist.name}
@@ -531,14 +543,16 @@ export const ServiceAreaMap: React.FC = () => {
 
         {/* Right Grid: Detailed parameters card and list selection (lg:col-span-6) */}
         <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+
           {/* Quick district selector buttons pile */}
           <div className="space-y-2">
             <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest pl-1">
               Command Center Fleet Index
             </p>
             <div className="flex gap-2 flex-wrap">
-              {Object.values(DISTRICT_RECORDS).map((dist) => {
+              {(Object.values(zonalRecords) as DistrictData[]).map((dist) => {
                 const isSelected = selectedDistrict === dist.id;
+                const isOverLimit = dist.activeStaff > 45 && dist.isActive;
                 
                 return (
                   <button
@@ -546,20 +560,26 @@ export const ServiceAreaMap: React.FC = () => {
                     onClick={() => setSelectedDistrict(dist.id)}
                     className={`px-3 py-2 rounded-xl text-xs font-display font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
                       isSelected 
-                        ? 'bg-brand-blue-900 text-white border-brand-blue-950 shadow-sm' 
+                        ? isOverLimit
+                          ? 'bg-red-600 text-white border-red-700 shadow-sm ring-2 ring-red-500/40'
+                          : 'bg-brand-blue-900 text-white border-brand-blue-950 shadow-sm' 
                         : dist.isActive 
-                          ? 'bg-white text-neutral-700 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50' 
+                          ? isOverLimit
+                            ? 'bg-red-50/80 text-red-700 border-red-200 hover:bg-red-100/90'
+                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50' 
                           : 'bg-neutral-100 text-neutral-400 border-neutral-200/50 opacity-60'
                     }`}
                   >
                     <span className={`w-1.5 h-1.5 rounded-full ${
-                      dist.status === 'active-hq' 
-                        ? 'bg-brand-gold-500' 
-                        : dist.isActive 
-                          ? 'bg-brand-blue-500' 
-                          : 'bg-neutral-400'
+                      isOverLimit
+                        ? 'bg-red-600 animate-ping'
+                        : dist.status === 'active-hq' 
+                          ? 'bg-brand-gold-500' 
+                          : dist.isActive 
+                            ? 'bg-brand-blue-500' 
+                            : 'bg-neutral-400'
                     }`} />
-                    <span>{dist.name}</span>
+                    <span>{dist.name.split(': ')[1] || dist.name}</span>
                   </button>
                 );
               })}
@@ -618,35 +638,89 @@ export const ServiceAreaMap: React.FC = () => {
 
                 {/* Quantitative statistics strip */}
                 {currentRecord.isActive ? (
-                  <div className="grid grid-cols-3 gap-3 pt-4 border-t border-neutral-100">
-                    <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-150/70">
-                      <div className="flex items-center gap-1.5 text-brand-blue-700">
-                        <Droplet className="w-3.5 h-3.5" />
-                        <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">Active Pumps</span>
+                  <div className="space-y-4">
+                    {currentRecord.activeStaff > 45 && (
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-800 text-xs flex items-start gap-2.5 animate-pulse">
+                        <ShieldAlert className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-bold">Staff Capacity Safety Ceiling Exceeded</p>
+                          <p className="text-[11px] text-red-700 font-light mt-0.5 leading-relaxed">
+                            Operational protocols strictly limit on-field dewatering staff to a maximum of 45 per zone to ensure field safety. Current deployment of {currentRecord.activeStaff} violates this ceiling. Please reduce the staffing immediately.
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-xl sm:text-2xl font-black text-neutral-900 mt-1 font-mono leading-none">
-                        {currentRecord.pumpsDeployed}
-                      </p>
-                    </div>
+                    )}
 
-                    <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-150/70">
-                      <div className="flex items-center gap-1.5 text-brand-blue-700">
-                        <User className="w-3.5 h-3.5" />
-                        <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">On-field Staff</span>
+                    <div className="grid grid-cols-3 gap-3 pt-4 border-t border-neutral-100">
+                      <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-150/70">
+                        <div className="flex items-center gap-1.5 text-brand-blue-700">
+                          <Droplet className="w-3.5 h-3.5" />
+                          <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">Active Pumps</span>
+                        </div>
+                        <p className="text-xl sm:text-2xl font-black text-neutral-900 mt-1 font-mono leading-none">
+                          {currentRecord.pumpsDeployed}
+                        </p>
                       </div>
-                      <p className="text-xl sm:text-2xl font-black text-neutral-900 mt-1 font-mono leading-none">
-                        {currentRecord.activeStaff}
-                      </p>
-                    </div>
 
-                    <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-150/70">
-                      <div className="flex items-center gap-1.5 text-brand-blue-700">
-                        <Settings className="w-3.5 h-3.5" />
-                        <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">Incidents Met</span>
+                      <div className={`p-3 rounded-xl border flex flex-col justify-between transition-all ${
+                        currentRecord.activeStaff > 45 
+                          ? 'bg-red-50/50 border-red-200 ring-1 ring-red-100' 
+                          : 'bg-neutral-50 border-neutral-150/70'
+                      }`}>
+                        <div className="flex items-center gap-1.5 text-brand-blue-700">
+                          <User className="w-3.5 h-3.5 shrink-0" />
+                          <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">On-field Staff</span>
+                        </div>
+                        <div className="flex items-center justify-between mt-1 gap-1">
+                          <p className={`text-lg sm:text-xl font-black font-mono leading-none ${
+                            currentRecord.activeStaff > 45 ? 'text-red-600' : 'text-neutral-900'
+                          }`}>
+                            {currentRecord.activeStaff}
+                          </p>
+                          <div className="flex gap-0.5">
+                            <button
+                              onClick={() => {
+                                setZonalRecords(prev => ({
+                                  ...prev,
+                                  [selectedDistrict]: {
+                                    ...prev[selectedDistrict],
+                                    activeStaff: Math.max(0, prev[selectedDistrict].activeStaff - 1)
+                                  }
+                                }));
+                              }}
+                              className="w-4 h-4 bg-neutral-200 hover:bg-neutral-300 rounded text-neutral-800 text-[9px] font-extrabold flex items-center justify-center transition-colors cursor-pointer"
+                              title="Decrease staff"
+                            >
+                              -
+                            </button>
+                            <button
+                              onClick={() => {
+                                setZonalRecords(prev => ({
+                                  ...prev,
+                                  [selectedDistrict]: {
+                                    ...prev[selectedDistrict],
+                                    activeStaff: prev[selectedDistrict].activeStaff + 1
+                                  }
+                                }));
+                              }}
+                              className="w-4 h-4 bg-neutral-200 hover:bg-neutral-300 rounded text-neutral-800 text-[9px] font-extrabold flex items-center justify-center transition-colors cursor-pointer"
+                              title="Increase staff"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-xl sm:text-2xl font-black text-neutral-900 mt-1 font-mono leading-none">
-                        {currentRecord.floodsManaged}
-                      </p>
+
+                      <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-150/70">
+                        <div className="flex items-center gap-1.5 text-brand-blue-700">
+                          <Settings className="w-3.5 h-3.5" />
+                          <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">Incidents Met</span>
+                        </div>
+                        <p className="text-xl sm:text-2xl font-black text-neutral-900 mt-1 font-mono leading-none">
+                          {currentRecord.floodsManaged}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ) : (

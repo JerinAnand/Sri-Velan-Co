@@ -282,9 +282,9 @@ async function startServer() {
   app.get("/api/weather-alerts", async (req, res) => {
     try {
       const locations = [
-        { name: "Villupuram Region", lat: 11.9401, lon: 79.4861 },
-        { name: "Chennai Corridor", lat: 13.0827, lon: 80.2707 },
-        { name: "Cuddalore Region", lat: 11.7480, lon: 79.7714 }
+        { name: "Northern Chennai", lat: 13.1600, lon: 80.2500 },
+        { name: "Central Chennai", lat: 13.0600, lon: 80.2500 },
+        { name: "Southern Chennai", lat: 12.9200, lon: 80.2200 }
       ];
 
       const weatherData = await Promise.all(
