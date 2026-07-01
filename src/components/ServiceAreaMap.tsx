@@ -21,101 +21,185 @@ interface DistrictData {
 }
 
 const DISTRICT_RECORDS: Record<string, DistrictData> = {
-  villupuram: {
-    id: 'villupuram',
-    name: 'Villupuram',
-    isActive: true,
-    status: 'active-hq',
-    pumpsDeployed: 45,
-    activeStaff: 150,
-    floodsManaged: 18,
-    description: 'Corporate Headquarters and central maintenance yard. Houses the largest collection of high-horsepower tractor-driven dewatering machinery and immediate emergency relief armadas.',
-    facilities: ['Main Maintenance Yard', 'Central Staff Quarters', '24/7 Dispatch Desk', 'Heavy Machinery Fleet A'],
-    coordinateLabel: { x: 205, y: 135 }
-  },
-  cuddalore: {
-    id: 'cuddalore',
-    name: 'Cuddalore',
-    isActive: true,
-    status: 'active-node',
-    pumpsDeployed: 28,
-    activeStaff: 75,
-    floodsManaged: 12,
-    description: 'A major storm-vulnerable coastal hub. Historically significant region for flood control, specialized in canal dredging support and high-inflow storm pumping.',
-    facilities: ['Coastal Response Base', 'Wetlands Pumping Array', 'Suction Trailer Storage'],
-    coordinateLabel: { x: 260, y: 165 }
-  },
-  chennai: {
-    id: 'chennai',
-    name: 'Chennai',
-    isActive: true,
-    status: 'active-hq',
-    pumpsDeployed: 32,
-    activeStaff: 90,
-    floodsManaged: 14,
-    description: 'Capital corporate municipal support division and Primary Yard Command. Heavily engaged with the Greater Chennai Corporation (GCC) for subway clearance and neighborhood drainage logs during severe storm cycles.',
-    facilities: ['Metro Liaison Office', 'Basement Extraction Division', 'High-HP Submersibles Base', 'North-Eastern Express Maintenance Hub'],
-    coordinateLabel: { x: 295, y: 55 }
-  },
-  chengalpattu: {
-    id: 'chengalpattu',
-    name: 'Chengalpattu',
+  zone1: {
+    id: 'zone1',
+    name: 'Zone 1: Thiruvottiyur',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 18,
-    activeStaff: 45,
-    floodsManaged: 8,
-    description: 'Vital expressway and bypass drainage management sector. Protects key transport channels from severe runoffs and delivers lake-inflow balance assistance.',
-    facilities: ['Highway De-clogging Unit', 'Canal Gate Liaison Post'],
-    coordinateLabel: { x: 265, y: 95 }
+    activeStaff: 42,
+    floodsManaged: 9,
+    description: 'Northern coastal industrial and residential corridor. Key focus is on Buckingham Canal drainage blocks, beach-front storm outlets, and low-lying residential clusters adjacent to Ennore Expressway.',
+    facilities: ['Thiruvottiyur High-HP Pumping Station', 'Coastal Suction Fleet B', 'Ennore Storm Gate Monitor'],
+    coordinateLabel: { x: 255, y: 52 }
   },
-  kanchipuram: {
-    id: 'kanchipuram',
-    name: 'Kanchipuram',
+  zone2: {
+    id: 'zone2',
+    name: 'Zone 2: Manali',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 24,
+    activeStaff: 55,
+    floodsManaged: 11,
+    description: 'Petrochemical industrial complex zone. Specializes in managing refinery surface runoff and deploying heavy-duty chemical-resistant bypass pumping rigs for rapid stormwater transfer.',
+    facilities: ['Manali Industrial Bypass Yard', 'High-Inflow Submersibles Unit', 'Heavy De-clogging Fleet C'],
+    coordinateLabel: { x: 175, y: 50 }
+  },
+  zone3: {
+    id: 'zone3',
+    name: 'Zone 3: Madhavaram',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 15,
+    activeStaff: 30,
+    floodsManaged: 6,
+    description: 'Semi-residential catchment region containing multiple large holding ponds. Actively monitors Retteri lake outflow channels and assists in residential basement extractions.',
+    facilities: ['Retteri Outlet Liaison Post', 'Madhavaram Mobile Suction Depot'],
+    coordinateLabel: { x: 155, y: 110 }
+  },
+  zone4: {
+    id: 'zone4',
+    name: 'Zone 4: Tondiarpet',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 20,
+    activeStaff: 48,
+    floodsManaged: 13,
+    description: 'Densely populated historic North Chennai area. Characterized by narrow alleys and complex drainage lines; heavily relies on high-capacity truck-mounted vacuum pumps and manual desilt actions.',
+    facilities: ['Tondiarpet Vacuum Pump Station', 'North Chennai Response Base'],
+    coordinateLabel: { x: 257, y: 115 }
+  },
+  zone5: {
+    id: 'zone5',
+    name: 'Zone 5: Royapuram',
+    isActive: true,
+    status: 'active-hq',
+    pumpsDeployed: 35,
+    activeStaff: 95,
+    floodsManaged: 22,
+    description: 'Command center for North-Eastern Chennai. Direct liaison for harbor operations, Central railway station underpasses, and major subway dewatering tasks during high storm-surge scenarios.',
+    facilities: ['Royapuram Deep-Well Command Base', 'Central Underpass Pump Array', 'Expressway Response Unit'],
+    coordinateLabel: { x: 252, y: 170 }
+  },
+  zone6: {
+    id: 'zone6',
+    name: 'Zone 6: Thiru-Vi-Ka-Nagar',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 22,
+    activeStaff: 50,
+    floodsManaged: 15,
+    description: 'Vulnerable basin containing the Otteri Nullah canal feed. Demands continuous suction coverage to prevent storm overflow into nearby low-elevation housing colonies.',
+    facilities: ['Otteri Nullah Channel Pumping Station', 'Standby Diesel Pump Fleet F'],
+    coordinateLabel: { x: 180, y: 167 }
+  },
+  zone7: {
+    id: 'zone7',
+    name: 'Zone 7: Ambattur',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 26,
+    activeStaff: 62,
+    floodsManaged: 12,
+    description: 'Industrial estate zone with large lake inflows. Partners with state PWD to run high-capacity tractor-driven pumps to relieve water accumulation on major industrial roadways and subways.',
+    facilities: ['Ambattur Industrial Pump Reserve', 'Lake Outflow Control Hub'],
+    coordinateLabel: { x: 82, y: 147 }
+  },
+  zone8: {
+    id: 'zone8',
+    name: 'Zone 8: Anna Nagar',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 19,
+    activeStaff: 45,
+    floodsManaged: 10,
+    description: 'Centrally located high-density area bounded by the Cooum River. Closely monitors river bund stability and deploys high-volume trailer pumps to clear local water logging.',
+    facilities: ['Cooum Bund Emergency Base', 'Anna Nagar Rapid Relief Fleet'],
+    coordinateLabel: { x: 125, y: 217 }
+  },
+  zone9: {
+    id: 'zone9',
+    name: 'Zone 9: Teynampet',
+    isActive: true,
+    status: 'active-hq',
+    pumpsDeployed: 40,
+    activeStaff: 110,
+    floodsManaged: 26,
+    description: 'Corporate headquarters and central command yard for Chennai dewatering division. Operates 24/7 GCC liaison desks, supervising primary subway suction pumps and emergency power generators.',
+    facilities: ['Central Teynampet HQ Base', 'VVIP Underpasses Suction Fleet', '24/7 GCC Emergency Liaison Desk', 'Standby Trailer Pump Hub A'],
+    coordinateLabel: { x: 202, y: 225 }
+  },
+  zone10: {
+    id: 'zone10',
+    name: 'Zone 10: Kodambakkam',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 25,
+    activeStaff: 58,
+    floodsManaged: 18,
+    description: 'Legacy inundation zone carrying the crucial Mambalam Canal. Focused on maintaining smooth channel flow and preventing waterlogging in low-elevation central hubs.',
+    facilities: ['Mambalam Canal Pumping Array', 'Subway Emergency Suction Team'],
+    coordinateLabel: { x: 120, y: 275 }
+  },
+  zone11: {
+    id: 'zone11',
+    name: 'Zone 11: Valasaravakkam',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 14,
+    activeStaff: 32,
+    floodsManaged: 7,
+    description: 'Primarily residential sector in Western Chennai. Actively manages local stormwater canal runoffs and delivers quick-response pumping support for street-level water collection.',
+    facilities: ['Valasaravakkam Residential Suction Depot', 'Canal Gate Support Unit'],
+    coordinateLabel: { x: 50, y: 245 }
+  },
+  zone12: {
+    id: 'zone12',
+    name: 'Zone 12: Alandur',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 16,
-    activeStaff: 38,
-    floodsManaged: 6,
-    description: 'Industrial tech zone protection division. Partners with PWD to manage large lake overflows and prevent waterlogging around industrial complexes.',
-    facilities: ['Industrial Cluster Unit', 'Reservoir Outflow Control Station'],
-    coordinateLabel: { x: 232, y: 82 }
+    activeStaff: 36,
+    floodsManaged: 9,
+    description: 'Key transit and airport corridor. Monitors active Adyar River floodplains, securing subways and highway underpasses to ensure uninterrupted transport flows.',
+    facilities: ['Airport Perimeter Suction Base', 'Adyar River Liaison Station'],
+    coordinateLabel: { x: 92, y: 337 }
   },
-  tiruvallur: {
-    id: 'tiruvallur',
-    name: 'Tiruvallur',
+  zone13: {
+    id: 'zone13',
+    name: 'Zone 13: Adyar',
+    isActive: true,
+    status: 'active-hq',
+    pumpsDeployed: 30,
+    activeStaff: 80,
+    floodsManaged: 17,
+    description: 'Command center for South Chennai. Safeguards the Adyar estuary, Buckingham Canal confluence, and high-density residential developments through automated high-volume marine-grade pumps.',
+    facilities: ['Adyar Estuary High-Flow Station', 'South Chennai Response Hub', 'Buckingham Canal Suction Division'],
+    coordinateLabel: { x: 200, y: 342 }
+  },
+  zone14: {
+    id: 'zone14',
+    name: 'Zone 14: Perungudi',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 12,
-    activeStaff: 32,
+    activeStaff: 28,
+    floodsManaged: 4,
+    description: 'IT Corridor and marshland border zone. Active division protecting critical IT parks and managing sensitive marsh runoff drainage limits.',
+    facilities: ['Perungudi Active Depot', 'IT Expressway Suction Team'],
+    coordinateLabel: { x: 155, y: 407 }
+  },
+  zone15: {
+    id: 'zone15',
+    name: 'Zone 15: Sholinganallur',
+    isActive: true,
+    status: 'active-node',
+    pumpsDeployed: 15,
+    activeStaff: 35,
     floodsManaged: 5,
-    description: 'Northern catchment zone team. Monitors active reservoirs and offers rapid-action flood response deployment to surrounding villages and public offices.',
-    facilities: ['Northern Catchment Base', 'Agriculture Drainage Fleet'],
-    coordinateLabel: { x: 255, y: 35 }
-  },
-  tiruvannamalai: {
-    id: 'tiruvannamalai',
-    name: 'Tiruvannamalai',
-    isActive: false,
-    status: 'standby',
-    pumpsDeployed: 0,
-    activeStaff: 0,
-    floodsManaged: 2,
-    description: 'Standby support district. Mobilized as needed from the adjacent Villupuram central yard.',
-    facilities: ['Emergency Depot Connection'],
-    coordinateLabel: { x: 190, y: 90 }
-  },
-  kallakurichi: {
-    id: 'kallakurichi',
-    name: 'Kallakurichi',
-    isActive: false,
-    status: 'standby',
-    pumpsDeployed: 0,
-    activeStaff: 0,
-    floodsManaged: 3,
-    description: 'Standby support district. Frequently assisted during seasonal lake-breach operations.',
-    facilities: ['Regional Mobile Service Unit'],
-    coordinateLabel: { x: 155, y: 135 }
+    description: 'Deep southern coastal IT sector. Low-lying catchment area with multiple lake margins. Deploys high-capacity bypass rigs to handle massive seasonal monsoon water log risks.',
+    facilities: ['Sholinganallur Emergency Response Base', 'Monsoon Bypass Pump Station'],
+    coordinateLabel: { x: 165, y: 475 }
   }
 };
 
@@ -149,7 +233,7 @@ const districtVariants = {
 export const ServiceAreaMap: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 350, height: 460 });
-  const [selectedDistrict, setSelectedDistrict] = useState<string>('villupuram');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>('zone9');
   const [hoveredDistrict, setHoveredDistrict] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -170,37 +254,23 @@ export const ServiceAreaMap: React.FC = () => {
   const activeRegions = Object.values(DISTRICT_RECORDS).filter(d => d.isActive);
   const currentRecord = DISTRICT_RECORDS[selectedDistrict];
 
-  // SVG Render paths representing stylized Tamil Nadu district polygons
+  // SVG Render paths representing stylized Chennai City zones
   const districtPaths = [
-    { id: 'chennai', name: 'Chennai', d: 'M 285 45 L 305 45 L 305 65 L 285 65 Z' },
-    { id: 'tiruvallur', name: 'Tiruvallur', d: 'M 230 40 L 280 20 L 295 50 L 250 65 Z' },
-    { id: 'kanchipuram', name: 'Kanchipuram', d: 'M 220 65 L 260 65 L 250 100 L 210 95 Z' },
-    { id: 'chengalpattu', name: 'Chengalpattu', d: 'M 260 65 L 295 65 L 280 120 L 250 100 Z' },
-    { id: 'villupuram', name: 'Villupuram', d: 'M 175 110 L 240 105 L 255 160 L 190 170 Z' },
-    { id: 'cuddalore', name: 'Cuddalore', d: 'M 235 160 L 275 130 L 280 190 L 225 190 Z' },
-    { id: 'tiruvannamalai', name: 'Tiruvannamalai', d: 'M 160 70 L 220 65 L 210 110 L 175 115 Z' },
-    { id: 'kallakurichi', name: 'Kallakurichi', d: 'M 130 115 L 180 110 L 185 165 L 135 155 Z' },
-    
-    // Ambient surrounding non-active districts to compose the full outline of Tamil Nadu
-    { id: 'salem', name: 'Salem / Western Belt', d: 'M 100 130 L 140 120 L 145 180 L 95 180 Z' },
-    { id: 'dharmapuri', name: 'Dharmapuri', d: 'M 115 50 L 165 65 L 150 115 L 110 105 Z' },
-    { id: 'krishnagiri', name: 'Krishnagiri', d: 'M 100 10 L 150 15 L 145 65 L 95 55 Z' },
-    { id: 'nilgiris', name: 'Nilgiris / Coimbatore', d: 'M 5 150 L 45 150 L 35 190 L 5 190' },
-    { id: 'coimbatore', name: 'Coimbatore', d: 'M 5 195 L 45 195 L 55 260 L 15 260 Z' },
-    { id: 'erode', name: 'Erode', d: 'M 50 130 L 95 135 L 90 190 L 45 190 Z' },
-    { id: 'trichy', name: 'Trichy Central', d: 'M 135 180 L 185 175 L 180 230 L 125 230 Z' },
-    { id: 'thanjavur', name: 'Thanjavur Delta', d: 'M 190 195 L 235 195 L 230 250 L 180 240 Z' },
-    { id: 'tiruvarur', name: 'Tiruvarur', d: 'M 235 195 L 260 195 L 255 240 L 230 240 Z' },
-    { id: 'nagapattinam', name: 'Nagapattinam', d: 'M 260 190 L 280 190 L 270 260 L 255 240 Z' },
-    { id: 'pudukkottai', name: 'Pudukkottai', d: 'M 175 245 L 225 245 L 215 300 L 165 290 Z' },
-    { id: 'madurai', name: 'Madurai Region', d: 'M 100 255 L 150 250 L 145 310 L 95 310 Z' },
-    { id: 'sivagangai', name: 'Sivagangai', d: 'M 150 250 L 195 245 L 185 305 L 145 310 Z' },
-    { id: 'dindigul', name: 'Dindigul', d: 'M 75 210 L 125 220 L 115 270 L 65 260 Z' },
-    { id: 'ramanthapuram', name: 'Ramanathapuram', d: 'M 145 315 L 230 310 L 225 350 L 135 345 Z' },
-    { id: 'virudhunagar', name: 'Virudhunagar', d: 'M 75 315 L 130 315 L 120 370 L 65 370 Z' },
-    { id: 'tuticorin', name: 'Tuticorin', d: 'M 105 375 L 155 370 L 145 440 L 95 440 Z' },
-    { id: 'tirunelveli', name: 'Tirunelveli', d: 'M 50 375 L 100 375 L 95 445 L 45 445 Z' },
-    { id: 'kanyakumari', name: 'Kanyakumari', d: 'M 45 450 L 85 450 L 75 490 L 35 490 Z' }
+    { id: 'zone1', name: 'Zone 1: Thiruvottiyur', d: 'M 210 15 L 290 20 L 295 90 L 220 85 Z' },
+    { id: 'zone2', name: 'Zone 2: Manali', d: 'M 130 20 L 210 15 L 220 85 L 140 80 Z' },
+    { id: 'zone3', name: 'Zone 3: Madhavaram', d: 'M 120 80 L 195 85 L 190 140 L 115 135 Z' },
+    { id: 'zone4', name: 'Zone 4: Tondiarpet', d: 'M 220 85 L 295 90 L 285 145 L 220 140 Z' },
+    { id: 'zone5', name: 'Zone 5: Royapuram', d: 'M 220 140 L 285 145 L 280 200 L 220 195 Z' },
+    { id: 'zone6', name: 'Zone 6: Thiru-Vi-Ka-Nagar', d: 'M 140 140 L 220 140 L 215 195 L 140 195 Z' },
+    { id: 'zone7', name: 'Zone 7: Ambattur', d: 'M 50 110 L 120 110 L 110 185 L 45 175 Z' },
+    { id: 'zone8', name: 'Zone 8: Anna Nagar', d: 'M 90 185 L 165 195 L 160 250 L 85 240 Z' },
+    { id: 'zone9', name: 'Zone 9: Teynampet', d: 'M 165 195 L 240 195 L 235 255 L 160 250 Z' },
+    { id: 'zone10', name: 'Zone 10: Kodambakkam', d: 'M 85 240 L 160 250 L 155 310 L 80 300 Z' },
+    { id: 'zone11', name: 'Zone 11: Valasaravakkam', d: 'M 20 190 L 85 240 L 80 300 L 15 250 Z' },
+    { id: 'zone12', name: 'Zone 12: Alandur', d: 'M 60 300 L 135 310 L 125 375 L 50 365 Z' },
+    { id: 'zone13', name: 'Zone 13: Adyar', d: 'M 155 310 L 255 310 L 245 375 L 145 375 Z' },
+    { id: 'zone14', name: 'Zone 14: Perungudi', d: 'M 110 375 L 210 375 L 200 440 L 100 440 Z' },
+    { id: 'zone15', name: 'Zone 15: Sholinganallur', d: 'M 120 440 L 220 440 L 210 510 L 110 510 Z' }
   ];
 
   return (
@@ -375,7 +445,7 @@ export const ServiceAreaMap: React.FC = () => {
                           isSelected ? 'fill-neutral-900 font-black' : 'fill-neutral-500'
                         }`}
                       >
-                        {dist.name}
+                        {dist.name.split(': ')[1] || dist.name}
                       </text>
                     </g>
                   );
@@ -385,7 +455,7 @@ export const ServiceAreaMap: React.FC = () => {
           </div>
 
           <div className="w-full flex justify-between items-center bg-neutral-50 p-3.5 border border-neutral-100 rounded-xl mt-4">
-            <span className="text-[10px] font-mono text-neutral-450 uppercase">Tamil Nadu Coastal Coverage Zone</span>
+            <span className="text-[10px] font-mono text-neutral-450 uppercase">Chennai Municipal Zonal Coverage Map</span>
             <div className="flex gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-brand-blue-700 block" title="Active Core District" />
               <span className="w-2.5 h-2.5 rounded-full bg-brand-blue-300 block" title="Support Command Area" />
@@ -508,7 +578,7 @@ export const ServiceAreaMap: React.FC = () => {
             >
               {currentRecord.status === 'active-hq' && (
                 <div className="absolute top-4 right-4 bg-yellow-50 text-yellow-800 border border-yellow-250 text-[9px] font-mono font-black tracking-widest uppercase px-2 py-0.5 rounded">
-                  ★ REGIONAL GENERAL COMMAND HQ
+                  ★ CHENNAI ZONE COMMAND HQ
                 </div>
               )}
 
@@ -525,7 +595,7 @@ export const ServiceAreaMap: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-display font-black text-xl text-brand-blue-950">
-                      District of {currentRecord.name}
+                      {currentRecord.name}
                     </h3>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500">Coverage Class:</span>
