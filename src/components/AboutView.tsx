@@ -227,7 +227,7 @@ export const AboutView: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 {/* GST Card */}
-                <div className="bg-neutral-900 text-white rounded-2xl p-8 border border-neutral-800 relative overflow-hidden flex flex-col justify-between h-72">
+                <div className="bg-neutral-900 text-white rounded-2xl p-8 border border-neutral-800 relative overflow-hidden flex flex-col justify-between min-h-72">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/3 rounded-bl-full pointer-events-none" />
                   <div className="space-y-4">
                     <div className="inline-flex bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold">GST registered</div>
@@ -245,7 +245,7 @@ export const AboutView: React.FC = () => {
                 </div>
 
                 {/* MSME Card */}
-                <div className="bg-brand-blue-950 text-white rounded-2xl p-8 border border-brand-blue-900 relative overflow-hidden flex flex-col justify-between h-72">
+                <div className="bg-brand-blue-950 text-white rounded-2xl p-8 border border-brand-blue-900 relative overflow-hidden flex flex-col justify-between min-h-72">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/3 rounded-bl-full pointer-events-none" />
                   <div className="space-y-4">
                     <div className="inline-flex bg-brand-gold-500/20 text-brand-gold-400 border border-brand-gold-400/30 font-mono text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold">MSME registered</div>
