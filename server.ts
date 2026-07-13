@@ -172,14 +172,19 @@ async function startServer() {
       }
 
       const apiKey = process.env.GEMINI_API_KEY;
-      console.log(`[Diagnostic] API Key length: ${apiKey ? apiKey.length : 0}, first 5 chars: ${apiKey ? apiKey.substring(0, 5) : 'none'}`);
-      if (!apiKey) {
-        throw new Error("GEMINI_API_KEY environment variable is not configured. Falling back to local planner.");
+      const isApiKeyValid = typeof apiKey === "string" && apiKey.startsWith("AIzaSy");
+      console.log(`[Diagnostic] API Key length: ${apiKey ? apiKey.length : 0}, isApiKeyValid: ${isApiKeyValid}`);
+      
+      if (!isApiKeyValid) {
+        // Fall back directly to avoid making an invalid / unauthenticated request to Google and logging console errors
+        const fallbackText = generateFallbackResponse(prompt);
+        res.status(200).json({ text: fallbackText, isFallback: true });
+        return;
       }
 
       // Initialize Google GenAI Client with standard user-agent header
       const ai = new GoogleGenAI({
-        apiKey: apiKey,
+        apiKey: apiKey!,
         httpOptions: {
           headers: {
             "User-Agent": "aistudio-build"
@@ -357,10 +362,11 @@ async function startServer() {
       let hasAiWarning = false;
 
       const apiKey = process.env.GEMINI_API_KEY;
-      if (apiKey) {
+      const isApiKeyValid = typeof apiKey === "string" && apiKey.startsWith("AIzaSy");
+      if (isApiKeyValid) {
         try {
           const ai = new GoogleGenAI({
-            apiKey: apiKey,
+            apiKey: apiKey!,
             httpOptions: { headers: { "User-Agent": "aistudio-build" } }
           });
 
@@ -403,6 +409,7 @@ async function startServer() {
           aiBriefing = "Regional IMD advisory reports localized convective monsoon developments across coastal Tamil Nadu corridors. Clients in low-lying industrial or municipal zones should run routine fuel level verification on backup standby pumping generators.";
         }
       } else {
+        // Quietly use backup text when no valid API key is present to prevent Unauthenticated console errors
         aiBriefing = "Regional IMD advisory reports localized convective monsoon developments across coastal Tamil Nadu corridors. Clients in low-lying industrial or municipal zones should run routine fuel level verification on backup standby pumping generators.";
       }
 

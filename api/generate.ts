@@ -110,8 +110,10 @@ export default async function handler(req: any, res: any) {
 
   try {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not configured on Vercel. Falling back to local planner.");
+    const isApiKeyValid = typeof apiKey === "string" && apiKey.startsWith("AIzaSy");
+    if (!isApiKeyValid) {
+      const fallbackText = generateFallbackResponse(prompt);
+      return res.status(200).json({ text: fallbackText, isFallback: true });
     }
 
     // Call the Google Gemini API directly using Node's native fetch

@@ -256,62 +256,58 @@ export const ContactView: React.FC = () => {
 
     if (!isQueryRelevant(aiPrompt)) {
       setAiLoading(true);
-      await runWithLoader('Checking project parameters matching alignment...', async () => {
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setAiResult(
-          "Your query does not appear to contain civil contracting, dewatering, road sweeping, or PWD/WRD-related engineering parameters.\n\n" +
-          "Sri Velan AI™ Engineering Assistant specializes in analyzing specifications about civil construction, fluid drainage control, and high-wear hydraulic broomers.\n\n" +
-          "### Suggestions for valid inputs:\n" +
-          "- Dewatering Setups: Need high-capacity pump specifications for a 4.5 MLD subway drainage project.\n" +
-          "- Road Sweeper Cleans: Tractor-attached highway sweeping broomer brush requirements for NHAI road maintenance.\n" +
-          "- Civil Construction: PWD concrete foundation guidelines and soil bearing load calculations."
-        );
-      });
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setAiResult(
+        "Your query does not appear to contain civil contracting, dewatering, road sweeping, or PWD/WRD-related engineering parameters.\n\n" +
+        "Sri Velan AI™ Engineering Assistant specializes in analyzing specifications about civil construction, fluid drainage control, and high-wear hydraulic broomers.\n\n" +
+        "### Suggestions for valid inputs:\n" +
+        "- Dewatering Setups: Need high-capacity pump specifications for a 4.5 MLD subway drainage project.\n" +
+        "- Road Sweeper Cleans: Tractor-attached highway sweeping broomer brush requirements for NHAI road maintenance.\n" +
+        "- Civil Construction: PWD concrete foundation guidelines and soil bearing load calculations."
+      );
       setAiLoading(false);
       return;
     }
 
     setAiLoading(true);
     try {
-      await runWithLoader('Analyzing blueprints and generating smart AI estimate...', async () => {
-        let response;
-        try {
-          // Try calling the universal API endpoint first (works on Vercel and Express)
-          response = await fetch('/api/generate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ prompt: aiPrompt }),
-          });
+      let response;
+      try {
+        // Try calling the universal API endpoint first (works on Vercel and Express)
+        response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt: aiPrompt }),
+        });
 
-          // If returned 404, we are probably in a pure Netlify environment, triggering fallback
-          if (response.status === 404) {
-            throw new Error('Not Found - Triggering fallback endpoint');
-          }
-        } catch (err) {
-          console.warn('Primary /api/generate endpoint was not found or failed, attempting Netlify fallback...');
-          response = await fetch('/.netlify/functions/generate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ prompt: aiPrompt }),
-          });
+        // If returned 404, we are probably in a pure Netlify environment, triggering fallback
+        if (response.status === 404) {
+          throw new Error('Not Found - Triggering fallback endpoint');
         }
+      } catch (err) {
+        console.warn('Primary /api/generate endpoint was not found or failed, attempting Netlify fallback...');
+        response = await fetch('/.netlify/functions/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt: aiPrompt }),
+        });
+      }
 
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.error || `Server responded with status ${response.status}`);
-        }
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `Server responded with status ${response.status}`);
+      }
 
-        const data = await response.json();
-        if (data.text) {
-          setAiResult(data.text);
-        } else {
-          throw new Error('Received empty text from the AI generation server.');
-        }
-      });
+      const data = await response.json();
+      if (data.text) {
+        setAiResult(data.text);
+      } else {
+        throw new Error('Received empty text from the AI generation server.');
+      }
     } catch (err: any) {
       console.error('AI Estimator Fetch Error:', err);
       setAiError(err.message || 'Failed to establish connection to AI serverless function.');
@@ -609,7 +605,6 @@ export const ContactView: React.FC = () => {
                       key={c.id}
                       onClick={() => {
                         setSelectedVcardId(c.id);
-                        registerClick(`vcard-select-${c.id}`);
                       }}
                       className={`text-center py-2 rounded-md transition-all font-display font-semibold text-xs leading-none relative cursor-pointer ${
                         selectedVcardId === c.id
@@ -681,7 +676,6 @@ export const ContactView: React.FC = () => {
                         {/* Download VFC file */}
                         <button
                           onClick={() => {
-                            registerClick(`vcard-download-${activeContact.id}`);
                             downloadVcardFile(activeContact.id, activeContact.vcard);
                           }}
                           className="flex items-center justify-center gap-2 bg-brand-blue-900 hover:bg-brand-blue-850 text-white font-display font-semibold text-xs py-3 px-3 rounded-xl border border-brand-blue-800 shadow-xs transition-colors cursor-pointer group"
@@ -693,7 +687,6 @@ export const ContactView: React.FC = () => {
                         {/* Copy raw code */}
                         <button
                           onClick={() => {
-                            registerClick(`vcard-copy-${activeContact.id}`);
                             copyVcardToClipboard(activeContact.vcard);
                           }}
                           className={`flex items-center justify-center gap-2 font-display font-semibold text-xs py-3 px-3 rounded-xl border transition-all cursor-pointer ${

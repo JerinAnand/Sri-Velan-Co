@@ -158,8 +158,14 @@ export const handler = async (event: any, context: any) => {
 
   try {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not configured on Netlify. Falling back to local planner.");
+    const isApiKeyValid = typeof apiKey === "string" && apiKey.startsWith("AIzaSy");
+    if (!isApiKeyValid) {
+      const fallbackText = generateFallbackResponse(prompt);
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ text: fallbackText, isFallback: true })
+      };
     }
 
     // Call the Google Gemini API directly using robust Node.js 18+ fetch API
