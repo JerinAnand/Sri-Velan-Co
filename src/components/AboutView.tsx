@@ -405,6 +405,54 @@ export const AboutView: React.FC = () => {
 
           </div>
 
+          {/* 5b. Managing Director Card (Mr. Vetrivel S) */}
+          <div className="max-w-5xl mx-auto bg-neutral-950 rounded-3xl overflow-hidden shadow-2xl text-white grid grid-cols-1 md:grid-cols-12 gap-0 relative border border-neutral-800 text-left mt-10">
+            <div className="absolute inset-x-0 bottom-0 top-0 grid-overlay opacity-5 pointer-events-none" />
+            
+            {/* Left Col: High Fidelity Image */}
+            <div className="md:col-span-5 h-80 md:h-auto overflow-hidden relative">
+              <img 
+                src={COMPANY_DETAILS.leadership.managingDirector.image} 
+                alt="Mr. Vetrivel S - Managing Director"
+                className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 filter brightness-95"
+                referrerPolicy="no-referrer"
+                loading="lazy"
+                width="600"
+                height="800"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent md:hidden" />
+            </div>
+
+            {/* Right Col: Leadership bio copy panel */}
+            <div className="md:col-span-7 p-8 sm:p-14 flex flex-col justify-center space-y-6 relative z-10 bg-brand-blue-950 border-t md:border-t-0 md:border-l border-brand-blue-900/60">
+              <div className="space-y-2.5">
+                <div className="inline-flex items-center gap-1.5 bg-brand-gold-500/10 text-brand-gold-400 border border-brand-gold-400/20 rounded-full py-1 px-3 text-xs leading-none font-mono">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Managing Director</span>
+                </div>
+                
+                <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
+                  {COMPANY_DETAILS.leadership.managingDirector.name}
+                </h3>
+                <p className="text-xs sm:text-sm text-brand-gold-500 font-mono tracking-wider uppercase leading-none font-semibold">
+                  {COMPANY_DETAILS.leadership.managingDirector.role}
+                </p>
+              </div>
+
+              <div className="h-px bg-brand-blue-800/60 w-full" />
+
+              <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
+                "{COMPANY_DETAILS.leadership.managingDirector.bio}"
+              </p>
+
+              <div className="pt-2 flex items-center gap-3">
+                <span className="text-[10px] text-neutral-400 uppercase font-mono">Sign of Authority</span>
+                <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">Vetrivel S</span>
+              </div>
+            </div>
+
+          </div>
+
           {/* Executive Board Roles Subsection */}
           <div className="mt-20 pt-16 border-t border-neutral-200">
             <div className="text-center max-w-xl mx-auto space-y-2 mb-12">
