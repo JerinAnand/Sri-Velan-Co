@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 
@@ -282,6 +283,42 @@ async function startServer() {
 
   app.post("/.netlify/functions/send-email", handleEmailSending);
   app.post("/api/send-email", handleEmailSending);
+
+  const DATA_FILE_PATH = path.join(process.cwd(), "editable-data.json");
+
+  const getSavedData = (): Record<string, string | number> => {
+    try {
+      if (fs.existsSync(DATA_FILE_PATH)) {
+        const fileContent = fs.readFileSync(DATA_FILE_PATH, "utf8");
+        return JSON.parse(fileContent);
+      }
+    } catch (err) {
+      console.error("Error reading editable data file:", err);
+    }
+    return {};
+  };
+
+  const saveSavedData = (data: Record<string, string | number>) => {
+    try {
+      fs.writeFileSync(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf8");
+    } catch (err) {
+      console.error("Error writing editable data file:", err);
+    }
+  };
+
+  app.get("/api/editable-data", (req, res) => {
+    res.json(getSavedData());
+  });
+
+  app.post("/api/editable-data", (req, res) => {
+    const data = req.body;
+    if (!data || typeof data !== "object") {
+      res.status(400).json({ error: "Invalid data format" });
+      return;
+    }
+    saveSavedData(data);
+    res.json({ success: true });
+  });
 
   // Real-time disaster weather alerts endpoint
   app.get("/api/weather-alerts", async (req, res) => {

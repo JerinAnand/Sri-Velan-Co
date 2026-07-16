@@ -341,7 +341,7 @@ interface OverridesTableViewProps {
 }
 
 function OverridesTableView({ registry, stats }: OverridesTableViewProps) {
-  const { editableData, getValue, updateValue, revertValue } = useAdmin();
+  const { editableData, getValue, updateValue, revertValue, validateValue, getBoundsDescription } = useAdmin();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<'All' | 'Stats' | 'Equipment Specs' | 'Project Counters' | 'Milestones'>('All');
   const [onlyOverridden, setOnlyOverridden] = useState(false);
@@ -349,6 +349,7 @@ function OverridesTableView({ registry, stats }: OverridesTableViewProps) {
   // Editing state
   const [inlineEditingId, setInlineEditingId] = useState<string | null>(null);
   const [inlineValue, setInlineValue] = useState<string>('');
+  const [inlineError, setInlineError] = useState<string | null>(null);
 
   // Process and Filter fields
   const filteredFields = useMemo(() => {
@@ -369,6 +370,7 @@ function OverridesTableView({ registry, stats }: OverridesTableViewProps) {
   const handleStartInlineEdit = (f: EditableFieldDef, currentValue: string | number) => {
     setInlineEditingId(f.id);
     setInlineValue(currentValue.toString());
+    setInlineError(null);
   };
 
   const handleSaveInlineEdit = (f: EditableFieldDef) => {
@@ -377,6 +379,14 @@ function OverridesTableView({ registry, stats }: OverridesTableViewProps) {
       const parsed = Number(inlineValue);
       finalVal = isNaN(parsed) ? f.defaultValue : parsed;
     }
+
+    const result = validateValue(f.id, finalVal);
+    if (!result.isValid) {
+      setInlineError(result.error || 'Invalid value');
+      return;
+    }
+
+    setInlineError(null);
     updateValue(f.id, finalVal);
     setInlineEditingId(null);
   };
@@ -493,32 +503,48 @@ function OverridesTableView({ registry, stats }: OverridesTableViewProps) {
 
                       <td className="py-4 px-5 font-mono text-[11px]">
                         {isEditing ? (
-                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                            <input
-                              type="text"
-                              value={inlineValue}
-                              onChange={(e) => setInlineValue(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleSaveInlineEdit(field);
-                                if (e.key === 'Escape') setInlineEditingId(null);
-                              }}
-                              className="bg-neutral-900 border border-brand-gold-500 rounded px-2 py-1 text-xs text-white max-w-[140px] focus:outline-none focus:ring-1 focus:ring-brand-gold-500 font-mono"
-                              autoFocus
-                            />
-                            <button
-                              onClick={() => handleSaveInlineEdit(field)}
-                              className="p-1 bg-brand-gold-500 text-brand-blue-950 rounded hover:bg-brand-gold-400 cursor-pointer"
-                              title="Commit override"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => setInlineEditingId(null)}
-                              className="p-1 bg-white/5 hover:bg-white/10 rounded text-neutral-400 cursor-pointer"
-                              title="Cancel editing"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
+                          <div className="flex flex-col gap-1.5" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center gap-1.5">
+                              <input
+                                type="text"
+                                value={inlineValue}
+                                onChange={(e) => {
+                                  setInlineValue(e.target.value);
+                                  setInlineError(null);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handleSaveInlineEdit(field);
+                                  if (e.key === 'Escape') setInlineEditingId(null);
+                                }}
+                                className={`bg-neutral-900 border rounded px-2 py-1 text-xs text-white max-w-[140px] focus:outline-none focus:ring-1 font-mono ${
+                                  inlineError ? 'border-red-500 focus:ring-red-500 ring-1 ring-red-500/20' : 'border-brand-gold-500 focus:ring-brand-gold-500'
+                                }`}
+                                autoFocus
+                              />
+                              <button
+                                onClick={() => handleSaveInlineEdit(field)}
+                                className="p-1 bg-brand-gold-500 text-brand-blue-950 rounded hover:bg-brand-gold-400 cursor-pointer shrink-0"
+                                title="Commit override"
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => setInlineEditingId(null)}
+                                className="p-1 bg-white/5 hover:bg-white/10 rounded text-neutral-400 cursor-pointer shrink-0"
+                                title="Cancel editing"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                            {inlineError && (
+                              <p className="text-[9px] text-red-400 max-w-[180px] font-sans leading-tight mt-0.5 flex items-center gap-1 animate-pulse">
+                                <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                                {inlineError}
+                              </p>
+                            )}
+                            <p className="text-[8px] text-neutral-500 font-sans leading-none pl-0.5">
+                              {getBoundsDescription(field.id)}
+                            </p>
                           </div>
                         ) : (
                           <div className="flex items-center gap-2">

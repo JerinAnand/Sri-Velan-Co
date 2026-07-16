@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { validateFieldValue, getFieldBoundsDescription } from '../utils/validation';
 
 interface AdminContextType {
   isAdmin: boolean;
@@ -12,6 +13,8 @@ interface AdminContextType {
   setShowLoginModal: (show: boolean) => void;
   editableData: Record<string, string | number>;
   resetCategories: (categories: string[]) => void;
+  validateValue: (id: string, value: string | number) => { isValid: boolean; error?: string; value: string | number };
+  getBoundsDescription: (id: string) => string;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
@@ -26,6 +29,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [editableData, setEditableData] = useState<Record<string, string | number>>(() => {
     try {
       const stored = localStorage.getItem('editable_data');
@@ -35,14 +39,54 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  // Keep localStorage in sync with editableData state
+  // Load initial data from server on mount
+  useEffect(() => {
+    const fetchServerData = async () => {
+      try {
+        const response = await fetch('/api/editable-data');
+        if (response.ok) {
+          const serverData = await response.json();
+          if (serverData && typeof serverData === 'object') {
+            setEditableData((prev) => ({
+              ...prev,
+              ...serverData,
+            }));
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load editable data from server:', err);
+      } finally {
+        setIsLoaded(true);
+      }
+    };
+    fetchServerData();
+  }, []);
+
+  // Keep localStorage and server in sync with editableData state after loaded
   useEffect(() => {
     try {
       localStorage.setItem('editable_data', JSON.stringify(editableData));
     } catch {
       // Safe fallback
     }
-  }, [editableData]);
+
+    if (isLoaded) {
+      const pushToServer = async () => {
+        try {
+          await fetch('/api/editable-data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(editableData),
+          });
+        } catch (err) {
+          console.warn('Failed to sync editable data with server:', err);
+        }
+      };
+      pushToServer();
+    }
+  }, [editableData, isLoaded]);
 
   // Handle keybindings (Ctrl + Shift + A) to toggle the admin login modal
   useEffect(() => {
@@ -93,10 +137,20 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateValue = (id: string, value: string | number) => {
+    const result = validateFieldValue(id, value);
+    const finalVal = result.isValid ? value : result.value;
     setEditableData((prev) => ({
       ...prev,
-      [id]: value,
+      [id]: finalVal,
     }));
+  };
+
+  const validateValue = (id: string, value: string | number) => {
+    return validateFieldValue(id, value);
+  };
+
+  const getBoundsDescription = (id: string) => {
+    return getFieldBoundsDescription(id);
   };
 
   const revertValue = (id: string) => {
@@ -152,6 +206,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         setShowLoginModal,
         editableData,
         resetCategories,
+        validateValue,
+        getBoundsDescription,
       }}
     >
       {children}

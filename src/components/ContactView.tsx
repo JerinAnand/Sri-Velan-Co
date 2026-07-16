@@ -35,6 +35,8 @@ import {
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useEasterEgg } from '../context/EasterEggContext';
 import { useLoading } from '../context/LoadingContext';
+import { useAdmin } from '../context/AdminContext';
+import { EditableValue } from './EditableValue';
 
 interface VCardContact {
   id: string;
@@ -107,6 +109,27 @@ const VCARD_CONTACTS: VCardContact[] = [
 export const ContactView: React.FC = () => {
   const { registerClick } = useEasterEgg();
   const { runWithLoader } = useLoading();
+  const { getValue, isAdmin } = useAdmin();
+
+  const dynamicContacts: VCardContact[] = VCARD_CONTACTS.map(contact => {
+    const title = getValue(`vcard_${contact.id}_title`, contact.title);
+    const role = getValue(`vcard_${contact.id}_role`, contact.role);
+    const phone = getValue(`vcard_${contact.id}_phone`, contact.phone);
+    const email = getValue(`vcard_${contact.id}_email`, contact.email);
+    const office = getValue(`vcard_${contact.id}_office`, contact.office);
+    
+    const updatedVcard = `BEGIN:VCARD\r\nVERSION:3.0\r\nFN:${title}\r\nORG:Sri Velan & Co\r\nTITLE:${role}\r\nTEL;TYPE=WORK,VOICE:${phone}\r\nEMAIL;TYPE=PREF,INTERNET:${email}\r\nNOTE:${role} of Sri Velan & Co.\r\nURL:https://srivelanandco.com\r\nEND:VCARD`;
+
+    return {
+      ...contact,
+      title,
+      role,
+      phone,
+      email,
+      office,
+      vcard: updatedVcard
+    };
+  });
   const [loading, setLoading] = useState(false);
   const [complete, setComplete] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -519,18 +542,22 @@ export const ContactView: React.FC = () => {
                     </div>
                     <div className="space-y-1 text-left min-w-0">
                       <p className="text-[10px] text-neutral-400 uppercase font-mono tracking-widest">General Inquiries & Operations</p>
-                      {COMPANY_DETAILS.phones.map(p => (
-                        <a 
-                          key={p}
-                          href={`tel:${p.replace(/\s+/g, '')}`} 
-                          onClick={() => registerClick('emergency-dial')}
-                          aria-label={`Call general inquiries and rapid operations desk at mobile number ${p}`}
-                          title={`Call operations representative at ${p}`}
-                          className="block font-display font-semibold text-base text-brand-blue-900 hover:text-brand-gold-600 transition-colors truncate"
-                        >
-                          {p}
-                        </a>
-                      ))}
+                      {COMPANY_DETAILS.phones.map((p, idx) => {
+                        const phoneId = `company_phone_${idx}`;
+                        const displayPhone = getValue(phoneId, p);
+                        return (
+                          <a 
+                            key={p}
+                            href={`tel:${String(displayPhone).replace(/\s+/g, '')}`} 
+                            onClick={() => registerClick('emergency-dial')}
+                            aria-label={`Call general inquiries and rapid operations desk at mobile number ${p}`}
+                            title={`Call operations representative at ${p}`}
+                            className="block font-display font-semibold text-base text-brand-blue-900 hover:text-brand-gold-600 transition-colors truncate"
+                          >
+                            <EditableValue id={phoneId} defaultValue={p} />
+                          </a>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -570,16 +597,19 @@ export const ContactView: React.FC = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm font-sans" id="contact-emails-list">
-                    {COMPANY_DETAILS.emails.map(email => (
-                      <a 
-                        key={email}
-                        href={`mailto:${email}`} 
-                        className="block text-neutral-600 hover:text-brand-blue-700 hover:underline py-1 truncate"
-                        title={email}
-                      >
-                        {email}
-                      </a>
-                    ))}
+                    {COMPANY_DETAILS.emails.map((email, idx) => {
+                      const emailId = `company_email_${idx}`;
+                      return (
+                        <a 
+                          key={email}
+                          href={`mailto:${getValue(emailId, email)}`} 
+                          className="block text-neutral-600 hover:text-brand-blue-700 hover:underline py-1 truncate"
+                          title={email}
+                        >
+                          <EditableValue id={emailId} defaultValue={email} />
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -600,7 +630,7 @@ export const ContactView: React.FC = () => {
 
                 {/* Directory Selector tabs */}
                 <div className="grid grid-cols-3 gap-1 px-1 py-1 bg-neutral-100 rounded-lg" id="vcard-selector-tabs">
-                  {VCARD_CONTACTS.map((c) => (
+                  {dynamicContacts.map((c) => (
                     <button
                       key={c.id}
                       onClick={() => {
@@ -620,7 +650,8 @@ export const ContactView: React.FC = () => {
 
                 {/* Dynamic QR Display & Card details */}
                 {(() => {
-                  const activeContact = VCARD_CONTACTS.find(c => c.id === selectedVcardId) || VCARD_CONTACTS[0];
+                  const activeContact = dynamicContacts.find(c => c.id === selectedVcardId) || dynamicContacts[0];
+                  const originalContact = VCARD_CONTACTS.find(c => c.id === activeContact.id) || VCARD_CONTACTS[0];
                   return (
                     <div className="space-y-5" id="vcard-dynamic-panel">
                       
@@ -646,25 +677,31 @@ export const ContactView: React.FC = () => {
                         <div className="space-y-2 text-left min-w-0 flex-1 w-full">
                           <div className="space-y-0.5">
                             <h4 className="font-display font-black text-sm text-brand-blue-950 tracking-tight truncate">
-                              {activeContact.title}
+                              <EditableValue id={`vcard_${activeContact.id}_title`} defaultValue={originalContact.title} />
                             </h4>
                             <p className="text-[11px] text-brand-gold-600 font-mono font-bold uppercase tracking-wider">
-                              {activeContact.role}
+                              <EditableValue id={`vcard_${activeContact.id}_role`} defaultValue={originalContact.role} />
                             </p>
                           </div>
 
                           <div className="space-y-1.5 text-xs text-neutral-600 font-sans">
                             <div className="flex items-center gap-2 min-w-0">
                               <Phone className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
-                              <span className="font-medium text-neutral-800 truncate">{activeContact.phone}</span>
+                              <span className="font-medium text-neutral-800 truncate">
+                                <EditableValue id={`vcard_${activeContact.id}_phone`} defaultValue={originalContact.phone} />
+                              </span>
                             </div>
                             <div className="flex items-center gap-2 min-w-0">
                               <Mail className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
-                              <span className="truncate">{activeContact.email}</span>
+                              <span className="truncate">
+                                <EditableValue id={`vcard_${activeContact.id}_email`} defaultValue={originalContact.email} />
+                              </span>
                             </div>
                             <div className="flex items-center gap-2 min-w-0">
                               <MapPin className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
-                              <span className="truncate">{activeContact.office}</span>
+                              <span className="truncate">
+                                <EditableValue id={`vcard_${activeContact.id}_office`} defaultValue={originalContact.office} />
+                              </span>
                             </div>
                           </div>
                         </div>

@@ -11,6 +11,8 @@ import { COMPANY_DETAILS } from '../data';
 import { ActiveView } from '../types';
 import { useEasterEgg } from '../context/EasterEggContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAdmin } from '../context/AdminContext';
+import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
 export const Header: React.FC = () => {
@@ -18,6 +20,7 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const { registerClick } = useEasterEgg();
   const { theme, toggleTheme } = useTheme();
+  const { getValue } = useAdmin();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -109,7 +112,7 @@ export const Header: React.FC = () => {
                   className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors"
                   style={{ width: '189.359px', fontSize: '22px', lineHeight: '32px' }}
                 >
-                  {COMPANY_DETAILS.name}
+                  <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
                 </h1>
                 <p 
                   className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase whitespace-nowrap"
@@ -240,8 +243,12 @@ export const Header: React.FC = () => {
                       />
                     </div>
                     <div className="truncate">
-                      <h3 className="font-display font-bold text-sm text-white tracking-wide uppercase truncate">{COMPANY_DETAILS.name}</h3>
-                      <span className="text-[9px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTABLISHED IN 2006</span>
+                      <h3 className="font-display font-bold text-sm text-white tracking-wide uppercase truncate">
+                        <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
+                      </h3>
+                      <span className="text-[9px] text-brand-gold-400 font-mono block tracking-widest leading-none">
+                        ESTABLISHED IN <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
+                      </span>
                     </div>
                   </div>
                   <button

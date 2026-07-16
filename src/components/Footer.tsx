@@ -9,12 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ActiveView } from '../types';
 import { useAdmin } from '../context/AdminContext';
+import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
-  const { setShowLoginModal } = useAdmin();
+  const { setShowLoginModal, getValue } = useAdmin();
 
   const quickLinks = [
     { label: 'Home Page', view: 'home' as ActiveView },
@@ -53,8 +54,12 @@ export const Footer: React.FC = () => {
                 />
               </div>
               <div>
-                <h3 className="font-display font-bold text-lg tracking-wide uppercase" style={{ color: '#bea937' }}>{COMPANY_DETAILS.name}</h3>
-                <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">ESTABLISHED IN 2006</span>
+                <h3 className="font-display font-bold text-lg tracking-wide uppercase" style={{ color: '#bea937' }}>
+                  <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
+                </h3>
+                <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">
+                  ESTABLISHED IN <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
+                </span>
               </div>
             </div>
             
@@ -66,12 +71,16 @@ export const Footer: React.FC = () => {
             <div className="space-y-2.5 bg-brand-blue-900/60 border border-brand-blue-800/40 p-4 rounded-lg">
               <div className="flex justify-between items-center text-xs">
                 <span className="text-neutral-400">GSTIN Registry</span>
-                <span className="text-brand-gold-400 font-mono font-medium select-all">{COMPANY_DETAILS.gstin}</span>
+                <span className="text-brand-gold-400 font-mono font-medium select-all">
+                  <EditableValue id="company_gstin" defaultValue={COMPANY_DETAILS.gstin} />
+                </span>
               </div>
               <div className="h-px bg-brand-blue-800/40 w-full" />
               <div className="flex justify-between items-center text-xs">
                 <span className="text-neutral-400">MSME Udyam</span>
-                <span className="text-brand-gold-400 font-mono font-medium select-all">{COMPANY_DETAILS.msme}</span>
+                <span className="text-brand-gold-400 font-mono font-medium select-all">
+                  <EditableValue id="company_msme" defaultValue={COMPANY_DETAILS.msme} />
+                </span>
               </div>
             </div>
           </div>
@@ -106,35 +115,44 @@ export const Footer: React.FC = () => {
             <div className="space-y-3.5 text-sm text-neutral-300">
               <div className="space-y-2">
                 <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">Emergency Hotlines (24/7)</p>
-                {COMPANY_DETAILS.phones.map((phone) => (
-                  <a
-                    key={phone}
-                    href={`tel:${phone.replace(/\s+/g, '')}`}
-                    aria-label={`Call emergency duty hotline at ${phone}`}
-                    title={`Call Emergency Duty Hotline: ${phone}`}
-                    className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors font-medium text-white"
-                  >
-                    <Phone className="w-4 h-4 text-brand-gold-500 shrink-0" />
-                    <span>{phone}</span>
-                  </a>
-                ))}
+                {COMPANY_DETAILS.phones.map((phone, idx) => {
+                  const phoneId = `company_phone_${idx}`;
+                  const displayPhone = getValue(phoneId, phone);
+                  return (
+                    <a
+                      key={phone}
+                      href={`tel:${String(displayPhone).replace(/\s+/g, '')}`}
+                      aria-label={`Call emergency duty hotline at ${phone}`}
+                      title={`Call Emergency Duty Hotline: ${phone}`}
+                      className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors font-medium text-white"
+                    >
+                      <Phone className="w-4 h-4 text-brand-gold-500 shrink-0" />
+                      <EditableValue id={phoneId} defaultValue={phone} />
+                    </a>
+                  );
+                })}
               </div>
 
               <div className="space-y-2 pt-2">
                 <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">Administration Email</p>
                 <div className="space-y-1">
-                  {COMPANY_DETAILS.emails.slice(0, 2).map((email) => (
-                    <a
-                      key={email}
-                      href={`mailto:${email}`}
-                      aria-label={`Email Sri Velan and Co administration office at ${email}`}
-                      className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors truncate"
-                      title={`Email administration: ${email}`}
-                    >
-                      <Mail className="w-4 h-4 text-brand-gold-500 shrink-0" />
-                      <span className="truncate">{email}</span>
-                    </a>
-                  ))}
+                  {COMPANY_DETAILS.emails.slice(0, 2).map((email, idx) => {
+                    const emailId = `company_email_${idx}`;
+                    return (
+                      <a
+                        key={email}
+                        href={`mailto:${getValue(emailId, email)}`}
+                        aria-label={`Email Sri Velan and Co administration office at ${email}`}
+                        className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors truncate"
+                        title={`Email administration: ${email}`}
+                      >
+                        <Mail className="w-4 h-4 text-brand-gold-500 shrink-0" />
+                        <span className="truncate">
+                          <EditableValue id={emailId} defaultValue={email} />
+                        </span>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -206,7 +224,9 @@ export const Footer: React.FC = () => {
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-400">
           <div className="flex items-center gap-1.5 flex-wrap justify-center text-center">
             <span>© {currentYear}</span>
-            <span className="font-semibold text-white">{COMPANY_DETAILS.legalName}.</span>
+            <span className="font-semibold text-white">
+              <EditableValue id="company_legal_name" defaultValue={COMPANY_DETAILS.legalName} />.
+            </span>
             <span>All Corporate Rights Reserved.</span>
           </div>
           

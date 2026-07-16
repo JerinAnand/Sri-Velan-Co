@@ -146,7 +146,7 @@ export const AboutView: React.FC = () => {
               <div className="lg:col-span-7 space-y-6">
                 <div className="inline-flex items-center gap-1.5 bg-brand-blue-50 text-brand-blue-700 font-mono font-bold text-[10px] uppercase py-1.5 px-3.5 rounded-full border border-brand-blue-100">
                   <Calendar className="w-3.5 h-3.5 text-brand-blue-600" />
-                  <span>Established in {COMPANY_DETAILS.yearEstablished}</span>
+                  <span>Established in <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} /></span>
                 </div>
                 
                 <h2 className="text-2xl sm:text-3.5xl font-black text-brand-blue-900 tracking-tight leading-tight">
@@ -154,7 +154,7 @@ export const AboutView: React.FC = () => {
                 </h2>
 
                 <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans first-letter:text-4xl first-letter:font-bold first-letter:text-brand-blue-800 first-letter:mr-1">
-                  {COMPANY_DETAILS.incorporationHistory}
+                  <EditableValue id="company_incorporation_history" defaultValue={COMPANY_DETAILS.incorporationHistory} />
                 </p>
 
                 <p className="text-sm text-neutral-500 leading-relaxed font-sans">
@@ -387,7 +387,6 @@ export const AboutView: React.FC = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent md:hidden" />
             </div>
-
             {/* Right Col: Leadership bio copy panel */}
             <div className="md:col-span-7 p-8 sm:p-14 flex flex-col justify-center space-y-6 relative z-10 bg-brand-blue-950 border-t md:border-t-0 md:border-l border-brand-blue-900/60">
               <div className="space-y-2.5">
@@ -397,22 +396,24 @@ export const AboutView: React.FC = () => {
                 </div>
                 
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
-                  {COMPANY_DETAILS.leadership.governingPartner.name}
+                  <EditableValue id="gp_name" defaultValue={COMPANY_DETAILS.leadership.governingPartner.name} />
                 </h3>
                 <p className="text-xs sm:text-sm text-brand-gold-500 font-mono tracking-wider uppercase leading-none font-semibold">
-                  {COMPANY_DETAILS.leadership.governingPartner.role}
+                  <EditableValue id="gp_role" defaultValue={COMPANY_DETAILS.leadership.governingPartner.role} />
                 </p>
               </div>
 
               <div className="h-px bg-brand-blue-800/60 w-full" />
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
-                "{COMPANY_DETAILS.leadership.governingPartner.bio}"
+                "<EditableValue id="gp_bio" defaultValue={COMPANY_DETAILS.leadership.governingPartner.bio} />"
               </p>
 
               <div className="pt-2 flex items-center gap-3">
                 <span className="text-[10px] text-neutral-400 uppercase font-mono">Sign of Authority</span>
-                <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">G. Selva Kumar</span>
+                <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">
+                  <EditableValue id="gp_signature" defaultValue="G. Selva Kumar" />
+                </span>
               </div>
             </div>
 
@@ -445,22 +446,24 @@ export const AboutView: React.FC = () => {
                 </div>
                 
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
-                  {COMPANY_DETAILS.leadership.managingDirector.name}
+                  <EditableValue id="md_name" defaultValue={COMPANY_DETAILS.leadership.managingDirector.name} />
                 </h3>
                 <p className="text-xs sm:text-sm text-brand-gold-500 font-mono tracking-wider uppercase leading-none font-semibold">
-                  {COMPANY_DETAILS.leadership.managingDirector.role}
+                  <EditableValue id="md_role" defaultValue={COMPANY_DETAILS.leadership.managingDirector.role} />
                 </p>
               </div>
 
               <div className="h-px bg-brand-blue-800/60 w-full" />
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
-                "{COMPANY_DETAILS.leadership.managingDirector.bio}"
+                "<EditableValue id="md_bio" defaultValue={COMPANY_DETAILS.leadership.managingDirector.bio} />"
               </p>
 
               <div className="pt-2 flex items-center gap-3">
                 <span className="text-[10px] text-neutral-400 uppercase font-mono">Sign of Authority</span>
-                <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">Vetrivel S</span>
+                <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">
+                  <EditableValue id="md_signature" defaultValue="Vetrivel S" />
+                </span>
               </div>
             </div>
 
