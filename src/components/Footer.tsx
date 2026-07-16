@@ -8,11 +8,13 @@ import { Phone, Mail, MapPin, Award, ArrowUpRight, Instagram, FileText } from 'l
 import { useNavigate } from 'react-router-dom';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ActiveView } from '../types';
+import { useAdmin } from '../context/AdminContext';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
+  const { setShowLoginModal } = useAdmin();
 
   const quickLinks = [
     { label: 'Home Page', view: 'home' as ActiveView },
@@ -216,6 +218,13 @@ export const Footer: React.FC = () => {
             <span>•</span>
             <button onClick={() => handleLinkClick('contact')} className="hover:text-brand-gold-400 transition-colors">
               Contract Intake Portal
+            </button>
+            <span>•</span>
+            <button 
+              onClick={() => setShowLoginModal(true)} 
+              className="hover:text-brand-gold-400 transition-colors text-[10px] text-neutral-500 hover:underline uppercase tracking-wider font-mono cursor-pointer"
+            >
+              Admin Portal
             </button>
           </div>
         </div>

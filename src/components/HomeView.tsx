@@ -30,6 +30,8 @@ import {
 import { COMPANY_DETAILS, SERVICE_CATEGORIES, PROJECTS } from '../data';
 import { ActiveView } from '../types';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
+import { useAdmin } from '../context/AdminContext';
+import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
 interface HomeViewProps {
@@ -104,9 +106,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
     return () => clearInterval(timer);
   }, [isCarouselPaused, heroSlides.length]);
 
+  const { getValue, isAdmin } = useAdmin();
+  const yoeTarget = getValue('home_years_of_legacy', 20);
+  const pumpCountTarget = getValue('home_heavy_machineries', 400);
+
   // Triggering hooks for numbers
-  const yoeAnim = useCountUp(20, 1800);
-  const pumpCount = useCountUp(400, 1500);
+  const yoeAnim = useCountUp(yoeTarget, 1800);
+  const pumpCount = useCountUp(pumpCountTarget, 1500);
 
   // Dewatering Speed Telemetry Simulator calculations
   // Sri Velan & Co can discharge on average 3,000 Liters of water per hour with a 4-inch pump.
@@ -299,12 +305,18 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  {yoeAnim}+
+                  {isAdmin ? (
+                    <EditableValue id="home_years_of_legacy" defaultValue={20} displaySuffix="+" />
+                  ) : (
+                    <>{yoeAnim}+</>
+                  )}
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   Years of Structural Legacy
                 </p>
-                <p className="text-xs text-neutral-500 leading-tight">Founded in 2006 in Villupuram</p>
+                <p className="text-xs text-neutral-500 leading-tight">
+                  Founded in <EditableValue id="company_year_established" defaultValue={2006} /> in Villupuram
+                </p>
               </div>
             </div>
 
@@ -315,7 +327,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  5+
+                  <EditableValue id="home_gov_registrations" defaultValue={5} displaySuffix="+" />
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   Government Registered Contractor
@@ -331,7 +343,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  {pumpCount}+
+                  {isAdmin ? (
+                    <EditableValue id="home_heavy_machineries" defaultValue={400} displaySuffix="+" />
+                  ) : (
+                    <>{pumpCount}+</>
+                  )}
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   Heavy Machineries & Fleet
@@ -347,7 +363,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  24/7
+                  <EditableValue id="home_dispatch_hours" defaultValue="24/7" />
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   Disaster Dispatch Desk

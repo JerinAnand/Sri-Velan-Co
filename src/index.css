@@ -324,6 +324,33 @@ html.dark-high-contrast #state-districts path[fill="#f87171"] {
 }
 
 /* ==========================================================================
+   ADMIN PORTAL EDITABLE HIGH-CONTRAST HIGHLIGHT & PULSE
+   ========================================================================== */
+@keyframes adminPulse {
+  0% {
+    outline: 2px dashed rgba(230, 179, 37, 0.4);
+    outline-offset: 2px;
+    box-shadow: 0 0 2px rgba(230, 179, 37, 0.2);
+  }
+  50% {
+    outline: 2px dashed rgba(230, 179, 37, 0.95);
+    outline-offset: 4px;
+    box-shadow: 0 0 10px 3px rgba(230, 179, 37, 0.65);
+    background-color: rgba(230, 179, 37, 0.15);
+  }
+  100% {
+    outline: 2px dashed rgba(230, 179, 37, 0.4);
+    outline-offset: 2px;
+    box-shadow: 0 0 2px rgba(230, 179, 37, 0.2);
+  }
+}
+
+.admin-editable-highlight {
+  animation: adminPulse 2s infinite ease-in-out !important;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
    PRINT OPTIMIZATIONS (PRINT-FRIENDLY STYLING & MEDIA QUERIES)
    ========================================================================== */
 @media print {

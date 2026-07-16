@@ -28,9 +28,12 @@ import {
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ServiceAreaMap } from './ServiceAreaMap';
+import { useAdmin } from '../context/AdminContext';
+import { EditableValue } from './EditableValue';
 
 export const AboutView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'credentials' | 'milestones'>('profile');
+  const { isAdmin } = useAdmin();
 
   // Strategic milestones structured from the incorporation history
   const corporateMilestones = [
@@ -270,25 +273,35 @@ export const AboutView: React.FC = () => {
             <div className="space-y-12 text-left">
               <div className="max-w-xl">
                 <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase">OUR EVOLUTION</span>
-                <h2 className="text-2xl sm:text-3.5xl font-black text-brand-blue-900 tracking-tight mt-1">22-Year Infrastructure Trajectory</h2>
+                <h2 className="text-2xl sm:text-3.5xl font-black text-brand-blue-900 tracking-tight mt-1">
+                  <EditableValue id="trajectory_22_year" defaultValue="22-Year" /> Infrastructure Trajectory
+                </h2>
                 <p className="text-neutral-550 text-xs sm:text-sm font-sans font-light">Centralizing our progress from rural sub-pavement blocks to major regional civic contracts.</p>
               </div>
 
               {/* Milestones Vertical Stack */}
               <div className="relative border-l border-neutral-200 pl-6 sm:pl-8 ml-4 sm:ml-6 space-y-10 py-2">
-                {corporateMilestones.map((ms) => (
-                  <div key={ms.year} className="relative group">
+                {corporateMilestones.map((ms, idx) => (
+                  <div key={idx} className="relative group">
                     {/* Node Dot indicator */}
                     <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 h-4 w-4 rounded-full bg-brand-gold-500 border-4 border-white shadow-md group-hover:bg-brand-blue-800 transition-colors" />
                     
                     <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-250/70 hover:border-brand-blue-700/30 hover:bg-white hover:shadow-lg transition-all max-w-3xl">
                       <div className="flex items-center gap-3 flex-wrap mb-2">
-                        <span className="font-mono text-xl sm:text-2xl font-black text-brand-blue-900 tracking-tight">{ms.year}</span>
-                        <span className="text-[9px] font-mono tracking-widest bg-brand-blue-900/5 text-brand-blue-850 px-2 py-0.5 rounded border border-brand-blue-800/10 uppercase font-semibold">{ms.tag}</span>
+                        <span className="font-mono text-xl sm:text-2xl font-black text-brand-blue-900 tracking-tight">
+                          <EditableValue id={`milestone_year_${idx}`} defaultValue={ms.year} />
+                        </span>
+                        <span className="text-[9px] font-mono tracking-widest bg-brand-blue-900/5 text-brand-blue-850 px-2 py-0.5 rounded border border-brand-blue-800/10 uppercase font-semibold">
+                          <EditableValue id={`milestone_tag_${idx}`} defaultValue={ms.tag} />
+                        </span>
                       </div>
                       
-                      <h4 className="font-display font-bold text-sm sm:text-base text-neutral-900 mb-1">{ms.title}</h4>
-                      <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans font-light">{ms.desc}</p>
+                      <h4 className="font-display font-bold text-sm sm:text-base text-neutral-900 mb-1">
+                        <EditableValue id={`milestone_title_${idx}`} defaultValue={ms.title} />
+                      </h4>
+                      <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans font-light">
+                        <EditableValue id={`milestone_desc_${idx}`} defaultValue={ms.desc} />
+                      </p>
                     </div>
                   </div>
                 ))}

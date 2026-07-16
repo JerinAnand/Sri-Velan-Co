@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { EQUIPMENTS } from '../data';
 import { EquipmentItem } from '../types';
+import { useAdmin } from '../context/AdminContext';
+import { EditableValue } from './EditableValue';
 
 const METRIC_HELP_TEXTS: Record<string, string> = {
   'Maximum Discharge Capacity': 'The volume of liquid or dynamic fluid handled by the pump per hour/minute, indicating speed of dewatering under standard load.',
@@ -30,6 +32,12 @@ const METRIC_HELP_TEXTS: Record<string, string> = {
 };
 
 export const EquipmentsView: React.FC = () => {
+  const { getValue } = useAdmin();
+
+  const getSpecValue = (equipId: string, label: string, defaultVal: string) => {
+    return getValue(`eq_spec_${equipId}_${label}`, defaultVal);
+  };
+
   const [activeCategory, setActiveCategory] = useState<'all' | 'tractor-mounted' | 'earth-moving'>('all');
   const [selectedEquip, setSelectedEquip] = useState<EquipmentItem | null>(EQUIPMENTS[0]);
 
@@ -331,7 +339,10 @@ export const EquipmentsView: React.FC = () => {
                               {label}
                             </span>
                             <span className="text-neutral-800 font-mono text-left sm:text-right font-medium">
-                              {val}
+                              <EditableValue
+                                id={`eq_spec_${selectedEquip.id}_${label}`}
+                                defaultValue={val as string | number}
+                              />
                             </span>
                           </div>
                         ))}
@@ -476,8 +487,8 @@ export const EquipmentsView: React.FC = () => {
                       ))
                     ) : (
                       combinedSpecKeys.map((key, idx) => {
-                        const valA = pumpA?.specs[key] || '—';
-                        const valB = pumpB?.specs[key] || '—';
+                        const valA = pumpA ? getSpecValue(pumpA.id, key, pumpA.specs[key] || '—') : '—';
+                        const valB = pumpB ? getSpecValue(pumpB.id, key, pumpB.specs[key] || '—') : '—';
 
                         return (
                           <tr 
