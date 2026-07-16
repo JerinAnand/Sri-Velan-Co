@@ -178,10 +178,19 @@ html.dark-high-contrast textarea::placeholder {
 
 /* 6. Standard Borders and Dividers */
 html.dark-high-contrast .border,
+html.dark-high-contrast .border-neutral-100,
+html.dark-high-contrast .border-neutral-150,
+html.dark-high-contrast .border-neutral-150\/70,
+html.dark-high-contrast .border-neutral-150\/80,
+html.dark-high-contrast .border-brand-blue-100,
+html.dark-high-contrast .border-brand-blue-200\/50,
+html.dark-high-contrast .border-brand-gold-200\/50,
 html.dark-high-contrast .border-neutral-200,
-html.dark-high-contrast .border-neutral-200\/80,
+html.dark-high-contrast .border-neutral-200\/50,
 html.dark-high-contrast .border-neutral-200\/60,
-html.dark-high-contrast .border-neutral-250\/70 {
+html.dark-high-contrast .border-neutral-200\/80,
+html.dark-high-contrast .border-neutral-250\/70,
+html.dark-high-contrast .border-neutral-300 {
   border-color: #374151 !important;
 }
 
@@ -207,6 +216,111 @@ html.dark-high-contrast .bg-emerald-100 {
 html.dark-high-contrast .bg-emerald-50 *,
 html.dark-high-contrast .bg-emerald-100 * {
   color: #e0f2fe !important;
+}
+
+/* 9. High-Contrast Badge and Pill Component Overrides */
+html.dark-high-contrast .bg-brand-blue-50,
+html.dark-high-contrast .bg-brand-blue-700\/5,
+html.dark-high-contrast .bg-brand-blue-900\/5,
+html.dark-high-contrast .bg-brand-blue-600\/10 {
+  background-color: #0d1e36 !important;
+  border-color: #1e3a8a !important;
+}
+
+html.dark-high-contrast .bg-brand-gold-50,
+html.dark-high-contrast .bg-brand-gold-500\/10,
+html.dark-high-contrast .bg-brand-gold-500\/15 {
+  background-color: #261f0c !important;
+  border-color: #854d0e !important;
+}
+
+html.dark-high-contrast .bg-red-50,
+html.dark-high-contrast .bg-red-50\/50,
+html.dark-high-contrast .bg-red-50\/80,
+html.dark-high-contrast .bg-amber-50\/50,
+html.dark-high-contrast .bg-yellow-50,
+html.dark-high-contrast .bg-yellow-500\/10 {
+  background-color: #2d0c0c !important;
+  border-color: #991b1b !important;
+}
+
+html.dark-high-contrast .bg-neutral-100,
+html.dark-high-contrast .bg-neutral-100\/50,
+html.dark-high-contrast .bg-neutral-100\/60,
+html.dark-high-contrast .bg-neutral-100\/80 {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+html.dark-high-contrast .bg-indigo-100 {
+  background-color: #1e1b4b !important;
+  border-color: #312e81 !important;
+}
+
+/* Override text colors inside badges specifically to guarantee excellent contrast */
+html.dark-high-contrast .text-brand-blue-600,
+html.dark-high-contrast .text-brand-blue-700,
+html.dark-high-contrast .text-brand-blue-800,
+html.dark-high-contrast .text-brand-blue-850 {
+  color: #93c5fd !important;
+}
+
+html.dark-high-contrast .text-brand-gold-600,
+html.dark-high-contrast .text-brand-gold-700,
+html.dark-high-contrast .text-yellow-600,
+html.dark-high-contrast .text-yellow-800 {
+  color: #f3ce6b !important;
+}
+
+html.dark-high-contrast .text-red-700,
+html.dark-high-contrast .text-red-800,
+html.dark-high-contrast .text-amber-800 {
+  color: #fca5a5 !important;
+}
+
+html.dark-high-contrast .text-indigo-800 {
+  color: #c7d2fe !important;
+}
+
+html.dark-high-contrast .text-neutral-450,
+html.dark-high-contrast .text-neutral-500,
+html.dark-high-contrast .text-neutral-600 {
+  color: #d1d5db !important;
+}
+
+/* SVG Map district overlays and text label colors */
+html.dark-high-contrast svg text {
+  fill: #ffffff !important;
+}
+html.dark-high-contrast svg text.fill-neutral-500 {
+  fill: #9ca3af !important;
+}
+html.dark-high-contrast svg text.fill-red-500,
+html.dark-high-contrast svg text.fill-red-600 {
+  fill: #fca5a5 !important;
+}
+
+/* Override SVG Map district path fill colors for light/standby values */
+html.dark-high-contrast #state-districts path[fill="#f3f4f6"],
+html.dark-high-contrast #state-districts path[fill="#f5f5f5"] {
+  fill: #111d2e !important;
+  stroke: #374151 !important;
+}
+html.dark-high-contrast #state-districts path[fill="#eaeaea"] {
+  fill: #1f2937 !important;
+  stroke: #4b5563 !important;
+}
+html.dark-high-contrast #state-districts path[fill="#fef08a"] {
+  fill: #9a3412 !important; /* amber-800 for high-contrast standby */
+  stroke: #ea580c !important;
+}
+html.dark-high-contrast #state-districts path[fill="#93c5fd"] {
+  fill: #1e3a8a !important; /* blue-800 for active support */
+  stroke: #3b82f6 !important;
+}
+html.dark-high-contrast #state-districts path[fill="#f87171"] {
+  fill: #7f1d1d !important; /* red-900 for high-activity */
+  stroke: #ef4444 !important;
 }
 
 /* ==========================================================================
