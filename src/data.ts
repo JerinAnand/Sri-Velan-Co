@@ -92,7 +92,7 @@ export const SERVICE_CATEGORIES = [
     title: 'Urban Water Drainage & Multi-Utility Corridors',
     shortDescription: 'Building massive multi-chamber concrete storm water tunnels and heavy structural channels inside metropolitan rings.',
     fullDescription: 'Designing and executing reinforced concrete storm water systems beneath urban limits to prevent chronic waterlogging: placing precast heavy box conduits and casting in-situ dynamic storm trunks engineered for multi-ton vehicle traffic crossings.',
-    image: new URL('./assets/images/urban-water-drinage.jpg', import.meta.url).href,
+    image: new URL('./assets/images/regenerated_image_1784265170496.jpg', import.meta.url).href,
     highlights: ['High-Strength RCC Drain Channels', 'Precast Conduit Placements', 'Structural Manhole & Junction boxes', 'System Integration & Utility relocations']
   },
   {
