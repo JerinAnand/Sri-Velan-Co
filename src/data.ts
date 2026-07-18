@@ -92,7 +92,7 @@ export const SERVICE_CATEGORIES = [
     title: 'Urban Water Drainage & Multi-Utility Corridors',
     shortDescription: 'Building massive multi-chamber concrete storm water tunnels and heavy structural channels inside metropolitan rings.',
     fullDescription: 'Designing and executing reinforced concrete storm water systems beneath urban limits to prevent chronic waterlogging: placing precast heavy box conduits and casting in-situ dynamic storm trunks engineered for multi-ton vehicle traffic crossings.',
-    image: new URL('./assets/images/regenerated_image_1784265170496.jpg', import.meta.url).href,
+    image: new URL('./assets/images/regenerated_image_1784369432168.jpg', import.meta.url).href,
     highlights: ['High-Strength RCC Drain Channels', 'Precast Conduit Placements', 'Structural Manhole & Junction boxes', 'System Integration & Utility relocations']
   },
   {
@@ -100,7 +100,7 @@ export const SERVICE_CATEGORIES = [
     title: 'Disaster Relief & Heavy Dewatering Operations',
     shortDescription: 'The foremost deployment partner in South India for heavy dewatering systems, rapid canal breaching responses, and flood management.',
     fullDescription: 'Our emergency fleet operates around the clock during severe environmental storms across Chennai and coastal regions. Guided by expert technical engineers, we deploy extremely high-volume custom dewatering setups (up to 100 HP) and heavy earth movers to safeguard civilians and city grids.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYKfiwAnr8tSFNjZj_XSzajQQvnAVzDU79fw73VK9DcbcAJAz2le3lr5e6XhpkbK0bStuz2LU6hPoCoBytCVOO1Id0NA5xI_ye_kSutkyrbLNS86LKr68hdy6Z5EW5Chlp5Y4BhprAchhgtOexFV6eWL5-WSI7RYWV96iLGl5czosEa5AlEQR6Cro_id1zSO760qRM0awrOHnTn5aGlACqvBLkccoIBSTozM-SoG1s7yG5I_T_T7KbRDPh8-Tl0xs_QPlVrXdxEq8w',
+    image: new URL('./assets/images/regenerated_image_1784369789659.jpg', import.meta.url).href,
     highlights: ['4", 6" Air-Assist Vacuum Dewatering Pumps', 'High capacity 100 HP Submersible Dewatering Units', 'Rapid canal breach sandbagging and earthworks', 'Continuous 24/7 operator supervision']
   },
   {
