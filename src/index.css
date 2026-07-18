@@ -29,6 +29,9 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight text-neutral-900;
   }
+  body, header, nav, section, button, h1, h2, h3, h4, h5, h6, p, span, input, textarea, select {
+    transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out, color 200ms ease-in-out, box-shadow 200ms ease-in-out;
+  }
 }
 
 /* Custom Smooth Transitions */

@@ -54,7 +54,7 @@ export const Footer: React.FC = () => {
                 />
               </div>
               <div>
-                <h3 className="font-display font-bold text-lg tracking-wide uppercase" style={{ color: '#bea937' }}>
+                <h3 className="font-display font-bold text-lg tracking-wide uppercase text-brand-gold-500">
                   <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
                 </h3>
                 <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">

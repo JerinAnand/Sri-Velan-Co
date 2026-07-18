@@ -4,6 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sri Velan & Co | Government Engineering Contractors</title>
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('srivelan_theme');
+          if (stored === 'dark' || (!stored && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark-high-contrast');
+          } else {
+            document.documentElement.classList.remove('dark-high-contrast');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="description" content="Sri Velan & Co delivers certified government infrastructure services, including municipal buildings, irrigation channels, and diesel-powered dewatering pumps." />
     <meta name="keywords" content="Sri Velan & Co, Tamil Nadu PWD contractors, Water Resources Department Tamil Nadu, government civil engineering contractors, municipal building construction India, WRD irrigation channel contractors, tractor-mounted highway sweepers, diesel-powered dewatering pumps, irrigation canal stone pitching, emergency dewatering services Villupuram" />
     <link rel="icon" type="image/png" href="/sri-velan-logo.png" />

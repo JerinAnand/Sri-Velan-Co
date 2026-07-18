@@ -160,7 +160,7 @@ export const EquipmentsView: React.FC = () => {
           <span className="text-xs font-mono font-semibold tracking-widest text-brand-gold-400 uppercase">
             HEAVY MACHINERY FLEET
           </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight" style={{ color: '#bea937' }}>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-gold-500">
             Advanced Operational Machineries & Fleet
           </h1>
           <p className="max-w-3xl text-sm sm:text-base text-neutral-300 leading-relaxed font-sans font-light">
@@ -552,7 +552,7 @@ export const EquipmentsView: React.FC = () => {
       <section className="bg-brand-blue-900 text-white py-14" id="equip-dispatch-callout">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-4">
           <p className="text-brand-gold-400 font-mono text-xs uppercase tracking-widest font-bold">24/7 Operations Duty</p>
-          <h2 className="text-xl sm:text-2xl font-black font-display" style={{ color: '#bda72d' }}>Need Immediate Water Dewatering Pumps Dispatch?</h2>
+          <h2 className="text-xl sm:text-2xl font-black font-display text-brand-gold-400">Need Immediate Water Dewatering Pumps Dispatch?</h2>
           <p className="text-xs sm:text-sm text-neutral-300">Our diesel pump configurations and drivers are registered with emergency PWD panels and fully operational in any extreme cyclone environment.</p>
           <div className="pt-2">
             <a 

@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShieldAlert, Flame, MapPin, CheckCircle, Droplet, User, Settings, Info } from 'lucide-react';
+import { ShieldAlert, Flame, MapPin, CheckCircle, Droplet, User, Settings, Info, Activity } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
 import { EditableValue } from './EditableValue';
 
@@ -277,6 +277,42 @@ export const ServiceAreaMap: React.FC = () => {
     });
     observer.observe(containerRef.current);
     return () => observer.disconnect();
+  }, []);
+
+  // Fetch real-time telemetry on mount and keep map metrics synchronized
+  useEffect(() => {
+    const fetchLiveTelemetry = async () => {
+      try {
+        const res = await fetch('https://api.sheety.co/a60c109366402ebe451f834d2ca573d4/telemetryData/telemetry');
+        if (!res.ok) return;
+        const { telemetry } = await res.json();
+        if (telemetry && Array.isArray(telemetry)) {
+          setZonalRecords(prev => {
+            const next = { ...prev };
+            telemetry.forEach((item: any) => {
+              const zoneNumStr = item.zone?.match(/\d+/)?.[0];
+              if (zoneNumStr) {
+                const zoneKey = `zone${zoneNumStr}`;
+                if (next[zoneKey]) {
+                  next[zoneKey] = {
+                    ...next[zoneKey],
+                    pumpsDeployed: item.activePumps !== undefined ? Number(item.activePumps) : next[zoneKey].pumpsDeployed,
+                    activeStaff: item.staffCount !== undefined ? Number(item.staffCount) : next[zoneKey].activeStaff
+                  };
+                }
+              }
+            });
+            return next;
+          });
+        }
+      } catch (err) {
+        console.warn('Live map telemetry sync failed:', err);
+      }
+    };
+
+    fetchLiveTelemetry();
+    const interval = setInterval(fetchLiveTelemetry, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const activeRegions = (Object.values(zonalRecords) as DistrictData[]).filter(d => d.isActive);
@@ -678,116 +714,12 @@ export const ServiceAreaMap: React.FC = () => {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-3 pt-4 border-t border-neutral-100">
-                      <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-150/70">
-                        <div className="flex items-center gap-1.5 text-brand-blue-700">
-                          <Droplet className="w-3.5 h-3.5" />
-                          <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">Active Pumps</span>
-                        </div>
-                        <p className="text-xl sm:text-2xl font-black text-neutral-900 mt-1 font-mono leading-none">
-                          <EditableValue
-                            id={`zone_pumpsDeployed_${currentRecord.id}`}
-                            defaultValue={currentRecord.pumpsDeployed}
-                            onSave={(val) => {
-                              setZonalRecords(prev => ({
-                                ...prev,
-                                [currentRecord.id]: {
-                                  ...prev[currentRecord.id],
-                                  pumpsDeployed: Number(val)
-                                }
-                              }));
-                            }}
-                          />
-                        </p>
-                      </div>
-
-                      <div className={`p-3 rounded-xl border flex flex-col justify-between transition-all ${
-                        currentRecord.activeStaff > 45 
-                          ? 'bg-red-50/50 border-red-200 ring-1 ring-red-100' 
-                          : 'bg-neutral-50 border-neutral-150/70'
-                      }`}>
-                        <div className="flex items-center gap-1.5 text-brand-blue-700">
-                          <User className="w-3.5 h-3.5 shrink-0" />
-                          <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">On-field Staff</span>
-                        </div>
-                        <div className="flex items-center justify-between mt-1 gap-1">
-                          <p className={`text-lg sm:text-xl font-black font-mono leading-none ${
-                            currentRecord.activeStaff > 45 ? 'text-red-600' : 'text-neutral-900'
-                          }`}>
-                            <EditableValue
-                              id={`zone_activeStaff_${currentRecord.id}`}
-                              defaultValue={currentRecord.activeStaff}
-                              onSave={(val) => {
-                                setZonalRecords(prev => ({
-                                  ...prev,
-                                  [currentRecord.id]: {
-                                    ...prev[currentRecord.id],
-                                    activeStaff: Number(val)
-                                  }
-                                }));
-                              }}
-                            />
-                          </p>
-                          {isAdmin && (
-                            <div className="flex gap-0.5">
-                              <button
-                                onClick={() => {
-                                  const newVal = Math.max(0, currentRecord.activeStaff - 1);
-                                  setZonalRecords(prev => ({
-                                    ...prev,
-                                    [currentRecord.id]: {
-                                      ...prev[currentRecord.id],
-                                      activeStaff: newVal
-                                    }
-                                  }));
-                                  updateValue(`zone_activeStaff_${currentRecord.id}`, newVal);
-                                }}
-                                className="w-4 h-4 bg-neutral-200 hover:bg-neutral-300 rounded text-neutral-800 text-[9px] font-extrabold flex items-center justify-center transition-colors cursor-pointer"
-                                title="Decrease staff"
-                              >
-                                -
-                              </button>
-                              <button
-                                onClick={() => {
-                                  const newVal = currentRecord.activeStaff + 1;
-                                  setZonalRecords(prev => ({
-                                    ...prev,
-                                    [currentRecord.id]: {
-                                      ...prev[currentRecord.id],
-                                      activeStaff: newVal
-                                    }
-                                  }));
-                                  updateValue(`zone_activeStaff_${currentRecord.id}`, newVal);
-                                }}
-                                className="w-4 h-4 bg-neutral-200 hover:bg-neutral-300 rounded text-neutral-800 text-[9px] font-extrabold flex items-center justify-center transition-colors cursor-pointer"
-                                title="Increase staff"
-                              >
-                                +
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="bg-neutral-50 p-3 rounded-xl border border-neutral-150/70">
-                        <div className="flex items-center gap-1.5 text-brand-blue-700">
-                          <Settings className="w-3.5 h-3.5" />
-                          <span className="text-[9px] font-mono text-neutral-450 uppercase font-semibold">Incidents Met</span>
-                        </div>
-                        <p className="text-xl sm:text-2xl font-black text-neutral-900 mt-1 font-mono leading-none">
-                          <EditableValue
-                            id={`zone_floodsManaged_${currentRecord.id}`}
-                            defaultValue={currentRecord.floodsManaged}
-                            onSave={(val) => {
-                              setZonalRecords(prev => ({
-                                ...prev,
-                                [currentRecord.id]: {
-                                  ...prev[currentRecord.id],
-                                  floodsManaged: Number(val)
-                                }
-                              }));
-                            }}
-                          />
+                    <div className="bg-brand-blue-50/50 border border-brand-blue-100 rounded-xl p-4 text-brand-blue-800 text-xs flex items-start gap-2.5 mt-4">
+                      <Activity className="w-4 h-4 text-brand-blue-600 shrink-0 mt-0.5 animate-pulse" />
+                      <div>
+                        <p className="font-bold">Real-time Telemetry Active</p>
+                        <p className="text-[11px] text-brand-blue-700/95 font-medium mt-0.5 leading-relaxed">
+                          Kindly check the Emergency Telemetry Feed for Real Time Data.
                         </p>
                       </div>
                     </div>

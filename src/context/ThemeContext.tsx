@@ -14,6 +14,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       const stored = localStorage.getItem('srivelan_theme');
       if (stored === 'dark') return 'dark';
+      if (stored === 'light') return 'light';
+      
+      // Check system-level prefers-color-scheme as default
+      if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
     } catch {
       // Safe fallback
     }
