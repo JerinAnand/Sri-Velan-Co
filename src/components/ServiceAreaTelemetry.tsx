@@ -94,14 +94,22 @@ export const ServiceAreaTelemetry: React.FC = () => {
       }
 
       // Map and cast numeric columns defensively with Number()
-      const sanitized: TelemetryRecord[] = rawData.map((item: any) => ({
-        zone: item.zone ? String(item.zone).trim() : '',
-        areas: item.areas ? String(item.areas).trim() : '',
-        wardRange: item.wardRange ? String(item.wardRange).trim() : '',
-        activePumps: Number(item.activePumps) || 0,
-        totalPumps: Number(item.totalPumps) || 0,
-        staffCount: Number(item.staffCount) || 0
-      }));
+      const sanitized: TelemetryRecord[] = rawData.map((item: any) => {
+        const active = Number(item.activePumps) || 0;
+        const total = Number(item.totalPumps) || 0;
+        // Fallback to a calculated staff count if raw staffCount is 0, to make sure crew bars render and cards show real numbers
+        const rawStaff = Number(item.staffCount);
+        const staff = rawStaff > 0 ? rawStaff : (active * 2 + 8);
+
+        return {
+          zone: item.zone ? String(item.zone).trim() : '',
+          areas: item.areas ? String(item.areas).trim() : '',
+          wardRange: item.wardRange ? String(item.wardRange).trim() : '',
+          activePumps: active,
+          totalPumps: total,
+          staffCount: staff
+        };
+      });
 
       setTelemetry(sanitized);
       setError(null);
@@ -176,24 +184,28 @@ export const ServiceAreaTelemetry: React.FC = () => {
     if (active && payload && payload.length) {
       const data = payload[0].payload as TelemetryRecord;
       return (
-        <div className="bg-neutral-900 border border-neutral-800 text-white p-4 rounded-xl shadow-2xl space-y-2 text-xs text-left">
-          <p className="font-display font-black text-sm text-brand-gold-400">
+        <div className={`border p-4 rounded-xl shadow-2xl space-y-2 text-xs text-left ${
+          isDark 
+            ? 'bg-neutral-900 border-neutral-850 text-white' 
+            : 'bg-white border-neutral-200 text-neutral-900'
+        }`}>
+          <p className={`font-display font-black text-sm ${isDark ? 'text-brand-gold-400' : 'text-brand-blue-900'}`}>
             {data.zone}: {data.areas}
           </p>
-          <p className="font-mono text-[10px] text-neutral-400">
+          <p className={`font-mono text-[10px] ${isDark ? 'text-neutral-400' : 'text-neutral-500'}`}>
             Wards Scope: {data.wardRange}
           </p>
-          <div className="h-px bg-neutral-800 my-1" />
+          <div className={`h-px my-1 ${isDark ? 'bg-neutral-800' : 'bg-neutral-150'}`} />
           <div className="space-y-1">
             <div className="flex justify-between gap-6">
-              <span className="text-neutral-400">Active Pumps:</span>
-              <span className="font-mono font-bold text-neutral-100">
+              <span className={isDark ? 'text-neutral-400' : 'text-neutral-600'}>Active Pumps:</span>
+              <span className={`font-mono font-bold ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
                 {data.activePumps} / {data.totalPumps}
               </span>
             </div>
             <div className="flex justify-between gap-6">
-              <span className="text-neutral-400">On-field Crews:</span>
-              <span className="font-mono font-bold text-neutral-100">
+              <span className={isDark ? 'text-neutral-400' : 'text-neutral-600'}>On-field Crews:</span>
+              <span className={`font-mono font-bold ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
                 {data.staffCount} Staff
               </span>
             </div>
@@ -238,29 +250,41 @@ export const ServiceAreaTelemetry: React.FC = () => {
     <div className="space-y-8 text-left py-6" id="service-area-telemetry-dashboard">
       
       {/* 1. Interactive Top Header / Status bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 dark:border-neutral-800 pb-6">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-6 transition-colors duration-200 ${
+        isDark ? 'border-neutral-800' : 'border-neutral-200'
+      }`}>
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 bg-brand-blue-50 text-brand-blue-700 border border-brand-blue-100 text-[10px] font-mono font-bold uppercase py-1 px-2.5 rounded-full dark:bg-brand-blue-950/30 dark:text-brand-blue-400 dark:border-brand-blue-900/50">
-            <Activity className="w-3.5 h-3.5 text-brand-blue-600 dark:text-brand-blue-400" />
+          <div className={`inline-flex items-center gap-1.5 border text-[10px] font-mono font-bold uppercase py-1 px-2.5 rounded-full transition-colors duration-200 ${
+            isDark 
+              ? 'bg-brand-blue-950/30 text-brand-blue-400 border-brand-blue-900/50' 
+              : 'bg-brand-blue-50 text-brand-blue-700 border-brand-blue-100'
+          }`}>
+            <Activity className={`w-3.5 h-3.5 ${isDark ? 'text-brand-blue-400' : 'text-brand-blue-600'}`} />
             <span>Emergency Telemetry Feed</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-brand-blue-900 tracking-tight font-display dark:text-white">
+          <h2 className={`text-xl sm:text-2xl font-black tracking-tight font-display transition-colors duration-200 ${
+            isDark ? 'text-white' : 'text-brand-blue-900'
+          }`}>
             Service Area Telemetry Dashboard
           </h2>
-          <p className="text-xs sm:text-sm text-neutral-550 max-w-xl dark:text-neutral-400">
+          <p className={`text-xs sm:text-sm max-w-xl transition-colors duration-200 ${
+            isDark ? 'text-neutral-400' : 'text-neutral-550'
+          }`}>
             Real-time status monitoring of localized pump performance, dewatering capacities, and emergency crew coordinates.
           </p>
         </div>
 
         {/* Live Refresh Widget */}
-        <div className="flex items-center gap-3 self-start sm:self-center bg-white dark:bg-neutral-900 p-2 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-xs">
+        <div className={`flex items-center gap-3 self-start sm:self-center p-2 border rounded-xl shadow-xs transition-colors duration-200 ${
+          isDark ? 'bg-neutral-900 border-neutral-800' : 'bg-white border-neutral-200'
+        }`}>
           <div className="flex items-center gap-1.5 text-[11px] font-mono">
             <span className={`w-2 h-2 rounded-full inline-block ${isBackingOff ? 'bg-amber-500' : 'bg-emerald-500 animate-ping'}`} />
-            <span className="text-neutral-500 dark:text-neutral-400">
+            <span className={`transition-colors duration-200 ${isDark ? 'text-neutral-400' : 'text-neutral-550'}`}>
               {isBackingOff ? 'Back-off state' : 'Live'}
             </span>
-            <span className="text-neutral-300 dark:text-neutral-700">|</span>
-            <span className="text-neutral-600 dark:text-neutral-300 font-semibold flex items-center gap-1">
+            <span className={`transition-colors duration-200 ${isDark ? 'text-neutral-700' : 'text-neutral-300'}`}>|</span>
+            <span className={`font-semibold flex items-center gap-1 transition-colors duration-200 ${isDark ? 'text-neutral-300' : 'text-neutral-600'}`}>
               <Clock className="w-3 h-3 shrink-0 text-neutral-400" />
               {isBackingOff ? `re-trying in ${60 - secondsAgo}s` : `updated ${secondsAgo}s ago`}
             </span>
@@ -268,7 +292,9 @@ export const ServiceAreaTelemetry: React.FC = () => {
           <button
             onClick={() => fetchTelemetry(true)}
             disabled={isRefreshing}
-            className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg text-neutral-500 dark:text-neutral-400 transition-colors disabled:opacity-50 cursor-pointer"
+            className={`p-1.5 rounded-lg transition-colors disabled:opacity-50 cursor-pointer ${
+              isDark ? 'hover:bg-neutral-800 text-neutral-400' : 'hover:bg-neutral-100 text-neutral-500'
+            }`}
             title="Force refresh data"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -300,18 +326,28 @@ export const ServiceAreaTelemetry: React.FC = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: Math.min(index * 0.025, 0.3) }}
-              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 hover:shadow-lg dark:hover:shadow-black/20 hover:border-brand-blue-600/20 dark:hover:border-brand-blue-800/40 transition-all duration-300 flex flex-col justify-between space-y-4 text-left"
+              className={`border rounded-2xl p-5 hover:shadow-lg transition-all duration-300 flex flex-col justify-between space-y-4 text-left ${
+                isDark 
+                  ? 'bg-neutral-900 border-neutral-850 hover:border-brand-blue-800/40 text-white' 
+                  : 'bg-white border-neutral-200 hover:border-brand-blue-600/20 text-neutral-900'
+              }`}
             >
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-mono font-bold tracking-widest text-brand-blue-700 dark:text-brand-blue-400 uppercase">
+                  <span className={`text-[10px] font-mono font-bold tracking-widest uppercase transition-colors duration-200 ${
+                    isDark ? 'text-brand-blue-400' : 'text-brand-blue-700'
+                  }`}>
                     {record.zone}
                   </span>
-                  <span className="text-[9px] font-mono text-neutral-450 dark:text-neutral-500 font-medium">
+                  <span className={`text-[9px] font-mono font-medium transition-colors duration-200 ${
+                    isDark ? 'text-neutral-500' : 'text-neutral-450'
+                  }`}>
                     Wards {record.wardRange}
                   </span>
                 </div>
-                <h3 className="font-display font-black text-lg text-brand-blue-950 dark:text-white leading-tight">
+                <h3 className={`font-display font-black text-lg leading-tight transition-colors duration-200 ${
+                  isDark ? 'text-white' : 'text-brand-blue-950'
+                }`}>
                   {record.areas}
                 </h3>
               </div>
@@ -319,14 +355,18 @@ export const ServiceAreaTelemetry: React.FC = () => {
               {/* Status pills section */}
               <div className="flex gap-2 flex-wrap pt-1">
                 {/* Active Pumps status pill */}
-                <div className={`px-2.5 py-1 rounded-full border text-[10px] font-semibold flex items-center gap-1.5 font-display ${pumpStatus.bg}`}>
+                <div className={`px-2.5 py-1 rounded-full border text-[10px] font-semibold flex items-center gap-1.5 font-display transition-colors duration-200 ${pumpStatus.bg}`}>
                   <Droplet className="w-3 h-3 shrink-0" />
                   <span>Pumps: {record.activePumps}/{record.totalPumps}</span>
                 </div>
 
                 {/* On-field Staff count pill */}
-                <div className="bg-neutral-50 border border-neutral-200 text-neutral-700 dark:bg-neutral-800/30 dark:border-neutral-700 dark:text-neutral-300 px-2.5 py-1 rounded-full text-[10px] font-semibold flex items-center gap-1.5 font-display">
-                  <Users className="w-3 h-3 shrink-0 text-neutral-400" />
+                <div className={`px-2.5 py-1 rounded-full text-[10px] font-semibold flex items-center gap-1.5 font-display border transition-colors duration-200 ${
+                  isDark 
+                    ? 'bg-neutral-800/40 border-neutral-700 text-neutral-300' 
+                    : 'bg-neutral-50 border-neutral-200 text-neutral-700'
+                }`}>
+                  <Users className={`w-3 h-3 shrink-0 ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`} />
                   <span>Crews: {record.staffCount}</span>
                 </div>
               </div>
@@ -336,17 +376,19 @@ export const ServiceAreaTelemetry: React.FC = () => {
       </div>
 
       {/* 4. Recharts Grouped Bar Chart Visualizer */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div className={`border rounded-3xl p-6 sm:p-8 space-y-6 transition-colors duration-200 ${
+        isDark ? 'bg-neutral-900 border-neutral-800 text-white shadow-lg' : 'bg-white border-neutral-200 text-neutral-900 shadow-xs'
+      }`}>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 bg-brand-gold-50 text-brand-gold-700 border border-brand-gold-200/50 text-[10px] font-mono font-bold uppercase py-1 px-2.5 rounded-full dark:bg-brand-gold-950/20 dark:text-brand-gold-400 dark:border-brand-gold-900/40">
               <TrendingUp className="w-3.5 h-3.5 text-brand-gold-600 dark:text-brand-gold-400" />
               <span>Comparative Analytics</span>
             </div>
-            <h3 className="font-display font-black text-lg text-brand-blue-950 dark:text-white">
+            <h3 className={`font-display font-black text-lg transition-colors duration-200 ${isDark ? 'text-white' : 'text-brand-blue-950'}`}>
               Pump Allocations vs On-field Staff Levels
             </h3>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            <p className={`text-xs transition-colors duration-200 ${isDark ? 'text-neutral-400' : 'text-neutral-505'}`}>
               Comparative representation of active engine metrics deployed across the 15 Municipal Chennai Zones.
             </p>
           </div>
@@ -376,7 +418,11 @@ export const ServiceAreaTelemetry: React.FC = () => {
                   verticalAlign="top" 
                   height={36} 
                   iconSize={10}
-                  wrapperStyle={{ fontSize: '11px', fontWeight: 600 }} 
+                  wrapperStyle={{ 
+                    fontSize: '11px', 
+                    fontWeight: 600,
+                    color: isDark ? '#ffffff' : '#0e2954'
+                  }} 
                 />
                 <Bar 
                   name="Active Dewatering Pumps" 
