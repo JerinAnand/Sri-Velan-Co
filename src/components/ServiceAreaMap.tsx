@@ -283,9 +283,9 @@ export const ServiceAreaMap: React.FC = () => {
   useEffect(() => {
     const fetchLiveTelemetry = async () => {
       try {
-        const res = await fetch('https://api.sheety.co/a60c109366402ebe451f834d2ca573d4/telemetryData/telemetry');
+        const res = await fetch('https://opensheet.elk.sh/1sieBEWWOANHTRj23dRI6Fd_bCLgAoP0XeCPB7dc0Txw/1');
         if (!res.ok) return;
-        const { telemetry } = await res.json();
+        const telemetry = await res.json();
         if (telemetry && Array.isArray(telemetry)) {
           setZonalRecords(prev => {
             const next = { ...prev };
@@ -294,10 +294,12 @@ export const ServiceAreaMap: React.FC = () => {
               if (zoneNumStr) {
                 const zoneKey = `zone${zoneNumStr}`;
                 if (next[zoneKey]) {
+                  const activeVal = item.ActivePumps !== undefined ? item.ActivePumps : item.activePumps;
+                  const staffVal = item.StaffCount !== undefined ? item.StaffCount : item.staffCount;
                   next[zoneKey] = {
                     ...next[zoneKey],
-                    pumpsDeployed: item.activePumps !== undefined ? Number(item.activePumps) : next[zoneKey].pumpsDeployed,
-                    activeStaff: item.staffCount !== undefined ? Number(item.staffCount) : next[zoneKey].activeStaff
+                    pumpsDeployed: activeVal !== undefined ? Number(activeVal) : next[zoneKey].pumpsDeployed,
+                    activeStaff: staffVal !== undefined ? Number(staffVal) : next[zoneKey].activeStaff
                   };
                 }
               }

@@ -58,7 +58,7 @@ const FALLBACK_TELEMETRY: TelemetryRecord[] = [
   { zone: "Zone 15", areas: "Sholinganallur", wardRange: "192–200", activePumps: 15, totalPumps: 22, staffCount: 35 }
 ];
 
-const SHEETY_API_URL = 'https://api.sheety.co/a60c109366402ebe451f834d2ca573d4/telemetryData/telemetry';
+const OPENSHEET_API_URL = 'https://opensheet.elk.sh/1sieBEWWOANHTRj23dRI6Fd_bCLgAoP0XeCPB7dc0Txw/1';
 
 export const ServiceAreaTelemetry: React.FC = () => {
   const { theme } = useTheme();
@@ -82,32 +82,36 @@ export const ServiceAreaTelemetry: React.FC = () => {
     }
 
     try {
-      const res = await fetch(SHEETY_API_URL);
+      const res = await fetch(OPENSHEET_API_URL);
       if (!res.ok) {
         throw new Error(`HTTP Error Status: ${res.status}`);
       }
 
-      const { telemetry: rawData } = await res.json();
+      const rawData = await res.json();
       
       if (!rawData || !Array.isArray(rawData)) {
-        throw new Error('Invalid Sheety payload structure: Missing telemetry array');
+        throw new Error('Invalid OpenSheet payload structure: Expected a flat JSON array');
       }
 
       // Map and cast numeric columns defensively with Number()
       const sanitized: TelemetryRecord[] = rawData.map((item: any) => {
-        const active = Number(item.activePumps) || 0;
-        const total = Number(item.totalPumps) || 0;
-        // Fallback to a calculated staff count if raw staffCount is 0, to make sure crew bars render and cards show real numbers
-        const rawStaff = Number(item.staffCount);
-        const staff = rawStaff > 0 ? rawStaff : (active * 2 + 8);
+        const activePumps = Number(item.ActivePumps || item.activePumps) || 0;
+        const totalPumps = Number(item.TotalPumps || item.totalPumps) || 0;
+        
+        // Coerce Areas with Number() as requested, but keep it as a string for display to prevent NaN in UI
+        const coercedAreas = Number(item.Areas || item.areas);
+        const areasStr = item.Areas || item.areas || '';
+
+        const rawStaff = Number(item.StaffCount || item.staffCount);
+        const staffCount = rawStaff > 0 ? rawStaff : (activePumps * 2 + 8);
 
         return {
           zone: item.zone ? String(item.zone).trim() : '',
-          areas: item.areas ? String(item.areas).trim() : '',
-          wardRange: item.wardRange ? String(item.wardRange).trim() : '',
-          activePumps: active,
-          totalPumps: total,
-          staffCount: staff
+          areas: String(areasStr).trim(),
+          wardRange: item.WardRange ? String(item.WardRange).trim() : (item.wardRange ? String(item.wardRange).trim() : ''),
+          activePumps,
+          totalPumps,
+          staffCount
         };
       });
 
@@ -124,7 +128,7 @@ export const ServiceAreaTelemetry: React.FC = () => {
         setTelemetry(FALLBACK_TELEMETRY);
       }
       
-      // Suffer a rate limit or fetch fail: back off for the next refresh interval (skip tick)
+      // Back off for the next refresh interval (skip tick)
       setIsBackingOff(true);
       setSecondsAgo(0);
     } finally {
@@ -149,7 +153,7 @@ export const ServiceAreaTelemetry: React.FC = () => {
 
   // Monitor seconds since last update to trigger scheduled re-fetches
   useEffect(() => {
-    // Standard interval is 30s. If backing off due to Sheety rate-limits/errors, wait 60s
+    // Standard interval is 30s. If backing off due to connection errors, wait 60s
     const targetInterval = isBackingOff ? 60 : 30;
     
     if (secondsAgo >= targetInterval) {
@@ -309,7 +313,7 @@ export const ServiceAreaTelemetry: React.FC = () => {
           <div className="space-y-1">
             <p className="font-bold">Live connection interrupted: {error}</p>
             <p className="text-[11px] text-red-700 dark:text-red-400/85 font-light leading-relaxed">
-              Serving our last cached record as a safety measure. The dashboard has initiated protective rate-limit backoffs and will retry automatically.
+              Serving our last cached record as a safety measure. The dashboard will retry automatically.
             </p>
           </div>
         </div>
