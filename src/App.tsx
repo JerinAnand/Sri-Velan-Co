@@ -18,6 +18,7 @@ import { VelanChatBot } from './components/VelanChatBot';
 import { BrandedLoader } from './components/BrandedLoader';
 import { AdminControls } from './components/AdminControls';
 import { AdminDashboardView } from './components/AdminDashboardView';
+import { CapabilityStatement } from './components/CapabilityStatement';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle, ShieldCheck, Award } from 'lucide-react';
@@ -44,6 +45,7 @@ export default function App() {
 
   const activeView = pathMap[location.pathname] || 'home';
   const isAdminDashboard = location.pathname.startsWith('/admin/dashboard');
+  const isCapabilityStatement = location.pathname === '/capability-statement';
 
   const setActiveView = (view: ActiveView) => {
     navigate(view === 'home' ? '/' : '/' + view);
@@ -142,7 +144,7 @@ export default function App() {
       <BrandedLoader />
       
       {/* Sticky High Density Header */}
-      {!isAdminDashboard && <Header />}
+      {!isAdminDashboard && !isCapabilityStatement && <Header />}
 
       {/* Main Structural Frame with beautiful fade transitions on view swap */}
       <main className="flex-grow">
@@ -163,6 +165,7 @@ export default function App() {
               <Route path="/projects" element={<ProjectsView />} />
               <Route path="/hydraulic-broomer" element={<HydraulicBroomer />} />
               <Route path="/contact" element={<ContactView />} />
+              <Route path="/capability-statement" element={<CapabilityStatement />} />
               <Route path="/admin/dashboard/*" element={<AdminDashboardView />} />
               <Route path="*" element={<HomeView setActiveView={setActiveView} />} />
             </Routes>
@@ -171,10 +174,10 @@ export default function App() {
       </main>
 
       {/* Corporate Multi-Tier Footer */}
-      {!isAdminDashboard && <Footer />}
+      {!isAdminDashboard && !isCapabilityStatement && <Footer />}
 
       {/* Floating Action Utilities: Instant Call Trigger & WhatsApp Buttons */}
-      {!isAdminDashboard && (
+      {!isAdminDashboard && !isCapabilityStatement && (
         <div id="floating-action-utilities" className="fixed bottom-[88px] right-6 z-40 flex flex-col items-end gap-3 transition-all duration-300">
         
          {/* Floating Quick Emergency Dial Button */}
@@ -211,7 +214,7 @@ export default function App() {
      )}
  
        {/* Dynamic Back to top key isolated at left bottom corner to balance layout of the application */}
-       {!isAdminDashboard && (
+        {!isAdminDashboard && !isCapabilityStatement && (
          <div className="fixed bottom-6 left-6 z-40">
          <AnimatePresence>
            {showScrollTop && (
@@ -346,7 +349,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {!isAdminDashboard && <VelanChatBot showScrollTop={showScrollTop} />}
+        {!isAdminDashboard && !isCapabilityStatement && <VelanChatBot showScrollTop={showScrollTop} />}
         <AdminControls />
 
     </div>

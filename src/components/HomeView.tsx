@@ -25,8 +25,10 @@ import {
   ArrowUpRight,
   Activity,
   Play,
-  Pause
+  Pause,
+  FileText
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { COMPANY_DETAILS, SERVICE_CATEGORIES, PROJECTS } from '../data';
 import { ActiveView } from '../types';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
@@ -66,6 +68,7 @@ const useCountUp = (target: number, duration: number = 2000, trigger: boolean = 
 };
 
 export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [activeCompetency, setActiveCompetency] = useState(0);
@@ -219,7 +222,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             </AnimatePresence>
 
             {/* CTAs with beautiful glass effects */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
+            <div className="flex flex-col xl:flex-row gap-4 pt-6">
               <button
                 onClick={() => setActiveView('about')}
                 className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 hover:from-brand-gold-400 hover:to-brand-gold-500 font-display font-bold px-8 py-4 rounded-lg shadow-xl hover:shadow-brand-gold-500/10 hover:scale-[1.02] active:scale-98 transition-all text-sm uppercase tracking-wider"
@@ -227,6 +230,16 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               >
                 <span>Enterprise Credentials</span>
                 <ArrowRight className="w-4 h-4 text-brand-blue-950 font-bold" />
+              </button>
+
+              <button
+                onClick={() => navigate('/capability-statement?download=true')}
+                className="inline-flex items-center justify-center gap-2 bg-brand-blue-800/80 border border-brand-blue-700/50 hover:bg-brand-blue-700 hover:border-brand-blue-600 text-white font-display font-bold px-8 py-4 rounded-lg backdrop-blur-md hover:scale-[1.02] active:scale-98 transition-all text-sm uppercase tracking-wider cursor-pointer"
+                id="hero-lnk-capability"
+                title="Download Capability Statement"
+              >
+                <FileText className="w-4 h-4 text-brand-gold-400" />
+                <span>Capability Statement</span>
               </button>
 
               <button

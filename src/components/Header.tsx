@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, Mail, Award, Clock, ChevronRight, Sun, Moon } from 'lucide-react';
+import { Menu, X, Phone, Mail, Award, Clock, ChevronRight, Sun, Moon, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { COMPANY_DETAILS } from '../data';
@@ -166,6 +166,7 @@ export const Header: React.FC = () => {
                   <Sun className="w-5 h-5 text-yellow-300" />
                 )}
               </button>
+
               <button 
                 onClick={() => handleNavClick('contact')}
                 className="bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 font-display font-semibold text-sm px-5 py-2.5 rounded-lg shadow-md hover:from-brand-gold-400 hover:to-brand-gold-500 hover:shadow-lg active:scale-95 transition-all duration-200"

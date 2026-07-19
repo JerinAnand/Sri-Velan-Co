@@ -186,6 +186,22 @@ export const Footer: React.FC = () => {
               </div>
 
               <div className="space-y-3 pt-2">
+                {/* PDF Capability Statement Trigger */}
+                <button
+                  onClick={() => {
+                    navigate('/capability-statement?download=true');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  title="Download Corporate Capability Statement Document"
+                  className="flex items-center justify-between w-full bg-brand-blue-900 hover:bg-brand-blue-800 text-white font-medium text-xs py-2.5 px-3.5 border border-brand-blue-800 rounded-lg transition-colors group cursor-pointer text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-brand-gold-500" />
+                    <span>Download Capability Statement</span>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-neutral-400 group-hover:text-brand-gold-500 transition-colors" />
+                </button>
+
                 {/* PDF Brochure Trigger */}
                 <a
                   href={COMPANY_DETAILS.brochureLink}
