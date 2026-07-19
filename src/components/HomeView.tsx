@@ -35,7 +35,6 @@ import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { useAdmin } from '../context/AdminContext';
 import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
-import { TrustCounters } from './TrustCounters';
 
 interface HomeViewProps {
   setActiveView: (view: ActiveView) => void;
@@ -308,7 +307,94 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
       </section>
 
       {/* 2. Structured Trust Stats Strip (Counter Widgets) */}
-      <TrustCounters />
+      <section className="bg-neutral-900 border-y border-neutral-800/80 relative z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+          {/* Section Header */}
+          <div className="text-center md:text-left mb-10">
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block mb-2">VERIFIED CREDENTIALS</span>
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Our Core Trust Numbers</h2>
+            <div className="h-1 w-12 bg-brand-gold-500 mt-3 mx-auto md:mx-0" />
+          </div>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+            
+            {/* Stat 1 */}
+            <div className="p-6 bg-neutral-950/80 border border-neutral-800/60 rounded-2xl flex flex-col items-center md:items-start text-center md:text-left gap-4 hover:border-brand-gold-500/30 transition-colors">
+              <div className="p-3 bg-brand-gold-500/10 border border-brand-gold-500/15 rounded-xl text-brand-gold-400">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
+                  {isAdmin ? (
+                    <EditableValue id="home_years_of_legacy" defaultValue={20} displaySuffix="+" />
+                  ) : (
+                    <>{yoeAnim}+</>
+                  )}
+                </h3>
+                <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
+                  Years of Structural Legacy
+                </p>
+                <p className="text-xs text-neutral-500 leading-tight">
+                  Founded in <EditableValue id="company_year_established" defaultValue={2006} /> in Villupuram
+                </p>
+              </div>
+            </div>
+
+            {/* Stat 2 */}
+            <div className="p-6 bg-neutral-950/80 border border-neutral-800/60 rounded-2xl flex flex-col items-center md:items-start text-center md:text-left gap-4 hover:border-brand-gold-500/30 transition-colors">
+              <div className="p-3 bg-brand-gold-500/10 border border-brand-gold-500/15 rounded-xl text-brand-gold-400">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
+                  <EditableValue id="home_gov_registrations" defaultValue={5} displaySuffix="+" />
+                </h3>
+                <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
+                  Government Registered Contractor
+                </p>
+                <p className="text-xs text-neutral-500 leading-tight">State PWD, WRD, RD, TNCSC & GCC</p>
+              </div>
+            </div>
+
+            {/* Stat 3 */}
+            <div className="p-6 bg-neutral-950/80 border border-neutral-800/60 rounded-2xl flex flex-col items-center md:items-start text-center md:text-left gap-4 hover:border-brand-gold-500/30 transition-colors">
+              <div className="p-3 bg-brand-gold-500/10 border border-brand-gold-500/15 rounded-xl text-brand-gold-400">
+                <Hammer className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
+                  {isAdmin ? (
+                    <EditableValue id="home_heavy_machineries" defaultValue={400} displaySuffix="+" />
+                  ) : (
+                    <>{pumpCount}+</>
+                  )}
+                </h3>
+                <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
+                  Heavy Machineries & Fleet
+                </p>
+                <p className="text-xs text-neutral-500 leading-tight">Dewatering & Earth moving equipment</p>
+              </div>
+            </div>
+
+            {/* Stat 4 */}
+            <div className="p-6 bg-neutral-950/80 border border-neutral-800/60 rounded-2xl flex flex-col items-center md:items-start text-center md:text-left gap-4 hover:border-brand-gold-500/30 transition-colors">
+              <div className="p-3 bg-brand-gold-500/10 border border-brand-gold-500/15 rounded-xl text-brand-gold-400">
+                <Clock className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
+                  <EditableValue id="home_dispatch_hours" defaultValue="24/7" />
+                </h3>
+                <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
+                  Disaster Dispatch Desk
+                </p>
+                <p className="text-xs text-neutral-500 leading-tight">Under cyclone warning panels</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       {/* 3. L&T Inspired Corporate Competency Panels (Bento Layout) */}
       <section className="py-24 bg-white text-neutral-900" id="home-competency-section">
