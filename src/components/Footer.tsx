@@ -10,14 +10,12 @@ import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ActiveView } from '../types';
 import { useAdmin } from '../context/AdminContext';
 import { EditableValue } from './EditableValue';
-import { useTranslation } from '../translations/content';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const { setShowLoginModal, getValue } = useAdmin();
-  const { t } = useTranslation();
 
   const quickLinks = [
     { label: 'Home Page', view: 'home' as ActiveView },
@@ -60,26 +58,26 @@ export const Footer: React.FC = () => {
                   <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
                 </h3>
                 <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">
-                  {t("ESTABLISHED IN")} <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
+                  ESTABLISHED IN <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
                 </span>
               </div>
             </div>
             
             <p className="text-sm text-neutral-300 leading-relaxed font-sans">
-              {t("State-Registered Civil Engineering Contractors specializing in PWD Buildings, Water Resources, and rapid Disaster Response Pumping Operations.")}
+              State-Registered Civil Engineering Contractors specializing in PWD Buildings, Water Resources, and rapid Disaster Response Pumping Operations.
             </p>
 
             {/* Registration Tags Bento Box */}
             <div className="space-y-2.5 bg-brand-blue-900/60 border border-brand-blue-800/40 p-4 rounded-lg">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-neutral-400">{t("GSTIN Registry")}</span>
+                <span className="text-neutral-400">GSTIN Registry</span>
                 <span className="text-brand-gold-400 font-mono font-medium select-all">
                   <EditableValue id="company_gstin" defaultValue={COMPANY_DETAILS.gstin} />
                 </span>
               </div>
               <div className="h-px bg-brand-blue-800/40 w-full" />
               <div className="flex justify-between items-center text-xs">
-                <span className="text-neutral-400">{t("MSME Udyam")}</span>
+                <span className="text-neutral-400">MSME Udyam</span>
                 <span className="text-brand-gold-400 font-mono font-medium select-all">
                   <EditableValue id="company_msme" defaultValue={COMPANY_DETAILS.msme} />
                 </span>
@@ -90,7 +88,7 @@ export const Footer: React.FC = () => {
           {/* Column 2: Structured Service Sitemap links */}
           <div className="space-y-5" id="footer-col-links">
             <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-brand-gold-400">
-              {t("Corporate Directory")}
+              Corporate Directory
             </h4>
             
             <ul className="grid grid-cols-1 gap-2.5 text-sm" id="footer-directory-ul">
@@ -101,7 +99,7 @@ export const Footer: React.FC = () => {
                     className="flex items-center gap-1.5 text-neutral-300 hover:text-brand-gold-400 transition-colors text-left group"
                   >
                     <span className="h-1.5 w-1.5 bg-brand-gold-500 rounded-full group-hover:scale-150 transition-transform" />
-                    <span>{t(link.label)}</span>
+                    <span>{link.label}</span>
                   </button>
                 </li>
               ))}
@@ -111,12 +109,12 @@ export const Footer: React.FC = () => {
           {/* Column 3: Contact Channels */}
           <div className="space-y-5" id="footer-col-contacts">
             <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-brand-gold-400">
-              {t("Operational Contacts")}
+              Operational Contacts
             </h4>
 
             <div className="space-y-3.5 text-sm text-neutral-300">
               <div className="space-y-2">
-                <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">{t("Emergency Hotlines (24/7)")}</p>
+                <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">Emergency Hotlines (24/7)</p>
                 {COMPANY_DETAILS.phones.map((phone, idx) => {
                   const phoneId = `company_phone_${idx}`;
                   const displayPhone = getValue(phoneId, phone);
@@ -136,7 +134,7 @@ export const Footer: React.FC = () => {
               </div>
 
               <div className="space-y-2 pt-2">
-                <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">{t("Administration Email")}</p>
+                <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">Administration Email</p>
                 <div className="space-y-1">
                   {COMPANY_DETAILS.emails.slice(0, 2).map((email, idx) => {
                     const emailId = `company_email_${idx}`;
@@ -163,16 +161,16 @@ export const Footer: React.FC = () => {
           {/* Column 4: Physical Office Addresses & Assets */}
           <div className="space-y-5" id="footer-col-offices">
             <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-brand-gold-400">
-              {t("Company Assets")}
+              Company Assets
             </h4>
 
             <div className="space-y-4">
               <div className="flex gap-3 text-sm text-neutral-300">
                 <MapPin className="w-5 h-5 text-brand-gold-500 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium text-white text-xs uppercase font-mono">{t("Villupuram HQ")}</p>
+                  <p className="font-medium text-white text-xs uppercase font-mono">Villupuram HQ</p>
                   <p className="text-xs text-neutral-400 leading-relaxed mt-1">
-                    {OFFICES[0].addressLines.map(line => t(line)).join(' ')}
+                    {OFFICES[0].addressLines.join(' ')}
                   </p>
                 </div>
               </div>
@@ -180,9 +178,9 @@ export const Footer: React.FC = () => {
               <div className="flex gap-3 text-sm text-neutral-300 pt-1">
                 <MapPin className="w-5 h-5 text-brand-gold-500 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium text-white text-xs uppercase font-mono">{t("Chennai HQ")}</p>
+                  <p className="font-medium text-white text-xs uppercase font-mono">Chennai HQ</p>
                   <p className="text-xs text-neutral-400 leading-relaxed mt-1">
-                    {OFFICES[1].addressLines.map(line => t(line)).join(' ')}
+                    S2, Second Floor, A Block, 8th Cross Street, Ram Nagar South, Madipakkam, Chennai, Tamil Nadu - 600091.
                   </p>
                 </div>
               </div>
@@ -199,7 +197,7 @@ export const Footer: React.FC = () => {
                 >
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-brand-gold-500" />
-                    <span>{t("Download Capability Statement")}</span>
+                    <span>Download Capability Statement</span>
                   </div>
                   <ArrowUpRight className="w-4 h-4 text-neutral-400 group-hover:text-brand-gold-500 transition-colors" />
                 </button>
@@ -215,7 +213,7 @@ export const Footer: React.FC = () => {
                 >
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-brand-gold-500" />
-                    <span>{t("Download Company Brochure")}</span>
+                    <span>Download Company Brochure</span>
                   </div>
                   <ArrowUpRight className="w-4 h-4 text-neutral-400 group-hover:text-brand-gold-500 transition-colors" />
                 </a>
@@ -230,7 +228,7 @@ export const Footer: React.FC = () => {
                   className="flex items-center gap-2.5 text-xs text-neutral-300 hover:text-brand-gold-400 transition-colors pl-1"
                 >
                   <Instagram className="w-4 h-4 text-brand-gold-500" />
-                  <span>{t("@sri_velan_co on Instagram")}</span>
+                  <span>@sri_velan_co on Instagram</span>
                 </a>
               </div>
             </div>
@@ -245,24 +243,24 @@ export const Footer: React.FC = () => {
             <span className="font-semibold text-white">
               <EditableValue id="company_legal_name" defaultValue={COMPANY_DETAILS.legalName} />.
             </span>
-            <span>{t("All Corporate Rights Reserved.")}</span>
+            <span>All Corporate Rights Reserved.</span>
           </div>
           
           <div className="flex items-center gap-4 flex-wrap justify-center text-neutral-400">
             <span className="flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-brand-gold-500" />
-              <span>{t("Registered PWD Contractor")}</span>
+              <span>Registered PWD Contractor</span>
             </span>
             <span>•</span>
             <button onClick={() => handleLinkClick('contact')} className="hover:text-brand-gold-400 transition-colors">
-              {t("Contract Intake Portal")}
+              Contract Intake Portal
             </button>
             <span>•</span>
             <button 
               onClick={() => setShowLoginModal(true)} 
               className="hover:text-brand-gold-400 transition-colors text-[10px] text-neutral-500 hover:underline uppercase tracking-wider font-mono cursor-pointer"
             >
-              {t("Admin Portal")}
+              Admin Portal
             </button>
           </div>
         </div>

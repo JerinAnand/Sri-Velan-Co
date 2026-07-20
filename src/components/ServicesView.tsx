@@ -17,10 +17,8 @@ import {
   Award
 } from 'lucide-react';
 import { SERVICE_CATEGORIES } from '../data';
-import { useTranslation } from '../translations/content';
 
 export const ServicesView: React.FC = () => {
-  const { t } = useTranslation();
   const [selectedService, setSelectedService] = useState<string | null>(SERVICE_CATEGORIES[0].id);
 
   // Map icon comp to specific service id
@@ -66,13 +64,13 @@ export const ServicesView: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4">
           <span className="text-xs font-mono font-semibold tracking-widest text-brand-gold-400 uppercase">
-            {t("OUR DIVISIONS")}
+            OUR DIVISIONS
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-gold-500">
-            {t("Specialized Infrastructure Verticals")}
+            Specialized Infrastructure Verticals
           </h1>
           <p className="max-w-3xl text-sm sm:text-base text-neutral-300 leading-relaxed font-sans font-light">
-            {t("Through absolute engineering compliance, state-of-the-art hydraulic plants, and seasoned builders, we manage key community infrastructure networks.")}
+            Through absolute engineering compliance, state-of-the-art hydraulic plants, and seasoned builders, we manage key community infrastructure networks.
           </p>
         </div>
       </section>
@@ -83,8 +81,8 @@ export const ServicesView: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             
             {/* Left Nav menu Column (1/3 width) */}
-            <div className="lg:col-span-4 space-y-3 font-sans" id="services-sidebar-nav">
-              <p className="text-xs font-mono text-neutral-400 tracking-wider uppercase mb-5">{t("Select Division to View Details")}</p>
+            <div className="lg:col-span-4 space-y-3" id="services-sidebar-nav">
+              <p className="text-xs font-mono text-neutral-400 tracking-wider uppercase mb-5">Select Division to View Details</p>
               
               {SERVICE_CATEGORIES.map((svc) => {
                 const isSelected = selectedService === svc.id;
@@ -93,7 +91,7 @@ export const ServicesView: React.FC = () => {
                     key={svc.id}
                     id={`services-tab-${svc.id}`}
                     onClick={() => setSelectedService(svc.id)}
-                    className={`w-full flex items-center gap-4 p-5 rounded-2xl border text-left cursor-pointer transition-all min-h-[44px] ${
+                    className={`w-full flex items-center gap-4 p-5 rounded-2xl border text-left cursor-pointer transition-all ${
                       isSelected 
                         ? 'bg-brand-blue-700 border-brand-blue-800 text-white shadow-md font-bold' 
                         : 'bg-neutral-50 text-neutral-800 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100/50'
@@ -105,9 +103,9 @@ export const ServicesView: React.FC = () => {
                       {getIcon(svc.id)}
                     </div>
                     
-                    <div className="flex-1 min-w-0 font-sans">
-                      <h3 className="font-display font-medium text-sm sm:text-base tracking-tight leading-snug group-hover:text-brand-gold-500 font-sans">
-                        {t(svc.title)}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-display font-medium text-sm sm:text-base tracking-tight leading-snug group-hover:text-brand-gold-500">
+                        {svc.title}
                       </h3>
                     </div>
                   </button>
@@ -142,12 +140,12 @@ export const ServicesView: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent" />
                   </div>
 
-                  <div className="space-y-4 font-sans">
-                    <h2 className="text-2xl sm:text-3xl font-black font-display text-brand-blue-900 font-sans">
-                      {t(activeSvc.title)}
+                  <div className="space-y-4">
+                    <h2 className="text-2xl sm:text-3xl font-black font-display text-brand-blue-900">
+                      {activeSvc.title}
                     </h2>
-                    <p className="text-neutral-600 text-sm sm:text-base leading-relaxed font-sans font-light font-sans">
-                      {t(activeSvc.fullDescription)}
+                    <p className="text-neutral-600 text-sm sm:text-base leading-relaxed font-sans first-letter:text-2xl first-letter:font-bold first-letter:text-brand-blue-800">
+                      {activeSvc.fullDescription}
                     </p>
                   </div>
 
@@ -155,8 +153,8 @@ export const ServicesView: React.FC = () => {
                   <div className="bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200/80 space-y-4">
                     <div className="flex items-center gap-2 border-b border-neutral-100 pb-3">
                       <CalendarCheck className="w-5 h-5 text-brand-gold-500 shrink-0" />
-                      <h4 className="font-display font-bold text-sm tracking-wide text-brand-blue-900 uppercase font-sans">
-                        {t("Division Specs & Execution Checklists")}
+                      <h4 className="font-display font-bold text-sm tracking-wide text-brand-blue-900 uppercase">
+                        Division Specs & Execution Checklists
                       </h4>
                     </div>
                     
@@ -164,7 +162,7 @@ export const ServicesView: React.FC = () => {
                       {activeSvc.highlights.map((hlt, index) => (
                         <div key={index} className="flex gap-2.5 items-start">
                           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                          <p className="text-xs sm:text-sm text-neutral-700 leading-snug font-sans">{t(hlt)}</p>
+                          <p className="text-xs sm:text-sm text-neutral-700 leading-snug">{hlt}</p>
                         </div>
                       ))}
                     </div>
@@ -181,9 +179,9 @@ export const ServicesView: React.FC = () => {
       {/* Corporate Capability Section */}
       <section className="bg-brand-blue-950 text-white py-16" id="services-guarantee">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold font-display text-brand-gold-400 font-sans">{t("Tender Compliance & Vetted Resource Pools")}</h2>
-          <p className="text-sm text-neutral-300 max-w-2xl mx-auto leading-relaxed font-sans font-light">
-            {t("All our operational segments are fully insured/licensed, compliant with the Hindu Religious Charitable Endowments (HR&CE), Water Resources Department (WRD), and Public Works Department (PWD) specifications.")}
+          <h2 className="text-2xl sm:text-3xl font-bold font-display text-brand-gold-400">Tender Compliance & Vetted Resource Pools</h2>
+          <p className="text-sm text-neutral-300 max-w-2xl mx-auto leading-relaxed">
+            All our operational segments are fully insured/licensed, compliant with the Hindu Religious Charitable Endowments (HR&CE), Water Resources Department (WRD), and Public Works Department (PWD) specifications.
           </p>
         </div>
       </section>

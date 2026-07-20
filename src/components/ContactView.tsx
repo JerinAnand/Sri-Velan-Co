@@ -36,7 +36,6 @@ import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useEasterEgg } from '../context/EasterEggContext';
 import { useLoading } from '../context/LoadingContext';
 import { useAdmin } from '../context/AdminContext';
-import { useTranslation } from '../translations/content';
 import { EditableValue } from './EditableValue';
 
 interface VCardContact {
@@ -108,7 +107,6 @@ const VCARD_CONTACTS: VCardContact[] = [
 ];
 
 export const ContactView: React.FC = () => {
-  const { t } = useTranslation();
   const { registerClick } = useEasterEgg();
   const { runWithLoader } = useLoading();
   const { getValue, isAdmin } = useAdmin();
@@ -503,13 +501,13 @@ export const ContactView: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4">
           <span className="text-xs font-mono font-semibold tracking-widest text-brand-gold-400 uppercase">
-            {t("CONNECT WITH US")}
+            CONNECT WITH US
           </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-gold-500 font-sans">
-            {t("Our Regional Offices & Intakes")}
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-gold-500">
+            Our Regional Offices & Intakes
           </h1>
           <p className="max-w-3xl text-sm sm:text-base text-neutral-300 leading-relaxed font-sans font-light">
-            {t("Contact Mr. Selva Kumar’s operational office today regarding infrastructure tenders, high-flow pump hiring, hydraulic brooming contracts, or emergency cyclone rescue assistance.")}
+            Contact Mr. Selva Kumar’s operational office today regarding infrastructure tenders, high-flow pump hiring, hydraulic brooming contracts, or emergency cyclone rescue assistance.
           </p>
         </div>
       </section>
@@ -522,18 +520,18 @@ export const ContactView: React.FC = () => {
             {/* Left Column: Direct Call, WhatsApp, and Executive Board (5/12 width) */}
             <div className="lg:col-span-5 space-y-8" id="contact-quick-touch">
               <div className="space-y-3">
-                <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase">{t("DIRECT DISPATCH")}</span>
-                <h2 className="text-2xl sm:text-3xl font-black text-brand-blue-900 tracking-tight leading-tight font-sans">{t("Reach Out to our Executives")}</h2>
+                <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase">DIRECT DISPATCH</span>
+                <h2 className="text-2xl sm:text-3xl font-black text-brand-blue-900 tracking-tight leading-tight">Reach Out to our Executives</h2>
                 <p className="text-neutral-500 text-sm leading-relaxed font-sans font-light">
-                  {t("Our team maintains redundant communications to monitor high-volume flood relief networks and municipal developments across Tamil Nadu boundaries.")}
+                  Our team maintains redundant communications to monitor high-volume flood relief networks and municipal developments across Tamil Nadu boundaries.
                 </p>
               </div>
 
               {/* Section 1: Direct Channels */}
               <div className="space-y-4" id="contact-channels-content">
-                <h3 className="font-display font-extrabold text-xs uppercase tracking-wider text-brand-blue-950 flex items-center gap-2 font-sans">
+                <h3 className="font-display font-extrabold text-xs uppercase tracking-wider text-brand-blue-950 flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-gold-500"></span>
-                  {t("Direct Channels")}
+                  Direct Channels
                 </h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4" id="contact-tel-whatsapp">
@@ -542,8 +540,8 @@ export const ContactView: React.FC = () => {
                     <div className="p-2.5 bg-brand-blue-900 text-white rounded-lg shrink-0">
                       <Phone className="w-4 h-4" />
                     </div>
-                    <div className="space-y-1 text-left min-w-0 font-sans">
-                      <p className="text-[10px] text-neutral-400 uppercase font-mono tracking-widest">{t("General Inquiries & Operations")}</p>
+                    <div className="space-y-1 text-left min-w-0">
+                      <p className="text-[10px] text-neutral-400 uppercase font-mono tracking-widest">General Inquiries & Operations</p>
                       {COMPANY_DETAILS.phones.map((p, idx) => {
                         const phoneId = `company_phone_${idx}`;
                         const displayPhone = getValue(phoneId, p);
@@ -576,16 +574,16 @@ export const ContactView: React.FC = () => {
                     <div className="p-2.5 bg-emerald-600 text-white rounded-lg shrink-0">
                       <MessageSquare className="w-4 h-4 text-white" />
                     </div>
-                    <div className="space-y-1 min-w-0 font-sans">
+                    <div className="space-y-1 min-w-0">
                       <p className="text-[10px] text-emerald-600 uppercase font-mono tracking-widest font-semibold flex items-center gap-1">
-                        <span>{t("WhatsApp Portal")}</span>
+                        <span>WhatsApp Portal</span>
                         <ExternalLink className="w-3 h-3 text-emerald-500" />
                       </p>
-                      <p className="font-display font-bold text-base text-emerald-950 group-hover:text-emerald-700 transition-colors font-sans">
-                        {t("Inquire on WhatsApp Chat")}
+                      <p className="font-display font-bold text-base text-emerald-950 group-hover:text-emerald-700 transition-colors">
+                        Inquire on WhatsApp Chat
                       </p>
-                      <p className="text-xs text-emerald-600/80 font-sans leading-relaxed font-sans font-light">
-                        {t("Tap to open an instant secure messaging chat directly with our Estimating Officer.")}
+                      <p className="text-xs text-emerald-600/80 font-sans leading-relaxed">
+                        Tap to open an instant secure messaging chat directly with our Estimating Officer.
                       </p>
                     </div>
                   </button>
@@ -595,7 +593,7 @@ export const ContactView: React.FC = () => {
                 <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200/80 hover:border-brand-blue-900/25 hover:shadow-lg hover:shadow-brand-blue-900/5 hover:-translate-y-1 transition-all duration-300 space-y-4 shadow-xs">
                   <div className="flex items-center gap-2 border-b border-neutral-200 pb-2">
                     <Mail className="w-4 h-4 text-brand-gold-500 shrink-0" />
-                    <h4 className="font-display font-bold text-xs uppercase tracking-wider text-brand-blue-900 font-sans">{t("Email Correspondence")}</h4>
+                    <h4 className="font-display font-bold text-xs uppercase tracking-wider text-brand-blue-900">Email Correspondence</h4>
                   </div>
                   
                   <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm font-sans" id="contact-emails-list">
@@ -620,32 +618,32 @@ export const ContactView: React.FC = () => {
               {/* Section 2: Quick-Share vCard QR Generator */}
               <div className="bg-neutral-50/50 border border-neutral-200/80 hover:border-brand-blue-900/20 hover:shadow-lg hover:shadow-brand-blue-900/5 hover:-translate-y-1 rounded-2xl p-6 space-y-6 shadow-xs mt-6 transition-all duration-300" id="vcard-qr-generator">
                 <div className="space-y-1.5 text-left">
-                  <span className="text-[10px] font-mono font-bold tracking-widest text-brand-gold-600 uppercase block">{t("OFFICIAL DIRECTORY")}</span>
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-brand-gold-600 uppercase block">OFFICIAL DIRECTORY</span>
                   <div className="flex items-center gap-2">
                     <QrCode className="w-5 h-5 text-brand-blue-900 shrink-0" />
-                    <h3 className="font-display font-extrabold text-base text-brand-blue-950 font-sans">{t("Quick-Share Contact QR Card")}</h3>
+                    <h3 className="font-display font-extrabold text-base text-brand-blue-950">Quick-Share Contact QR Card</h3>
                   </div>
                   <p className="text-xs text-neutral-500 leading-relaxed font-sans font-light">
-                    {t("For government officials and site officers: select an entry below to generate an instant vCard. Scan with your mobile device camera to save the office number, email, and address directly to your device directory, or download the VCF file.")}
+                    For government officials and site officers: select an entry below to generate an instant vCard. Scan with your mobile device camera to save the office number, email, and address directly to your device directory, or download the VCF file.
                   </p>
                 </div>
 
                 {/* Directory Selector tabs */}
-                <div className="grid grid-cols-3 gap-1 px-1 py-1 bg-neutral-100 rounded-lg font-sans" id="vcard-selector-tabs">
+                <div className="grid grid-cols-3 gap-1 px-1 py-1 bg-neutral-100 rounded-lg" id="vcard-selector-tabs">
                   {dynamicContacts.map((c) => (
                     <button
                       key={c.id}
                       onClick={() => {
                         setSelectedVcardId(c.id);
                       }}
-                      className={`text-center py-2 rounded-md transition-all font-display font-semibold text-xs leading-none relative cursor-pointer min-h-[44px] ${
+                      className={`text-center py-2 rounded-md transition-all font-display font-semibold text-xs leading-none relative cursor-pointer ${
                         selectedVcardId === c.id
                           ? 'bg-white text-brand-blue-950 shadow-xs border border-neutral-200/50'
                           : 'text-neutral-500 hover:text-brand-blue-950 hover:bg-white/40'
                       }`}
                     >
-                      <span className="block font-sans text-[9px] font-bold text-neutral-400 uppercase tracking-tight scale-90 mb-0.5">{t(c.shortLabel)}</span>
-                      <span className="truncate block max-w-full px-1 font-sans">{t(c.displayName)}</span>
+                      <span className="block font-sans text-[9px] font-bold text-neutral-400 uppercase tracking-tight scale-90 mb-0.5">{c.shortLabel}</span>
+                      <span className="truncate block max-w-full px-1">{c.displayName}</span>
                     </button>
                   ))}
                 </div>
@@ -671,7 +669,7 @@ export const ContactView: React.FC = () => {
                             includeMargin={false}
                           />
                           <span className="text-[9px] font-mono font-medium text-neutral-400 mt-1.5 select-none uppercase tracking-wide">
-                            {t("Scan with camera")}
+                            Scan with camera
                           </span>
                         </div>
 
@@ -717,10 +715,10 @@ export const ContactView: React.FC = () => {
                           onClick={() => {
                             downloadVcardFile(activeContact.id, activeContact.vcard);
                           }}
-                          className="flex items-center justify-center gap-2 bg-brand-blue-900 hover:bg-brand-blue-850 text-white font-display font-semibold text-xs py-3 px-3 rounded-xl border border-brand-blue-800 shadow-xs transition-colors cursor-pointer group min-h-[44px]"
+                          className="flex items-center justify-center gap-2 bg-brand-blue-900 hover:bg-brand-blue-850 text-white font-display font-semibold text-xs py-3 px-3 rounded-xl border border-brand-blue-800 shadow-xs transition-colors cursor-pointer group"
                         >
                           <Download className="w-4 h-4 text-brand-gold-400 group-hover:scale-110 transition-transform" />
-                          <span>{t("Download VCF")}</span>
+                          <span>Download VCF</span>
                         </button>
 
                         {/* Copy raw code */}
@@ -728,7 +726,7 @@ export const ContactView: React.FC = () => {
                           onClick={() => {
                             copyVcardToClipboard(activeContact.vcard);
                           }}
-                          className={`flex items-center justify-center gap-2 font-display font-semibold text-xs py-3 px-3 rounded-xl border transition-all cursor-pointer min-h-[44px] ${
+                          className={`flex items-center justify-center gap-2 font-display font-semibold text-xs py-3 px-3 rounded-xl border transition-all cursor-pointer ${
                             copiedVcard 
                               ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
                               : 'bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-300'
@@ -737,12 +735,12 @@ export const ContactView: React.FC = () => {
                           {copiedVcard ? (
                             <>
                               <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                              <span className="truncate">{t("Copied")}</span>
+                              <span className="truncate">Copied</span>
                             </>
                           ) : (
                             <>
                               <Copy className="w-4 h-4 text-neutral-500 shrink-0" />
-                              <span className="truncate">{t("Copy Text")}</span>
+                              <span className="truncate">Copy Text</span>
                             </>
                           )}
                         </button>
@@ -754,7 +752,7 @@ export const ContactView: React.FC = () => {
 
                 <div className="bg-neutral-100/60 rounded-xl p-3 border border-neutral-200/40 text-center">
                   <p className="text-[10px] text-neutral-500 leading-relaxed font-sans font-light">
-                    {t("Tip: Scan the code above directly with your iPhone or Android camera to instantly prefill a new contact form with all company details loaded in one tap.")}
+                    Tip: Scan the code above directly with your iPhone or Android camera to instantly prefill a new contact form with all company details loaded in one tap.
                   </p>
                 </div>
               </div>
@@ -768,11 +766,11 @@ export const ContactView: React.FC = () => {
 
               <div className="space-y-6 relative z-10">
                 <div className="space-y-1">
-                  <h3 className="font-display font-black text-xl text-brand-blue-900 leading-tight font-sans">
-                    {t("Civil Intake & Tender Inquiry Portal")}
+                  <h3 className="font-display font-black text-xl text-brand-blue-900 leading-tight">
+                    Civil Intake & Tender Inquiry Portal
                   </h3>
-                  <p className="text-xs text-neutral-400 font-sans">
-                    {t("Submit your parameters below and our board officers will respond with certified blueprints or quotes.")}
+                  <p className="text-xs text-neutral-400">
+                    Submit your parameters below and our board officers will respond with certified blueprints or quotes.
                   </p>
                 </div>
 
@@ -784,11 +782,11 @@ export const ContactView: React.FC = () => {
                 )}
 
                 {complete ? (
-                  <div className="bg-indigo-50 border border-brand-blue-600/30 p-8 rounded-2xl text-center space-y-3 font-sans">
+                  <div className="bg-indigo-50 border border-brand-blue-600/30 p-8 rounded-2xl text-center space-y-3">
                     <CheckCircle className="w-12 h-12 text-brand-blue-700 mx-auto" />
-                    <h3 className="font-display font-semibold text-lg text-brand-blue-950 font-sans">{t("Inquiry Logged")}</h3>
-                    <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans font-light">
-                      {t("Thank you,")} <strong>{msgDetails.name}</strong>. {t("Your civil tender interest was logged in Mr. G. Selva Kumar's Estimating Bureau. One of our operational representatives will link with you at")} <strong>{msgDetails.phone}</strong> {t("soon.")}
+                    <h3 className="font-display font-semibold text-lg text-brand-blue-950">Inquiry Logged</h3>
+                    <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
+                      Thank you, <strong>{msgDetails.name}</strong>. Your civil tender interest was logged in Mr. G. Selva Kumar's Estimating Bureau. One of our operational representatives will link with you at <strong>{msgDetails.phone}</strong> soon.
                     </p>
                     {isSandbox && (
                       <div className="pt-2">
@@ -804,7 +802,7 @@ export const ContactView: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       
                       <div className="space-y-1 text-xs">
-                        <label className="text-neutral-500 font-semibold font-display font-sans">{t("Contractor / Client Name *")}</label>
+                        <label className="text-neutral-500 font-semibold font-display">Contractor / Client Name *</label>
                         <input 
                           type="text" 
                           required
@@ -814,15 +812,15 @@ export const ContactView: React.FC = () => {
                             if (errors.name) setErrors({...errors, name: ''});
                           }}
                           className="w-full bg-neutral-50 border border-neutral-200 hover:border-neutral-300 focus:border-brand-blue-700 rounded-lg p-3 text-sm text-neutral-800 focus:outline-none focus:ring-1 focus:ring-brand-blue-700 transition-colors font-sans"
-                          placeholder={t("e.g. Selvam Builders")}
+                          placeholder="e.g. Selvam Builders"
                         />
                         {errors.name && (
-                          <p className="text-red-600 font-medium text-xs mt-1 animate-fade-in font-sans">{errors.name}</p>
+                          <p className="text-red-600 font-medium text-xs mt-1 animate-fade-in">{errors.name}</p>
                         )}
                       </div>
 
                       <div className="space-y-1 text-xs">
-                        <label className="text-neutral-500 font-semibold font-display font-sans">{t("Contact Phone Number *")}</label>
+                        <label className="text-neutral-500 font-semibold font-display">Contact Phone Number *</label>
                         <input 
                           type="tel" 
                           required
@@ -832,10 +830,10 @@ export const ContactView: React.FC = () => {
                             if (errors.phone) setErrors({...errors, phone: ''});
                           }}
                           className="w-full bg-neutral-50 border border-neutral-200 hover:border-neutral-300 focus:border-brand-blue-700 rounded-lg p-3 text-sm text-neutral-800 focus:outline-none focus:ring-1 focus:ring-brand-blue-700 transition-colors font-sans"
-                          placeholder={t("e.g. +91 98420 XXXXX")}
+                          placeholder="e.g. +91 98420 XXXXX"
                         />
                         {errors.phone && (
-                          <p className="text-red-600 font-medium text-xs mt-1 animate-fade-in font-sans">{errors.phone}</p>
+                          <p className="text-red-600 font-medium text-xs mt-1 animate-fade-in">{errors.phone}</p>
                         )}
                       </div>
 
@@ -844,35 +842,35 @@ export const ContactView: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
                       <div className="space-y-1 text-xs">
-                        <label className="text-neutral-500 font-semibold font-display font-sans">{t("Corporate Email Address")}</label>
+                        <label className="text-neutral-500 font-semibold font-display">Corporate Email Address</label>
                         <input 
                           type="email" 
                           value={msgDetails.email}
                           onChange={(e) => setMsgDetails({...msgDetails, email: e.target.value})}
                           className="w-full bg-neutral-50 border border-neutral-200 hover:border-neutral-300 focus:border-brand-blue-700 rounded-lg p-3 text-sm text-neutral-800 focus:outline-none focus:ring-1 focus:ring-brand-blue-700 transition-colors font-sans"
-                          placeholder={t("e.g. tender@builder.com")}
+                          placeholder="e.g. tender@builder.com"
                         />
                       </div>
 
                       <div className="space-y-1 text-xs">
-                        <label className="text-neutral-500 font-semibold font-display font-sans">{t("Primary Area of Interest")}</label>
+                        <label className="text-neutral-500 font-semibold font-display">Primary Area of Interest</label>
                         <select 
                           className="w-full bg-neutral-50 border border-neutral-200 hover:border-neutral-300 focus:border-brand-blue-700 rounded-lg p-3 text-sm text-neutral-800 focus:outline-none focus:ring-1 focus:ring-brand-blue-700 transition-colors font-sans"
                           value={msgDetails.serviceInterest}
                           onChange={(e) => setMsgDetails({...msgDetails, serviceInterest: e.target.value})}
                         >
-                          <option value="general">{t("General Civil Inquiry")}</option>
-                          <option value="pwd-road">{t("PWD Paving / Civil Construction")}</option>
-                          <option value="wrd-canal">{t("WRD Irrigation / Canals")}</option>
-                          <option value="dewatering">{t("Emergency Dewatering Pump Hire")}</option>
-                          <option value="sweeper">{t("Hydraulic Sweeping Broomer Spec")}</option>
+                          <option value="general">General Civil Inquiry</option>
+                          <option value="pwd-road">PWD Paving / Civil Construction</option>
+                          <option value="wrd-canal">WRD Irrigation / Canals</option>
+                          <option value="dewatering">Emergency Dewatering Pump Hire</option>
+                          <option value="sweeper">Hydraulic Sweeping Broomer Spec</option>
                         </select>
                       </div>
 
                     </div>
 
                     <div className="space-y-1 text-xs">
-                      <label className="text-neutral-500 font-semibold font-display font-sans">{t("Tender Scope Summary / Detailed Request Description")}</label>
+                      <label className="text-neutral-500 font-semibold font-display">Tender Scope Summary / Detailed Request Description</label>
                       <textarea 
                         rows={4}
                         value={msgDetails.message}
@@ -881,10 +879,10 @@ export const ContactView: React.FC = () => {
                           if (errors.message) setErrors({...errors, message: ''});
                         }}
                         className="w-full bg-neutral-50 border border-neutral-200 hover:border-neutral-300 focus:border-brand-blue-700 rounded-lg p-3 text-sm text-neutral-800 focus:outline-none focus:ring-1 focus:ring-brand-blue-700 transition-colors font-sans"
-                        placeholder={t("Detail site elevation specs, discharge pipe lengths, or tractor PTO parameters...")}
+                        placeholder="Detail site elevation specs, discharge pipe lengths, or tractor PTO parameters..."
                       />
                       {errors.message && (
-                        <p className="text-red-600 font-medium text-xs mt-1 animate-fade-in font-sans">{errors.message}</p>
+                        <p className="text-red-600 font-medium text-xs mt-1 animate-fade-in">{errors.message}</p>
                       )}
                     </div>
 
@@ -892,7 +890,7 @@ export const ContactView: React.FC = () => {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="inline-flex items-center justify-center gap-2 bg-brand-blue-700 hover:bg-brand-blue-900 text-white font-display font-semibold text-sm py-3.5 px-8 rounded-lg shadow-md hover:shadow-lg transition-all w-full sm:w-auto min-h-[44px]"
+                        className="inline-flex items-center justify-center gap-2 bg-brand-blue-700 hover:bg-brand-blue-900 text-white font-display font-semibold text-sm py-3.5 px-8 rounded-lg shadow-md hover:shadow-lg transition-all w-full sm:w-auto"
                         id="contact-form-submit"
                       >
                         {loading ? (
@@ -900,7 +898,7 @@ export const ContactView: React.FC = () => {
                         ) : (
                           <Send className="w-4 h-4 shrink-0" />
                         )}
-                        <span className="font-sans">{t("Log Inquiry and Connect")}</span>
+                        <span>Log Inquiry and Connect</span>
                       </button>
                     </div>
 
@@ -918,9 +916,9 @@ export const ContactView: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-xl mx-auto space-y-3 mb-16">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">{t("GEOGRAPHICAL NETWORK")}</span>
-            <h2 className="text-3xl font-black text-brand-blue-900 tracking-tight font-sans">{t("Registered Hubs & Maps")}</h2>
-            <p className="text-xs sm:text-sm text-neutral-500 font-sans">{t("Coordinate mapping for our corporate offices in Villupuram and metro Chennai transit sectors.")}</p>
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">GEOGRAPHICAL NETWORK</span>
+            <h2 className="text-3xl font-black text-brand-blue-900 tracking-tight">Registered Hubs & Maps</h2>
+            <p className="text-xs sm:text-sm text-neutral-500">Coordinate mapping for our corporate offices in Villupuram and metro Chennai transit sectors.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -936,7 +934,7 @@ export const ContactView: React.FC = () => {
                   <div 
                     onClick={() => setSelectedDirectionsOffice(office)}
                     className="h-64 sm:h-72 w-full bg-neutral-100 relative border-b border-neutral-200 overflow-hidden cursor-pointer group/map"
-                    title={t("Click to open driving directions & routing options")}
+                    title="Click to open driving directions & routing options"
                   >
                     {isInteractive ? (
                       <div className="w-full h-full relative pointer-events-none">
@@ -968,11 +966,11 @@ export const ContactView: React.FC = () => {
                       <div className="bg-white text-brand-blue-950 p-3 rounded-full shadow-lg mb-2 transform scale-75 group-hover/map:scale-100 duration-300 transition-transform">
                         <Route className="w-6 h-6 text-brand-gold-500" />
                       </div>
-                      <span className="text-white text-xs sm:text-sm font-bold tracking-wide font-sans">
-                        {t("Click Map for Driving Routes & Directions")}
+                      <span className="text-white text-xs sm:text-sm font-bold tracking-wide">
+                        Click Map for Driving Routes & Directions
                       </span>
-                      <p className="text-neutral-200 text-[11px] mt-1 max-w-xs font-sans font-light">
-                        {t("View landmark proximity, highway access, and direct routing details")}
+                      <p className="text-neutral-200 text-[11px] mt-1 max-w-xs">
+                        View landmark proximity, highway access, and direct routing details
                       </p>
                     </div>
 
@@ -981,65 +979,65 @@ export const ContactView: React.FC = () => {
                       <button 
                         type="button"
                         onClick={(e) => { e.preventDefault(); setMapViewModes({ ...mapViewModes, [office.name]: 'interactive' }); }}
-                        className={`px-2 py-1 rounded transition-all font-medium font-sans ${isInteractive ? 'bg-brand-gold-500 text-brand-blue-950 font-bold' : 'text-neutral-400 hover:text-white'}`}
+                        className={`px-2 py-1 rounded transition-all font-medium ${isInteractive ? 'bg-brand-gold-500 text-brand-blue-950 font-bold' : 'text-neutral-400 hover:text-white'}`}
                       >
-                        {t("Interactive Map")}
+                        Interactive Map
                       </button>
                       <button 
                         type="button"
                         onClick={(e) => { e.preventDefault(); setMapViewModes({ ...mapViewModes, [office.name]: 'static' }); }}
-                        className={`px-2 py-1 rounded transition-all font-medium font-sans ${!isInteractive ? 'bg-brand-gold-500 text-brand-blue-950 font-bold' : 'text-neutral-400 hover:text-white'}`}
+                        className={`px-2 py-1 rounded transition-all font-medium ${!isInteractive ? 'bg-brand-gold-500 text-brand-blue-950 font-bold' : 'text-neutral-400 hover:text-white'}`}
                       >
-                        {t("Satellite Blueprint")}
+                        Satellite Blueprint
                       </button>
                     </div>
 
                     {/* Quick overlay badge to trigger modal on tap */}
                     <div className="absolute top-3 left-3 bg-brand-blue-900/85 text-[10px] text-white font-mono uppercase tracking-widest pl-2 pr-2.5 py-1.5 rounded-md flex items-center gap-1.5 border border-brand-blue-700/50 backdrop-blur-xs shadow-md">
                       <Compass className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '8s' }} />
-                      <span className="font-sans">{t("Get Routes")}</span>
+                      <span>Get Routes</span>
                     </div>
 
                     {/* Dynamic location PIN float label */}
                     <div className="absolute top-3 right-3 bg-brand-blue-950/90 text-white font-mono text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-wider border border-brand-blue-800 z-10">
-                      {t(office.type)}
+                      {office.type}
                     </div>
                   </div>
 
                   <div className="p-6 flex flex-col justify-between flex-1 space-y-6">
-                    <div className="space-y-2.5 font-sans">
+                    <div className="space-y-2.5">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-display font-bold text-lg text-brand-blue-950 group-hover:text-brand-blue-700 transition-colors font-sans">
-                          {t(office.name)}
+                        <h3 className="font-display font-bold text-lg text-brand-blue-950 group-hover:text-brand-blue-700 transition-colors">
+                          {office.name}
                         </h3>
                       </div>
                       <div className="flex gap-2.5 items-start text-xs sm:text-sm text-neutral-600 font-sans leading-relaxed">
                         <MapPin className="w-5 h-5 text-brand-gold-500 mt-0.5 shrink-0" />
                         <div>
                           {office.addressLines.map(line => (
-                            <p key={line}>{t(line)}</p>
+                            <p key={line}>{line}</p>
                           ))}
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-neutral-100 flex items-center justify-between gap-4 font-sans">
+                    <div className="pt-4 border-t border-neutral-100 flex items-center justify-between gap-4">
                       <button
                         type="button"
                         onClick={() => setSelectedDirectionsOffice(office)}
-                        className="inline-flex items-center gap-1.5 text-brand-blue-900 hover:text-brand-gold-600 text-xs font-bold transition-colors min-h-[44px]"
+                        className="inline-flex items-center gap-1.5 text-brand-blue-900 hover:text-brand-gold-600 text-xs font-bold transition-colors"
                       >
                         <Route className="w-4 h-4" />
-                        <span>{t("Show Detailed Drive Routes")}</span>
+                        <span>Show Detailed Drive Routes</span>
                       </button>
 
                       <a
                         href={office.mapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-brand-blue-700 text-xs font-semibold group/link min-h-[44px]"
+                        className="inline-flex items-center gap-1.5 text-neutral-500 hover:text-brand-blue-700 text-xs font-semibold group/link"
                       >
-                        <span>{t("Navigate in Google Maps")}</span>
+                        <span>Navigate in Google Maps</span>
                         <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                       </a>
                     </div>
@@ -1116,15 +1114,15 @@ export const ContactView: React.FC = () => {
                       <div className="flex items-center gap-2 mb-2">
                         <Route className="w-5 h-5 text-brand-gold-400" />
                         <span className="text-xs font-mono font-bold uppercase tracking-widest text-brand-gold-400">
-                          {t("DIRECTIONS & ROUTING GUIDE")}
+                          DIRECTIONS & ROUTING GUIDE
                         </span>
                       </div>
 
-                      <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-tight pr-8 font-sans">
-                        {t(office.name)}
+                      <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-tight pr-8">
+                        {office.name}
                       </h3>
                       <p className="text-neutral-300 font-sans text-xs sm:text-sm mt-1 max-w-lg">
-                        {t("Step-by-step coordinates and navigational instructions to our Tamil Nadu support base.")}
+                        Step-by-step coordinates and navigational instructions to our Tamil Nadu support base.
                       </p>
                     </div>
 
@@ -1134,27 +1132,27 @@ export const ContactView: React.FC = () => {
                       {/* Copyable Address Grid */}
                       <div className="bg-neutral-50 rounded-2xl p-4 border border-neutral-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-450 block">{t("Official Yard Address")}</span>
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-450 block">Official Yard Address</span>
                           <div className="text-xs sm:text-sm font-semibold text-neutral-800">
                             {office.addressLines.map((line, lIdx) => (
-                              <p key={lIdx}>{t(line)}</p>
+                              <p key={lIdx}>{line}</p>
                             ))}
                           </div>
                         </div>
                         <button
                           type="button"
                           onClick={copyToClipboard}
-                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-neutral-50 active:scale-98 text-neutral-700 hover:text-brand-blue-900 border border-neutral-200 shadow-xs px-3.5 py-2 rounded-xl text-xs sm:text-xs font-bold transition-all shrink-0 min-h-[44px]"
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-neutral-50 active:scale-98 text-neutral-700 hover:text-brand-blue-900 border border-neutral-200 shadow-xs px-3.5 py-2 rounded-xl text-xs sm:text-xs font-bold transition-all shrink-0"
                         >
                           {copiedAddress ? (
                             <>
                               <Check className="w-4 h-4 text-green-600" />
-                              <span className="text-green-600 font-bold">{t("Address Copied!")}</span>
+                              <span className="text-green-600 font-bold">Address Copied!</span>
                             </>
                           ) : (
                             <>
                               <Copy className="w-4 h-4 text-neutral-500" />
-                              <span>{t("Copy Address Parameters")}</span>
+                              <span>Copy Address Parameters</span>
                             </>
                           )}
                         </button>
@@ -1167,10 +1165,10 @@ export const ContactView: React.FC = () => {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 text-brand-blue-900 font-semibold text-sm">
                             <Navigation className="w-4.5 h-4.5 text-brand-gold-500" />
-                            <span>{t("Highway Access & Road Route")}</span>
+                            <span>Highway Access & Road Route</span>
                           </div>
                           <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed bg-neutral-50/50 p-3 rounded-xl border border-neutral-100">
-                            {t(directions.highwayRoute)}
+                            {directions.highwayRoute}
                           </p>
                         </div>
 
@@ -1178,10 +1176,10 @@ export const ContactView: React.FC = () => {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 text-brand-blue-900 font-semibold text-sm">
                             <MapPin className="w-4.5 h-4.5 text-brand-gold-500" />
-                            <span>{t("Primary Proximity Landmark")}</span>
+                            <span>Primary Proximity Landmark</span>
                           </div>
                           <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed bg-neutral-50/50 p-3 rounded-xl border border-neutral-100">
-                            {t(directions.landmark)}
+                            {directions.landmark}
                           </p>
                         </div>
 
@@ -1191,23 +1189,23 @@ export const ContactView: React.FC = () => {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-brand-blue-900 font-semibold text-sm">
                           <Compass className="w-4.5 h-4.5 text-brand-gold-500" />
-                          <span>{t("Rail & Transit Connectivity")}</span>
+                          <span>Rail & Transit Connectivity</span>
                         </div>
                         <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed bg-neutral-50/50 p-4 rounded-xl border border-neutral-100">
-                          {t(directions.transitOption)}
+                          {directions.transitOption}
                         </p>
                       </div>
 
                       {/* Transit sequence checklist */}
                       <div className="space-y-3">
-                        <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-neutral-450 block">{t("Navigational Checkpoints")}</span>
+                        <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-neutral-450 block">Navigational Checkpoints</span>
                         <div className="space-y-2.5">
                           {directions.keyInstructions.map((inst, iIdx) => (
                             <div key={iIdx} className="flex gap-3 items-start text-xs sm:text-sm text-neutral-600 bg-neutral-50/30 px-3 py-2 rounded-lg border border-neutral-200/40">
                               <span className="bg-brand-blue-100 text-brand-blue-900 font-mono text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                                 {iIdx + 1}
                               </span>
-                              <span>{t(inst)}</span>
+                              <span>{inst}</span>
                             </div>
                           ))}
                         </div>
@@ -1220,18 +1218,18 @@ export const ContactView: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setSelectedDirectionsOffice(null)}
-                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-neutral-700 hover:bg-neutral-100 text-xs sm:text-sm font-semibold transition-all order-2 sm:order-1 min-h-[44px]"
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-neutral-700 hover:bg-neutral-100 text-xs sm:text-sm font-semibold transition-all order-2 sm:order-1"
                       >
-                        {t("Dismiss Route Map")}
+                        Dismiss Route Map
                       </button>
                       <a
                         href={office.mapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-gold-500 hover:bg-brand-gold-600 text-brand-blue-950 font-black px-6 py-2.5 rounded-xl text-xs sm:text-sm shadow-md hover:shadow-lg transition-all order-1 sm:order-2 min-h-[44px]"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-gold-500 hover:bg-brand-gold-600 text-brand-blue-950 font-black px-6 py-2.5 rounded-xl text-xs sm:text-sm shadow-md hover:shadow-lg transition-all order-1 sm:order-2"
                       >
                         <Route className="w-4.5 h-4.5 text-brand-blue-950" />
-                        <span>{t("Launch Realtime Navigation Overlay")}</span>
+                        <span>Launch Realtime Navigation Overlay</span>
                         <ExternalLink className="w-3.5 h-3.5 shrink-0" />
                       </a>
                     </div>
@@ -1255,13 +1253,13 @@ export const ContactView: React.FC = () => {
           <div className="text-center space-y-3 mb-12">
             <div className="inline-flex items-center gap-1.5 bg-brand-gold-500/15 border border-brand-gold-500/30 text-brand-gold-400 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider">
               <Sparkles className="w-4 h-4" />
-              <span>{t("Sri Velan AI™ Engineering Assistant")}</span>
+              <span>Sri Velan AI™ Engineering Assistant</span>
             </div>
-            <h2 className="text-2xl sm:text-4.5xl font-black font-display tracking-tight text-white leading-none font-sans">
-              {t("Smart Tender Estimator & Planner")}
+            <h2 className="text-2xl sm:text-4.5xl font-black font-display tracking-tight text-white leading-none">
+              Smart Tender Estimator & Planner
             </h2>
-            <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl mx-auto leading-relaxed font-sans font-light">
-              {t("Input specifications about your construction project (such as site PWD coordinates, canal lengths, desired dewatering pumping flow capacities, or asphalt preplanning) to instant-generate operational action plans or assets blueprints.")}
+            <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl mx-auto leading-relaxed">
+              Input specifications about your construction project (such as site PWD coordinates, canal lengths, desired dewatering pumping flow capacities, or asphalt preplanning) to instant-generate operational action plans or assets blueprints.
             </p>
           </div>
 
@@ -1274,31 +1272,31 @@ export const ContactView: React.FC = () => {
 
             <form onSubmit={handleAiEstimate} className="space-y-6">
               <div className="space-y-2 text-xs">
-                <label className="text-neutral-400 font-bold uppercase tracking-widest block font-sans">{t("Project Parameters / Site Specifications")}</label>
+                <label className="text-neutral-400 font-bold uppercase tracking-widest block">Project Parameters / Site Specifications</label>
                 <textarea
                   rows={4}
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
-                  placeholder={t("e.g., We have a 4.5 MLD subway drainage contractor bid. Require technical dewatering setups, recommended pump units, and state PWD safety checklist compliance.")}
-                  className="w-full bg-neutral-950 border border-neutral-800 hover:border-neutral-700 focus:border-brand-gold-500 rounded-xl p-4 text-xs sm:text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-gold-500 transition-all font-sans leading-relaxed font-light"
+                  placeholder="e.g., We have a 4.5 MLD subway drainage contractor bid. Require technical dewatering setups, recommended pump units, and state PWD safety checklist compliance."
+                  className="w-full bg-neutral-950 border border-neutral-800 hover:border-neutral-700 focus:border-brand-gold-500 rounded-xl p-4 text-xs sm:text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-gold-500 transition-all font-sans leading-relaxed"
                 />
                 
                 {/* Empty prompt hint (Requirement 7) */}
                 {!aiPrompt.trim() && (
-                  <p className="text-brand-gold-500/80 font-mono text-[10px] sm:text-xs mt-2 flex items-center gap-1.5 animate-pulse font-sans">
-                    <span>💡 {t("Hint: Input details about your site, dimensions, or fluid logging levels to unlock the estimation engine.")}</span>
+                  <p className="text-brand-gold-500/80 font-mono text-[10px] sm:text-xs mt-2 flex items-center gap-1.5 animate-pulse">
+                    <span>💡 Hint: Input details about your site, dimensions, or fluid logging levels to unlock the estimation engine.</span>
                   </p>
                 )}
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider font-sans">
-                  {t("Model: Gemini 3.5 Flash Proxy · Compliant with PWD/WRD")}
+                <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider">
+                  Model: Gemini 3.5 Flash Proxy · Compliant with PWD/WRD
                 </p>
                 <button
                   type="submit"
                   disabled={aiLoading || !aiPrompt.trim()}
-                  className={`inline-flex items-center gap-2 font-display font-extrabold text-xs uppercase tracking-wider py-3.5 px-8 rounded-xl shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-gold-500/50 w-full sm:w-auto justify-center min-h-[44px] ${
+                  className={`inline-flex items-center gap-2 font-display font-extrabold text-xs uppercase tracking-wider py-3.5 px-8 rounded-xl shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-gold-500/50 w-full sm:w-auto justify-center ${
                     !aiPrompt.trim()
                       ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed border border-neutral-750'
                       : 'bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 border border-brand-gold-600/35 active:scale-95'
@@ -1309,34 +1307,34 @@ export const ContactView: React.FC = () => {
                   ) : (
                     <Sparkles className="w-4 h-4" />
                   )}
-                  <span className="font-sans">{t("Generate AI Assessment")}</span>
+                  <span>Generate AI Assessment</span>
                 </button>
               </div>
             </form>
 
             {/* Loading state (Requirement 5) */}
             {aiLoading && (
-              <div id="ai-loading-card" className="mt-8 pt-8 border-t border-neutral-800 flex flex-col items-center justify-center py-10 space-y-3 font-sans">
+              <div id="ai-loading-card" className="mt-8 pt-8 border-t border-neutral-800 flex flex-col items-center justify-center py-10 space-y-3">
                 <Loader className="w-8 h-8 animate-spin text-brand-gold-500 mr-2" />
-                <p className="text-xs sm:text-sm font-mono text-neutral-400 uppercase tracking-widest animate-pulse font-sans">
-                  {t("Analyzing site parameters via Secure AI Proxy...")}
+                <p className="text-xs sm:text-sm font-mono text-neutral-400 uppercase tracking-widest animate-pulse">
+                  Analyzing site parameters via Secure AI Proxy...
                 </p>
               </div>
             )}
 
             {/* Error state (Requirement 6) */}
             {aiError && (
-              <div id="ai-error-banner" className="mt-8 p-6 bg-red-950/40 border border-red-500/50 text-red-100 rounded-2xl flex flex-col sm:flex-row items-start gap-4 animate-fade-in font-mono text-xs leading-relaxed font-sans">
+              <div id="ai-error-banner" className="mt-8 p-6 bg-red-950/40 border border-red-500/50 text-red-100 rounded-2xl flex flex-col sm:flex-row items-start gap-4 animate-fade-in font-mono text-xs leading-relaxed">
                 <span className="text-xl shrink-0">⚠</span>
-                <div className="space-y-1.5 flex-1 select-text font-sans">
-                  <h4 className="font-bold text-red-300 uppercase tracking-wide font-sans">{t("AI Estimation Retrieval Failed")}</h4>
-                  <p className="font-sans">{t(aiError)}</p>
-                  <p className="text-[10px] text-red-400/80 font-sans">{t("Please check that your GEMINI_API_KEY environment variable is configured in your project settings, or retry in a few seconds.")}</p>
+                <div className="space-y-1.5 flex-1 select-text">
+                  <h4 className="font-bold text-red-300 uppercase tracking-wide">AI Estimation Retrieval Failed</h4>
+                  <p>{aiError}</p>
+                  <p className="text-[10px] text-red-400/80">Please check that your GEMINI_API_KEY environment variable is configured in your project settings, or retry in a few seconds.</p>
                   <button
                     onClick={(e) => { handleAiEstimate(e); }}
-                    className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-200 font-semibold uppercase text-[10px] tracking-wide rounded-md transition-all active:scale-95 min-h-[44px]"
+                    className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-200 font-semibold uppercase text-[10px] tracking-wide rounded-md transition-all active:scale-95"
                   >
-                    <span>{t("Attempt Connection Retry")}</span>
+                    <span>Attempt Connection Retry</span>
                   </button>
                 </div>
               </div>
@@ -1348,21 +1346,21 @@ export const ContactView: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-5 bg-brand-gold-500 rounded-sm" />
-                    <h3 className="font-display font-bold text-sm sm:text-base uppercase tracking-wider text-brand-gold-400 font-sans">
-                      {t("Technical Assessment Report")}
+                    <h3 className="font-display font-bold text-sm sm:text-base uppercase tracking-wider text-brand-gold-400">
+                      Technical Assessment Report
                     </h3>
                   </div>
-                  <span className="text-[9px] sm:text-[10px] text-neutral-400 font-mono bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800 font-sans">
-                    {t("DATE: LIVE ADVISORY")}
+                  <span className="text-[9px] sm:text-[10px] text-neutral-400 font-mono bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800">
+                    DATE: LIVE ADVISORY
                   </span>
                 </div>
 
-                <div className="text-left bg-neutral-950/40 p-5 sm:p-8 rounded-2xl border border-neutral-800 space-y-3 overflow-hidden select-text font-sans font-light">
+                <div className="text-left bg-neutral-950/40 p-5 sm:p-8 rounded-2xl border border-neutral-800 space-y-3 overflow-hidden select-text">
                   {parseAiMarkdown(aiResult)}
                 </div>
 
-                <p className="text-[10px] text-neutral-500 font-mono text-left leading-relaxed font-sans font-light">
-                  {t("Disclaimer: Generated assessment reports are simulated matching PWD indices. Submit formal contract blueprints to Mr. G. Selva Kumar for authorized commercial bidding.")}
+                <p className="text-[10px] text-neutral-500 font-mono text-left leading-relaxed">
+                  Disclaimer: Generated assessment reports are simulated matching PWD indices. Submit formal contract blueprints to Mr. G. Selva Kumar for authorized commercial bidding.
                 </p>
               </div>
             )}
