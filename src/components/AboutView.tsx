@@ -534,9 +534,9 @@ export const AboutView: React.FC = () => {
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Dhinakaravel' : 'திரு. தினகரவேல்'}</h4>
-                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-neutral-600 font-mono uppercase tracking-wide font-bold bg-neutral-100 px-2.5 py-1 rounded-full border border-neutral-200">
-                    <BookOpen className="w-3.5 h-3.5 text-neutral-600" />
-                    <span>{language === 'en' ? 'Auditor & Accountant' : 'தணிக்கையாளர் & கணக்காளர்'}</span>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-emerald-700 font-mono uppercase tracking-wide font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/50">
+                    <Landmark className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{language === 'en' ? 'Financial Consultant' : 'நிதி ஆலோசகர்'}</span>
                   </div>
                 </div>
                 <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">

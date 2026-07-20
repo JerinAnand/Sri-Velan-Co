@@ -107,6 +107,26 @@ const VCARD_CONTACTS: VCardContact[] = [
   }
 ];
 
+export const maskPhoneNumber = (phone: string): string => {
+  if (!phone) return '';
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length <= 5) {
+    return '*'.repeat(phone.length);
+  }
+  let digitCount = 0;
+  let result = '';
+  for (let i = phone.length - 1; i >= 0; i--) {
+    const char = phone[i];
+    if (/\d/.test(char) && digitCount < 5) {
+      result = '*' + result;
+      digitCount++;
+    } else {
+      result = char + result;
+    }
+  }
+  return result;
+};
+
 export const ContactView: React.FC = () => {
   const { t, language } = useTranslation();
   const { registerClick } = useEasterEgg();
@@ -138,6 +158,7 @@ export const ContactView: React.FC = () => {
   const [isSandbox, setIsSandbox] = useState(false);
   const [selectedVcardId, setSelectedVcardId] = useState<string>('corporate');
   const [copiedVcard, setCopiedVcard] = useState<boolean>(false);
+  const [isPhoneFocused, setIsPhoneFocused] = useState<boolean>(false);
   const [msgDetails, setMsgDetails] = useState({
     name: '',
     phone: '',
@@ -848,7 +869,9 @@ export const ContactView: React.FC = () => {
                         <input 
                           type="tel" 
                           required
-                          value={msgDetails.phone}
+                          value={isPhoneFocused ? msgDetails.phone : maskPhoneNumber(msgDetails.phone)}
+                          onFocus={() => setIsPhoneFocused(true)}
+                          onBlur={() => setIsPhoneFocused(false)}
                           onChange={(e) => {
                             setMsgDetails({...msgDetails, phone: e.target.value});
                             if (errors.phone) setErrors({...errors, phone: ''});

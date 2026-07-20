@@ -17,7 +17,7 @@ export const en = {
     message: 'Technical Details / Scope / Tender Outline *',
     placeholders: {
       name: 'e.g. Larsen & Toubro Procurement',
-      phone: 'e.g. +91 94430 18243',
+      phone: 'e.g. +91 94xxx xxxxx',
       email: 'e.g. tenders@lntinfra.com',
       message: 'Briefly write your tender requirements, project deadlines, or urgent dewatering locations...'
     },
@@ -89,7 +89,7 @@ export const ta = {
     message: 'தொழில்நுட்ப விவரங்கள் / திட்டத் தேவை *',
     placeholders: {
       name: 'எ.கா. லார்சன் & டூப்ரோ கொள்முதல் பிரிவு',
-      phone: 'எ.கா. +91 94430 18243',
+      phone: 'எ.கா. +91 94xxx xxxxx',
       email: 'எ.கா. tenders@lntinfra.com',
       message: 'உங்கள் திட்டத் தேவைகள், காலக்கெடு அல்லது அவசர நீர் வெளியேற்றத் தேவைகளைச் சுருக்கமாக எழுதவும்...'
     },

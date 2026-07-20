@@ -22,11 +22,32 @@ import {
 import { COMPANY_DETAILS } from '../data';
 import { useTranslation } from '../context/TranslationContext';
 
+const maskPhoneNumber = (phone: string): string => {
+  if (!phone) return '';
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length <= 5) {
+    return '*'.repeat(phone.length);
+  }
+  let digitCount = 0;
+  let result = '';
+  for (let i = phone.length - 1; i >= 0; i--) {
+    const char = phone[i];
+    if (/\d/.test(char) && digitCount < 5) {
+      result = '*' + result;
+      digitCount++;
+    } else {
+      result = char + result;
+    }
+  }
+  return result;
+};
+
 export const HydraulicBroomer: React.FC = () => {
   const { t, language } = useTranslation();
   const [tractorHp, setTractorHp] = useState<string>('45-60');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+  const [isPhoneFocused, setIsPhoneFocused] = useState(false);
   const [clientSpecs, setClientSpecs] = useState({
     name: '',
     phone: '',
@@ -340,7 +361,7 @@ export const HydraulicBroomer: React.FC = () => {
                     {t('hydraulicBroomer.successHeader')}
                   </h3>
                   <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans">
-                    {t('hydraulicBroomer.successMsg1')}<strong>{clientSpecs.name}</strong>{t('hydraulicBroomer.successMsg2')}<strong>{clientSpecs.tractorModel || 'Standard'}</strong>{t('hydraulicBroomer.successMsg3')}<strong>{clientSpecs.phone}</strong>{t('hydraulicBroomer.successMsg4')}
+                    {t('hydraulicBroomer.successMsg1')}<strong>{clientSpecs.name}</strong>{t('hydraulicBroomer.successMsg2')}<strong>{clientSpecs.tractorModel || 'Standard'}</strong>{t('hydraulicBroomer.successMsg3')}<strong>{maskPhoneNumber(clientSpecs.phone)}</strong>{t('hydraulicBroomer.successMsg4')}
                   </p>
                 </div>
               ) : (
@@ -368,7 +389,9 @@ export const HydraulicBroomer: React.FC = () => {
                       <input 
                         type="tel" 
                         required
-                        value={clientSpecs.phone}
+                        value={isPhoneFocused ? clientSpecs.phone : maskPhoneNumber(clientSpecs.phone)}
+                        onFocus={() => setIsPhoneFocused(true)}
+                        onBlur={() => setIsPhoneFocused(false)}
                         onChange={(e) => setClientSpecs({...clientSpecs, phone: e.target.value})}
                         className="w-full bg-neutral-800 border border-neutral-700 hover:border-neutral-600 focus:border-brand-gold-500 rounded-lg p-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-gold-500 transition-colors font-sans text-left"
                         placeholder={t('hydraulicBroomer.formPlaceholders.phone')}
