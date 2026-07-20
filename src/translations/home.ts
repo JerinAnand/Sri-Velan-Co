@@ -13,7 +13,7 @@ export const en = {
       badge: 'WRD Irrigation'
     },
     slide3: {
-      title: "Tractor-Driven Pumps &\nHigh-Capacity 100 HP Pumping Solutions",
+      title: "Tractor-Driven Dewatering Pumps &\nHigh-Capacity 100 HP Pumping Solutions",
       subtitle: 'Disaster Relief Management',
       tagline: 'Providing reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping services for construction, infrastructure, and government projects',
       badge: 'Emergency Ready'
@@ -85,7 +85,7 @@ export const ta = {
       badge: 'நீர் வளத் துறை'
     },
     slide3: {
-      title: "டிராக்டர் மூலம் இயக்கப்படும் பம்புகள் மற்றும்\nஅதிவேக 100 HP நீர் வெளியேற்றும் தீர்வுகள்",
+      title: "டிராக்டர் மூலம் இயக்கப்படும் நீர் வெளியேற்றும் பம்புகள் மற்றும்\nஅதிவேக 100 HP நீர் வெளியேற்றும் தீர்வுகள்",
       subtitle: 'பேரிடர் நிவாரண மேலாண்மை',
       tagline: 'கட்டுமானம், உள்கட்டமைப்பு மற்றும் அரசு திட்டங்களுக்கு நம்பகமான நீர் வெளியேற்றம், வெள்ளக் கட்டுப்பாடு, அகழ்வாராய்ச்சி வடிகால், ஏரி தூர்வாருதல் மற்றும் அவசர பம்பிங் சேவைகளை வழங்குதல்.',
       badge: 'அவசரகால தயார் நிலை'

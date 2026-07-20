@@ -35,6 +35,7 @@ import companyLogo from '../assets/images/sri-velan-logo.png';
 import pwdLogo from '../assets/images/pwd_logo_1784540042820.jpg';
 import gccLogo from '../assets/images/gcc_logo_1784540058542.jpg';
 import cmrlLogo from '../assets/images/cmrl_logo_1784540076590.jpg';
+import rvnlLogo from '../assets/images/rvnl_logo_1784551212130.jpg';
 
 interface HomeViewProps {
   setActiveView: (view: ActiveView) => void;
@@ -375,11 +376,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               <motion.div
                 className="flex gap-12 items-center whitespace-nowrap shrink-0"
                 animate={{
-                  x: [0, -480],
+                  x: [0, -640],
                 }}
                 transition={{
                   ease: "linear",
-                  duration: 18,
+                  duration: 22,
                   repeat: Infinity,
                 }}
               >
@@ -387,7 +388,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 {[...Array(5)].flatMap((_, i) => [
                   { name: 'PWD', fullName: 'Public Works Department (PWD)', logo: pwdLogo, desc: 'Water Resources & Buildings' },
                   { name: 'GCC', fullName: 'Greater Chennai Corporation (GCC)', logo: gccLogo, desc: 'Stormwater Drainage Works' },
-                  { name: 'CMRL', fullName: 'Chennai Metro Rail Limited (CMRL)', logo: cmrlLogo, desc: 'Metro Transit Infrastructure' }
+                  { name: 'CMRL', fullName: 'Chennai Metro Rail Limited (CMRL)', logo: cmrlLogo, desc: 'Metro Transit Infrastructure' },
+                  { name: 'RVNL', fullName: 'Rail Vikas Nigam Limited (RVNL)', logo: rvnlLogo, desc: 'Railway Infrastructure Projects' }
                 ]).map((client, index) => (
                   <div
                     key={`${client.name}-${index}`}

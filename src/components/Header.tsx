@@ -67,11 +67,9 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="w-full fixed top-0 z-50 transition-all duration-350 ease-in-out">
-      {/* Top Banner Info Bar - Hidden on small viewports or on scroll */}
-      <div className={`bg-brand-blue-900 border-b border-brand-blue-800/60 text-white py-2.5 px-4 sm:px-6 lg:px-8 text-xs transition-all duration-350 ${
-        isScrolled ? 'h-0 py-0 overflow-hidden border-none' : 'h-auto'
-      }`}>
+    <header className="w-full fixed top-0 left-0 right-0 z-50 transition-all duration-350 ease-in-out">
+      {/* Top Banner Info Bar - Stays pinned and visible with the navbar */}
+      <div className="bg-brand-blue-900 border-b border-brand-blue-800/60 text-white py-2.5 px-4 sm:px-6 lg:px-8 text-xs transition-all duration-350 h-auto">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-2">
           {/* Quality Tag */}
           <div className="flex items-center gap-2 text-brand-gold-400 font-medium text-center">

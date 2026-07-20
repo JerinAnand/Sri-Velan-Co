@@ -20,6 +20,9 @@ interface DistrictData {
   description: string;
   facilities: string[];
   coordinateLabel: { x: number; y: number };
+  totalPumps?: number;
+  wardRange?: string;
+  areas?: string;
 }
 
 const DISTRICT_RECORDS: Record<string, DistrictData> = {
@@ -33,7 +36,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 9,
     description: 'Northern coastal industrial and residential corridor. Key focus is on Buckingham Canal drainage blocks, beach-front storm outlets, and low-lying residential clusters adjacent to Ennore Expressway.',
     facilities: ['Thiruvottiyur High-HP Pumping Station', 'Coastal Suction Fleet B', 'Ennore Storm Gate Monitor'],
-    coordinateLabel: { x: 255, y: 52 }
+    coordinateLabel: { x: 285, y: 55 }
   },
   zone2: {
     id: 'zone2',
@@ -45,7 +48,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 11,
     description: 'Petrochemical industrial complex zone. Specializes in managing refinery surface runoff and deploying heavy-duty chemical-resistant bypass pumping rigs for rapid stormwater transfer.',
     facilities: ['Manali Industrial Bypass Yard', 'High-Inflow Submersibles Unit', 'Heavy De-clogging Fleet C'],
-    coordinateLabel: { x: 175, y: 50 }
+    coordinateLabel: { x: 175, y: 52 }
   },
   zone3: {
     id: 'zone3',
@@ -57,7 +60,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 6,
     description: 'Semi-residential catchment region containing multiple large holding ponds. Actively monitors Retteri lake outflow channels and assists in residential basement extractions.',
     facilities: ['Retteri Outlet Liaison Post', 'Madhavaram Mobile Suction Depot'],
-    coordinateLabel: { x: 155, y: 110 }
+    coordinateLabel: { x: 175, y: 107 }
   },
   zone4: {
     id: 'zone4',
@@ -69,7 +72,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 13,
     description: 'Densely populated historic North Chennai area. Characterized by narrow alleys and complex drainage lines; heavily relies on high-capacity truck-mounted vacuum pumps and manual desilt actions.',
     facilities: ['Tondiarpet Vacuum Pump Station', 'North Chennai Response Base'],
-    coordinateLabel: { x: 257, y: 115 }
+    coordinateLabel: { x: 300, y: 135 }
   },
   zone5: {
     id: 'zone5',
@@ -81,7 +84,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 22,
     description: 'Command center for North-Eastern Chennai. Direct liaison for harbor operations, Central railway station underpasses, and major subway dewatering tasks during high storm-surge scenarios.',
     facilities: ['Royapuram Deep-Well Command Base', 'Central Underpass Pump Array', 'Expressway Response Unit'],
-    coordinateLabel: { x: 252, y: 170 }
+    coordinateLabel: { x: 305, y: 212 }
   },
   zone6: {
     id: 'zone6',
@@ -93,7 +96,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 15,
     description: 'Vulnerable basin containing the Otteri Nullah canal feed. Demands continuous suction coverage to prevent storm overflow into nearby low-elevation housing colonies.',
     facilities: ['Otteri Nullah Channel Pumping Station', 'Standby Diesel Pump Fleet F'],
-    coordinateLabel: { x: 180, y: 167 }
+    coordinateLabel: { x: 172, y: 172 }
   },
   zone7: {
     id: 'zone7',
@@ -105,7 +108,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 12,
     description: 'Industrial estate zone with large lake inflows. Partners with state PWD to run high-capacity tractor-driven pumps to relieve water accumulation on major industrial roadways and subways.',
     facilities: ['Ambattur Industrial Pump Reserve', 'Lake Outflow Control Hub'],
-    coordinateLabel: { x: 82, y: 147 }
+    coordinateLabel: { x: 75, y: 155 }
   },
   zone8: {
     id: 'zone8',
@@ -117,7 +120,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 10,
     description: 'Centrally located high-density area bounded by the Cooum River. Closely monitors river bund stability and deploys high-volume trailer pumps to clear local water logging.',
     facilities: ['Cooum Bund Emergency Base', 'Anna Nagar Rapid Relief Fleet'],
-    coordinateLabel: { x: 125, y: 217 }
+    coordinateLabel: { x: 137, y: 265 }
   },
   zone9: {
     id: 'zone9',
@@ -129,7 +132,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 26,
     description: 'Corporate headquarters and central command yard for Chennai dewatering division. Operates 24/7 GCC liaison desks, supervising primary subway suction pumps and emergency power generators.',
     facilities: ['Central Teynampet HQ Base', 'VVIP Underpasses Suction Fleet', '24/7 GCC Emergency Liaison Desk', 'Standby Trailer Pump Hub A'],
-    coordinateLabel: { x: 202, y: 225 }
+    coordinateLabel: { x: 295, y: 265 }
   },
   zone10: {
     id: 'zone10',
@@ -141,7 +144,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 18,
     description: 'Legacy inundation zone carrying the crucial Mambalam Canal. Focused on maintaining smooth channel flow and preventing waterlogging in low-elevation central hubs.',
     facilities: ['Mambalam Canal Pumping Array', 'Subway Emergency Suction Team'],
-    coordinateLabel: { x: 120, y: 275 }
+    coordinateLabel: { x: 195, y: 345 }
   },
   zone11: {
     id: 'zone11',
@@ -153,7 +156,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 7,
     description: 'Primarily residential sector in Western Chennai. Actively manages local stormwater canal runoffs and delivers quick-response pumping support for street-level water collection.',
     facilities: ['Valasaravakkam Residential Suction Depot', 'Canal Gate Support Unit'],
-    coordinateLabel: { x: 50, y: 245 }
+    coordinateLabel: { x: 92, y: 310 }
   },
   zone12: {
     id: 'zone12',
@@ -165,7 +168,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 9,
     description: 'Key transit and airport corridor. Monitors active Adyar River floodplains, securing subways and highway underpasses to ensure uninterrupted transport flows.',
     facilities: ['Airport Perimeter Suction Base', 'Adyar River Liaison Station'],
-    coordinateLabel: { x: 92, y: 337 }
+    coordinateLabel: { x: 95, y: 400 }
   },
   zone13: {
     id: 'zone13',
@@ -177,7 +180,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 17,
     description: 'Command center for South Chennai. Safeguards the Adyar estuary, Buckingham Canal confluence, and high-density residential developments through automated high-volume marine-grade pumps.',
     facilities: ['Adyar Estuary High-Flow Station', 'South Chennai Response Hub', 'Buckingham Canal Suction Division'],
-    coordinateLabel: { x: 200, y: 342 }
+    coordinateLabel: { x: 275, y: 370 }
   },
   zone14: {
     id: 'zone14',
@@ -189,7 +192,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 4,
     description: 'IT Corridor and marshland border zone. Active division protecting critical IT parks and managing sensitive marsh runoff drainage limits.',
     facilities: ['Perungudi Active Depot', 'IT Expressway Suction Team'],
-    coordinateLabel: { x: 155, y: 407 }
+    coordinateLabel: { x: 225, y: 470 }
   },
   zone15: {
     id: 'zone15',
@@ -201,15 +204,33 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
     floodsManaged: 5,
     description: 'Deep southern coastal IT sector. Low-lying catchment area with multiple lake margins. Deploys high-capacity bypass rigs to handle massive seasonal monsoon water log risks.',
     facilities: ['Sholinganallur Emergency Response Base', 'Monsoon Bypass Pump Station'],
-    coordinateLabel: { x: 165, y: 475 }
+    coordinateLabel: { x: 225, y: 550 }
   }
+};
+
+const ZONE_METRIC_DEFAULTS: Record<string, { totalPumps: number; wardRange: string }> = {
+  zone1: { totalPumps: 25, wardRange: '1–14' },
+  zone2: { totalPumps: 30, wardRange: '15–21' },
+  zone3: { totalPumps: 20, wardRange: '22–33' },
+  zone4: { totalPumps: 28, wardRange: '34–48' },
+  zone5: { totalPumps: 45, wardRange: '49–63' },
+  zone6: { totalPumps: 30, wardRange: '64–78' },
+  zone7: { totalPumps: 35, wardRange: '79–93' },
+  zone8: { totalPumps: 25, wardRange: '94–108' },
+  zone9: { totalPumps: 50, wardRange: '109–126' },
+  zone10: { totalPumps: 35, wardRange: '127–142' },
+  zone11: { totalPumps: 20, wardRange: '143–155' },
+  zone12: { totalPumps: 22, wardRange: '156–167' },
+  zone13: { totalPumps: 40, wardRange: '168–180' },
+  zone14: { totalPumps: 18, wardRange: '181–191' },
+  zone15: { totalPumps: 22, wardRange: '192–200' }
 };
 
 const containerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.015
+      staggerChildren: 0.04
     }
   }
 };
@@ -217,7 +238,7 @@ const containerVariants = {
 const districtVariants = {
   hidden: { 
     opacity: 0, 
-    scale: 0.9,
+    scale: 0.95,
     transformOrigin: '50% 50%'
   },
   visible: { 
@@ -226,8 +247,8 @@ const districtVariants = {
     transformOrigin: '50% 50%',
     transition: {
       type: 'spring',
-      stiffness: 100,
-      damping: 14
+      stiffness: 80,
+      damping: 12
     }
   }
 };
@@ -244,6 +265,14 @@ export const ServiceAreaMap: React.FC = () => {
   const [zonalRecords, setZonalRecords] = useState<Record<string, DistrictData>>(() => {
     const records = JSON.parse(JSON.stringify(DISTRICT_RECORDS)); // Deep copy to avoid mutating source constants
     try {
+      // Add defaults
+      Object.keys(records).forEach(zoneId => {
+        const defaults = ZONE_METRIC_DEFAULTS[zoneId] || { totalPumps: 25, wardRange: '' };
+        records[zoneId].totalPumps = defaults.totalPumps;
+        records[zoneId].wardRange = defaults.wardRange;
+        records[zoneId].areas = records[zoneId].name.split(': ')[1] || '';
+      });
+
       const stored = localStorage.getItem('editable_data');
       if (stored) {
         const data = JSON.parse(stored);
@@ -296,10 +325,24 @@ export const ServiceAreaMap: React.FC = () => {
                 if (next[zoneKey]) {
                   const activeVal = item.ActivePumps !== undefined ? item.ActivePumps : item.activePumps;
                   const staffVal = item.StaffCount !== undefined ? item.StaffCount : item.staffCount;
+                  const totalVal = item.TotalPumps !== undefined ? item.TotalPumps : item.totalPumps;
+                  const wardVal = item.WardRange !== undefined ? item.WardRange : item.wardRange;
+                  const areasVal = item.Areas !== undefined ? item.Areas : item.areas;
+
+                  const activePumps = activeVal !== undefined ? Number(activeVal) : next[zoneKey].pumpsDeployed;
+                  const rawStaff = staffVal !== undefined ? Number(staffVal) : next[zoneKey].activeStaff;
+                  const staffCount = rawStaff > 0 ? rawStaff : (activePumps * 2 + 8);
+                  const totalPumps = totalVal !== undefined ? Number(totalVal) : (ZONE_METRIC_DEFAULTS[zoneKey]?.totalPumps || 25);
+                  const wardRange = wardVal !== undefined ? String(wardVal).trim() : (ZONE_METRIC_DEFAULTS[zoneKey]?.wardRange || '');
+                  const areas = areasVal !== undefined ? String(areasVal).trim() : (next[zoneKey].name.split(': ')[1] || '');
+
                   next[zoneKey] = {
                     ...next[zoneKey],
-                    pumpsDeployed: activeVal !== undefined ? Number(activeVal) : next[zoneKey].pumpsDeployed,
-                    activeStaff: staffVal !== undefined ? Number(staffVal) : next[zoneKey].activeStaff
+                    pumpsDeployed: activePumps,
+                    activeStaff: staffCount,
+                    totalPumps,
+                    wardRange,
+                    areas
                   };
                 }
               }
@@ -320,23 +363,23 @@ export const ServiceAreaMap: React.FC = () => {
   const activeRegions = (Object.values(zonalRecords) as DistrictData[]).filter(d => d.isActive);
   const currentRecord = zonalRecords[selectedDistrict];
 
-  // SVG Render paths representing stylized Chennai City zones
-  const districtPaths = [
-    { id: 'zone1', name: 'Zone 1: Thiruvottiyur', d: 'M 210 15 L 290 20 L 295 90 L 220 85 Z' },
-    { id: 'zone2', name: 'Zone 2: Manali', d: 'M 130 20 L 210 15 L 220 85 L 140 80 Z' },
-    { id: 'zone3', name: 'Zone 3: Madhavaram', d: 'M 120 80 L 195 85 L 190 140 L 115 135 Z' },
-    { id: 'zone4', name: 'Zone 4: Tondiarpet', d: 'M 220 85 L 295 90 L 285 145 L 220 140 Z' },
-    { id: 'zone5', name: 'Zone 5: Royapuram', d: 'M 220 140 L 285 145 L 280 200 L 220 195 Z' },
-    { id: 'zone6', name: 'Zone 6: Thiru-Vi-Ka-Nagar', d: 'M 140 140 L 220 140 L 215 195 L 140 195 Z' },
-    { id: 'zone7', name: 'Zone 7: Ambattur', d: 'M 50 110 L 120 110 L 110 185 L 45 175 Z' },
-    { id: 'zone8', name: 'Zone 8: Anna Nagar', d: 'M 90 185 L 165 195 L 160 250 L 85 240 Z' },
-    { id: 'zone9', name: 'Zone 9: Teynampet', d: 'M 165 195 L 240 195 L 235 255 L 160 250 Z' },
-    { id: 'zone10', name: 'Zone 10: Kodambakkam', d: 'M 85 240 L 160 250 L 155 310 L 80 300 Z' },
-    { id: 'zone11', name: 'Zone 11: Valasaravakkam', d: 'M 20 190 L 85 240 L 80 300 L 15 250 Z' },
-    { id: 'zone12', name: 'Zone 12: Alandur', d: 'M 60 300 L 135 310 L 125 375 L 50 365 Z' },
-    { id: 'zone13', name: 'Zone 13: Adyar', d: 'M 155 310 L 255 310 L 245 375 L 145 375 Z' },
-    { id: 'zone14', name: 'Zone 14: Perungudi', d: 'M 110 375 L 210 375 L 200 440 L 100 440 Z' },
-    { id: 'zone15', name: 'Zone 15: Sholinganallur', d: 'M 120 440 L 220 440 L 210 510 L 110 510 Z' }
+  // Dynamic data-driven configuration of Chennai Greater Chennai Corporation (GCC) Zonal Geography paths
+  const ZONE_CONFIGS = [
+    { id: 'zone1', d: 'M 230 10 L 340 10 L 340 100 L 250 120 L 230 70 Z', color: '#0ea5e9', selectedColor: '#0369a1', hoverColor: '#38bdf8', inactiveColor: '#f0f9ff' },
+    { id: 'zone2', d: 'M 120 20 L 230 10 L 230 70 L 140 85 Z', color: '#3b82f6', selectedColor: '#1d4ed8', hoverColor: '#60a5fa', inactiveColor: '#eff6ff' },
+    { id: 'zone3', d: 'M 120 85 L 230 70 L 210 135 L 125 145 Z', color: '#14b8a6', selectedColor: '#0f766e', hoverColor: '#2dd4bf', inactiveColor: '#ccfbf1' },
+    { id: 'zone4', d: 'M 250 120 L 340 100 L 350 170 L 260 175 Z', color: '#06b6d4', selectedColor: '#0e7490', hoverColor: '#22d3ee', inactiveColor: '#ecfeff' },
+    { id: 'zone5', d: 'M 260 175 L 350 170 L 360 250 L 255 240 Z', color: '#2563eb', selectedColor: '#1e3a8a', hoverColor: '#3b82f6', inactiveColor: '#f0f4ff' },
+    { id: 'zone6', d: 'M 125 145 L 210 135 L 220 200 L 145 210 Z', color: '#0d9488', selectedColor: '#115e59', hoverColor: '#14b8a6', inactiveColor: '#f0fdfa' },
+    { id: 'zone7', d: 'M 20 100 L 120 85 L 125 145 L 145 210 L 95 240 L 30 190 Z', color: '#6366f1', selectedColor: '#4338ca', hoverColor: '#818cf8', inactiveColor: '#e0e7ff' },
+    { id: 'zone8', d: 'M 95 240 L 180 230 L 170 300 L 80 295 Z', color: '#f59e0b', selectedColor: '#b45309', hoverColor: '#fbbf24', inactiveColor: '#fef3c7' },
+    { id: 'zone9', d: 'M 220 200 L 255 240 L 360 250 L 330 330 L 240 320 L 230 260 Z', color: '#4f46e5', selectedColor: '#3730a3', hoverColor: '#6366f1', inactiveColor: '#f5f3ff' },
+    { id: 'zone10', d: 'M 170 300 L 240 320 L 230 390 L 150 380 Z', color: '#8b5cf6', selectedColor: '#5b21b6', hoverColor: '#a78bfa', inactiveColor: '#f3e8ff' },
+    { id: 'zone11', d: 'M 30 190 L 95 240 L 80 295 L 150 300 L 130 360 L 50 350 Z', color: '#ec4899', selectedColor: '#9d174d', hoverColor: '#f472b6', inactiveColor: '#fce7f3' },
+    { id: 'zone12', d: 'M 50 350 L 130 360 L 150 380 L 140 450 L 60 440 Z', color: '#f43f5e', selectedColor: '#9f1239', hoverColor: '#fb7185', inactiveColor: '#ffe4e6' },
+    { id: 'zone13', d: 'M 240 320 L 330 330 L 310 440 L 210 420 Z', color: '#10b981', selectedColor: '#047857', hoverColor: '#34d399', inactiveColor: '#d1fae5' },
+    { id: 'zone14', d: 'M 140 450 L 210 420 L 310 440 L 280 510 L 170 520 Z', color: '#64748b', selectedColor: '#334155', hoverColor: '#94a3b8', inactiveColor: '#f1f5f9' },
+    { id: 'zone15', d: 'M 170 520 L 280 510 L 260 590 L 150 580 Z', color: '#475569', selectedColor: '#1e293b', hoverColor: '#64748b', inactiveColor: '#f8fafc' }
   ];
 
   return (
@@ -391,14 +434,27 @@ export const ServiceAreaMap: React.FC = () => {
 
           <div className="w-full h-full flex items-center justify-center pt-8 overflow-visible">
             <svg 
-              viewBox="0 0 350 500" 
+              viewBox="0 0 400 600" 
               className="w-full select-none filter drop-shadow-md duration-350 transition-all overflow-visible"
               style={{ 
-                maxWidth: `${Math.min(dimensions.width - 48, 350)}px`,
-                aspectRatio: '350/500',
+                maxWidth: '100%',
+                aspectRatio: '400/600',
                 height: 'auto'
               }}
             >
+              <defs>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feComponentTransfer in="blur" result="boost">
+                    <feFuncA type="linear" slope="1.5"/>
+                  </feComponentTransfer>
+                  <feMerge>
+                    <feMergeNode in="boost" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
               {/* Regional outlines */}
               <motion.g 
                 id="state-districts"
@@ -407,41 +463,28 @@ export const ServiceAreaMap: React.FC = () => {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-40px" }}
               >
-                {districtPaths.map((path) => {
+                {ZONE_CONFIGS.map((path) => {
                   const data = zonalRecords[path.id];
                   const hasData = !!data;
                   const isActive = data?.isActive;
                   const isSelected = selectedDistrict === path.id;
                   const isHovered = hoveredDistrict === path.id;
 
-                  // Dynamic color fills based on state
-                  let fill = '#f5f5f5'; // Neutral non-operational gray
-                  let stroke = '#e5e5e5';
-                  let strokeWidth = '1';
+                  // Dynamic color fills based on state from a distinct, cohesive palette
+                  let fill = '#f1f5f9';
+                  let stroke = isSelected ? '#ffffff' : '#ffffff';
+                  let strokeWidth = isSelected ? '2.5' : '1';
 
                   if (hasData) {
-                    if (data.activeStaff > 45 && data.isActive) {
-                      fill = isSelected ? '#991b1b' : (isHovered ? '#dc2626' : '#f87171');
-                      stroke = '#991b1b';
-                      strokeWidth = isSelected ? '2.5' : '2';
-                    } else if (data.status === 'active-hq') {
-                      fill = isSelected ? '#1e3a8a' : (isHovered ? '#1d4ed8' : '#3b82f6');
-                      stroke = '#1e3a8a';
-                      strokeWidth = isSelected ? '2' : '1.5';
-                    } else if (data.status === 'active-node') {
-                      fill = isSelected ? '#1e40af' : (isHovered ? '#3b82f6' : '#93c5fd');
-                      stroke = '#1e40af';
-                      strokeWidth = isSelected ? '2' : '1.5';
-                    } else if (data.status === 'standby') {
-                      fill = isSelected ? '#ca8a04' : (isHovered ? '#eab308' : '#fef08a');
-                      stroke = '#ca8a04';
-                      strokeWidth = isSelected ? '1.5' : '1';
+                    if (!isActive) {
+                      fill = path.inactiveColor;
+                    } else if (isSelected) {
+                      fill = path.selectedColor;
+                    } else if (isHovered) {
+                      fill = path.hoverColor;
+                    } else {
+                      fill = path.color;
                     }
-                  } else {
-                    // Normal rest state
-                    fill = isHovered ? '#eaeaea' : '#f3f4f6';
-                    stroke = '#d1d5db';
-                    strokeWidth = '0.5';
                   }
 
                   return (
@@ -472,6 +515,7 @@ export const ServiceAreaMap: React.FC = () => {
                           scale: 1.018,
                           filter: hasData ? "brightness(1.06) drop-shadow(0px 4px 8px rgba(0,0,0,0.15))" : "brightness(1.02)",
                         }}
+                        filter={isSelected ? "url(#glow)" : "none"}
                         style={{ transformOrigin: 'center' }}
                         className="transition-all cursor-pointer"
                       />
@@ -492,34 +536,67 @@ export const ServiceAreaMap: React.FC = () => {
                 })}
               </motion.g>
 
-              {/* Major District Labels */}
+              {/* Major District Labels & Response Hub Markers */}
               <g id="district-labels" className="pointer-events-none">
                 {(Object.values(zonalRecords) as DistrictData[]).map((dist) => {
                   const isSelected = selectedDistrict === dist.id;
                   const isOverLimit = dist.activeStaff > 45 && dist.isActive;
                   
                   return (
-                    <g key={dist.id} className="transition-all duration-300">
-                      {/* Compact dot locating the district center */}
-                      <circle 
-                        cx={dist.coordinateLabel.x} 
-                        cy={dist.coordinateLabel.y} 
-                        r={isSelected ? '3.5' : '2'} 
-                        fill={isOverLimit ? '#dc2626' : dist.status === 'active-hq' ? '#ca8a04' : '#1d4ed8'}
-                        className="transition-transform duration-300"
-                      />
-                      {/* Label Text */}
+                    <g key={dist.id} className="transition-all duration-350">
+                      {/* Plotting Small Circles matching the Legend: Navy for Primary, Amber for Secondary */}
+                      {dist.isActive && (
+                        dist.status === 'active-hq' ? (
+                          // Primary response hub (dark navy dot)
+                          <circle 
+                            cx={dist.coordinateLabel.x} 
+                            cy={dist.coordinateLabel.y} 
+                            r={isSelected ? '6.5' : '5'} 
+                            fill="#0e2954"
+                            stroke="#ffffff"
+                            strokeWidth="1.5"
+                            className="transition-all duration-300 filter drop-shadow-sm"
+                          />
+                        ) : (
+                          // Secondary response hub (amber/yellow dot)
+                          <circle 
+                            cx={dist.coordinateLabel.x} 
+                            cy={dist.coordinateLabel.y} 
+                            r={isSelected ? '5.5' : '4.5'} 
+                            fill="#eab308"
+                            stroke="#ffffff"
+                            strokeWidth="1.2"
+                            className="transition-all duration-300 filter drop-shadow-sm"
+                          />
+                        )
+                      )}
+
+                      {!dist.isActive && (
+                        // Standby/Inactive Zone Muted Small Dot
+                        <circle 
+                          cx={dist.coordinateLabel.x} 
+                          cy={dist.coordinateLabel.y} 
+                          r="3" 
+                          fill="#94a3b8"
+                          stroke="#ffffff"
+                          strokeWidth="1"
+                          className="transition-all duration-300"
+                        />
+                      )}
+
+                      {/* Responsive Label Text: hidden on mobile (<640px) to prevent layout clutter, tap-to-reveal tooltips are active */}
                       <text
-                        x={dist.coordinateLabel.x + 6}
-                        y={dist.coordinateLabel.y + 3}
-                        className={`font-mono text-[8px] font-bold ${
+                        x={dist.coordinateLabel.x}
+                        y={dist.coordinateLabel.y + 15}
+                        textAnchor="middle"
+                        className={`hidden sm:block font-mono text-[8px] font-bold tracking-tight pointer-events-none transition-all duration-300 ${
                           isSelected 
                             ? isOverLimit 
-                              ? 'fill-red-600 font-black' 
+                              ? 'fill-red-700 font-black scale-105' 
                               : 'fill-neutral-900 font-black' 
                             : isOverLimit 
-                              ? 'fill-red-500 font-bold' 
-                              : 'fill-neutral-500'
+                              ? 'fill-red-500 font-semibold' 
+                              : 'fill-neutral-600'
                         }`}
                       >
                         {dist.name.split(': ')[1] || dist.name}
@@ -531,27 +608,39 @@ export const ServiceAreaMap: React.FC = () => {
             </svg>
           </div>
 
-          <div className="w-full flex justify-between items-center bg-neutral-50 p-3.5 border border-neutral-100 rounded-xl mt-4">
-            <span className="text-[10px] font-mono text-neutral-450 uppercase">Chennai Municipal Zonal Coverage Map</span>
-            <div className="flex gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-brand-blue-700 block" title="Active Core District" />
-              <span className="w-2.5 h-2.5 rounded-full bg-brand-blue-300 block" title="Support Command Area" />
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-200 block" title="Reserve/Standby Unit" />
+          {/* Map Legend: Responsive and fully matching markers & active state */}
+          <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center bg-neutral-50 p-4 border border-neutral-150 rounded-xl mt-4 gap-2.5">
+            <span className="text-[10px] font-mono text-neutral-450 uppercase font-bold">Chennai Zonal Coverage Map</span>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-600">
+                <span className="w-3 h-3 rounded-full bg-[#0e2954] border border-white shadow-xs inline-block" />
+                <span>Primary Hub (Navy)</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-600">
+                <span className="w-3 h-3 rounded-full bg-[#eab308] border border-white shadow-xs inline-block" />
+                <span>Secondary Hub (Amber)</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-450">
+                <span className="w-3 h-3 rounded-full bg-neutral-250 border border-white inline-block" />
+                <span>Standby / Inactive</span>
+              </div>
             </div>
           </div>
 
           {/* Floating Hover Tooltip */}
           <AnimatePresence>
             {hoveredDistrict && (() => {
-              const hoveredData = DISTRICT_RECORDS[hoveredDistrict];
-              const name = hoveredData ? hoveredData.name : (districtPaths.find(p => p.id === hoveredDistrict)?.name || hoveredDistrict);
+              const hoveredData = zonalRecords[hoveredDistrict];
+              const name = hoveredData ? hoveredData.name : (zonalRecords[hoveredDistrict]?.name || hoveredDistrict);
               const projectCount = hoveredData ? hoveredData.floodsManaged : 0;
+              const areaName = hoveredData?.areas || (hoveredData?.name?.split(': ')[1] || hoveredDistrict);
+              const zoneName = hoveredData ? hoveredData.name.split(': ')[0] : hoveredDistrict;
               
               // Smart quadrant positioning to prevent tooltip from clipping or hiding outside the parent container
               const showBelow = tooltipPos.y < 165;
               const showLeft = tooltipPos.x > 175;
               
-              const xOffset = showLeft ? -236 : 12;
+              const xOffset = showLeft ? -256 : 12;
               const yOffset = showBelow ? 12 : -12;
               const transformValue = showBelow ? 'none' : 'translateY(-100%)';
 
@@ -561,44 +650,52 @@ export const ServiceAreaMap: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.12 }}
-                  className="absolute bg-neutral-900 border border-neutral-800 text-white p-3.5 rounded-xl shadow-2xl pointer-events-none z-[100] w-56 text-left overflow-visible"
+                  className="absolute bg-neutral-900 border border-neutral-800 text-white p-3.5 rounded-xl shadow-2xl pointer-events-none z-[100] w-60 text-left overflow-visible space-y-2"
                   style={{
                     left: `${tooltipPos.x + xOffset}px`,
                     top: `${tooltipPos.y + yOffset}px`,
                     transform: transformValue
                   }}
                 >
-                  <div className="flex items-center justify-between gap-2 border-b border-neutral-800 pb-2 mb-2">
-                    <span className="font-display font-extrabold text-xs text-neutral-100">
-                      {name}
-                    </span>
-                    <span className={`text-[8px] font-mono font-bold uppercase px-1.5 py-0.5 rounded ${
+                  <div className="flex items-center justify-between gap-2 border-b border-neutral-800 pb-2">
+                    <div className="space-y-0.5">
+                      <p className="font-display font-black text-xs text-brand-gold-400 leading-tight">
+                        {zoneName}: {areaName}
+                      </p>
+                      {hoveredData?.wardRange && (
+                        <p className="font-mono text-[9px] text-neutral-400">
+                          Wards Scope: {hoveredData.wardRange}
+                        </p>
+                      )}
+                    </div>
+                    <span className={`text-[8px] font-mono font-bold uppercase px-1.5 py-0.5 rounded shrink-0 self-start ${
                       hoveredData?.status === 'active-hq' 
                         ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
                         : hoveredData?.isActive 
                           ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
                           : 'bg-neutral-800 text-neutral-400 border border-neutral-700/50'
                     }`}>
-                      {hoveredData?.status === 'active-hq' ? 'Command HQ' : hoveredData?.isActive ? 'Active Sector' : 'Standby / Outer'}
+                      {hoveredData?.status === 'active-hq' ? 'Command HQ' : hoveredData?.isActive ? 'Active' : 'Standby'}
                     </span>
                   </div>
-                  <div className="space-y-1.5 font-sans text-[11px]">
-                    <div className="flex justify-between items-center text-neutral-350">
-                      <span>Relief Projects:</span>
-                      <span className="font-mono font-bold text-brand-gold-400">{projectCount} Completed</span>
+                  
+                  <div className="space-y-1 font-sans text-xs">
+                    <div className="flex justify-between gap-6">
+                      <span className="text-neutral-400">Active Pumps:</span>
+                      <span className="font-mono font-bold text-neutral-100">
+                        {hoveredData?.pumpsDeployed} / {hoveredData?.totalPumps || 25}
+                      </span>
                     </div>
-                    {hoveredData && hoveredData.isActive && (
-                      <>
-                        <div className="flex justify-between items-center text-neutral-400">
-                          <span>Active Pumps:</span>
-                          <span className="font-mono font-semibold text-neutral-200">{hoveredData.pumpsDeployed} Deployed</span>
-                        </div>
-                        <div className="flex justify-between items-center text-neutral-400">
-                          <span>De-watering Staff:</span>
-                          <span className="font-mono font-semibold text-neutral-200">{hoveredData.activeStaff} On-Field</span>
-                        </div>
-                      </>
-                    )}
+                    <div className="flex justify-between gap-6">
+                      <span className="text-neutral-400">On-field Crews:</span>
+                      <span className="font-mono font-bold text-neutral-100">
+                        {hoveredData?.activeStaff} Staff
+                      </span>
+                    </div>
+                    <div className="flex justify-between gap-6 pt-1 border-t border-neutral-850/50 text-[10px]">
+                      <span className="text-neutral-500">Relief Projects:</span>
+                      <span className="font-mono text-neutral-400">{projectCount} Completed</span>
+                    </div>
                   </div>
                 </motion.div>
               );
