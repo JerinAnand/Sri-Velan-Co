@@ -30,36 +30,30 @@ import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ServiceAreaMap } from './ServiceAreaMap';
 import { ServiceAreaTelemetry } from './ServiceAreaTelemetry';
 import { useAdmin } from '../context/AdminContext';
+import { useTranslation } from '../context/TranslationContext';
 import { EditableValue } from './EditableValue';
 
 export const AboutView: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'credentials' | 'milestones'>('profile');
+  const { t, language } = useTranslation();
   const { isAdmin } = useAdmin();
+  const [activeTab, setActiveTab] = useState<'profile' | 'credentials' | 'milestones'>('profile');
 
   // Strategic milestones structured from the incorporation history
   const corporateMilestones = [
     {
       year: '2006',
-      title: 'Company Inception & Initial Works',
-      desc: 'Formed in Villupuram by Mr. G. Selva Kumar, specializing in localized micro-conduit paving, stormwater drains, and rural brick masonry.',
       tag: 'FOUNDATION'
     },
     {
       year: '2012',
-      title: 'Water Resource Board Accreditation',
-      desc: 'Formally elevated to Water Resources Department (WRD) contractor, delivering major stonepitched canals, retaining barriers, and block works.',
       tag: 'EXPANSION'
     },
     {
       year: '2018',
-      title: 'State Contractor Licensing Registration',
-      desc: 'Attained high-status contracting licensing permitting tender bounds under Tamil Nadu Public Works and Irrigation departments.',
       tag: 'LEADERSHIP'
     },
     {
       year: '2024 - 2026',
-      title: 'Dewatering Fleet Dominance',
-      desc: 'Established South India’s premier localized mobilization dewatering arm, successfully countering Cyclone Fengal logging with high-volume diesel pumps.',
       tag: 'INNOVATION'
     }
   ];
@@ -90,10 +84,10 @@ export const AboutView: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4 text-left">
           <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase">
-            ESTABLISHED IN 2006
+            {t('about.headerBadge')}
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight font-display text-white">
-            {COMPANY_DETAILS.name} Corporate Profile
+            {COMPANY_DETAILS.name} {t('about.title')}
           </h1>
           <motion.p
             initial={{ opacity: 0, y: 15 }}
@@ -102,7 +96,7 @@ export const AboutView: React.FC = () => {
             transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-3xl text-sm sm:text-base text-neutral-300 font-sans font-light leading-relaxed"
           >
-            An integral driving force of civil engineering in Tamil Nadu, we are Government Registered Contractors driven by quality, operational readiness, and community public service.
+            {t('about.subtitle')}
           </motion.p>
         </div>
       </section>
@@ -112,9 +106,9 @@ export const AboutView: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-8 overflow-x-auto no-scrollbar py-3">
             {[
-              { id: 'profile', label: 'Corporate Overview' },
-              { id: 'credentials', label: 'Compliance & Registration ID' },
-              { id: 'milestones', label: 'Our Historical Journey' }
+              { id: 'profile', label: t('about.tabs.profile') },
+              { id: 'credentials', label: t('about.tabs.credentials') },
+              { id: 'milestones', label: t('about.tabs.milestones') }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -147,38 +141,38 @@ export const AboutView: React.FC = () => {
               <div className="lg:col-span-7 space-y-6">
                 <div className="inline-flex items-center gap-1.5 bg-brand-blue-50 text-brand-blue-700 font-mono font-bold text-[10px] uppercase py-1.5 px-3.5 rounded-full border border-brand-blue-100">
                   <Calendar className="w-3.5 h-3.5 text-brand-blue-600" />
-                  <span>Established in <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} /></span>
+                  <span>{t('about.overview.badge')}</span>
                 </div>
                 
                 <h2 className="text-2xl sm:text-3.5xl font-black text-brand-blue-900 tracking-tight leading-tight">
-                  Two Decades of Solid Structural Foundations & Community Operations
+                  {t('about.overview.title')}
                 </h2>
 
                 <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans first-letter:text-4xl first-letter:font-bold first-letter:text-brand-blue-800 first-letter:mr-1">
-                  <EditableValue id="company_incorporation_history" defaultValue={COMPANY_DETAILS.incorporationHistory} />
+                  <EditableValue id="company_incorporation_history" defaultValue={t('about.overview.description1')} />
                 </p>
 
-                <p className="text-sm text-neutral-500 leading-relaxed font-sans">
-                  By leveraging strong relationships with public entities and utilizing proprietary machinery assets, we deliver robust building plans, complex flood channels, retaining structures, and asphalt corridors that withstand decades of structural loads.
+                <p className="text-sm text-neutral-550 leading-relaxed font-sans font-light">
+                  {t('about.overview.description2')}
                 </p>
 
                 {/* Grid checklist of values */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-neutral-100">
                   <div className="flex gap-2.5">
                     <CheckCircle2 className="w-5 h-5 text-brand-gold-500 shrink-0" />
-                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">PWD Accredited Performance</p>
+                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">{t('about.overview.item1')}</p>
                   </div>
                   <div className="flex gap-2.5">
                     <CheckCircle2 className="w-5 h-5 text-brand-gold-500 shrink-0" />
-                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">Tractor Sweeping proprietary fleet</p>
+                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">{t('about.overview.item2')}</p>
                   </div>
                   <div className="flex gap-2.5">
                     <CheckCircle2 className="w-5 h-5 text-brand-gold-500 shrink-0" />
-                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">PWD Standards Audited Execution</p>
+                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">{t('about.overview.item3')}</p>
                   </div>
                   <div className="flex gap-2.5">
                     <CheckCircle2 className="w-5 h-5 text-brand-gold-500 shrink-0" />
-                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">Emergency Storm Pump Fleet Ready</p>
+                    <p className="text-xs sm:text-sm text-neutral-700 font-semibold font-display">{t('about.overview.item4')}</p>
                   </div>
                 </div>
               </div>
@@ -186,7 +180,7 @@ export const AboutView: React.FC = () => {
               {/* Right Col: Design Grid for Highlight stats */}
               <div className="lg:col-span-5 bg-neutral-50 p-8 border border-neutral-200/80 rounded-3xl space-y-6">
                 <h3 className="font-display font-black text-sm uppercase tracking-wider text-brand-blue-950 pb-3 border-b border-neutral-200">
-                  Registrar Credentials
+                  {language === 'en' ? 'Registrar Credentials' : 'பதிவாளர் சான்றுகள்'}
                 </h3>
 
                 <div className="space-y-4">
@@ -197,9 +191,9 @@ export const AboutView: React.FC = () => {
                       <Award className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider">Classification Status</p>
-                      <h4 className="font-display font-bold text-base text-brand-blue-950">Registered Civil Contractors</h4>
-                      <p className="text-xs text-neutral-500 mt-0.5 font-light">Accredited to pitch water, land development, and administrative tenders state-wide.</p>
+                      <p className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider">{language === 'en' ? 'Classification Status' : 'வகைப்பாடு நிலை'}</p>
+                      <h4 className="font-display font-bold text-base text-brand-blue-950">{language === 'en' ? 'Registered Civil Contractors' : 'பதிவு பெற்ற சிவில் ஒப்பந்தக்காரர்கள்'}</h4>
+                      <p className="text-xs text-neutral-500 mt-0.5 font-light">{language === 'en' ? 'Accredited to pitch water, land development, and administrative tenders state-wide.' : 'மாநிலம் தழுவிய நீர்வள, நில மேம்பாடு மற்றும் நிர்வாக ஒப்பந்தப்புள்ளிகளில் பங்கேற்க அங்கீகரிக்கப்பட்டது.'}</p>
                     </div>
                   </div>
 
@@ -209,9 +203,9 @@ export const AboutView: React.FC = () => {
                       <FileCheck className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider">Quality Management</p>
-                      <h4 className="font-display font-bold text-base text-brand-blue-950">Engineered Specifications</h4>
-                      <p className="text-xs text-neutral-500 mt-0.5 font-light">Our execution checklists follow state department and MoRTH specifications covering dual pavement and dewatering blocks.</p>
+                      <p className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider">{language === 'en' ? 'Quality Management' : 'தர மேலாண்மை'}</p>
+                      <h4 className="font-display font-bold text-base text-brand-blue-950">{language === 'en' ? 'Engineered Specifications' : 'பொறியியல் விவரக்குறிப்புகள்'}</h4>
+                      <p className="text-xs text-neutral-500 mt-0.5 font-light">{language === 'en' ? 'Our execution checklists follow state department and MoRTH specifications covering dual pavement and dewatering blocks.' : 'எங்கள் செயல்பாடுகள் மாநிலத் துறை மற்றும் MoRTH விவரக்குறிப்புகளைப் பின்பற்றி இரட்டை நடைபாதை மற்றும் நீர் வெளியேற்றும் பணிகளை உள்ளடக்கியது.'}</p>
                     </div>
                   </div>
 
@@ -224,8 +218,8 @@ export const AboutView: React.FC = () => {
           {activeTab === 'credentials' && (
             <div className="space-y-10 text-left">
               <div className="max-w-2xl">
-                <h2 className="text-2xl sm:text-3xl font-black text-brand-blue-900 tracking-tight">Official Government Registry Credentials</h2>
-                <p className="text-neutral-500 text-sm mt-1">Our physical registrations are audited under official ministries, assuring compliance with industrial and tax systems.</p>
+                <h2 className="text-2xl sm:text-3xl font-black text-brand-blue-900 tracking-tight">{t('about.credentials.title')}</h2>
+                <p className="text-neutral-500 text-sm mt-1">{t('about.credentials.subtitle')}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -234,17 +228,17 @@ export const AboutView: React.FC = () => {
                 <div className="bg-neutral-900 text-white rounded-2xl p-8 border border-neutral-800 relative overflow-hidden flex flex-col justify-between min-h-72">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/3 rounded-bl-full pointer-events-none" />
                   <div className="space-y-4">
-                    <div className="inline-flex bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold">GST registered</div>
-                    <h3 className="font-display font-bold text-xl text-brand-gold-400">Goods & Service Tax Identification</h3>
-                    <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">Officially certified GSTIN mapping active state and federal commercial tax structures.</p>
+                    <div className="inline-flex bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold">{t('about.credentials.gst.tag')}</div>
+                    <h3 className="font-display font-bold text-xl text-brand-gold-400">{t('about.credentials.gst.title')}</h3>
+                    <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">{t('about.credentials.gst.desc')}</p>
                   </div>
                   
                   <div className="pt-6 border-t border-neutral-800 flex justify-between items-end">
                     <div>
-                      <span className="block text-[9px] font-mono text-neutral-450 uppercase tracking-wider">TAX REGISTER INDEX NUMBER</span>
+                      <span className="block text-[9px] font-mono text-neutral-400 uppercase tracking-wider">{t('about.credentials.gst.indexLabel')}</span>
                       <span className="font-mono text-sm sm:text-base font-bold text-white tracking-wider select-all">{COMPANY_DETAILS.gstin}</span>
                     </div>
-                    <span className="text-[10px] text-emerald-400 font-mono">● ACTIVE VERIFIED</span>
+                    <span className="text-[10px] text-emerald-400 font-mono">{t('about.credentials.statusActive')}</span>
                   </div>
                 </div>
 
@@ -252,17 +246,17 @@ export const AboutView: React.FC = () => {
                 <div className="bg-brand-blue-950 text-white rounded-2xl p-8 border border-brand-blue-900 relative overflow-hidden flex flex-col justify-between min-h-72">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/3 rounded-bl-full pointer-events-none" />
                   <div className="space-y-4">
-                    <div className="inline-flex bg-brand-gold-500/20 text-brand-gold-400 border border-brand-gold-400/30 font-mono text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold">MSME registered</div>
-                    <h3 className="font-display font-bold text-xl text-brand-gold-400">Micro, Small and Medium Enterprises Registry</h3>
-                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans font-light">Classified under the Ministry of MSME, Government of India, enabling high institutional backing and tender leverage.</p>
+                    <div className="inline-flex bg-brand-gold-500/20 text-brand-gold-400 border border-brand-gold-400/30 font-mono text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold">{t('about.credentials.msme.tag')}</div>
+                    <h3 className="font-display font-bold text-xl text-brand-gold-400">{t('about.credentials.msme.title')}</h3>
+                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans font-light">{t('about.credentials.msme.desc')}</p>
                   </div>
                   
                   <div className="pt-6 border-t border-brand-blue-900/60 flex justify-between items-end">
                     <div>
-                      <span className="block text-[9px] font-mono text-neutral-400 uppercase tracking-wider">UDYAM ID REGISTER</span>
+                      <span className="block text-[9px] font-mono text-neutral-400 uppercase tracking-wider">{t('about.credentials.msme.udyamLabel')}</span>
                       <span className="font-mono text-sm sm:text-base font-bold text-white tracking-wider select-all">{COMPANY_DETAILS.msme}</span>
                     </div>
-                    <span className="text-[10px] text-brand-gold-400 font-mono">UDYAM REGISTERED</span>
+                    <span className="text-[10px] text-brand-gold-400 font-mono">{t('about.credentials.statusRegistered')}</span>
                   </div>
                 </div>
 
@@ -273,39 +267,45 @@ export const AboutView: React.FC = () => {
           {activeTab === 'milestones' && (
             <div className="space-y-12 text-left">
               <div className="max-w-xl">
-                <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase">OUR EVOLUTION</span>
+                <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase">{t('about.milestones.evolution')}</span>
                 <h2 className="text-2xl sm:text-3.5xl font-black text-brand-blue-900 tracking-tight mt-1">
-                  <EditableValue id="trajectory_22_year" defaultValue="22-Year" /> Infrastructure Trajectory
+                  <EditableValue id="trajectory_22_year" defaultValue={language === 'en' ? '20-Year' : '20-ஆண்டு'} /> {language === 'en' ? 'Infrastructure Trajectory' : 'உள்கட்டமைப்பு வளர்ச்சிப் பாதை'}
                 </h2>
-                <p className="text-neutral-550 text-xs sm:text-sm font-sans font-light">Centralizing our progress from rural sub-pavement blocks to major regional civic contracts.</p>
+                <p className="text-neutral-550 text-xs sm:text-sm font-sans font-light">{t('about.milestones.desc')}</p>
               </div>
 
               {/* Milestones Vertical Stack */}
               <div className="relative border-l border-neutral-200 pl-6 sm:pl-8 ml-4 sm:ml-6 space-y-10 py-2">
-                {corporateMilestones.map((ms, idx) => (
-                  <div key={idx} className="relative group">
-                    {/* Node Dot indicator */}
-                    <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 h-4 w-4 rounded-full bg-brand-gold-500 border-4 border-white shadow-md group-hover:bg-brand-blue-800 transition-colors" />
-                    
-                    <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-250/70 hover:border-brand-blue-700/30 hover:bg-white hover:shadow-lg transition-all max-w-3xl">
-                      <div className="flex items-center gap-3 flex-wrap mb-2">
-                        <span className="font-mono text-xl sm:text-2xl font-black text-brand-blue-900 tracking-tight">
-                          <EditableValue id={`milestone_year_${idx}`} defaultValue={ms.year} />
-                        </span>
-                        <span className="text-[9px] font-mono tracking-widest bg-brand-blue-900/5 text-brand-blue-850 px-2 py-0.5 rounded border border-brand-blue-800/10 uppercase font-semibold">
-                          <EditableValue id={`milestone_tag_${idx}`} defaultValue={ms.tag} />
-                        </span>
-                      </div>
+                {corporateMilestones.map((ms, idx) => {
+                  const milTitle = t(`about.milestones.items.${idx}.title`);
+                  const milDesc = t(`about.milestones.items.${idx}.desc`);
+                  const milTag = t(`about.milestones.items.${idx}.tag`);
+
+                  return (
+                    <div key={idx} className="relative group">
+                      {/* Node Dot indicator */}
+                      <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 h-4 w-4 rounded-full bg-brand-gold-500 border-4 border-white shadow-md group-hover:bg-brand-blue-800 transition-colors" />
                       
-                      <h4 className="font-display font-bold text-sm sm:text-base text-neutral-900 mb-1">
-                        <EditableValue id={`milestone_title_${idx}`} defaultValue={ms.title} />
-                      </h4>
-                      <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans font-light">
-                        <EditableValue id={`milestone_desc_${idx}`} defaultValue={ms.desc} />
-                      </p>
+                      <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-250/70 hover:border-brand-blue-700/30 hover:bg-white hover:shadow-lg transition-all max-w-3xl">
+                        <div className="flex items-center gap-3 flex-wrap mb-2">
+                          <span className="font-mono text-xl sm:text-2xl font-black text-brand-blue-900 tracking-tight">
+                            <EditableValue id={`milestone_year_${idx}`} defaultValue={ms.year} />
+                          </span>
+                          <span className="text-[9px] font-mono tracking-widest bg-brand-blue-900/5 text-brand-blue-850 px-2 py-0.5 rounded border border-brand-blue-800/10 uppercase font-semibold">
+                            <EditableValue id={`milestone_tag_${idx}`} defaultValue={milTag} />
+                          </span>
+                        </div>
+                        
+                        <h4 className="font-display font-bold text-sm sm:text-base text-neutral-900 mb-1">
+                          <EditableValue id={`milestone_title_${idx}`} defaultValue={milTitle} />
+                        </h4>
+                        <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans font-light">
+                          <EditableValue id={`milestone_desc_${idx}`} defaultValue={milDesc} />
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -340,9 +340,9 @@ export const AboutView: React.FC = () => {
                 <div className="h-12 w-12 bg-brand-gold-500/10 text-brand-gold-400 rounded-xl flex items-center justify-center border border-brand-gold-500/20 shadow-md">
                   <Compass className="w-6 h-6" />
                 </div>
-                <h3 className="font-display font-black text-xl text-white tracking-tight uppercase">Our Strategic Vision</h3>
+                <h3 className="font-display font-black text-xl text-white tracking-tight uppercase">{t('about.visionMission.vision.title')}</h3>
                 <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                  To remain the premier, most reliable civil engineering provider in South India by continuously expanding our rapid mobilization pumping fleets, implementing progressive environmental standards, and delivering resilient municipal systems that stand the test of seasonal storm shifts and heavy water movements.
+                  {t('about.visionMission.vision.desc')}
                 </p>
               </div>
               <div className="h-1 w-20 bg-brand-gold-500 rounded mt-4" />
@@ -354,9 +354,9 @@ export const AboutView: React.FC = () => {
                 <div className="h-12 w-12 bg-brand-blue-500/10 text-brand-blue-400 rounded-xl flex items-center justify-center border border-brand-blue-500/20 shadow-md">
                   <Target className="w-6 h-6" />
                 </div>
-                <h3 className="font-display font-black text-xl text-white tracking-tight uppercase">Our Core Mission</h3>
+                <h3 className="font-display font-black text-xl text-white tracking-tight uppercase">{t('about.visionMission.mission.title')}</h3>
                 <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                  To serve community utilities with absolute operational integrity. We achieve this by procuring high-grade engineered concrete mix matrices, maintaining fully functional hydraulic and suction pumps on constant status alert, and deploying seasoned technical crews capable of sealing broken embankments and draining waterlogged populations safely in minimum time frames.
+                  {t('about.visionMission.mission.desc')}
                 </p>
               </div>
               <div className="h-1 w-20 bg-brand-blue-600 rounded mt-4" />
@@ -371,12 +371,12 @@ export const AboutView: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-xl mx-auto space-y-3 mb-16">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">ADMINISTRATION</span>
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">{t('about.leadership.badge')}</span>
             <h2 className="text-3xl sm:text-4xl font-black text-brand-blue-900 tracking-tight font-display flex items-center justify-center gap-2.5">
               <Award className="w-8 h-8 sm:w-10 sm:h-10 text-brand-gold-500 shrink-0 filter drop-shadow-sm" />
-              <span>Governing Board</span>
+              <span>{t('about.leadership.title')}</span>
             </h2>
-            <p className="text-xs sm:text-sm text-neutral-500 font-sans">Represented by a legacy of dedicated civil contractors leading water and land development networks in Tamil Nadu.</p>
+            <p className="text-xs sm:text-sm text-neutral-500 font-sans">{t('about.leadership.subtitle')}</p>
           </div>
 
           <div className="max-w-5xl mx-auto bg-neutral-950 rounded-3xl overflow-hidden shadow-2xl text-white grid grid-cols-1 md:grid-cols-12 gap-0 relative border border-neutral-800 text-left">
@@ -400,7 +400,7 @@ export const AboutView: React.FC = () => {
               <div className="space-y-2.5">
                 <div className="inline-flex items-center gap-1.5 bg-brand-gold-500/10 text-brand-gold-400 border border-brand-gold-400/20 rounded-full py-1 px-3 text-xs leading-none font-mono">
                   <UserCheck className="w-3.5 h-3.5" />
-                  <span>Governing Partner</span>
+                  <span>{t('about.leadership.roleGP')}</span>
                 </div>
                 
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
@@ -414,11 +414,11 @@ export const AboutView: React.FC = () => {
               <div className="h-px bg-brand-blue-800/60 w-full" />
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
-                "<EditableValue id="gp_bio" defaultValue={COMPANY_DETAILS.leadership.governingPartner.bio} />"
+                "<EditableValue id="gp_bio" defaultValue={t('about.leadership.gpBio')} />"
               </p>
 
               <div className="pt-2 flex items-center gap-3">
-                <span className="text-[10px] text-neutral-400 uppercase font-mono">Sign of Authority</span>
+                <span className="text-[10px] text-neutral-400 uppercase font-mono">{t('about.leadership.signAuthority')}</span>
                 <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">
                   <EditableValue id="gp_signature" defaultValue="G. Selva Kumar" />
                 </span>
@@ -450,7 +450,7 @@ export const AboutView: React.FC = () => {
               <div className="space-y-2.5">
                 <div className="inline-flex items-center gap-1.5 bg-brand-gold-500/10 text-brand-gold-400 border border-brand-gold-400/20 rounded-full py-1 px-3 text-xs leading-none font-mono">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Managing Director</span>
+                  <span>{t('about.leadership.roleMD')}</span>
                 </div>
                 
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
@@ -464,11 +464,11 @@ export const AboutView: React.FC = () => {
               <div className="h-px bg-brand-blue-800/60 w-full" />
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
-                "<EditableValue id="md_bio" defaultValue={COMPANY_DETAILS.leadership.managingDirector.bio} />"
+                "<EditableValue id="md_bio" defaultValue={t('about.leadership.mdBio')} />"
               </p>
 
               <div className="pt-2 flex items-center gap-3">
-                <span className="text-[10px] text-neutral-400 uppercase font-mono">Sign of Authority</span>
+                <span className="text-[10px] text-neutral-400 uppercase font-mono">{t('about.leadership.signAuthority')}</span>
                 <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">
                   <EditableValue id="md_signature" defaultValue="Vetrivel S" />
                 </span>
@@ -480,10 +480,10 @@ export const AboutView: React.FC = () => {
           {/* Executive Board Roles Subsection */}
           <div className="mt-20 pt-16 border-t border-neutral-200">
             <div className="text-center max-w-xl mx-auto space-y-2 mb-12">
-              <span className="text-[10px] font-mono font-bold tracking-widest text-brand-gold-600 uppercase block">ADMINISTRATING OFFICERS</span>
-              <h3 className="text-2xl font-black font-display text-brand-blue-950 tracking-tight">Executive Board Roles</h3>
-              <p className="text-xs text-neutral-500 font-sans">
-                The governing directors and auditing consultants managing Sri Velan & Co's regional infrastructure deployment.
+              <span className="text-[10px] font-mono font-bold tracking-widest text-brand-gold-600 uppercase block">{language === 'en' ? 'ADMINISTRATING OFFICERS' : 'நிர்வாக அதிகாரிகள்'}</span>
+              <h3 className="text-2xl font-black font-display text-brand-blue-950 tracking-tight">{t('about.leadership.rolesTitle')}</h3>
+              <p className="text-xs text-neutral-550 font-sans">
+                {t('about.leadership.rolesSubtitle')}
               </p>
             </div>
 
@@ -495,14 +495,16 @@ export const AboutView: React.FC = () => {
                   SK
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">Mr. Selva Kumar</h4>
+                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Selva Kumar' : 'திரு. செல்வ குமார்'}</h4>
                   <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
                     <Award className="w-3.5 h-3.5" />
-                    <span>Founder</span>
+                    <span>{language === 'en' ? 'Founder' : 'நிறுவனர்'}</span>
                   </div>
                 </div>
                 <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                  Directs strategic multi-district rescue logistics and civil contracts in Tamil Nadu.
+                  {language === 'en' 
+                    ? 'Directs strategic multi-district rescue logistics and civil contracts in Tamil Nadu.' 
+                    : 'தமிழ்நாட்டில் உத்திகள் சார்ந்த பல மாவட்ட மீட்பு தளவாடங்கள் மற்றும் சிவில் ஒப்பந்தங்களை இயக்குகிறார்.'}
                 </p>
               </div>
 
@@ -512,14 +514,16 @@ export const AboutView: React.FC = () => {
                   VV
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">Mr. Vetrivel</h4>
+                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Vetrivel' : 'திரு. வெற்றிவேல்'}</h4>
                   <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Managing Director</span>
+                    <span>{t('about.leadership.roleMD')}</span>
                   </div>
                 </div>
                 <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                  Oversees active fleet engineering, team mobilizations, and regional yards management.
+                  {language === 'en' 
+                    ? 'Oversees active fleet engineering, team mobilizations, and regional yards management.' 
+                    : 'செயலில் உள்ள கடற்படை பொறியியல், குழு அணிதிரட்டல்கள் மற்றும் பிராந்திய யார்டுகள் மேலாண்மை ஆகியவற்றை மேற்பார்வையிடுகிறார்.'}
                 </p>
               </div>
 
@@ -529,14 +533,16 @@ export const AboutView: React.FC = () => {
                   DK
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">Mr. Dhinakaravel</h4>
+                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Dhinakaravel' : 'திரு. தினகரவேல்'}</h4>
                   <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-neutral-600 font-mono uppercase tracking-wide font-bold bg-neutral-100 px-2.5 py-1 rounded-full border border-neutral-200">
                     <BookOpen className="w-3.5 h-3.5 text-neutral-600" />
-                    <span>Auditor & Accountant</span>
+                    <span>{language === 'en' ? 'Auditor & Accountant' : 'தணிக்கையாளர் & கணக்காளர்'}</span>
                   </div>
                 </div>
                 <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                  Manages regulatory financial audits, GST submissions compliance, and budget planning.
+                  {language === 'en' 
+                    ? 'Manages regulatory financial audits, GST submissions compliance, and budget planning.' 
+                    : 'ஒழுங்குமுறை நிதி தணிக்கைகள், ஜிஎஸ்டி சமர்ப்பிப்புகளின் இணக்கம் மற்றும் வரவு செலவு திட்டமிடல் ஆகியவற்றை நிர்வகிக்கிறார்.'}
                 </p>
               </div>
 
@@ -546,14 +552,16 @@ export const AboutView: React.FC = () => {
                   JA
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">Mr. Jerin Anand</h4>
+                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Jerin Anand' : 'திரு. ஜெரின் ஆனந்த்'}</h4>
                   <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
                     <Code className="w-3.5 h-3.5" />
-                    <span>Admin & Developer</span>
+                    <span>{language === 'en' ? 'Admin & Developer' : 'நிர்வாகி & டெவலப்பர்'}</span>
                   </div>
                 </div>
                 <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                  Maintains enterprise tech portals, secure digital records, and digital identity.
+                  {language === 'en' 
+                    ? 'Maintains enterprise tech portals, secure digital records, and digital identity.' 
+                    : 'நிறுவன தொழில்நுட்ப இணையதளங்கள், பாதுகாப்பான டிஜிட்டல் பதிவுகள் மற்றும் டிஜிட்டல் அடையாளத்தை பராமரிக்கிறார்.'}
                 </p>
               </div>
 
@@ -567,10 +575,12 @@ export const AboutView: React.FC = () => {
         <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
           <div className="space-y-2">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">COMPLIANCE & AUDIT</span>
-            <h2 className="text-2xl sm:text-3.5xl font-black text-white tracking-tight font-display">Our Registrations & Credentials</h2>
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">{language === 'en' ? 'COMPLIANCE & AUDIT' : 'இணக்கம் மற்றும் தணிக்கை'}</span>
+            <h2 className="text-2xl sm:text-3.5xl font-black text-white tracking-tight font-display">{language === 'en' ? 'Our Registrations & Credentials' : 'எங்கள் பதிவுகள் மற்றும் சான்றுகள்'}</h2>
             <p className="text-xs sm:text-sm text-neutral-300 max-w-xl mx-auto font-sans font-light">
-              Sri Velan & Co maintains active contracting licenses, MSME declarations, and tax registrations audited directly by state ministries.
+              {language === 'en' 
+                ? 'Sri Velan & Co maintains active contracting licenses, MSME declarations, and tax registrations audited directly by state ministries.'
+                : 'ஸ்ரீ வேலன் & கோ மாநில அமைச்சகங்களால் நேரடியாக தணிக்கை செய்யப்பட்ட செயலில் உள்ள ஒப்பந்த உரிமங்கள், எம்எஸ்எம்இ அறிவிப்புகள் மற்றும் வரி பதிவுகளை பராமரிக்கிறது.'}
             </p>
           </div>
 
@@ -581,9 +591,9 @@ export const AboutView: React.FC = () => {
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">TENDER CAPACITY</p>
-                <h4 className="font-display font-medium text-sm sm:text-base text-white">Government Registered Contractor</h4>
-                <p className="text-xs text-neutral-300/80 font-light">Cleared for state public works.</p>
+                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">{language === 'en' ? 'TENDER CAPACITY' : 'ஒப்பந்தப்புள்ளி திறன்'}</p>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">{language === 'en' ? 'Government Registered Contractor' : 'அரசு பதிவு பெற்ற ஒப்பந்தக்காரர்'}</h4>
+                <p className="text-xs text-neutral-300/80 font-light">{language === 'en' ? 'Cleared for state public works.' : 'மாநில பொதுப்பணித் துறைகளுக்கு அனுமதி பெற்றது.'}</p>
               </div>
             </div>
 
@@ -593,9 +603,9 @@ export const AboutView: React.FC = () => {
                 <FileText className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">TAX COMPLIANCE</p>
+                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">{language === 'en' ? 'TAX COMPLIANCE' : 'வரி இணக்கம்'}</p>
                 <h4 className="font-display font-medium text-sm sm:text-base text-white">GSTIN: 33ABFFS6298G1ZU</h4>
-                <p className="text-xs text-neutral-300/80 font-light">Verified commercial GST entity status.</p>
+                <p className="text-xs text-neutral-300/80 font-light">{language === 'en' ? 'Verified commercial GST entity status.' : 'சரிபார்க்கப்பட்ட வணிக ஜிஎஸ்டி நிறுவன நிலை.'}</p>
               </div>
             </div>
 
@@ -607,7 +617,7 @@ export const AboutView: React.FC = () => {
               <div className="space-y-1">
                 <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">MINISTRY OF MSME</p>
                 <h4 className="font-display font-medium text-sm sm:text-base text-white">UDYAM-TN-31-0046742</h4>
-                <p className="text-xs text-neutral-300/80 font-light">Certified micro-industrial business unit.</p>
+                <p className="text-xs text-neutral-300/80 font-light">{language === 'en' ? 'Certified micro-industrial business unit.' : 'சான்றளிக்கப்பட்ட குறு-தொழில்துறை வணிக அலகு.'}</p>
               </div>
             </div>
 
@@ -617,9 +627,9 @@ export const AboutView: React.FC = () => {
                 <CheckCircle className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">QUALITY CONTROL</p>
-                <h4 className="font-display font-medium text-sm sm:text-base text-white">Engineered Quality Services</h4>
-                <p className="text-xs text-neutral-300/80 font-light">Committed to code-compliant engineering.</p>
+                <p className="text-[10px] font-mono text-brand-gold-400 uppercase tracking-wider font-semibold">{language === 'en' ? 'QUALITY CONTROL' : 'தரக் கட்டுப்பாடு'}</p>
+                <h4 className="font-display font-medium text-sm sm:text-base text-white">{language === 'en' ? 'Engineered Quality Services' : 'தரமான பொறியியல் சேவைகள்'}</h4>
+                <p className="text-xs text-neutral-300/80 font-light">{language === 'en' ? 'Committed to code-compliant engineering.' : 'விதிமுறைகளுக்கு இணங்க பொறியியல் பணிகளை செய்ய அர்ப்பணிக்கப்பட்டுள்ளது.'}</p>
               </div>
             </div>
           </div>
@@ -631,10 +641,10 @@ export const AboutView: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-12">
           
           <div className="space-y-3">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">TESTIMONIALS</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-brand-blue-900 tracking-tight font-display">Client Testimonials</h2>
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase block">{t('about.testimonials.tag')}</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-brand-blue-900 tracking-tight font-display">{t('about.testimonials.title')}</h2>
             <p className="text-xs sm:text-sm text-neutral-550 max-w-xl mx-auto font-sans font-light">
-              Trusted by leading government departments and state municipalities to execute critical heavy infrastructure and emergency dewatering tasks.
+              {t('about.testimonials.desc')}
             </p>
           </div>
 
@@ -653,12 +663,12 @@ export const AboutView: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-neutral-600 font-sans italic leading-relaxed">
-                  "Sri Velan & Co demonstrated exemplary operational speed in clearing the canal beds. Their high-capacity pumping fleet was fully mobilized within hours, preventing severe flooding in our residential sectors during the heavy monsoon cycle."
+                  {t('about.testimonials.t1.quote')}
                 </p>
               </div>
               <div className="pt-4 border-t border-neutral-100">
-                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">Executive Engineer</h4>
-                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">Public Works Department (PWD), Villupuram Division</p>
+                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">{t('about.testimonials.t1.author')}</h4>
+                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">{t('about.testimonials.t1.dept')}</p>
               </div>
             </div>
 
@@ -676,12 +686,12 @@ export const AboutView: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-neutral-600 font-sans italic leading-relaxed">
-                  "The quality of concrete masonry and stone-pitching executed along the regulatory structures meets our highest standards of hydraulic flow endurance. A very methodical and structured approach by experienced registered engineers."
+                  {t('about.testimonials.t2.quote')}
                 </p>
               </div>
               <div className="pt-4 border-t border-neutral-100">
-                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">Superintending Engineer</h4>
-                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">Water Resources Department (WRD), Chennai Region</p>
+                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">{t('about.testimonials.t2.author')}</h4>
+                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">{t('about.testimonials.t2.dept')}</p>
               </div>
             </div>
 
@@ -699,17 +709,16 @@ export const AboutView: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-xs sm:text-sm text-neutral-600 font-sans italic leading-relaxed">
-                  "Deploying their tractor-mounted sweepers and earthmovers made a critical difference in municipal road development and recovery. Their coordination with local ward engineering officials has been exceptional."
+                  {t('about.testimonials.t3.quote')}
                 </p>
               </div>
               <div className="pt-4 border-t border-neutral-100">
-                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">Assistant Commissioner</h4>
-                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">Greater Chennai Corporation (GCC)</p>
+                <h4 className="font-display font-bold text-xs sm:text-sm text-brand-blue-950 leading-tight">{t('about.testimonials.t3.author')}</h4>
+                <p className="text-[10px] text-neutral-500 font-mono mt-0.5">{t('about.testimonials.t3.dept')}</p>
               </div>
             </div>
           </div>
 
-          {/* TODO: Replace with real client testimonials */}
         </div>
       </section>
 

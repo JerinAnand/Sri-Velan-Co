@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAdmin } from '../context/AdminContext';
+import { useTranslation } from '../context/TranslationContext';
 import { Pencil, AlertCircle } from 'lucide-react';
 
 interface EditableValueProps {
@@ -25,16 +26,17 @@ export function EditableValue({
   onSave,
 }: EditableValueProps) {
   const { isAdmin, getValue, updateValue, validateValue, getBoundsDescription } = useAdmin();
+  const { language } = useTranslation(); // Subscribe to language changes to force instant re-render
   const currentValue = getValue(id, defaultValue);
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState<string | number>(currentValue);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  // Synchronize internal state with changes in context (e.g. if we Reset to Defaults)
+  // Synchronize internal state with changes in context (e.g. if we Reset to Defaults or language change)
   useEffect(() => {
     setTempValue(currentValue);
     setValidationError(null);
-  }, [currentValue]);
+  }, [currentValue, language]);
 
   const handleSave = () => {
     // Convert to number if the original value was a number

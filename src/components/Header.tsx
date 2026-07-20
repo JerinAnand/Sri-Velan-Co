@@ -12,6 +12,7 @@ import { ActiveView } from '../types';
 import { useEasterEgg } from '../context/EasterEggContext';
 import { useTheme } from '../context/ThemeContext';
 import { useAdmin } from '../context/AdminContext';
+import { useTranslation } from '../context/TranslationContext';
 import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
@@ -21,6 +22,7 @@ export const Header: React.FC = () => {
   const { registerClick } = useEasterEgg();
   const { theme, toggleTheme } = useTheme();
   const { getValue } = useAdmin();
+  const { language, changeLanguage, t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -49,13 +51,13 @@ export const Header: React.FC = () => {
   }, []);
 
   const navItems = [
-    { label: 'Home', view: 'home' as ActiveView },
-    { label: 'About Us', view: 'about' as ActiveView },
-    { label: 'Services', view: 'services' as ActiveView },
-    { label: 'Equipments', view: 'equipments' as ActiveView },
-    { label: 'Projects', view: 'projects' as ActiveView },
-    { label: 'Hydraulic Broomer', view: 'hydraulic-broomer' as ActiveView },
-    { label: 'Contact Us', view: 'contact' as ActiveView },
+    { label: t('navigation.home'), view: 'home' as ActiveView },
+    { label: t('navigation.about'), view: 'about' as ActiveView },
+    { label: t('navigation.services'), view: 'services' as ActiveView },
+    { label: t('navigation.equipments'), view: 'equipments' as ActiveView },
+    { label: t('navigation.projects'), view: 'projects' as ActiveView },
+    { label: t('navigation.hydraulicBroomer'), view: 'hydraulic-broomer' as ActiveView },
+    { label: t('navigation.contact'), view: 'contact' as ActiveView },
   ];
 
   const handleNavClick = (view: ActiveView) => {
@@ -74,7 +76,7 @@ export const Header: React.FC = () => {
           {/* Quality Tag */}
           <div className="flex items-center gap-2 text-brand-gold-400 font-medium text-center">
             <Award className="w-3.5 h-3.5" />
-            <span>Government Registered Contractor</span>
+            <span>{t('navigation.governmentRegistered')}</span>
           </div>
         </div>
       </div>
@@ -115,8 +117,9 @@ export const Header: React.FC = () => {
                   <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
                 </h1>
                 <p 
-                  className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase whitespace-nowrap"
-                  style={{ width: '189.359px' }}
+                  className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase truncate"
+                  style={{ maxWidth: '189.359px' }}
+                  title="Powered by Trust, Proven by Provision"
                 >
                   Powered by Trust, Proven by Provision
                 </p>
@@ -124,7 +127,7 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center gap-1 py-1" role="menubar">
+            <div className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1.5 py-1 max-w-[34rem] xl:max-w-[48rem] 2xl:max-w-5xl flex-1 px-2" role="menubar">
               {navItems.map((item) => {
                 const isActive = activeView === item.view;
                 return (
@@ -134,13 +137,13 @@ export const Header: React.FC = () => {
                     onClick={() => handleNavClick(item.view)}
                     aria-current={isActive ? 'page' : undefined}
                     role="menuitem"
-                    className={`px-4 py-2 rounded-md font-display text-sm font-medium transition-all duration-300 relative overflow-hidden group ${
+                    className={`px-2 py-1.5 xl:px-3 xl:py-2 rounded-md font-display lg:text-[11px] xl:text-xs 2xl:text-sm font-medium transition-all duration-300 relative overflow-hidden group max-w-[90px] xl:max-w-[130px] 2xl:max-w-none text-center shrink-0 ${
                       isActive 
                         ? 'text-brand-gold-400' 
                         : 'text-neutral-200 hover:text-white'
                     }`}
                   >
-                    <span className="relative z-10">{item.label}</span>
+                    <span className="relative z-10 block truncate" title={item.label}>{item.label}</span>
                     {/* Hover slider indicator */}
                     <span className={`absolute bottom-0 left-0 w-full h-[3px] bg-brand-gold-500 transform origin-left transition-transform duration-350 ${
                       isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -152,6 +155,17 @@ export const Header: React.FC = () => {
 
             {/* Quick Consultation CTA - Desktop */}
             <div className="hidden lg:flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => changeLanguage(language === 'en' ? 'ta' : 'en')}
+                className="px-3 py-1.5 rounded-lg border border-neutral-300/20 text-neutral-300 hover:text-brand-gold-400 hover:bg-white/10 transition-all font-display text-xs font-semibold tracking-wider flex items-center gap-1 cursor-pointer shrink-0"
+                aria-label={`Switch language to ${language === 'en' ? 'Tamil' : 'English'}`}
+                title={`Switch language to ${language === 'en' ? 'Tamil' : 'English'}`}
+                id="header-lang-toggle-desktop"
+              >
+                {language === 'en' ? 'தமிழ்' : 'English'}
+              </button>
+
               <button
                 type="button"
                 onClick={toggleTheme}
@@ -166,17 +180,20 @@ export const Header: React.FC = () => {
                   <Sun className="w-5 h-5 text-yellow-300" />
                 )}
               </button>
-
-              <button 
-                onClick={() => handleNavClick('contact')}
-                className="bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 font-display font-semibold text-sm px-5 py-2.5 rounded-lg shadow-md hover:from-brand-gold-400 hover:to-brand-gold-500 hover:shadow-lg active:scale-95 transition-all duration-200"
-              >
-                Get Quote
-              </button>
             </div>
 
             {/* Mobile Actions: Theme Toggle & Hamburger Trigger */}
             <div className="lg:hidden flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => changeLanguage(language === 'en' ? 'ta' : 'en')}
+                className="px-2.5 py-1.5 rounded border border-neutral-300/20 text-neutral-200 hover:text-brand-gold-400 transition-colors font-display text-xs font-semibold cursor-pointer shrink-0"
+                aria-label={`Switch language to ${language === 'en' ? 'Tamil' : 'English'}`}
+                title={`Switch language to ${language === 'en' ? 'Tamil' : 'English'}`}
+                id="header-lang-toggle-mobile"
+              >
+                {language === 'en' ? 'தமிழ்' : 'EN'}
+              </button>
               <button
                 type="button"
                 onClick={toggleTheme}
@@ -248,7 +265,7 @@ export const Header: React.FC = () => {
                         <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
                       </h3>
                       <span className="text-[9px] text-brand-gold-400 font-mono block tracking-widest leading-none">
-                        ESTABLISHED IN <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
+                        {t('navigation.establishedIn')} <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
                       </span>
                     </div>
                   </div>
@@ -263,7 +280,7 @@ export const Header: React.FC = () => {
 
                 {/* Nav Links List */}
                 <div className="space-y-1">
-                  <p className="text-[9px] text-brand-gold-400 uppercase font-mono tracking-widest mb-3 pl-2">Navigation Deck</p>
+                  <p className="text-[9px] text-brand-gold-400 uppercase font-mono tracking-widest mb-3 pl-2">{t('navigation.navigationDeck')}</p>
                   {navItems.map((item) => {
                     const isActive = activeView === item.view;
                     return (
@@ -289,7 +306,7 @@ export const Header: React.FC = () => {
               {/* Drawer Footer info details */}
               <div className="p-6 bg-brand-blue-900/40 border-t border-brand-blue-900/80 space-y-4">
                 <div className="space-y-1 text-xs text-neutral-400">
-                  <p className="font-semibold text-white uppercase font-mono text-[9px] tracking-wider text-brand-gold-400">EMERGENCY DEWATERING DIVISION</p>
+                  <p className="font-semibold text-white uppercase font-mono text-[9px] tracking-wider text-brand-gold-400">{t('navigation.emergencyDewatering')}</p>
                   <p className="font-sans font-light">Registered state partners maintaining localized vertical pump networks 24/7 during seasonal warning events.</p>
                 </div>
                 
@@ -302,7 +319,7 @@ export const Header: React.FC = () => {
                     className="flex justify-center items-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 hover:from-brand-gold-400 hover:to-brand-gold-500 text-brand-blue-950 font-display font-extrabold text-xs tracking-wider uppercase py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95"
                   >
                     <Phone className="w-4 h-4 text-brand-blue-950" />
-                    <span>Call Duty Desk</span>
+                    <span>{t('navigation.callDutyDesk')}</span>
                   </a>
                   <a 
                     href="mailto:srivelan2004@gmail.com" 
@@ -311,7 +328,7 @@ export const Header: React.FC = () => {
                     className="flex justify-center items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-display font-bold text-xs py-3.5 px-4 rounded-xl transition-colors"
                   >
                     <Mail className="w-4 h-4 text-brand-gold-400" />
-                    <span>Email Headquarters</span>
+                    <span>{t('navigation.emailHeadquarters')}</span>
                   </a>
                 </div>
               </div>

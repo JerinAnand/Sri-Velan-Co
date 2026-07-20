@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ActiveView } from '../types';
 import { useAdmin } from '../context/AdminContext';
+import { useTranslation } from '../context/TranslationContext';
 import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
@@ -16,15 +17,16 @@ export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const { setShowLoginModal, getValue } = useAdmin();
+  const { t } = useTranslation();
 
   const quickLinks = [
-    { label: 'Home Page', view: 'home' as ActiveView },
-    { label: 'About Company', view: 'about' as ActiveView },
-    { label: 'Our Services', view: 'services' as ActiveView },
-    { label: 'Machinery & Fleet', view: 'equipments' as ActiveView },
-    { label: 'Project Portfolio', view: 'projects' as ActiveView },
-    { label: 'Hydraulic Broomer spec', view: 'hydraulic-broomer' as ActiveView },
-    { label: 'Contact Us', view: 'contact' as ActiveView },
+    { label: t('footer.links.home'), view: 'home' as ActiveView },
+    { label: t('footer.links.about'), view: 'about' as ActiveView },
+    { label: t('footer.links.services'), view: 'services' as ActiveView },
+    { label: t('footer.links.equipments'), view: 'equipments' as ActiveView },
+    { label: t('footer.links.projects'), view: 'projects' as ActiveView },
+    { label: t('footer.links.hydraulicBroomer'), view: 'hydraulic-broomer' as ActiveView },
+    { label: t('footer.links.contact'), view: 'contact' as ActiveView },
   ];
 
   const handleLinkClick = (view: ActiveView) => {
@@ -58,26 +60,26 @@ export const Footer: React.FC = () => {
                   <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
                 </h3>
                 <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">
-                  ESTABLISHED IN <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
+                  {t('navigation.establishedIn')} <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
                 </span>
               </div>
             </div>
             
             <p className="text-sm text-neutral-300 leading-relaxed font-sans">
-              State-Registered Civil Engineering Contractors specializing in PWD Buildings, Water Resources, and rapid Disaster Response Pumping Operations.
+              {t('footer.companyDesc')}
             </p>
 
             {/* Registration Tags Bento Box */}
             <div className="space-y-2.5 bg-brand-blue-900/60 border border-brand-blue-800/40 p-4 rounded-lg">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-neutral-400">GSTIN Registry</span>
+                <span className="text-neutral-400">{t('footer.gstRegistry')}</span>
                 <span className="text-brand-gold-400 font-mono font-medium select-all">
                   <EditableValue id="company_gstin" defaultValue={COMPANY_DETAILS.gstin} />
                 </span>
               </div>
               <div className="h-px bg-brand-blue-800/40 w-full" />
               <div className="flex justify-between items-center text-xs">
-                <span className="text-neutral-400">MSME Udyam</span>
+                <span className="text-neutral-400">{t('footer.msmeUdyam')}</span>
                 <span className="text-brand-gold-400 font-mono font-medium select-all">
                   <EditableValue id="company_msme" defaultValue={COMPANY_DETAILS.msme} />
                 </span>
@@ -88,7 +90,7 @@ export const Footer: React.FC = () => {
           {/* Column 2: Structured Service Sitemap links */}
           <div className="space-y-5" id="footer-col-links">
             <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-brand-gold-400">
-              Corporate Directory
+              {t('footer.corporateDirectory')}
             </h4>
             
             <ul className="grid grid-cols-1 gap-2.5 text-sm" id="footer-directory-ul">
@@ -109,12 +111,12 @@ export const Footer: React.FC = () => {
           {/* Column 3: Contact Channels */}
           <div className="space-y-5" id="footer-col-contacts">
             <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-brand-gold-400">
-              Operational Contacts
+              {t('footer.operationalContacts')}
             </h4>
 
             <div className="space-y-3.5 text-sm text-neutral-300">
               <div className="space-y-2">
-                <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">Emergency Hotlines (24/7)</p>
+                <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">{t('footer.emergencyHotlines')}</p>
                 {COMPANY_DETAILS.phones.map((phone, idx) => {
                   const phoneId = `company_phone_${idx}`;
                   const displayPhone = getValue(phoneId, phone);
@@ -134,7 +136,7 @@ export const Footer: React.FC = () => {
               </div>
 
               <div className="space-y-2 pt-2">
-                <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">Administration Email</p>
+                <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">{t('footer.adminEmail')}</p>
                 <div className="space-y-1">
                   {COMPANY_DETAILS.emails.slice(0, 2).map((email, idx) => {
                     const emailId = `company_email_${idx}`;
@@ -161,7 +163,7 @@ export const Footer: React.FC = () => {
           {/* Column 4: Physical Office Addresses & Assets */}
           <div className="space-y-5" id="footer-col-offices">
             <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-brand-gold-400">
-              Company Assets
+              {t('footer.regionalHQ')}
             </h4>
 
             <div className="space-y-4">
@@ -197,7 +199,7 @@ export const Footer: React.FC = () => {
                 >
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-brand-gold-500" />
-                    <span>Download Capability Statement</span>
+                    <span>{t('footer.downloadCapability')}</span>
                   </div>
                   <ArrowUpRight className="w-4 h-4 text-neutral-400 group-hover:text-brand-gold-500 transition-colors" />
                 </button>
@@ -213,7 +215,7 @@ export const Footer: React.FC = () => {
                 >
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-brand-gold-500" />
-                    <span>Download Company Brochure</span>
+                    <span>{t('footer.downloadBrochure')}</span>
                   </div>
                   <ArrowUpRight className="w-4 h-4 text-neutral-400 group-hover:text-brand-gold-500 transition-colors" />
                 </a>
@@ -228,7 +230,7 @@ export const Footer: React.FC = () => {
                   className="flex items-center gap-2.5 text-xs text-neutral-300 hover:text-brand-gold-400 transition-colors pl-1"
                 >
                   <Instagram className="w-4 h-4 text-brand-gold-500" />
-                  <span>@sri_velan_co on Instagram</span>
+                  <span>{t('footer.instagramHandle')}</span>
                 </a>
               </div>
             </div>
@@ -243,24 +245,24 @@ export const Footer: React.FC = () => {
             <span className="font-semibold text-white">
               <EditableValue id="company_legal_name" defaultValue={COMPANY_DETAILS.legalName} />.
             </span>
-            <span>All Corporate Rights Reserved.</span>
+            <span>{t('footer.allRightsReserved')}</span>
           </div>
           
           <div className="flex items-center gap-4 flex-wrap justify-center text-neutral-400">
             <span className="flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-brand-gold-500" />
-              <span>Registered PWD Contractor</span>
+              <span>{t('footer.registeredPWD')}</span>
             </span>
             <span>•</span>
             <button onClick={() => handleLinkClick('contact')} className="hover:text-brand-gold-400 transition-colors">
-              Contract Intake Portal
+              {t('footer.contractIntakePortal')}
             </button>
             <span>•</span>
             <button 
               onClick={() => setShowLoginModal(true)} 
               className="hover:text-brand-gold-400 transition-colors text-[10px] text-neutral-500 hover:underline uppercase tracking-wider font-mono cursor-pointer"
             >
-              Admin Portal
+              {t('footer.adminPortal')}
             </button>
           </div>
         </div>

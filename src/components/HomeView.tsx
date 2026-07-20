@@ -14,27 +14,27 @@ import {
   ArrowRight, 
   TrendingUp, 
   ShieldCheck, 
-  Zap, 
   Hammer,
-  Sparkles,
-  Database,
-  ChevronLeft,
-  ChevronRight,
   Sliders,
-  Compass,
   ArrowUpRight,
   Activity,
   Play,
   Pause,
-  FileText
+  FileText,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { COMPANY_DETAILS, SERVICE_CATEGORIES, PROJECTS } from '../data';
+import { COMPANY_DETAILS, SERVICE_CATEGORIES } from '../data';
 import { ActiveView } from '../types';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { useAdmin } from '../context/AdminContext';
+import { useTranslation } from '../context/TranslationContext';
 import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
+import pwdLogo from '../assets/images/pwd_logo_1784540042820.jpg';
+import gccLogo from '../assets/images/gcc_logo_1784540058542.jpg';
+import cmrlLogo from '../assets/images/cmrl_logo_1784540076590.jpg';
 
 interface HomeViewProps {
   setActiveView: (view: ActiveView) => void;
@@ -69,34 +69,35 @@ const useCountUp = (target: number, duration: number = 2000, trigger: boolean = 
 
 export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const navigate = useNavigate();
+  const { t, language } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [activeCompetency, setActiveCompetency] = useState(0);
   const [simVolume, setSimVolume] = useState<number>(45000); // 45,000 Liters default
   const [simPumps, setSimPumps] = useState<number>(6); // Default 6 pumps matching 45,000 Liters recommended deployment
 
-  // Hero slideshow content using high-quality authenticated links
+  // Hero slideshow content
   const heroSlides = [
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ',
-      title: "Government Buildings &\nPublic Infrastructure",
-      subtitle: 'Accredited Civil Construction',
-      tagline: 'Developing and renovating of educational and public facilities such as schools, colleges, laboratories, hostels, and public facilities with engineering excellence, quality workmanship, and timely execution.',
-      badge: 'Infrastructure'
+      title: t('home.hero.slide1.title'),
+      subtitle: t('home.hero.slide1.subtitle'),
+      tagline: t('home.hero.slide1.tagline'),
+      badge: t('home.hero.slide1.badge')
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAtF7lQsjygWGM_wckM4HW-z2nj4oRbJglwvqyPrBOopVct0FaNayNZmcV2KclNO_D91euKAKDATiy4EK6o8y08eifUUdU9GA78MFSpP7NkllTKFnMKwV2APckmltuCrXUOQ2QX-mPrSukG22c432b0rw_ra7cIVWQ5YMRbkiKoaxjYQSkKOA0fHzRDt2xaNGGRmo0bxs0IfA74U3H4Ui_SKCTZsfqfa5zC0T4xCPuTqFNiP7LpEsi5NCEKk8KnMbTz7GUcXkKOd5t1',
-      title: "Roads, Water Resources &\nRural Development",
-      subtitle: 'Hydraulic Flow Management',
-      tagline: 'Executing roads, culverts, dredging works, retaining walls, under-sluices, and water resource projects that strengthen communities and support sustainable growth.',
-      badge: 'WRD Irrigation'
+      title: t('home.hero.slide2.title'),
+      subtitle: t('home.hero.slide2.subtitle'),
+      tagline: t('home.hero.slide2.tagline'),
+      badge: t('home.hero.slide2.badge')
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYKfiwAnr8tSFNjZj_XSzajQQvnAVzDU79fw73VK9DcbcAJAz2le3lr5e6XhpkbK0bStuz2LU6hPoCoBytCVOO1Id0NA5xI_ye_kSutkyrbLNS86LKr68hdy6Z5EW5Chlp5Y4BhprAchhgtOexFV6eWL5-WSI7RYWV96iLGl5czosEa5AlEQR6Cro_id1zSO760qRM0awrOHnTn5aGlACqvBLkccoIBSTozM-SoG1s7yG5I_T_T7KbRDPh8-Tl0xs_QPlVrXdxEq8w',
-      title: "Tractor-Driven Pumps &\nHigh-Capacity 100 HP Pumping Solutions",
-      subtitle: 'Disaster Relief Management',
-      tagline: 'Providing reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping services for construction, infrastructure, and government projects',
-      badge: 'Emergency Ready'
+      title: t('home.hero.slide3.title'),
+      subtitle: t('home.hero.slide3.subtitle'),
+      tagline: t('home.hero.slide3.tagline'),
+      badge: t('home.hero.slide3.badge')
     }
   ];
 
@@ -118,7 +119,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const pumpCount = useCountUp(pumpCountTarget, 1500);
 
   // Dewatering Speed Telemetry Simulator calculations
-  // Sri Velan & Co can discharge on average 3,000 Liters of water per hour with a 4-inch pump.
   const calcClearanceDuration = (vol: number, pumps: number) => {
     const hourlyCapacityPerPump = 3000; // 3000 Liters/hour
     const totalHourlyCapacity = pumps * hourlyCapacityPerPump;
@@ -127,12 +127,22 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
     const hours = Math.floor(hoursDecimal);
     const minutes = Math.round((hoursDecimal - hours) * 60);
     
-    if (hours === 0) {
-      return `${minutes} Min${minutes !== 1 ? 's' : ''}`;
-    } else if (minutes === 0) {
-      return `${hours} Hour${hours !== 1 ? 's' : ''}`;
+    if (language === 'en') {
+      if (hours === 0) {
+        return `${minutes} Min${minutes !== 1 ? 's' : ''}`;
+      } else if (minutes === 0) {
+        return `${hours} Hour${hours !== 1 ? 's' : ''}`;
+      } else {
+        return `${hours} Hr${hours !== 1 ? 's' : ''} ${minutes} Min${minutes !== 1 ? 's' : ''}`;
+      }
     } else {
-      return `${hours} Hr${hours !== 1 ? 's' : ''} ${minutes} Min${minutes !== 1 ? 's' : ''}`;
+      if (hours === 0) {
+        return `${minutes} நிமிடங்கள்`;
+      } else if (minutes === 0) {
+        return `${hours} மணிநேரம்`;
+      } else {
+        return `${hours} மணி ${minutes} நிமிடம்`;
+      }
     }
   };
 
@@ -152,6 +162,36 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
     return 24; // Multi-node response for severe volumes
   };
 
+  const competencyItems = [
+    {
+      title: t('home.competencies.item1.title'),
+      desc: t('home.competencies.item1.desc'),
+      metric: language === 'en' ? '50+ KM' : '50+ கி.மீ',
+      label: language === 'en' ? 'Canals Lined' : 'சீர்படுத்தப்பட்ட கால்வாய்கள்',
+      details: language === 'en' 
+        ? ['Custom concrete masonry alignments', 'Stonepitching bank protection', 'Distribution sluices']
+        : ['தனிப்பயன் கான்கிரீட் சீரமைப்புகள்', 'கற்பதிப்பு கரை பாதுகாப்பு', 'விநியோக மதகுகள்']
+    },
+    {
+      title: t('home.competencies.item3.title'),
+      desc: t('home.competencies.item3.desc'),
+      metric: '100%',
+      label: language === 'en' ? 'Emergency Readiness' : 'அவசரகால தயார் நிலை',
+      details: language === 'en'
+        ? ['Vacuum-assist quick sediment passage', 'Tractor-coupled auxiliary pumps', 'Sandbag breach plugging']
+        : ['வெற்றிட-உதவி விரைவான வண்டல் வெளியேற்றம்', 'டிராக்டருடன் இணைக்கப்பட்ட பம்புகள்', 'மணல் மூட்டை தடுப்புகள்']
+    },
+    {
+      title: t('home.competencies.item2.title'),
+      desc: t('home.competencies.item2.desc'),
+      metric: language === 'en' ? '120k+ SQ' : '120k+ ச.அடி',
+      label: language === 'en' ? 'Sq Ft Concrete Frame' : 'கான்கிரீட் கட்டமைப்பு',
+      details: language === 'en'
+        ? ['Accredited high-finish RCC frames', 'Premium department vetting', 'Compliance to municipal codes']
+        : ['அங்கீகரிக்கப்பட்ட RCC கட்டமைப்புகள்', 'பிரீமியம் துறை சரிபார்ப்பு', 'நகராட்சி குறியீடுகளுடன் இணங்குதல்']
+    }
+  ];
+
   return (
     <div className="w-full bg-neutral-900 text-neutral-100" id="home-view-container">
       
@@ -166,10 +206,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 z-0"
+            className="absolute inset-0 z-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${heroSlides[currentSlide].image})` }}
           >
             {/* Dark elegant blue radial gradient to give a cinematic corporate fade */}
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-blue-950/90 via-brand-blue-900/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-brand-blue-950/95 via-brand-blue-950/75 to-neutral-950/30" />
             <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-neutral-900 via-neutral-900/60 to-transparent" />
           </motion.div>
         </AnimatePresence>
@@ -222,24 +263,27 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             </AnimatePresence>
 
             {/* CTAs with beautiful glass effects */}
-            <div className="flex flex-col xl:flex-row gap-4 pt-6">
+            <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <button
                 onClick={() => setActiveView('about')}
                 className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 hover:from-brand-gold-400 hover:to-brand-gold-500 font-display font-bold px-8 py-4 rounded-lg shadow-xl hover:shadow-brand-gold-500/10 hover:scale-[1.02] active:scale-98 transition-all text-sm uppercase tracking-wider"
                 id="hero-lnk-about"
               >
-                <span>Enterprise Credentials</span>
+                <span>{t('home.hero.enterpriseCredentials')}</span>
                 <ArrowRight className="w-4 h-4 text-brand-blue-950 font-bold" />
               </button>
 
               <button
-                onClick={() => navigate('/capability-statement?download=true')}
+                onClick={() => {
+                  navigate('/capability-statement?download=true');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="inline-flex items-center justify-center gap-2 bg-brand-blue-800/80 border border-brand-blue-700/50 hover:bg-brand-blue-700 hover:border-brand-blue-600 text-white font-display font-bold px-8 py-4 rounded-lg backdrop-blur-md hover:scale-[1.02] active:scale-98 transition-all text-sm uppercase tracking-wider cursor-pointer"
                 id="hero-lnk-capability"
-                title="Download Capability Statement"
+                title={t('home.hero.capabilityStatement')}
               >
                 <FileText className="w-4 h-4 text-brand-gold-400" />
-                <span>Capability Statement</span>
+                <span>{t('home.hero.capabilityStatement')}</span>
               </button>
 
               <button
@@ -247,7 +291,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 className="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/20 hover:border-white/40 text-white font-display font-semibold px-8 py-4 rounded-lg backdrop-blur-md hover:bg-white/10 active:scale-98 transition-all text-sm uppercase tracking-wider"
                 id="hero-lnk-contact"
               >
-                <span>Tender Submissions Bureau</span>
+                <span>{t('home.hero.tenderSubmissions')}</span>
                 <ArrowUpRight className="w-4 h-4 text-brand-gold-400" />
               </button>
             </div>
@@ -306,13 +350,80 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
       </section>
 
+      {/* Trusted By Government Client Carousel */}
+      <section className="bg-neutral-950 py-10 border-b border-neutral-800/80 overflow-hidden relative z-20" id="home-trusted-by-carousel">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-6">
+            <p className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase">
+              {language === 'en' ? 'TRUSTED BY LEADING DEPARTMENTS' : 'முன்னணி அரசுத் துறைகளால் நம்பப்படுகிறது'}
+            </p>
+            <h3 className="text-xs text-neutral-400 mt-2 font-sans font-light">
+              {language === 'en' 
+                ? 'Empaneled class-status contractor delivering key public works & high-head storm dewatering deployments'
+                : 'பொதுப்பணித்துறை மற்றும் அதிவேக பேரிடர் மேலாண்மை பணிகளை வெற்றிகரமாக நிறைவேற்றும் அங்கீகாரம் பெற்ற ஒப்பந்ததாரர்'}
+            </h3>
+          </div>
+
+          {/* Scrolling Carousel Track */}
+          <div className="relative w-full overflow-hidden py-2">
+            {/* Left fade gradient for professional blend */}
+            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-neutral-950 to-transparent z-10 pointer-events-none" />
+            {/* Right fade gradient for professional blend */}
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-neutral-950 to-transparent z-10 pointer-events-none" />
+
+            <div className="flex select-none overflow-hidden">
+              <motion.div
+                className="flex gap-12 items-center whitespace-nowrap shrink-0"
+                animate={{
+                  x: [0, -480],
+                }}
+                transition={{
+                  ease: "linear",
+                  duration: 18,
+                  repeat: Infinity,
+                }}
+              >
+                {/* We repeat the logos multiple times to ensure smooth infinite loop scroll */}
+                {[...Array(5)].flatMap((_, i) => [
+                  { name: 'PWD', fullName: 'Public Works Department (PWD)', logo: pwdLogo, desc: 'Water Resources & Buildings' },
+                  { name: 'GCC', fullName: 'Greater Chennai Corporation (GCC)', logo: gccLogo, desc: 'Stormwater Drainage Works' },
+                  { name: 'CMRL', fullName: 'Chennai Metro Rail Limited (CMRL)', logo: cmrlLogo, desc: 'Metro Transit Infrastructure' }
+                ]).map((client, index) => (
+                  <div
+                    key={`${client.name}-${index}`}
+                    className="flex items-center gap-4 bg-neutral-900/40 border border-neutral-800/40 hover:border-brand-gold-500/30 hover:bg-neutral-900/80 rounded-xl px-5 py-2.5 transition-all duration-300 group shrink-0 shadow-sm"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-white p-1 overflow-hidden shrink-0 transition-all duration-300 group-hover:scale-105">
+                      <img
+                        src={client.logo}
+                        alt={`${client.fullName} Logo`}
+                        className="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-display font-bold text-xs text-neutral-300 group-hover:text-white transition-colors">
+                        {client.fullName}
+                      </p>
+                      <p className="text-[9px] text-neutral-500 font-mono tracking-wide uppercase">
+                        {client.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 2. Structured Trust Stats Strip (Counter Widgets) */}
       <section className="bg-neutral-900 border-y border-neutral-800/80 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
           {/* Section Header */}
           <div className="text-center md:text-left mb-10">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block mb-2">VERIFIED CREDENTIALS</span>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Our Core Trust Numbers</h2>
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block mb-2">{t('home.stats.verifiedCredentials')}</span>
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t('home.stats.title')}</h2>
             <div className="h-1 w-12 bg-brand-gold-500 mt-3 mx-auto md:mx-0" />
           </div>
           
@@ -332,10 +443,14 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   )}
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Years of Structural Legacy
+                  {t('home.stats.yearsLegacy')}
                 </p>
                 <p className="text-xs text-neutral-500 leading-tight">
-                  Founded in <EditableValue id="company_year_established" defaultValue={2006} /> in Villupuram
+                  {language === 'en' ? (
+                    <>Founded in <EditableValue id="company_year_established" defaultValue={2006} /> in Villupuram</>
+                  ) : (
+                    <><EditableValue id="company_year_established" defaultValue={2006} /> ஆம் ஆண்டு விழுப்புரத்தில் நிறுவப்பட்டது</>
+                  )}
                 </p>
               </div>
             </div>
@@ -350,9 +465,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   <EditableValue id="home_gov_registrations" defaultValue={5} displaySuffix="+" />
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Government Registered Contractor
+                  {t('home.stats.govContractor')}
                 </p>
-                <p className="text-xs text-neutral-500 leading-tight">State PWD, WRD, RD, TNCSC & GCC</p>
+                <p className="text-xs text-neutral-500 leading-tight">{t('home.stats.pwdWrd')}</p>
               </div>
             </div>
 
@@ -370,9 +485,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   )}
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Heavy Machineries & Fleet
+                  {t('home.stats.machineryFleet')}
                 </p>
-                <p className="text-xs text-neutral-500 leading-tight">Dewatering & Earth moving equipment</p>
+                <p className="text-xs text-neutral-500 leading-tight">{t('home.stats.dewateringEarth')}</p>
               </div>
             </div>
 
@@ -386,9 +501,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   <EditableValue id="home_dispatch_hours" defaultValue="24/7" />
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Disaster Dispatch Desk
+                  {t('home.stats.dispatchDesk')}
                 </p>
-                <p className="text-xs text-neutral-500 leading-tight">Under cyclone warning panels</p>
+                <p className="text-xs text-neutral-500 leading-tight">{t('home.stats.cycloneWarning')}</p>
               </div>
             </div>
 
@@ -406,25 +521,29 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             <div className="lg:col-span-5 space-y-6">
               <div className="inline-flex items-center gap-1.5 bg-brand-blue-50 text-brand-blue-700 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider">
                 <Award className="w-3.5 h-3.5" />
-                <span>Excellence in Execution</span>
+                <span>{t('home.competencies.header')}</span>
               </div>
               
               <h2 className="text-3xl sm:text-4.5xl font-black text-brand-blue-900 leading-none tracking-tight">
-                Engineering Discipline That Moves Civil Assets.
+                {t('home.competencies.title')}
               </h2>
               
               <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans font-light">
-                Our approach as a <strong className="font-semibold">contracting group</strong> is guided by precise raw-material procurement, robust structural concrete verification against standard PWD aggregates, and complete mechanical command over dual-dewatering operations to ensure continuous security for state networks.
+                {t('home.competencies.desc')}
               </p>
 
               <div className="h-px bg-neutral-200 w-full" />
 
               <div className="space-y-3.5">
-                {[
+                {(language === 'en' ? [
                   'Strict compliance with IS-code grade parameters (M30/M40 concrete matrix validation)',
                   'Extensive direct relationships with leading steel and heavy aggregate quarries',
                   'Rigorous quality execution checklists on block masonry works'
-                ].map((item, idx) => (
+                ] : [
+                  'கடுமையான IS-குறியீடு தர அளவுருக்களுடன் இணங்குதல் (M30/M40 கான்கிரீட் கலவை சரிபார்ப்பு)',
+                  'முன்னணி எஃகு மற்றும் கனரக ஜல்லி குவாரிகளுடன் விரிவான நேரடி உறவுகள்',
+                  'கட்டிட கட்டுமான வேலைகளில் கடுமையான தரச் சரிபார்ப்புப் பட்டியல்கள்'
+                ]).map((item, idx) => (
                   <div key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-neutral-600">
                     <span className="h-4.5 w-4.5 rounded-full bg-brand-blue-50 text-brand-blue-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
                     <span>{item}</span>
@@ -435,29 +554,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
             {/* Right side interactive toggles with spec views */}
             <div className="lg:col-span-7 space-y-4">
-              {[
-                {
-                  title: 'Water Resource & Hydraulic Engineering',
-                  desc: 'Forming concrete structural weirs, distributing state feeder channel canals, stonepitched embankment pitching, and heavy irrigation conduits.',
-                  metric: '50+ KM',
-                  label: 'Canals lined',
-                  details: ['Custom concrete masonry alignments', 'Stonepitching bank protection', 'Distribution sluices']
-                },
-                {
-                  title: 'Disaster Dewatering & Emergency Rescue Operations',
-                  desc: 'Deploying robust air-assist vacuum pumps (up to 100 HP) and experienced operators under official state directive desks on a 24-hr status loop during Cyclone warning events.',
-                  metric: '100% SUCC',
-                  label: 'Emergency Recoveries',
-                  details: ['Vacuum-assist quick sediment passage', 'Tractor-coupled auxiliary pumps', 'Sandbag breach plugging']
-                },
-                {
-                  title: 'Municipal Administrative Complex Structures',
-                  desc: 'Constructing robust multi-story building blocks and quarters with state PWD vetting, certified premium plaster finishes, rainwater harvesting, and grid corridors.',
-                  metric: '120k+ SQ',
-                  label: 'Sq Ft Concrete Frame',
-                  details: ['Accredited high-finish RCC frames', 'Premium department vetting', 'Compliance to municipal codes']
-                }
-              ].map((comp, idx) => {
+              {competencyItems.map((comp, idx) => {
                 const isActive = activeCompetency === idx;
                 return (
                   <div 
@@ -518,10 +615,16 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
             <div className="space-y-3 max-w-2xl text-left">
-              <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">OPERATIONAL CAPACITY</span>
-              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">Corporate Infrastructure Services</h2>
+              <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">
+                {language === 'en' ? 'OPERATIONAL CAPACITY' : 'செயல்பாட்டு திறன்'}
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+                {language === 'en' ? 'Corporate Infrastructure Services' : 'கார்ப்பரேட் உள்கட்டமைப்பு சேவைகள்'}
+              </h2>
               <p className="text-xs sm:text-sm text-neutral-400 font-sans font-light leading-relaxed">
-                As licensed construction partners, our division operations are vetted for extreme load capacities and public safety clearances across Tamil Nadu.
+                {language === 'en' 
+                  ? 'As licensed construction partners, our division operations are vetted for extreme load capacities and public safety clearances across Tamil Nadu.'
+                  : 'அங்கீகரிக்கப்பட்ட கட்டுமான பங்காளியாக, எங்கள் பிரிவு செயல்பாடுகள் தமிழ்நாட்டின் தீவிர சுமை திறன்கள் மற்றும் பொது பாதுகாப்பு அனுமதிகளுக்காக சரிபார்க்கப்படுகின்றன.'}
               </p>
             </div>
             
@@ -529,7 +632,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               onClick={() => setActiveView('services')}
               className="inline-flex items-center gap-1.5 text-brand-gold-400 hover:text-white text-xs font-semibold uppercase tracking-wider shrink-0 transition-colors"
             >
-              <span>View All 6 Specialized Sectors</span>
+              <span>{language === 'en' ? 'View All 6 Specialized Sectors' : 'அனைத்து 6 சிறப்புப் பிரிவுகளையும் காண்க'}</span>
               <ArrowUpRight className="w-4 h-4" />
             </button>
           </div>
@@ -544,7 +647,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 <div className="h-56 relative overflow-hidden bg-neutral-950">
                   <img 
                     src={svc.image} 
-                    alt={svc.title} 
+                    alt={t(`services.${svc.id}.title`)} 
                     className="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                     loading="lazy"
@@ -554,17 +657,17 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   />
                   {/* Subtle technical ribbon indicator */}
                   <div className="absolute top-4 right-4 bg-brand-gold-500 text-brand-blue-950 font-mono text-[9px] font-bold py-1 px-2.5 rounded-full uppercase tracking-wider">
-                    SPEC COMPLIANT
+                    {language === 'en' ? 'SPEC COMPLIANT' : 'விதிமுறை இணக்கமானது'}
                   </div>
                 </div>
 
                 <div className="p-6 sm:p-8 space-y-4 flex-1 flex flex-col justify-between text-left">
                   <div className="space-y-2">
                     <h3 className="font-display font-bold text-lg text-white group-hover:text-brand-gold-400 transition-colors">
-                      {svc.title}
+                      {t(`services.${svc.id}.title`)}
                     </h3>
                     <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                      {svc.shortDescription}
+                      {t(`services.${svc.id}.shortDescription`)}
                     </p>
                   </div>
 
@@ -573,7 +676,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                       onClick={() => setActiveView('services')}
                       className="text-brand-gold-400 hover:text-white text-xs font-semibold flex items-center gap-1 transition-all"
                     >
-                      <span>Explore Technical Standards</span>
+                      <span>{language === 'en' ? 'Explore Technical Standards' : 'தொழில்நுட்ப தரங்களை ஆராயுங்கள்'}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -595,15 +698,15 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             <div className="lg:col-span-5 space-y-6 text-left">
               <div className="inline-flex items-center gap-1.5 bg-brand-gold-500/10 text-brand-gold-700 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider border border-brand-gold-500/20">
                 <Sliders className="w-3.5 h-3.5" />
-                <span>Equipment Capability Interactive Simulator</span>
+                <span>{t('home.simulator.header')}</span>
               </div>
               
               <h2 className="text-3xl sm:text-4.5xl font-black text-brand-blue-900 leading-none tracking-tight">
-                Disaster Pumping Telemetry Calculator
+                {t('home.simulator.title')}
               </h2>
               
               <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed font-sans font-light">
-                Sri Velan & Co maintains South India's largest localized mobilization dewatering network. On average, a standard 4-inch pump can discharge <strong className="font-semibold text-brand-blue-900">3,000 Liters of water per hour</strong>. Adjust the calculator sliders to test our discharge clearing parameters:
+                {t('home.simulator.desc')}
               </p>
 
               {/* Sliders */}
@@ -611,9 +714,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 {/* Slider Input 1: Volume */}
                 <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200/80 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">Flood Fluid Volume</span>
+                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">{t('home.simulator.volumeLabel')}</span>
                     <span className="font-display font-extrabold text-brand-blue-900 text-lg font-mono">
-                      {simVolume.toLocaleString()} Liters
+                      {simVolume.toLocaleString()} {t('home.simulator.liters')}
                     </span>
                   </div>
 
@@ -632,17 +735,17 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   />
 
                   <div className="flex justify-between text-[10px] font-mono text-neutral-400">
-                    <span>3,000 Liters (Minor Waterlogging)</span>
-                    <span>300,000 Liters (Subway Flooding Grid)</span>
+                    <span>{language === 'en' ? '3,000 Liters (Minor Waterlogging)' : '3,000 லிட்டர் (சிறிய நீர் தேக்கம்)'}</span>
+                    <span>{language === 'en' ? '300,000 Liters (Subway Flooding Grid)' : '300,000 லிட்டர் (சுரங்கப்பாதை வெள்ளம்)'}</span>
                   </div>
                 </div>
 
                 {/* Slider Input 2: Pumps */}
                 <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200/80 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">Active 4-Inch Pumps</span>
+                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">{t('home.simulator.pumpsLabel')}</span>
                     <span className="font-display font-extrabold text-brand-blue-900 text-lg font-mono">
-                      {simPumps} pump{simPumps !== 1 ? 's' : ''}
+                      {simPumps} {language === 'en' ? (simPumps !== 1 ? 'pumps' : 'pump') : t('home.simulator.pumps')}
                     </span>
                   </div>
 
@@ -657,8 +760,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   />
 
                   <div className="flex justify-between text-[10px] font-mono text-neutral-400">
-                    <span>1 Pump (3,000 L/hr)</span>
-                    <span>30 Pumps (90,000 L/hr)</span>
+                    <span>{language === 'en' ? '1 Pump (3,000 L/hr)' : '1 பம்ப் (3,000 லி/ம)'}</span>
+                    <span>{language === 'en' ? '30 Pumps (90,000 L/hr)' : '30 பம்புகள் (90,000 லி/ம)'}</span>
                   </div>
                 </div>
               </div>
@@ -671,9 +774,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               <div className="flex items-center justify-between border-b border-neutral-800 pb-4 mb-6">
                 <div className="flex items-center gap-2">
                   <Activity className="w-5 h-5 text-brand-gold-400 animate-pulse" />
-                  <span className="font-mono text-xs uppercase tracking-widest text-neutral-400">PUMP DISPATCH EST-TELEMETRY</span>
+                  <span className="font-mono text-xs uppercase tracking-widest text-neutral-400">{t('home.simulator.resultsHeader')}</span>
                 </div>
-                <span className="text-[10px] bg-emerald-950 text-emerald-400 font-mono px-2 py-0.5 rounded border border-emerald-800">SIMULATIVE MATRIX V2.5</span>
+                <span className="text-[10px] bg-emerald-950 text-emerald-400 font-mono px-2 py-0.5 rounded border border-emerald-800">
+                  {language === 'en' ? 'SIMULATIVE MATRIX V2.5' : 'உருவகப்படுத்துதல் மேட்ரிக்ஸ் V2.5'}
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
@@ -681,53 +786,63 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 {/* Duration spec */}
                 <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 space-y-1 text-left flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">Calculated Clearance Time</span>
+                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">{t('home.simulator.clearanceDuration')}</span>
                     <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none">
                       {calcClearanceDuration(simVolume, simPumps)}
                     </p>
                   </div>
-                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">Continuous flow matching pressure outputs with direct PTO power plants</p>
+                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">
+                    {language === 'en' 
+                      ? 'Continuous flow matching pressure outputs with direct PTO power plants'
+                      : 'நேரடி பிடிஓ மின் உற்பத்தி நிலையங்களுடன் அழுத்தம் வெளியீடுகளை பொருத்தும் தொடர்ச்சியான ஓட்டம்'}
+                  </p>
                 </div>
 
                 {/* Diesel Fuel Units spec */}
                 <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 space-y-1 text-left flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">Estimated Diesel fuel</span>
+                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">{t('home.simulator.dieselFuel')}</span>
                     <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none">
-                      {calcDieselUnits(simVolume, simPumps)} Liters
+                      {calcDieselUnits(simVolume, simPumps)} {t('home.simulator.liters')}
                     </p>
                   </div>
-                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">Based on 2.5 Liters of diesel per active pump-hour running</p>
+                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">
+                    {language === 'en' 
+                      ? 'Based on 2.5 Liters of diesel per active pump-hour running' 
+                      : 'செயலில் உள்ள பம்ப்-மணிநேரத்திற்கு 2.5 லிட்டர் டீசல் என்ற அடிப்படையில்'}
+                  </p>
                 </div>
 
               </div>
 
               {/* Formula and rate verification card */}
               <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 mt-6 text-left space-y-3">
-                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">Discharge Equation & Rate Verification</span>
+                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">{t('home.simulator.activeDischarge')}</span>
                 <div className="bg-neutral-900 p-3 rounded-lg border border-neutral-800/60 text-xs font-mono text-neutral-300 space-y-2">
                   <div className="flex justify-between border-b border-neutral-800/55 pb-1">
-                    <span className="text-neutral-500">Average Rate per Pump:</span>
-                    <span className="text-white">3,000 Liters / Hour</span>
+                    <span className="text-neutral-500">{language === 'en' ? 'Average Rate per Pump:' : 'ஒரு பம்பின் சராசரி வேகம்:'}</span>
+                    <span className="text-white">{language === 'en' ? '3,000 Liters / Hour' : '3,000 லிட்டர் / மணிநேரம்'}</span>
                   </div>
                   <div className="flex justify-between border-b border-neutral-800/55 pb-1 flex-wrap">
-                    <span className="text-neutral-500">Cumulative Deployed rate ({simPumps} pump{simPumps !== 1 ? 's' : ''}):</span>
-                    <span className="text-emerald-400 font-extrabold">{(simPumps * 3000).toLocaleString()} Liters / Hour</span>
+                    <span className="text-neutral-500">
+                      {language === 'en' ? `Cumulative Deployed rate (${simPumps} pumps):` : `கூட்டு பயன்படுத்தப்பட்ட வேகம் (${simPumps} பம்புகள்):`}
+                    </span>
+                    <span className="text-emerald-400 font-extrabold">{(simPumps * 3000).toLocaleString()} {language === 'en' ? 'Liters / Hour' : 'லிட்டர் / மணிநேரம்'}</span>
                   </div>
                   <div className="flex justify-between border-b border-neutral-800/55 pb-1 flex-wrap">
-                    <span className="text-neutral-500">Discharge Equation:</span>
+                    <span className="text-neutral-500">{language === 'en' ? 'Discharge Equation:' : 'வெளியேற்ற சமன்பாடு:'}</span>
                     <span className="text-brand-gold-400 font-bold">
-                      {simVolume.toLocaleString()} Liters ÷ {(simPumps * 3000).toLocaleString()} L/Hr = {calcClearanceDuration(simVolume, simPumps)}
+                      {simVolume.toLocaleString()} L ÷ {(simPumps * 3000).toLocaleString()} L/Hr = {calcClearanceDuration(simVolume, simPumps)}
                     </span>
                   </div>
                   <div className="flex justify-between border-b border-neutral-800/55 pb-1">
-                    <span className="text-neutral-500">Diesel Consumption Rate:</span>
-                    <span className="text-white">2.5 Liters / Pump-Hour</span>
+                    <span className="text-neutral-500">{language === 'en' ? 'Diesel Consumption Rate:' : 'டீசல் நுகர்வு விகிதம்:'}</span>
+                    <span className="text-white">{language === 'en' ? '2.5 Liters / Pump-Hour' : '2.5 லிட்டர் / பம்ப்-மணிநேரம்'}</span>
                   </div>
                   <div className="flex justify-between pt-1 flex-wrap">
-                    <span className="text-neutral-500">Diesel Consumption Equation:</span>
+                    <span className="text-neutral-500">{language === 'en' ? 'Diesel Consumption Equation:' : 'டீசல் நுகர்வு சமன்பாடு:'}</span>
                     <span className="text-brand-gold-400 font-bold">
-                      {simPumps} Pump{simPumps !== 1 ? 's' : ''} × {(simVolume / (simPumps * 3000)).toFixed(2)} Hrs × 2.5 Liters/Hr = {calcDieselUnits(simVolume, simPumps)} Liters
+                      {simPumps} Pump{simPumps !== 1 ? 's' : ''} × {(simVolume / (simPumps * 3000)).toFixed(2)} Hrs × 2.5 L/Hr = {calcDieselUnits(simVolume, simPumps)} {t('home.simulator.liters')}
                     </span>
                   </div>
                 </div>
@@ -735,20 +850,24 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
               {/* Comparison details banner inside output */}
               <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 mt-6 text-left space-y-3">
-                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">Cyclone Response Deployment Layout</span>
+                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">{t('home.simulator.recommendedDeployment')}</span>
                 <p className="text-xs text-neutral-300 leading-relaxed font-sans font-light">
-                  During emergency storm peaks (such as Cyclone Fengal or Cyclone Michaung), dewatering fleets are split into continuous <strong className="font-semibold text-brand-gold-400">8-hour shift teams</strong> utilizing multi-cylinder heavy diesel motors capable of handling up to <strong className="font-semibold text-brand-gold-400">75mm compressible mud solids</strong> with no downtime.
+                  {language === 'en'
+                    ? 'During emergency storm peaks (such as Cyclone Fengal or Cyclone Michaung), dewatering fleets are split into continuous 8-hour shift teams utilizing multi-cylinder heavy diesel motors capable of handling up to 75mm compressible mud solids with no downtime.'
+                    : 'அவசரகால புயல் உச்சங்களின் போது (புயல் ஃபெங்கல் அல்லது புயல் மிக்ஜாம் போன்றவை), நீர் வெளியேற்றும் கடற்படைகள் 8 மணி நேர ஷிப்ட் குழுக்களாகப் பிரிக்கப்பட்டு, எந்த வேலைநீக்கமும் இல்லாமல் 75 மிமீ வரையிலான சேற்றைக் கையாளக்கூடிய கனரக டீசல் மோட்டார்கள் பயன்படுத்தப்படுகின்றன.'}
                 </p>
                 
                 <div className="h-px bg-neutral-800 w-full" />
                 
                 <div className="flex items-center justify-between flex-wrap gap-2 pt-1">
-                  <span className="text-[10px] text-neutral-400 font-mono">Tender Status: READY</span>
+                  <span className="text-[10px] text-neutral-400 font-mono">
+                    {language === 'en' ? 'Tender Status: READY' : 'ஒப்பந்தப்புள்ளி நிலை: தயார்'}
+                  </span>
                   <button 
                     onClick={() => setActiveView('equipments')}
                     className="text-[10px] text-brand-gold-400 hover:text-white font-mono uppercase tracking-wider flex items-center gap-1 transition-colors"
                   >
-                    <span>View Pump Spec Sheet</span>
+                    <span>{language === 'en' ? 'View Pump Spec Sheet' : 'பம்ப் விவரக்குறிப்புத் தாளைக் காண்க'}</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
@@ -772,12 +891,16 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
               
               <div className="lg:col-span-8 space-y-4">
-                <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase">OFFICIAL INTAKE PROCESS</span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-none leading-none font-display text-shadow">
-                  Ready to partner on municipal tenders?
+                <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase">
+                  {language === 'en' ? 'OFFICIAL INTAKE PROCESS' : 'அதிகாரப்பூர்வ சேர்க்கை செயல்முறை'}
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-none font-display text-shadow">
+                  {language === 'en' ? 'Ready to partner on municipal tenders?' : 'நகராட்சி ஒப்பந்தப்புள்ளிகளில் இணையத் தயாரா?'}
                 </h2>
                 <p className="text-sm text-neutral-300 max-w-3xl leading-relaxed">
-                  Connect with Mr. G. Selva Kumar’s regional estimating desk to gain verified class-status credentials, request specialized equipment hiring blocks, or organize rapid storm relief backups.
+                  {language === 'en'
+                    ? 'Connect with Mr. G. Selva Kumar’s regional estimating desk to gain verified class-status credentials, request specialized equipment hiring blocks, or organize rapid storm relief backups.'
+                    : 'சரிபார்க்கப்பட்ட சான்றுகளைப் பெற, சிறப்பு உபகரணங்களை வாடகைக்கு எடுக்க அல்லது விரைவான புயல் நிவாரணப் பணிகளை ஒருங்கிணைக்க திரு. ஜி. செல்வ குமாரின் பிராந்திய மதிப்பீட்டு மேசையைத் தொடர்பு கொள்ளவும்.'}
                 </p>
               </div>
 
@@ -787,7 +910,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   className="w-full bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-bold py-3.5 px-6 rounded-lg shadow-lg active:scale-95 transition-all text-sm uppercase text-center tracking-wider"
                   id="btn-bot-contact"
                 >
-                  Request Commercial Proposal
+                  {language === 'en' ? 'Request Commercial Proposal' : 'வணிக முன்மொழிவைக் கோரவும்'}
                 </button>
                 
                 <a
@@ -796,7 +919,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-neutral-900 border border-neutral-700 hover:border-neutral-500 hover:bg-neutral-800 text-white font-display font-semibold py-3.5 px-6 rounded-lg transition-colors text-sm"
                 >
-                  <span>Download Catalog PDF</span>
+                  <span>{language === 'en' ? 'Download Catalog PDF' : 'நிறுவன சிற்றேடு PDF'}</span>
                   <ArrowUpRight className="w-4 h-4 text-brand-gold-400" />
                 </a>
               </div>

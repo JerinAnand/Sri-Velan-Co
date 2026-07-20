@@ -11,9 +11,11 @@ import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 import { COMPANY_DETAILS, OFFICES } from '../data';
+import { useTranslation } from '../context/TranslationContext';
 
 export const CapabilityStatement: React.FC = () => {
   const navigate = useNavigate();
+  const { language, t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorLog, setErrorLog] = useState<string | null>(null);
@@ -120,7 +122,7 @@ export const CapabilityStatement: React.FC = () => {
     }
   }, [shouldTriggerDownload, logoLoaded]);
 
-  const todayDateStr = new Date().toLocaleDateString('en-US', {
+  const todayDateStr = new Date().toLocaleDateString(language === 'ta' ? 'ta-IN' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -218,7 +220,7 @@ export const CapabilityStatement: React.FC = () => {
           aria-label="Back to website"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to Website</span>
+          <span>{t('capability.backToWebsite')}</span>
         </button>
 
         <div className="flex gap-3">
@@ -228,7 +230,7 @@ export const CapabilityStatement: React.FC = () => {
             aria-label="Print capability statement document"
           >
             <Printer className="w-4 h-4" />
-            <span>Print Sheet</span>
+            <span>{t('capability.printSheet')}</span>
           </button>
           
           <button
@@ -240,12 +242,12 @@ export const CapabilityStatement: React.FC = () => {
             {isGenerating ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-brand-blue-950" />
-                <span>Generating PDF...</span>
+                <span>{t('capability.generatingPdf')}</span>
               </>
             ) : (
               <>
                 <Download className="w-4 h-4 text-brand-blue-950" />
-                <span>Download PDF</span>
+                <span>{t('capability.downloadPdf')}</span>
               </>
             )}
           </button>
@@ -257,9 +259,9 @@ export const CapabilityStatement: React.FC = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col justify-center items-center text-white no-print">
           <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-2xl max-w-sm w-full text-center space-y-4 shadow-2xl">
             <Loader2 className="w-12 h-12 animate-spin text-brand-gold-500 mx-auto" />
-            <h3 className="font-display font-bold text-lg">Compiling PDF</h3>
+            <h3 className="font-display font-bold text-lg">{t('capability.compilingPdf')}</h3>
             <p className="text-sm text-neutral-400 font-light leading-relaxed">
-              Applying corporate layout configurations, caching vector logos, and formatting A4 print matrix boundaries...
+              {t('capability.compilingDesc')}
             </p>
           </div>
         </div>
@@ -308,21 +310,21 @@ export const CapabilityStatement: React.FC = () => {
               </div>
               <div className="text-left">
                 <h1 className="font-bold tracking-tight uppercase leading-none" style={{ fontSize: '24px', color: '#0e2954', fontFamily: 'Arial, sans-serif' }}>
-                  SRI VELAN & CO
+                  {t('capability.letterhead.title')}
                 </h1>
                 <p className="font-bold tracking-wider uppercase mt-1" style={{ fontSize: '11px', color: '#4b5563', fontFamily: 'Arial, sans-serif' }}>
-                  Government Engineering Contractors
+                  {t('capability.letterhead.sub')}
                 </p>
                 <p className="mt-1 leading-normal" style={{ fontSize: '9px', color: '#6b7280' }}>
-                  {OFFICES[0].name}: {OFFICES[0].addressLines.join(' ')}
+                  {t('capability.letterhead.address')}
                 </p>
               </div>
             </div>
 
             <div className="text-right flex flex-col justify-end" style={{ fontSize: '9.5px', color: '#1f2937' }}>
-              <p><strong style={{ color: '#0e2954' }}>Phone:</strong> +91 98942 18243 | +91 98427 18243</p>
-              <p className="mt-0.5"><strong style={{ color: '#0e2954' }}>Email:</strong> srivelan2004@gmail.com</p>
-              <p className="mt-0.5"><strong style={{ color: '#0e2954' }}>Website:</strong> srivelan.co</p>
+              <p><strong style={{ color: '#0e2954' }}>{t('capability.letterhead.phone')}:</strong> +91 98942 18243 | +91 98427 18243</p>
+              <p className="mt-0.5"><strong style={{ color: '#0e2954' }}>{t('capability.letterhead.email')}:</strong> srivelan2004@gmail.com</p>
+              <p className="mt-0.5"><strong style={{ color: '#0e2954' }}>{t('capability.letterhead.website')}:</strong> srivelan.co</p>
             </div>
           </div>
 
@@ -332,34 +334,34 @@ export const CapabilityStatement: React.FC = () => {
             {/* 1. Company Overview Section */}
             <div className="text-left">
               <h2 className="font-bold uppercase tracking-wide pb-0.5 mb-1.5" style={{ fontSize: '12px', color: '#0e2954', borderBottom: '1px solid #0e2954' }}>
-                Company Overview
+                {t('capability.overview.title')}
               </h2>
               <p className="leading-relaxed text-justify" style={{ fontSize: '10px', color: '#1f2937' }}>
-                Sri Velan & Co is a premier civil engineering contractor founded in 2006 by Mr. G. Selva Kumar, specializing in public utility infrastructure works. The firm has 20 years of proven execution experience delivering municipal building blocks, state irrigation canal channels, agricultural stone pitched revetments, and emergency vacuum dewatering operations. Strategically anchored in Chennai and Villupuram, the group provides swift mobilization and reliable bid execution in compliance with government engineering norms.
+                {t('capability.overview.text')}
               </p>
             </div>
 
             {/* 2. Registration & Compliance Section */}
             <div className="text-left">
               <h2 className="font-bold uppercase tracking-wide pb-0.5 mb-1.5" style={{ fontSize: '12px', color: '#0e2954', borderBottom: '1px solid #0e2954' }}>
-                Registration & Compliance
+                {t('capability.compliance.title')}
               </h2>
               <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-left" style={{ fontSize: '10px', color: '#1f2937' }}>
                 <p className="flex items-center gap-1.5">
                   <span style={{ color: '#ca8a04', fontWeight: 'bold' }}>•</span>
-                  <span><strong>PWD/WRD Class Contractor:</strong> Class I/II State Government Accreditation</span>
+                  <span>{t('capability.compliance.pwd')}</span>
                 </p>
                 <p className="flex items-center gap-1.5">
                   <span style={{ color: '#ca8a04', fontWeight: 'bold' }}>•</span>
-                  <span><strong>GSTIN Registration:</strong> 33ABFFS6298G1ZU</span>
+                  <span>{t('capability.compliance.gst')}</span>
                 </p>
                 <p className="flex items-center gap-1.5">
                   <span style={{ color: '#ca8a04', fontWeight: 'bold' }}>•</span>
-                  <span><strong>PAN Identification:</strong> ABFFS6298G</span>
+                  <span>{t('capability.compliance.pan')}</span>
                 </p>
                 <p className="flex items-center gap-1.5">
                   <span style={{ color: '#ca8a04', fontWeight: 'bold' }}>•</span>
-                  <span><strong>MSME Udyam:</strong> UDYAM-TN-31-0046742</span>
+                  <span>{t('capability.compliance.msme')}</span>
                 </p>
               </div>
             </div>
@@ -367,24 +369,24 @@ export const CapabilityStatement: React.FC = () => {
             {/* 3. Core Competencies Section */}
             <div className="text-left">
               <h2 className="font-bold uppercase tracking-wide pb-0.5 mb-1.5" style={{ fontSize: '12px', color: '#0e2954', borderBottom: '1px solid #0e2954' }}>
-                Core Competencies
+                {t('capability.competencies.title')}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-left" style={{ fontSize: '9.5px', color: '#1f2937' }}>
                 <p className="flex items-start gap-1.5">
                   <span style={{ color: '#ca8a04', fontWeight: 'bold', marginTop: '2px' }}>✔</span>
-                  <span><strong>Municipal Building Construction:</strong> Reinforced concrete structures, school hostels, quarters, and finishes.</span>
+                  <span>{t('capability.competencies.item1')}</span>
                 </p>
                 <p className="flex items-start gap-1.5">
                   <span style={{ color: '#ca8a04', fontWeight: 'bold', marginTop: '2px' }}>✔</span>
-                  <span><strong>Canal Networks & Embankments:</strong> WRD irrigation distribution masonry, canals, and dry stone pitching.</span>
+                  <span>{t('capability.competencies.item2')}</span>
                 </p>
                 <p className="flex items-start gap-1.5">
                   <span style={{ color: '#ca8a04', fontWeight: 'bold', marginTop: '2px' }}>✔</span>
-                  <span><strong>Emergency Dewatering Operations:</strong> Mobilization of 6" & 10" vacuum-assist diesel pump fleets for flood mitigation.</span>
+                  <span>{t('capability.competencies.item3')}</span>
                 </p>
                 <p className="flex items-start gap-1.5">
                   <span style={{ color: '#ca8a04', fontWeight: 'bold', marginTop: '2px' }}>✔</span>
-                  <span><strong>Highway Mechanical Sweeping:</strong> Tractor-driven hydraulic broomer sweeping operations for highway clearings.</span>
+                  <span>{t('capability.competencies.item4')}</span>
                 </p>
               </div>
             </div>
@@ -392,45 +394,45 @@ export const CapabilityStatement: React.FC = () => {
             {/* 4. Key Clients / Empanelments Section */}
             <div className="text-left">
               <h2 className="font-bold uppercase tracking-wide pb-0.5 mb-1.5" style={{ fontSize: '12px', color: '#0e2954', borderBottom: '1px solid #0e2954' }}>
-                Key Clients & Empanelments
+                {t('capability.clients.title')}
               </h2>
               <div className="flex flex-wrap gap-x-6 gap-y-1 text-left" style={{ fontSize: '10px', color: '#1f2937' }}>
-                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> Greater Chennai Corporation (GCC)</span>
-                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> Chennai Metro Rail Limited (CMRL)</span>
-                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> Tamil Nadu Public Works Department (PWD)</span>
-                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> Water Resources Department (WRD)</span>
-                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> Hindu Religious & Charitable Endowments (HR&CE)</span>
+                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> {t('capability.clients.gcc')}</span>
+                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> {t('capability.clients.cmrl')}</span>
+                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> {t('capability.clients.pwd')}</span>
+                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> {t('capability.clients.wrd')}</span>
+                <span className="flex items-center gap-1"><span style={{ color: '#0e2954', fontWeight: 'bold' }}>•</span> {t('capability.clients.hrce')}</span>
               </div>
             </div>
 
             {/* 5. Representative Projects Section */}
             <div className="text-left">
               <h2 className="font-bold uppercase tracking-wide pb-0.5 mb-1.5" style={{ fontSize: '12px', color: '#0e2954', borderBottom: '1px solid #0e2954' }}>
-                Representative Projects
+                {t('capability.projects.title')}
               </h2>
               <table className="w-full border-collapse" style={{ fontSize: '9.5px', color: '#111827' }}>
                 <thead>
                   <tr style={{ backgroundColor: '#f3f4f6' }}>
-                    <th className="text-left p-1.5 font-bold uppercase" style={{ border: '1px solid #d1d5db', width: '65%' }}>Project Name / Operational Description</th>
-                    <th className="text-left p-1.5 font-bold uppercase" style={{ border: '1px solid #d1d5db', width: '35%' }}>Client / Government Department</th>
+                    <th className="text-left p-1.5 font-bold uppercase" style={{ border: '1px solid #d1d5db', width: '65%' }}>{t('capability.projects.headerProject')}</th>
+                    <th className="text-left p-1.5 font-bold uppercase" style={{ border: '1px solid #d1d5db', width: '35%' }}>{t('capability.projects.headerClient')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="p-1.5 font-medium" style={{ border: '1px solid #e5e7eb' }}>PWD Administrative Office Complex & Staff Quarters (45,000+ sq ft Construction)</td>
-                    <td className="p-1.5" style={{ border: '1px solid #e5e7eb' }}>Tamil Nadu Public Works Dept (PWD)</td>
+                    <td className="p-1.5 font-medium" style={{ border: '1px solid #e5e7eb' }}>{t('capability.projects.p1')}</td>
+                    <td className="p-1.5" style={{ border: '1px solid #e5e7eb' }}>{t('capability.projects.p1Client')}</td>
                   </tr>
                   <tr>
-                    <td className="p-1.5 font-medium" style={{ border: '1px solid #e5e7eb' }}>River Feeder Canal Earthworks, Stone Pitching, and Channel Lining (12+ KM)</td>
-                    <td className="p-1.5" style={{ border: '1px solid #e5e7eb' }}>Water Resources Department (WRD)</td>
+                    <td className="p-1.5 font-medium" style={{ border: '1px solid #e5e7eb' }}>{t('capability.projects.p2')}</td>
+                    <td className="p-1.5" style={{ border: '1px solid #e5e7eb' }}>{t('capability.projects.p2Client')}</td>
                   </tr>
                   <tr>
-                    <td className="p-1.5 font-medium" style={{ border: '1px solid #e5e7eb' }}>Operation Cyclone Fengal — High-Volume Vacuum-Assist Submersible Dewatering</td>
-                    <td className="p-1.5" style={{ border: '1px solid #e5e7eb' }}>Greater Chennai Corporation (GCC)</td>
+                    <td className="p-1.5 font-medium" style={{ border: '1px solid #e5e7eb' }}>{t('capability.projects.p3')}</td>
+                    <td className="p-1.5" style={{ border: '1px solid #e5e7eb' }}>{t('capability.projects.p3Client')}</td>
                   </tr>
                   <tr>
-                    <td className="p-1.5 font-medium" style={{ border: '1px solid #e5e7eb' }}>Heritage Temple Masonry, Structural Restoration, and outer safety layouts</td>
-                    <td className="p-1.5" style={{ border: '1px solid #e5e7eb' }}>HR & CE Department, Tamil Nadu</td>
+                    <td className="p-1.5 font-medium" style={{ border: '1px solid #e5e7eb' }}>{t('capability.projects.p4')}</td>
+                    <td className="p-1.5" style={{ border: '1px solid #e5e7eb' }}>{t('capability.projects.p4Client')}</td>
                   </tr>
                 </tbody>
               </table>
@@ -439,13 +441,13 @@ export const CapabilityStatement: React.FC = () => {
             {/* 6. Equipment & Machinery Owned Section */}
             <div className="text-left">
               <h2 className="font-bold uppercase tracking-wide pb-0.5 mb-1.5" style={{ fontSize: '12px', color: '#0e2954', borderBottom: '1px solid #0e2954' }}>
-                Equipment & Machinery Owned
+                {t('capability.equipment.title')}
               </h2>
               <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-left" style={{ fontSize: '9.5px', color: '#1f2937' }}>
-                <p><strong>• Heavy Excavators & Track Crawlers (12 to 22 Ton):</strong> 15+ Active Units</p>
-                <p><strong>• Vacuum-Assist Dewatering Pump Sets (6" and 10"):</strong> 34+ Deployed Units</p>
-                <p><strong>• Tractor-Mounted Hydraulic Broomers / Sweepers:</strong> 12+ Fleet Units</p>
-                <p><strong>• High-Voltage Electric Submersible Pumps (100 HP):</strong> 8+ Heavy Units</p>
+                <p>• {t('capability.equipment.item1')}</p>
+                <p>• {t('capability.equipment.item2')}</p>
+                <p>• {t('capability.equipment.item3')}</p>
+                <p>• {t('capability.equipment.item4')}</p>
               </div>
             </div>
 
@@ -454,17 +456,17 @@ export const CapabilityStatement: React.FC = () => {
           {/* C. Formal Office Footer & Authority Stamp */}
           <div className="mt-4 pt-3 flex justify-between items-end" style={{ borderTop: '1px solid #e5e7eb' }}>
             <div className="text-left" style={{ fontSize: '8.5px', color: '#6b7280' }}>
-              <p><strong>Contact Desk:</strong> Mr. G. Selva Kumar, Proprietor</p>
-              <p className="mt-0.5">Cell: +91 98942 18243 | srivelan2004@gmail.com</p>
-              <p className="mt-0.5">Corporate Offices: Chennai & Villupuram, Tamil Nadu</p>
+              <p><strong>{t('capability.footer.contactDesk')}</strong></p>
+              <p className="mt-0.5">{t('capability.footer.cell')}: +91 98942 18243 | srivelan2004@gmail.com</p>
+              <p className="mt-0.5">{t('capability.footer.corporateOffices')}</p>
             </div>
             
             <div className="text-right font-mono flex flex-col justify-end items-end" style={{ fontSize: '8px', color: '#9ca3af' }}>
               <div className="p-1 px-2.5 rounded mb-1" style={{ border: '1px dashed #d1d5db', backgroundColor: '#f9fafb', color: '#4b5563', fontSize: '7.5px' }}>
-                <span style={{ fontWeight: 'bold', color: '#0e2954' }}>✓</span> VERIFIED REGISTERED CONTRACTOR
+                <span style={{ fontWeight: 'bold', color: '#0e2954' }}>✓</span> {t('capability.footer.verifiedContractor')}
               </div>
-              <p>Generated on {todayDateStr}</p>
-              <p className="mt-0.5">Ref: SVC-CS-2026-A4</p>
+              <p>{t('capability.footer.generatedOn')} {todayDateStr}</p>
+              <p className="mt-0.5">{t('capability.footer.ref')}: SVC-CS-2026-A4</p>
             </div>
           </div>
 
