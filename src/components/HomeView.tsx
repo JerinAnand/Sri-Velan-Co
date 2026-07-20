@@ -33,6 +33,7 @@ import { COMPANY_DETAILS, SERVICE_CATEGORIES, PROJECTS } from '../data';
 import { ActiveView } from '../types';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { useAdmin } from '../context/AdminContext';
+import { useTranslation } from '../translations/content';
 import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
@@ -69,6 +70,7 @@ const useCountUp = (target: number, duration: number = 2000, trigger: boolean = 
 
 export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [activeCompetency, setActiveCompetency] = useState(0);
@@ -195,7 +197,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-gold-500"></span>
                 </span>
-                <span>{heroSlides[currentSlide].badge}</span>
+                <span>{t(heroSlides[currentSlide].badge)}</span>
                 <span className="text-neutral-500">|</span>
                 <span className="text-[10px] tracking-normal font-semibold">SRI VELAN & CO</span>
               </motion.div>
@@ -211,12 +213,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 transition={{ duration: 0.6, ease: 'easeOut' }}
                 className="space-y-4"
               >
-                <p className="text-brand-gold-400 font-mono text-sm uppercase tracking-widest font-semibold">{heroSlides[currentSlide].subtitle}</p>
+                <p className="text-brand-gold-400 font-mono text-sm uppercase tracking-widest font-semibold">{t(heroSlides[currentSlide].subtitle)}</p>
                 <h1 className="text-3xl sm:text-[42px] font-bold text-white text-left leading-tight sm:leading-[50.84px] tracking-tight font-display whitespace-pre-line">
-                  {heroSlides[currentSlide].title}
+                  {t(heroSlides[currentSlide].title)}
                 </h1>
-                <p className="max-w-2xl text-neutral-300 font-sans font-light text-sm sm:text-base lg:text-lg leading-relaxed">
-                  {heroSlides[currentSlide].tagline}
+                <p className="max-w-2xl text-neutral-300 font-sans font-light text-sm sm:text-base lg:text-lg leading-relaxed font-sans">
+                  {t(heroSlides[currentSlide].tagline)}
                 </p>
               </motion.div>
             </AnimatePresence>
@@ -225,29 +227,29 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             <div className="flex flex-col xl:flex-row gap-4 pt-6">
               <button
                 onClick={() => setActiveView('about')}
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 hover:from-brand-gold-400 hover:to-brand-gold-500 font-display font-bold px-8 py-4 rounded-lg shadow-xl hover:shadow-brand-gold-500/10 hover:scale-[1.02] active:scale-98 transition-all text-sm uppercase tracking-wider"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 hover:from-brand-gold-400 hover:to-brand-gold-500 font-display font-bold px-8 py-4 rounded-lg shadow-xl hover:shadow-brand-gold-500/10 hover:scale-[1.02] active:scale-98 transition-all text-sm uppercase tracking-wider min-h-[44px]"
                 id="hero-lnk-about"
               >
-                <span>Enterprise Credentials</span>
+                <span>{t("Enterprise Credentials")}</span>
                 <ArrowRight className="w-4 h-4 text-brand-blue-950 font-bold" />
               </button>
 
               <button
                 onClick={() => navigate('/capability-statement?download=true')}
-                className="inline-flex items-center justify-center gap-2 bg-brand-blue-800/80 border border-brand-blue-700/50 hover:bg-brand-blue-700 hover:border-brand-blue-600 text-white font-display font-bold px-8 py-4 rounded-lg backdrop-blur-md hover:scale-[1.02] active:scale-98 transition-all text-sm uppercase tracking-wider cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 bg-brand-blue-800/80 border border-brand-blue-700/50 hover:bg-brand-blue-700 hover:border-brand-blue-600 text-white font-display font-bold px-8 py-4 rounded-lg backdrop-blur-md hover:scale-[1.02] active:scale-98 transition-all text-sm uppercase tracking-wider cursor-pointer min-h-[44px]"
                 id="hero-lnk-capability"
                 title="Download Capability Statement"
               >
                 <FileText className="w-4 h-4 text-brand-gold-400" />
-                <span>Capability Statement</span>
+                <span>{t("Capability Statement")}</span>
               </button>
 
               <button
                 onClick={() => setActiveView('contact')}
-                className="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/20 hover:border-white/40 text-white font-display font-semibold px-8 py-4 rounded-lg backdrop-blur-md hover:bg-white/10 active:scale-98 transition-all text-sm uppercase tracking-wider"
+                className="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/20 hover:border-white/40 text-white font-display font-semibold px-8 py-4 rounded-lg backdrop-blur-md hover:bg-white/10 active:scale-98 transition-all text-sm uppercase tracking-wider min-h-[44px]"
                 id="hero-lnk-contact"
               >
-                <span>Tender Submissions Bureau</span>
+                <span>{t("Tender Submissions Bureau")}</span>
                 <ArrowUpRight className="w-4 h-4 text-brand-gold-400" />
               </button>
             </div>
@@ -311,8 +313,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
           {/* Section Header */}
           <div className="text-center md:text-left mb-10">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block mb-2">VERIFIED CREDENTIALS</span>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Our Core Trust Numbers</h2>
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block mb-2">{t("VERIFIED CREDENTIALS")}</span>
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("Our Core Trust Numbers")}</h2>
             <div className="h-1 w-12 bg-brand-gold-500 mt-3 mx-auto md:mx-0" />
           </div>
           
@@ -332,7 +334,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   )}
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Years of Structural Legacy
+                  {t("Years of Structural Legacy")}
                 </p>
                 <p className="text-xs text-neutral-500 leading-tight">
                   Founded in <EditableValue id="company_year_established" defaultValue={2006} /> in Villupuram
@@ -350,7 +352,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   <EditableValue id="home_gov_registrations" defaultValue={5} displaySuffix="+" />
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Government Registered Contractor
+                  {t("Government Registered Contractor")}
                 </p>
                 <p className="text-xs text-neutral-500 leading-tight">State PWD, WRD, RD, TNCSC & GCC</p>
               </div>
@@ -370,7 +372,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   )}
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Heavy Machineries & Fleet
+                  {t("Heavy Machineries & Fleet")}
                 </p>
                 <p className="text-xs text-neutral-500 leading-tight">Dewatering & Earth moving equipment</p>
               </div>
@@ -386,7 +388,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                   <EditableValue id="home_dispatch_hours" defaultValue="24/7" />
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
-                  Disaster Dispatch Desk
+                  {t("Disaster Dispatch Desk")}
                 </p>
                 <p className="text-xs text-neutral-500 leading-tight">Under cyclone warning panels</p>
               </div>
@@ -406,15 +408,15 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             <div className="lg:col-span-5 space-y-6">
               <div className="inline-flex items-center gap-1.5 bg-brand-blue-50 text-brand-blue-700 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider">
                 <Award className="w-3.5 h-3.5" />
-                <span>Excellence in Execution</span>
+                <span>{t("Excellence in Execution")}</span>
               </div>
               
               <h2 className="text-3xl sm:text-4.5xl font-black text-brand-blue-900 leading-none tracking-tight">
-                Engineering Discipline That Moves Civil Assets.
+                {t("Engineering Discipline That Moves Civil Assets.")}
               </h2>
               
               <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans font-light">
-                Our approach as a <strong className="font-semibold">contracting group</strong> is guided by precise raw-material procurement, robust structural concrete verification against standard PWD aggregates, and complete mechanical command over dual-dewatering operations to ensure continuous security for state networks.
+                {t("Our approach as a contracting group is guided by precise raw-material procurement, robust structural concrete verification against standard PWD aggregates, and complete mechanical command over dual-dewatering operations to ensure continuous security for state networks.")}
               </p>
 
               <div className="h-px bg-neutral-200 w-full" />
@@ -427,7 +429,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-neutral-600">
                     <span className="h-4.5 w-4.5 rounded-full bg-brand-blue-50 text-brand-blue-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                    <span>{item}</span>
+                    <span>{t(item)}</span>
                   </div>
                 ))}
               </div>
@@ -473,17 +475,17 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                     <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-4">
                       <div className="space-y-2 flex-1">
                         <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950 uppercase tracking-tight">
-                          {comp.title}
+                          {t(comp.title)}
                         </h4>
-                        <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed font-sans font-light">
-                          {comp.desc}
+                        <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed font-sans font-light font-sans">
+                          {t(comp.desc)}
                         </p>
                         
                         {isActive && (
                           <div className="flex flex-wrap gap-2 pt-3">
                             {comp.details.map((dtl) => (
                               <span key={dtl} className="text-[10px] bg-brand-blue-700/5 text-brand-blue-800 font-mono font-medium py-0.5 px-2.5 rounded-full border border-brand-blue-700/10">
-                                {dtl}
+                                {t(dtl)}
                               </span>
                             ))}
                           </div>
@@ -496,7 +498,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                           {comp.metric}
                         </span>
                         <span className="block text-[9px] text-neutral-400 font-mono tracking-widest uppercase mt-1">
-                          {comp.label}
+                          {t(comp.label)}
                         </span>
                       </div>
                     </div>
@@ -518,18 +520,18 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
             <div className="space-y-3 max-w-2xl text-left">
-              <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">OPERATIONAL CAPACITY</span>
-              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">Corporate Infrastructure Services</h2>
-              <p className="text-xs sm:text-sm text-neutral-400 font-sans font-light leading-relaxed">
-                As licensed construction partners, our division operations are vetted for extreme load capacities and public safety clearances across Tamil Nadu.
+              <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase block">{t("OPERATIONAL CAPACITY")}</span>
+              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">{t("Corporate Infrastructure Services")}</h2>
+              <p className="text-xs sm:text-sm text-neutral-400 font-sans font-light leading-relaxed font-sans">
+                {t("As licensed construction partners, our division operations are vetted for extreme load capacities and public safety clearances across Tamil Nadu.")}
               </p>
             </div>
             
             <button
               onClick={() => setActiveView('services')}
-              className="inline-flex items-center gap-1.5 text-brand-gold-400 hover:text-white text-xs font-semibold uppercase tracking-wider shrink-0 transition-colors"
+              className="inline-flex items-center gap-1.5 text-brand-gold-400 hover:text-white text-xs font-semibold uppercase tracking-wider shrink-0 transition-colors min-h-[44px]"
             >
-              <span>View All 6 Specialized Sectors</span>
+              <span>{t("View All 6 Specialized Sectors")}</span>
               <ArrowUpRight className="w-4 h-4" />
             </button>
           </div>
@@ -560,20 +562,20 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
                 <div className="p-6 sm:p-8 space-y-4 flex-1 flex flex-col justify-between text-left">
                   <div className="space-y-2">
-                    <h3 className="font-display font-bold text-lg text-white group-hover:text-brand-gold-400 transition-colors">
-                      {svc.title}
+                    <h3 className="font-display font-bold text-lg text-white group-hover:text-brand-gold-400 transition-colors font-sans">
+                      {t(svc.title)}
                     </h3>
-                    <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                      {svc.shortDescription}
+                    <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light font-sans">
+                      {t(svc.shortDescription)}
                     </p>
                   </div>
 
                   <div className="pt-4 border-t border-neutral-800 flex items-center justify-between">
                     <button 
                       onClick={() => setActiveView('services')}
-                      className="text-brand-gold-400 hover:text-white text-xs font-semibold flex items-center gap-1 transition-all"
+                      className="text-brand-gold-400 hover:text-white text-xs font-semibold flex items-center gap-1 transition-all min-h-[44px]"
                     >
-                      <span>Explore Technical Standards</span>
+                      <span>{t("Explore Technical Standards")}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -595,23 +597,23 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             <div className="lg:col-span-5 space-y-6 text-left">
               <div className="inline-flex items-center gap-1.5 bg-brand-gold-500/10 text-brand-gold-700 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider border border-brand-gold-500/20">
                 <Sliders className="w-3.5 h-3.5" />
-                <span>Equipment Capability Interactive Simulator</span>
+                <span>{t("Equipment Capability Interactive Simulator")}</span>
               </div>
               
               <h2 className="text-3xl sm:text-4.5xl font-black text-brand-blue-900 leading-none tracking-tight">
-                Disaster Pumping Telemetry Calculator
+                {t("Disaster Pumping Telemetry Calculator")}
               </h2>
               
-              <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed font-sans font-light">
-                Sri Velan & Co maintains South India's largest localized mobilization dewatering network. On average, a standard 4-inch pump can discharge <strong className="font-semibold text-brand-blue-900">3,000 Liters of water per hour</strong>. Adjust the calculator sliders to test our discharge clearing parameters:
+              <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed font-sans font-light font-sans">
+                {t("Sri Velan & Co maintains South India's largest localized mobilization dewatering network. On average, a standard 4-inch pump can discharge 3,000 Liters of water per hour. Adjust the calculator sliders to test our discharge clearing parameters:")}
               </p>
 
               {/* Sliders */}
-              <div className="space-y-4">
+              <div className="space-y-4 font-sans">
                 {/* Slider Input 1: Volume */}
                 <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200/80 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">Flood Fluid Volume</span>
+                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">{t("Flood Fluid Volume")}</span>
                     <span className="font-display font-extrabold text-brand-blue-900 text-lg font-mono">
                       {simVolume.toLocaleString()} Liters
                     </span>
@@ -640,7 +642,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 {/* Slider Input 2: Pumps */}
                 <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-200/80 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">Active 4-Inch Pumps</span>
+                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-500 font-bold">{t("Active 4-Inch Pumps")}</span>
                     <span className="font-display font-extrabold text-brand-blue-900 text-lg font-mono">
                       {simPumps} pump{simPumps !== 1 ? 's' : ''}
                     </span>
@@ -665,7 +667,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             </div>
 
             {/* Right side dynamic dashboard output display */}
-            <div className="lg:col-span-7 bg-neutral-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-neutral-800 relative overflow-hidden" id="simulator-output-card">
+            <div className="lg:col-span-7 bg-neutral-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-neutral-800 relative overflow-hidden font-sans" id="simulator-output-card">
               <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
               
               <div className="flex items-center justify-between border-b border-neutral-800 pb-4 mb-6">
@@ -681,51 +683,51 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                 {/* Duration spec */}
                 <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 space-y-1 text-left flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">Calculated Clearance Time</span>
-                    <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none">
+                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">{t("Calculated Clearance Time")}</span>
+                    <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none font-mono">
                       {calcClearanceDuration(simVolume, simPumps)}
                     </p>
                   </div>
-                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">Continuous flow matching pressure outputs with direct PTO power plants</p>
+                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">{t("Continuous flow matching pressure outputs with direct PTO power plants")}</p>
                 </div>
 
                 {/* Diesel Fuel Units spec */}
                 <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 space-y-1 text-left flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">Estimated Diesel fuel</span>
-                    <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none">
+                    <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest block mb-1">{t("Estimated Diesel fuel")}</span>
+                    <p className="text-3xl font-display font-extrabold text-brand-gold-400 font-mono leading-none font-mono">
                       {calcDieselUnits(simVolume, simPumps)} Liters
                     </p>
                   </div>
-                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">Based on 2.5 Liters of diesel per active pump-hour running</p>
+                  <p className="text-[10px] text-neutral-400 mt-2 leading-tight">{t("Based on 2.5 Liters of diesel per active pump-hour running")}</p>
                 </div>
 
               </div>
 
               {/* Formula and rate verification card */}
-              <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 mt-6 text-left space-y-3">
-                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">Discharge Equation & Rate Verification</span>
+              <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 mt-6 text-left space-y-3 font-sans">
+                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">{t("Discharge Equation & Rate Verification")}</span>
                 <div className="bg-neutral-900 p-3 rounded-lg border border-neutral-800/60 text-xs font-mono text-neutral-300 space-y-2">
                   <div className="flex justify-between border-b border-neutral-800/55 pb-1">
-                    <span className="text-neutral-500">Average Rate per Pump:</span>
+                    <span className="text-neutral-500">{t("Average Rate per Pump:")}</span>
                     <span className="text-white">3,000 Liters / Hour</span>
                   </div>
                   <div className="flex justify-between border-b border-neutral-800/55 pb-1 flex-wrap">
-                    <span className="text-neutral-500">Cumulative Deployed rate ({simPumps} pump{simPumps !== 1 ? 's' : ''}):</span>
+                    <span className="text-neutral-500">{t("Cumulative Deployed rate")} ({simPumps} pump{simPumps !== 1 ? 's' : ''}):</span>
                     <span className="text-emerald-400 font-extrabold">{(simPumps * 3000).toLocaleString()} Liters / Hour</span>
                   </div>
                   <div className="flex justify-between border-b border-neutral-800/55 pb-1 flex-wrap">
-                    <span className="text-neutral-500">Discharge Equation:</span>
+                    <span className="text-neutral-500">{t("Discharge Equation:")}</span>
                     <span className="text-brand-gold-400 font-bold">
                       {simVolume.toLocaleString()} Liters ÷ {(simPumps * 3000).toLocaleString()} L/Hr = {calcClearanceDuration(simVolume, simPumps)}
                     </span>
                   </div>
                   <div className="flex justify-between border-b border-neutral-800/55 pb-1">
-                    <span className="text-neutral-500">Diesel Consumption Rate:</span>
+                    <span className="text-neutral-500">{t("Diesel Consumption Rate:")}</span>
                     <span className="text-white">2.5 Liters / Pump-Hour</span>
                   </div>
                   <div className="flex justify-between pt-1 flex-wrap">
-                    <span className="text-neutral-500">Diesel Consumption Equation:</span>
+                    <span className="text-neutral-500">{t("Diesel Consumption Equation:")}</span>
                     <span className="text-brand-gold-400 font-bold">
                       {simPumps} Pump{simPumps !== 1 ? 's' : ''} × {(simVolume / (simPumps * 3000)).toFixed(2)} Hrs × 2.5 Liters/Hr = {calcDieselUnits(simVolume, simPumps)} Liters
                     </span>
@@ -734,21 +736,21 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
 
               {/* Comparison details banner inside output */}
-              <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 mt-6 text-left space-y-3">
-                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">Cyclone Response Deployment Layout</span>
-                <p className="text-xs text-neutral-300 leading-relaxed font-sans font-light">
-                  During emergency storm peaks (such as Cyclone Fengal or Cyclone Michaung), dewatering fleets are split into continuous <strong className="font-semibold text-brand-gold-400">8-hour shift teams</strong> utilizing multi-cylinder heavy diesel motors capable of handling up to <strong className="font-semibold text-brand-gold-400">75mm compressible mud solids</strong> with no downtime.
+              <div className="bg-neutral-950 p-5 rounded-xl border border-neutral-800/80 mt-6 text-left space-y-3 font-sans">
+                <span className="text-[10px] text-brand-gold-400 font-mono uppercase tracking-widest block font-bold leading-none">{t("Cyclone Response Deployment Layout")}</span>
+                <p className="text-xs text-neutral-300 leading-relaxed font-sans font-light font-sans">
+                  {t("During emergency storm peaks (such as Cyclone Fengal or Cyclone Michaung), dewatering fleets are split into continuous 8-hour shift teams utilizing multi-cylinder heavy diesel motors capable of handling up to 75mm compressible mud solids with no downtime.")}
                 </p>
                 
                 <div className="h-px bg-neutral-800 w-full" />
                 
                 <div className="flex items-center justify-between flex-wrap gap-2 pt-1">
-                  <span className="text-[10px] text-neutral-400 font-mono">Tender Status: READY</span>
+                  <span className="text-[10px] text-neutral-400 font-mono">{t("Tender Status: READY")}</span>
                   <button 
                     onClick={() => setActiveView('equipments')}
-                    className="text-[10px] text-brand-gold-400 hover:text-white font-mono uppercase tracking-wider flex items-center gap-1 transition-colors"
+                    className="text-[10px] text-brand-gold-400 hover:text-white font-mono uppercase tracking-wider flex items-center gap-1 transition-colors min-h-[44px]"
                   >
-                    <span>View Pump Spec Sheet</span>
+                    <span>{t("View Pump Spec Sheet")}</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
@@ -765,38 +767,38 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
       <section className="bg-neutral-900 py-20 text-white relative border-t border-neutral-800/80" id="home-cta-quote">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="bg-gradient-to-br from-brand-blue-950 to-neutral-950 border border-brand-blue-800/35 p-10 sm:p-14 rounded-3xl relative overflow-hidden shadow-xl text-left">
+          <div className="bg-gradient-to-br from-brand-blue-950 to-neutral-950 border border-brand-blue-800/35 p-10 sm:p-14 rounded-3xl relative overflow-hidden shadow-xl text-left font-sans">
             {/* Blueprint Overlay lines */}
             <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
               
               <div className="lg:col-span-8 space-y-4">
-                <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase">OFFICIAL INTAKE PROCESS</span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-none leading-none font-display text-shadow">
-                  Ready to partner on municipal tenders?
+                <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase">{t("OFFICIAL INTAKE PROCESS")}</span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-none leading-none font-display text-shadow font-sans">
+                  {t("Ready to partner on municipal tenders?")}
                 </h2>
-                <p className="text-sm text-neutral-300 max-w-3xl leading-relaxed">
-                  Connect with Mr. G. Selva Kumar’s regional estimating desk to gain verified class-status credentials, request specialized equipment hiring blocks, or organize rapid storm relief backups.
+                <p className="text-sm text-neutral-300 max-w-3xl leading-relaxed font-sans font-light">
+                  {t("Connect with Mr. G. Selva Kumar’s regional estimating desk to gain verified class-status credentials, request specialized equipment hiring blocks, or organize rapid storm relief backups.")}
                 </p>
               </div>
 
               <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3.5 w-full">
                 <button
                   onClick={() => setActiveView('contact')}
-                  className="w-full bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-bold py-3.5 px-6 rounded-lg shadow-lg active:scale-95 transition-all text-sm uppercase text-center tracking-wider"
+                  className="w-full bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-bold py-3.5 px-6 rounded-lg shadow-lg active:scale-95 transition-all text-sm uppercase text-center tracking-wider min-h-[44px]"
                   id="btn-bot-contact"
                 >
-                  Request Commercial Proposal
+                  {t("Request Commercial Proposal")}
                 </button>
                 
                 <a
                   href={COMPANY_DETAILS.brochureLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-neutral-900 border border-neutral-700 hover:border-neutral-500 hover:bg-neutral-800 text-white font-display font-semibold py-3.5 px-6 rounded-lg transition-colors text-sm"
+                  className="w-full flex items-center justify-center gap-2 bg-neutral-900 border border-neutral-700 hover:border-neutral-500 hover:bg-neutral-800 text-white font-display font-semibold py-3.5 px-6 rounded-lg transition-colors text-sm min-h-[44px]"
                 >
-                  <span>Download Catalog PDF</span>
+                  <span>{t("Download Catalog PDF")}</span>
                   <ArrowUpRight className="w-4 h-4 text-brand-gold-400" />
                 </a>
               </div>

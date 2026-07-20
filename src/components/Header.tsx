@@ -11,6 +11,8 @@ import { COMPANY_DETAILS } from '../data';
 import { ActiveView } from '../types';
 import { useEasterEgg } from '../context/EasterEggContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslation } from '../translations/content';
 import { useAdmin } from '../context/AdminContext';
 import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
@@ -20,6 +22,8 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const { registerClick } = useEasterEgg();
   const { theme, toggleTheme } = useTheme();
+  const { language, toggleLanguage } = useLanguage();
+  const { t } = useTranslation();
   const { getValue } = useAdmin();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -74,7 +78,7 @@ export const Header: React.FC = () => {
           {/* Quality Tag */}
           <div className="flex items-center gap-2 text-brand-gold-400 font-medium text-center">
             <Award className="w-3.5 h-3.5" />
-            <span>Government Registered Contractor</span>
+            <span>{t("Government Registered Contractor")}</span>
           </div>
         </div>
       </div>
@@ -109,16 +113,16 @@ export const Header: React.FC = () => {
               </div>
               <div className="flex flex-col">
                 <h1 
-                  className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors"
-                  style={{ width: '189.359px', fontSize: '22px', lineHeight: '32px' }}
+                  className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors font-sans"
+                  style={{ minWidth: '189.359px', fontSize: '22px', lineHeight: '32px' }}
                 >
                   <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
                 </h1>
                 <p 
-                  className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase whitespace-nowrap"
-                  style={{ width: '189.359px' }}
+                  className="text-[7px] leading-[13.25px] min-h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase"
+                  style={{ minWidth: '189.359px' }}
                 >
-                  Powered by Trust, Proven by Provision
+                  {t("Powered by Trust, Proven by Provision")}
                 </p>
               </div>
             </div>
@@ -134,13 +138,13 @@ export const Header: React.FC = () => {
                     onClick={() => handleNavClick(item.view)}
                     aria-current={isActive ? 'page' : undefined}
                     role="menuitem"
-                    className={`px-4 py-2 rounded-md font-display text-sm font-medium transition-all duration-300 relative overflow-hidden group ${
+                    className={`px-3 py-2 rounded-md font-display text-sm font-medium transition-all duration-300 relative overflow-hidden group min-w-max ${
                       isActive 
                         ? 'text-brand-gold-400' 
                         : 'text-neutral-200 hover:text-white'
                     }`}
                   >
-                    <span className="relative z-10">{item.label}</span>
+                    <span className="relative z-10">{t(item.label)}</span>
                     {/* Hover slider indicator */}
                     <span className={`absolute bottom-0 left-0 w-full h-[3px] bg-brand-gold-500 transform origin-left transition-transform duration-350 ${
                       isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -167,15 +171,27 @@ export const Header: React.FC = () => {
                 )}
               </button>
 
+              {/* Language Toggle Button - Desktop */}
+              <button
+                type="button"
+                onClick={toggleLanguage}
+                className="px-3 py-2.5 rounded-lg text-neutral-300 hover:text-brand-gold-400 hover:bg-white/10 transition-all flex items-center justify-center cursor-pointer font-display text-sm font-bold tracking-wider"
+                title={language === 'en' ? 'Switch to Tamil' : 'Switch to English'}
+                aria-label="Language toggle button"
+                id="header-language-toggle-desktop"
+              >
+                <span className="text-brand-gold-400">{language === 'en' ? 'EN' : 'TA'}</span>
+              </button>
+
               <button 
                 onClick={() => handleNavClick('contact')}
-                className="bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 font-display font-semibold text-sm px-5 py-2.5 rounded-lg shadow-md hover:from-brand-gold-400 hover:to-brand-gold-500 hover:shadow-lg active:scale-95 transition-all duration-200"
+                className="bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 text-brand-blue-950 font-display font-semibold text-sm px-5 py-2.5 rounded-lg shadow-md hover:from-brand-gold-400 hover:to-brand-gold-500 hover:shadow-lg active:scale-95 transition-all duration-200 min-w-[100px]"
               >
-                Get Quote
+                {t("Get Quote")}
               </button>
             </div>
 
-            {/* Mobile Actions: Theme Toggle & Hamburger Trigger */}
+            {/* Mobile Actions: Theme Toggle, Language Toggle & Hamburger Trigger */}
             <div className="lg:hidden flex items-center gap-2">
               <button
                 type="button"
@@ -191,6 +207,19 @@ export const Header: React.FC = () => {
                   <Sun className="w-5 h-5 text-yellow-300" />
                 )}
               </button>
+
+              {/* Language Toggle Button - Mobile */}
+              <button
+                type="button"
+                onClick={toggleLanguage}
+                className="p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer font-display text-sm font-bold tracking-wider"
+                title={language === 'en' ? 'Switch to Tamil' : 'Switch to English'}
+                aria-label="Language toggle button"
+                id="header-language-toggle-mobile"
+              >
+                <span className="text-brand-gold-400">{language === 'en' ? 'EN' : 'TA'}</span>
+              </button>
+
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 id="mobile-menu-toggle"
@@ -263,7 +292,7 @@ export const Header: React.FC = () => {
 
                 {/* Nav Links List */}
                 <div className="space-y-1">
-                  <p className="text-[9px] text-brand-gold-400 uppercase font-mono tracking-widest mb-3 pl-2">Navigation Deck</p>
+                  <p className="text-[9px] text-brand-gold-400 uppercase font-mono tracking-widest mb-3 pl-2">{t("Navigation Deck") || "Navigation Deck"}</p>
                   {navItems.map((item) => {
                     const isActive = activeView === item.view;
                     return (
@@ -271,13 +300,13 @@ export const Header: React.FC = () => {
                         key={item.view}
                         id={`mobile-nav-item-${item.view}`}
                         onClick={() => handleNavClick(item.view)}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left font-display text-base font-bold transition-all ${
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left font-display text-base font-bold transition-all min-h-[44px] ${
                           isActive 
                             ? 'bg-brand-blue-900 text-brand-gold-400 border-l-4 border-brand-gold-500 pl-3' 
                             : 'text-neutral-300 hover:bg-brand-blue-900/60 hover:text-white'
                         }`}
                       >
-                        <span>{item.label}</span>
+                        <span>{t(item.label)}</span>
                         <ChevronRight className={`w-4 h-4 transition-transform ${isActive ? 'text-brand-gold-400' : 'text-neutral-500'}`} />
                       </button>
                     );
@@ -289,8 +318,8 @@ export const Header: React.FC = () => {
               {/* Drawer Footer info details */}
               <div className="p-6 bg-brand-blue-900/40 border-t border-brand-blue-900/80 space-y-4">
                 <div className="space-y-1 text-xs text-neutral-400">
-                  <p className="font-semibold text-white uppercase font-mono text-[9px] tracking-wider text-brand-gold-400">EMERGENCY DEWATERING DIVISION</p>
-                  <p className="font-sans font-light">Registered state partners maintaining localized vertical pump networks 24/7 during seasonal warning events.</p>
+                  <p className="font-semibold text-white uppercase font-mono text-[9px] tracking-wider text-brand-gold-400">{t("EMERGENCY DEWATERING DIVISION") || "EMERGENCY DEWATERING DIVISION"}</p>
+                  <p className="font-sans font-light">{t("Registered state partners maintaining localized vertical pump networks 24/7 during seasonal warning events.") || "Registered state partners maintaining localized vertical pump networks 24/7 during seasonal warning events."}</p>
                 </div>
                 
                 <div className="flex flex-col gap-2.5">
@@ -299,19 +328,19 @@ export const Header: React.FC = () => {
                     onClick={() => registerClick('emergency-dial')}
                     aria-label="Call Emergency Dewatering Duty Representative fast coordinate mobilization at +919894218243"
                     title="Call Emergency Dewatering Duty Representative"
-                    className="flex justify-center items-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 hover:from-brand-gold-400 hover:to-brand-gold-500 text-brand-blue-950 font-display font-extrabold text-xs tracking-wider uppercase py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95"
+                    className="flex justify-center items-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 hover:from-brand-gold-400 hover:to-brand-gold-500 text-brand-blue-950 font-display font-extrabold text-xs tracking-wider uppercase py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 min-h-[44px]"
                   >
                     <Phone className="w-4 h-4 text-brand-blue-950" />
-                    <span>Call Duty Desk</span>
+                    <span>{t("Call Duty Desk") || "Call Duty Desk"}</span>
                   </a>
                   <a 
                     href="mailto:srivelan2004@gmail.com" 
                     aria-label="Email Sri Velan and Co administrative headquarters at srivelan2004@gmail.com"
                     title="Email Headquarters Office"
-                    className="flex justify-center items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-display font-bold text-xs py-3.5 px-4 rounded-xl transition-colors"
+                    className="flex justify-center items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-display font-bold text-xs py-3.5 px-4 rounded-xl transition-colors min-h-[44px]"
                   >
                     <Mail className="w-4 h-4 text-brand-gold-400" />
-                    <span>Email Headquarters</span>
+                    <span>{t("Email Headquarters")}</span>
                   </a>
                 </div>
               </div>
