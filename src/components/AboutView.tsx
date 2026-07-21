@@ -27,8 +27,6 @@ import {
   Code
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
-import { ServiceAreaMap } from './ServiceAreaMap';
-import { ServiceAreaTelemetry } from './ServiceAreaTelemetry';
 import { useAdmin } from '../context/AdminContext';
 import { useTranslation } from '../context/TranslationContext';
 import { EditableValue } from './EditableValue';
@@ -310,20 +308,6 @@ export const AboutView: React.FC = () => {
             </div>
           )}
 
-        </div>
-      </section>
-
-      {/* Service-Area Map Section */}
-      <section className="py-12 bg-white border-t border-neutral-200" id="service-area-section">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ServiceAreaMap />
-        </div>
-      </section>
-
-      {/* Service Area Telemetry Section */}
-      <section className="py-12 bg-neutral-50 border-t border-neutral-200" id="service-area-telemetry-section">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ServiceAreaTelemetry />
         </div>
       </section>
 

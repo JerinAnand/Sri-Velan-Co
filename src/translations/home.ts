@@ -15,7 +15,7 @@ export const en = {
     slide3: {
       title: "Tractor-Driven Dewatering Pumps &\nHigh-Capacity 100 HP Pumping Solutions",
       subtitle: 'Disaster Relief Management',
-      tagline: 'Providing reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping services for construction, infrastructure, and government projects',
+      tagline: 'Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations.',
       badge: 'Emergency Ready'
     },
     enterpriseCredentials: 'Enterprise Credentials',
@@ -87,7 +87,7 @@ export const ta = {
     slide3: {
       title: "டிராக்டர் மூலம் இயக்கப்படும் நீர் வெளியேற்றும் பம்புகள் மற்றும்\nஅதிவேக 100 HP நீர் வெளியேற்றும் தீர்வுகள்",
       subtitle: 'பேரிடர் நிவாரண மேலாண்மை',
-      tagline: 'கட்டுமானம், உள்கட்டமைப்பு மற்றும் அரசு திட்டங்களுக்கு நம்பகமான நீர் வெளியேற்றம், வெள்ளக் கட்டுப்பாடு, அகழ்வாராய்ச்சி வடிகால், ஏரி தூர்வாருதல் மற்றும் அவசர பம்பிங் சேவைகளை வழங்குதல்.',
+      tagline: 'கட்டுமானம் மற்றும் CMRL திட்டங்களுக்கு நம்பகமான நீர் வெளியேற்றம், வெள்ளக் கட்டுப்பாடு, அகழ்வாராய்ச்சி வடிகால், ஏரி தூர்வாருதல் மற்றும் அவசர பம்பிங் தீர்வுகளை வழங்குதல், தூண் குழி அகழ்வாராய்ச்சி உட்பட மெட்ரோ கட்டுமானப் பணிகளுக்கான நீர் வெளியேற்ற நிபுணத்துவத்துடன்.',
       badge: 'அவசரகால தயார் நிலை'
     },
     enterpriseCredentials: 'நிறுவன சான்றுகள்',

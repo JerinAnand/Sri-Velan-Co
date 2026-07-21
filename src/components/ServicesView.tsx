@@ -19,6 +19,8 @@ import {
 import { SERVICE_CATEGORIES } from '../data';
 import { useTranslation } from '../context/TranslationContext';
 import { translations, getValueByPath } from '../translations';
+import { ServiceAreaMap } from './ServiceAreaMap';
+import { ServiceAreaTelemetry } from './ServiceAreaTelemetry';
 
 export const ServicesView: React.FC = () => {
   const { t, language } = useTranslation();
@@ -188,6 +190,20 @@ export const ServicesView: React.FC = () => {
             </div>
 
           </div>
+        </div>
+      </section>
+
+      {/* Disaster Relief Service Areas Section */}
+      <section className="py-12 bg-white border-t border-neutral-200" id="service-area-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ServiceAreaMap />
+        </div>
+      </section>
+
+      {/* Service Area Telemetry Section & Pump Allocations vs On-field Staff Levels */}
+      <section className="py-12 bg-neutral-50 border-t border-neutral-200" id="service-area-telemetry-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ServiceAreaTelemetry />
         </div>
       </section>
 
