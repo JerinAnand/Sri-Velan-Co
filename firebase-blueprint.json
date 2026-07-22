@@ -24,6 +24,10 @@
     "/siteContent/{sectionKey}": {
       "schema": "SiteSection",
       "description": "Collection storing site content sections, including hero, about, services, stats, clients, governingBoard, projects, contact, footer, and translations."
+    },
+    "/siteContentHistory/{historyId}": {
+      "schema": "SiteSection",
+      "description": "Collection storing historical change logs and backup snapshots of site content."
     }
   }
 }

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { doc, onSnapshot, setDoc, collection, addDoc, query, orderBy, limit } from 'firebase/firestore';
+import { db, auth } from '../lib/firebase';
 import { COMPANY_DETAILS, OFFICES, SERVICE_CATEGORIES } from '../data';
 import { translations as DEFAULT_TRANSLATIONS } from '../translations';
 
@@ -234,11 +234,26 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
   translations: DEFAULT_TRANSLATIONS,
 };
 
+export interface HistoryEntry {
+  id: string;
+  timestamp: string;
+  action: string;
+  sectionKey?: string;
+  userEmail?: string;
+  snapshot: FullSiteContent;
+}
+
 interface SiteContentContextType {
   siteContent: FullSiteContent;
   loading: boolean;
+  historyEntries: HistoryEntry[];
+  historyLoading: boolean;
   updateSection: <K extends keyof FullSiteContent>(sectionKey: K, data: FullSiteContent[K]) => Promise<void>;
   seedInitialData: () => Promise<void>;
+  restoreToDefault: () => Promise<void>;
+  backupContent: () => Promise<FullSiteContent>;
+  restoreFromSnapshot: (snapshot: FullSiteContent, actionLabel?: string) => Promise<void>;
+  addHistoryRecord: (action: string, snapshot: FullSiteContent, sectionKey?: string) => Promise<void>;
 }
 
 const SiteContentContext = createContext<SiteContentContextType | undefined>(undefined);
@@ -246,6 +261,8 @@ const SiteContentContext = createContext<SiteContentContextType | undefined>(und
 export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [siteContent, setSiteContent] = useState<FullSiteContent>(DEFAULT_SITE_CONTENT);
   const [loading, setLoading] = useState<boolean>(true);
+  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState<boolean>(true);
 
   // Set up Firestore real-time snapshot listeners for all sections
   useEffect(() => {
@@ -299,11 +316,166 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     };
   }, []);
 
+  // Listen to siteContentHistory in real-time via onSnapshot
+  useEffect(() => {
+    try {
+      const historyCol = collection(db, 'siteContentHistory');
+      const q = query(historyCol, orderBy('timestamp', 'desc'), limit(50));
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const items: HistoryEntry[] = [];
+          snapshot.forEach((docSnap) => {
+            items.push({
+              id: docSnap.id,
+              ...docSnap.data(),
+            } as HistoryEntry);
+          });
+          setHistoryEntries(items);
+          setHistoryLoading(false);
+        },
+        (err) => {
+          console.warn('Firestore siteContentHistory onSnapshot warning:', err);
+          // LocalStorage fallback
+          try {
+            const local = JSON.parse(localStorage.getItem('siteContentHistory') || '[]');
+            setHistoryEntries(local);
+          } catch (e) {
+            console.warn('LocalStorage fallback parse error:', e);
+          }
+          setHistoryLoading(false);
+        }
+      );
+      return () => unsubscribe();
+    } catch (e) {
+      console.warn('Error attaching history listener:', e);
+      setHistoryLoading(false);
+    }
+  }, []);
+
+  // Helper to record history log entries
+  const addHistoryRecord = async (action: string, snapshot: FullSiteContent, sectionKey?: string) => {
+    const entryData = {
+      timestamp: new Date().toISOString(),
+      action,
+      sectionKey: sectionKey || 'all',
+      userEmail: auth.currentUser?.email || 'admin@srivelan.com',
+      snapshot,
+    };
+
+    try {
+      const historyCol = collection(db, 'siteContentHistory');
+      await addDoc(historyCol, entryData);
+    } catch (err) {
+      console.warn('Could not write history to Firestore, using LocalStorage fallback:', err);
+    }
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('siteContentHistory') || '[]');
+      const localEntry = { id: `local_${Date.now()}`, ...entryData };
+      const updated = [localEntry, ...existing].slice(0, 50);
+      localStorage.setItem('siteContentHistory', JSON.stringify(updated));
+      setHistoryEntries(updated);
+    } catch (e) {
+      console.warn('LocalStorage write failed:', e);
+    }
+  };
+
+  // Helper to fetch the entire current state of 'siteContent' collection using an onSnapshot listener
+  const fetchFullCollectionViaOnSnapshot = (): Promise<FullSiteContent> => {
+    return new Promise((resolve, reject) => {
+      const colRef = collection(db, 'siteContent');
+      const unsubscribe = onSnapshot(
+        colRef,
+        (querySnapshot) => {
+          const fullContent: Partial<FullSiteContent> = {};
+          querySnapshot.forEach((docSnap) => {
+            const key = docSnap.id as keyof FullSiteContent;
+            fullContent[key] = docSnap.data() as any;
+          });
+          const merged: FullSiteContent = {
+            ...DEFAULT_SITE_CONTENT,
+            ...fullContent,
+          };
+          unsubscribe(); // Clean up onSnapshot listener after resolving
+          resolve(merged);
+        },
+        (error) => {
+          unsubscribe();
+          reject(error);
+        }
+      );
+    });
+  };
+
+  // Backup Content: Uses an onSnapshot listener to fetch full state and triggers a downloadable JSON file
+  const backupContent = async (): Promise<FullSiteContent> => {
+    const fullSnapshot = await fetchFullCollectionViaOnSnapshot();
+
+    const backupPayload = {
+      app: 'Sri Velan & Co Infrastructure Portal',
+      collection: 'siteContent',
+      backupDate: new Date().toISOString(),
+      timestamp: Date.now(),
+      author: auth.currentUser?.email || 'admin@srivelan.com',
+      data: fullSnapshot,
+    };
+
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(backupPayload, null, 2)
+    )}`;
+    const downloadAnchor = document.createElement('a');
+    const dateStr = new Date().toISOString().split('T')[0];
+    downloadAnchor.setAttribute('href', jsonString);
+    downloadAnchor.setAttribute('download', `srivelan_siteContent_backup_${dateStr}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+
+    await addHistoryRecord('Offline Backup Downloaded', fullSnapshot);
+    return fullSnapshot;
+  };
+
+  // Restore to Default: Restores all documents in 'siteContent' to default values
+  const restoreToDefault = async () => {
+    // Save current state as safety backup first
+    await addHistoryRecord('Pre-Restore State Backup', siteContent);
+
+    const keys = Object.keys(DEFAULT_SITE_CONTENT) as (keyof FullSiteContent)[];
+    for (const key of keys) {
+      const docRef = doc(db, 'siteContent', key);
+      await setDoc(docRef, DEFAULT_SITE_CONTENT[key], { merge: false });
+    }
+
+    await addHistoryRecord('Restored to Default Settings', DEFAULT_SITE_CONTENT);
+  };
+
+  // Restore from a historical snapshot
+  const restoreFromSnapshot = async (snapshot: FullSiteContent, actionLabel?: string) => {
+    await addHistoryRecord('Pre-Rollback State Backup', siteContent);
+
+    const keys = Object.keys(snapshot) as (keyof FullSiteContent)[];
+    for (const key of keys) {
+      if (snapshot[key]) {
+        const docRef = doc(db, 'siteContent', key);
+        await setDoc(docRef, snapshot[key], { merge: false });
+      }
+    }
+
+    await addHistoryRecord(actionLabel || 'Restored From Historical Snapshot', snapshot);
+  };
+
   // Update a single section in Firestore
   const updateSection = async <K extends keyof FullSiteContent>(sectionKey: K, data: FullSiteContent[K]) => {
     try {
       const docRef = doc(db, 'siteContent', sectionKey);
       await setDoc(docRef, data, { merge: true });
+
+      const updated = {
+        ...siteContent,
+        [sectionKey]: data,
+      };
+      await addHistoryRecord(`Updated ${String(sectionKey).toUpperCase()} section`, updated, String(sectionKey));
     } catch (error) {
       console.error(`Error saving siteContent/${sectionKey} to Firestore:`, error);
       throw error;
@@ -317,10 +489,24 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const docRef = doc(db, 'siteContent', key);
       await setDoc(docRef, DEFAULT_SITE_CONTENT[key], { merge: true });
     }
+    await addHistoryRecord('Seeded Default Data to Firestore', DEFAULT_SITE_CONTENT);
   };
 
   return (
-    <SiteContentContext.Provider value={{ siteContent, loading, updateSection, seedInitialData }}>
+    <SiteContentContext.Provider
+      value={{
+        siteContent,
+        loading,
+        historyEntries,
+        historyLoading,
+        updateSection,
+        seedInitialData,
+        restoreToDefault,
+        backupContent,
+        restoreFromSnapshot,
+        addHistoryRecord,
+      }}
+    >
       {children}
     </SiteContentContext.Provider>
   );

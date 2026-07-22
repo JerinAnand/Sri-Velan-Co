@@ -217,12 +217,19 @@ export const ServicesView: React.FC = () => {
       </section>
 
       {/* Corporate Capability Section */}
-      <section className="bg-brand-blue-950 text-white py-16" id="services-guarantee">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold font-display text-brand-gold-400">
+      <section className="relative overflow-hidden bg-brand-blue-950 text-white py-16 sm:py-20 border-t border-brand-blue-900" id="services-guarantee">
+        <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-gold-500/10 border border-brand-gold-500/30 text-brand-gold-400 text-xs font-mono font-semibold tracking-wider uppercase">
+            <Award className="w-4 h-4 text-brand-gold-400 shrink-0" />
+            <span>{language === 'en' ? 'Verified Governance & Assurance' : 'உறுதிசெய்யப்பட்ட நிர்வாகம்'}</span>
+          </div>
+
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-brand-gold-400 tracking-tight leading-tight">
             {language === 'en' ? 'Tender Compliance & Vetted Resource Pools' : 'ஒப்பந்தப்புள்ளி இணக்கம் மற்றும் சரிபார்க்கப்பட்ட வளக் குழுக்கள்'}
           </h2>
-          <p className="text-sm text-neutral-300 max-w-2xl mx-auto leading-relaxed">
+
+          <p className="text-sm sm:text-base text-neutral-200 max-w-3xl mx-auto leading-relaxed font-sans font-light">
             {language === 'en' 
               ? 'All our operational segments are fully insured/licensed, compliant with the Hindu Religious Charitable Endowments (HR&CE), Water Resources Department (WRD), and Public Works Department (PWD) specifications.'
               : 'எங்கள் செயல்பாட்டுப் பிரிவுகள் அனைத்தும் முழுமையாகக் காப்பீடு/உரிமம் பெற்றுள்ளதோடு, இந்து சமய அறநிலையத் துறை (HR&CE), நீர்வளத் துறை (WRD) மற்றும் பொதுப்பணித்துறை (PWD) விதிமுறைகளுக்கு இணங்குபவை.'}

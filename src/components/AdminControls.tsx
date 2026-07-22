@@ -89,7 +89,7 @@ export function AdminControls() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="fixed bottom-6 left-20 sm:left-24 z-40"
+          className="fixed bottom-20 left-6 z-40"
           id="admin-portal-floating-container"
         >
           <button

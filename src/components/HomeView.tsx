@@ -402,7 +402,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                       <img
                         src={client.logo}
                         alt={`${client.fullName} Logo`}
-                        className="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                        className="w-full h-full object-contain transition-all duration-300"
                         referrerPolicy="no-referrer"
                       />
                     </div>

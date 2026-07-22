@@ -42,6 +42,13 @@ import {
   Filter,
   Languages,
   RefreshCw,
+  Download,
+  History,
+  RotateCcw,
+  FileJson,
+  Upload,
+  X,
+  Clock,
 } from 'lucide-react';
 import { COMPANY_DETAILS } from '../data';
 
@@ -59,7 +66,17 @@ type ActiveTab =
 
 export function AdminDashboardView() {
   const { user, logout } = useAuth();
-  const { siteContent, loading, updateSection, seedInitialData } = useSiteContent();
+  const {
+    siteContent,
+    loading,
+    updateSection,
+    seedInitialData,
+    restoreToDefault,
+    backupContent,
+    historyEntries,
+    historyLoading,
+    restoreFromSnapshot,
+  } = useSiteContent();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('hero');
@@ -67,6 +84,10 @@ export function AdminDashboardView() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isSeeding, setIsSeeding] = useState<boolean>(false);
+  const [isBackingUp, setIsBackingUp] = useState<boolean>(false);
+  const [isRestoring, setIsRestoring] = useState<boolean>(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
+  const [viewingSnapshot, setViewingSnapshot] = useState<any | null>(null);
 
   // Form states for each section
   const [heroForm, setHeroForm] = useState<HeroContent>(siteContent.hero);
@@ -109,6 +130,119 @@ export function AdminDashboardView() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // 1. Backup Content Handler (Uses onSnapshot listener to fetch full siteContent state & triggers JSON download)
+  const handleBackupContent = async () => {
+    setIsBackingUp(true);
+    setSaveError(null);
+    try {
+      await backupContent();
+      triggerToast('Downloaded siteContent collection JSON backup generated via real-time onSnapshot listener!');
+    } catch (err: any) {
+      console.error('Backup error:', err);
+      setSaveError('Failed to generate downloadable JSON backup.');
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
+  // 2. Restore to Default Handler
+  const handleRestoreToDefault = async () => {
+    if (
+      window.confirm(
+        'Are you sure you want to restore the entire site content to default values? Current Firestore state will be overwritten (a safety snapshot will be recorded in History).'
+      )
+    ) {
+      setIsRestoring(true);
+      setSaveError(null);
+      try {
+        await restoreToDefault();
+        triggerToast('Site content restored to default settings in Firestore!');
+      } catch (err: any) {
+        console.error('Restore to default failed:', err);
+        setSaveError('Failed to restore content to default settings.');
+      } finally {
+        setIsRestoring(false);
+      }
+    }
+  };
+
+  // 3. Rollback to Historical Version Handler
+  const handleRestoreFromHistory = async (entry: any) => {
+    const formattedDate = new Date(entry.timestamp).toLocaleString();
+    if (
+      window.confirm(
+        `Are you sure you want to rollback site content to the snapshot recorded on ${formattedDate}?`
+      )
+    ) {
+      setIsRestoring(true);
+      setSaveError(null);
+      try {
+        await restoreFromSnapshot(entry.snapshot, `Rolled back to snapshot from ${formattedDate}`);
+        triggerToast(`Successfully rolled back to site snapshot from ${formattedDate}!`);
+        setIsHistoryOpen(false);
+      } catch (err: any) {
+        console.error('History rollback failed:', err);
+        setSaveError('Failed to restore from historical snapshot.');
+      } finally {
+        setIsRestoring(false);
+      }
+    }
+  };
+
+  // Download individual history entry as JSON
+  const handleDownloadHistoryJSON = (entry: any) => {
+    const dateStr = new Date(entry.timestamp).toISOString().replace(/[:.]/g, '-');
+    const backupPayload = {
+      historyId: entry.id,
+      timestamp: entry.timestamp,
+      action: entry.action,
+      userEmail: entry.userEmail,
+      snapshot: entry.snapshot,
+    };
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(backupPayload, null, 2)
+    )}`;
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', jsonString);
+    downloadAnchor.setAttribute('download', `srivelan_snapshot_${dateStr}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    triggerToast('Historical snapshot downloaded as JSON file!');
+  };
+
+  // Restore from uploaded JSON file
+  const handleUploadJSONBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const parsed = JSON.parse(event.target?.result as string);
+        const snapshot = parsed.data || parsed.siteContent || parsed.snapshot || parsed;
+        if (!snapshot.hero || !snapshot.about) {
+          throw new Error('JSON structure does not appear to be a valid siteContent snapshot.');
+        }
+        if (
+          window.confirm(
+            `Valid site content backup detected (${file.name}). Restore Firestore data using this JSON file?`
+          )
+        ) {
+          setIsRestoring(true);
+          await restoreFromSnapshot(snapshot, `Restored from uploaded JSON backup (${file.name})`);
+          triggerToast('Site content restored from uploaded JSON backup!');
+          setIsHistoryOpen(false);
+        }
+      } catch (err: any) {
+        alert('Failed to parse uploaded backup JSON: ' + err.message);
+      } finally {
+        setIsRestoring(false);
+      }
+    };
+    reader.readAsText(file);
   };
 
   const handleSeedDefaults = async () => {
@@ -174,15 +308,47 @@ export function AdminDashboardView() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+          <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
+            {/* Backup Content Button */}
+            <button
+              onClick={handleBackupContent}
+              disabled={isBackingUp}
+              className="text-xs font-mono uppercase bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-extrabold px-3.5 py-2 rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              title="Fetch entire siteContent collection via onSnapshot and download JSON file for offline record-keeping"
+            >
+              <Download className="w-3.5 h-3.5" />
+              {isBackingUp ? 'Fetching...' : 'Backup Content'}
+            </button>
+
+            {/* History of Changes Button */}
+            <button
+              onClick={() => setIsHistoryOpen(true)}
+              className="text-xs font-mono uppercase bg-neutral-800 hover:bg-neutral-700 text-sky-400 border border-sky-500/30 px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+              title="View change history and restore from previous snapshots"
+            >
+              <History className="w-3.5 h-3.5 text-sky-400" />
+              History of Changes ({historyEntries.length})
+            </button>
+
+            {/* Restore to Default Button */}
+            <button
+              onClick={handleRestoreToDefault}
+              disabled={isRestoring}
+              className="text-xs font-mono uppercase bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-900/50 px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              title="Restore all site content to default settings in Firestore"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-red-400" />
+              {isRestoring ? 'Restoring...' : 'Restore to Default'}
+            </button>
+
             <button
               onClick={handleSeedDefaults}
               disabled={isSeeding}
-              className="text-xs font-mono uppercase bg-neutral-800 hover:bg-neutral-700 text-brand-gold-400 px-3.5 py-2 rounded-xl border border-brand-gold-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="text-xs font-mono uppercase bg-neutral-800 hover:bg-neutral-700 text-brand-gold-400 px-3 py-2 rounded-xl border border-brand-gold-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
               title="Seed default content into Firestore"
             >
               <Database className="w-3.5 h-3.5 text-brand-gold-400" />
-              {isSeeding ? 'Seeding...' : 'Seed Default Data'}
+              {isSeeding ? 'Seeding...' : 'Seed Data'}
             </button>
 
             <button
@@ -1132,6 +1298,161 @@ export function AdminDashboardView() {
           )}
         </div>
       </div>
+
+      {/* HISTORY OF CHANGES & SNAPSHOT BACKUPS MODAL */}
+      {isHistoryOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div className="bg-neutral-900 border border-neutral-700/80 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-5 bg-neutral-950 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-sky-500/15 border border-sky-500/30 rounded-xl text-sky-400">
+                  <History className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-lg text-white flex items-center gap-2">
+                    History of Changes & Snapshot Backups
+                    <span className="text-[10px] font-mono bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full">
+                      Real-time onSnapshot Active
+                    </span>
+                  </h3>
+                  <p className="text-xs text-neutral-400">
+                    Track change records, download historical JSON snapshots, or restore previous versions.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsHistoryOpen(false)}
+                className="p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-xl transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Action Bar */}
+            <div className="p-4 bg-neutral-900/90 border-b border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={handleBackupContent}
+                  disabled={isBackingUp}
+                  className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer shadow transition-all"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  {isBackingUp ? 'Generating...' : 'Backup Current State (JSON)'}
+                </button>
+
+                <label className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 font-mono text-[11px] uppercase px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer transition-all">
+                  <Upload className="w-3.5 h-3.5 text-amber-400" />
+                  Upload Backup JSON
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleUploadJSONBackup}
+                    className="hidden"
+                  />
+                </label>
+
+                <button
+                  onClick={handleRestoreToDefault}
+                  disabled={isRestoring}
+                  className="bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-900/40 font-mono text-[11px] uppercase px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer transition-all"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-red-400" />
+                  Restore to Default
+                </button>
+              </div>
+
+              <span className="text-neutral-500 font-mono text-[11px]">
+                {historyEntries.length} Recorded Event{historyEntries.length === 1 ? '' : 's'}
+              </span>
+            </div>
+
+            {/* Modal Body / History Entry List */}
+            <div className="p-5 overflow-y-auto space-y-3 flex-1 max-h-[60vh]">
+              {historyLoading ? (
+                <div className="py-12 text-center font-mono text-neutral-400 text-xs flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+                  <span>Loading history logs from Firestore...</span>
+                </div>
+              ) : historyEntries.length === 0 ? (
+                <div className="py-12 text-center text-neutral-500 space-y-2">
+                  <Clock className="w-8 h-8 mx-auto text-neutral-600" />
+                  <p className="font-mono text-xs">No change history recorded yet.</p>
+                  <p className="text-xs font-light text-neutral-400">
+                    Edits, backups, or default seedings will automatically record historical snapshot entries here.
+                  </p>
+                </div>
+              ) : (
+                historyEntries.map((entry) => (
+                  <div
+                    key={entry.id || entry.timestamp}
+                    className="bg-neutral-950/80 border border-white/10 hover:border-sky-500/40 rounded-xl p-4 transition-all space-y-3"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-2.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="bg-sky-500/10 text-sky-400 border border-sky-500/30 text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-md">
+                          {entry.action}
+                        </span>
+                        {entry.sectionKey && (
+                          <span className="bg-neutral-800 text-neutral-300 text-[10px] font-mono px-2 py-0.5 rounded">
+                            Section: {entry.sectionKey}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 text-neutral-400 font-mono text-[11px]">
+                        <Clock className="w-3.5 h-3.5 text-neutral-500" />
+                        <span>{new Date(entry.timestamp).toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+                      <p className="text-xs text-neutral-400 font-light">
+                        Recorded by: <strong className="text-neutral-200 font-mono">{entry.userEmail || 'admin@srivelan.com'}</strong>
+                      </p>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => setViewingSnapshot(viewingSnapshot === entry.id ? null : entry.id)}
+                          className="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-white/10 px-3 py-1.5 rounded-lg font-mono text-[11px] flex items-center gap-1 transition-all cursor-pointer"
+                        >
+                          <FileJson className="w-3.5 h-3.5 text-amber-400" />
+                          {viewingSnapshot === entry.id ? 'Hide JSON' : 'Inspect JSON'}
+                        </button>
+
+                        <button
+                          onClick={() => handleDownloadHistoryJSON(entry)}
+                          className="bg-neutral-800 hover:bg-neutral-700 text-sky-400 border border-sky-500/20 px-3 py-1.5 rounded-lg font-mono text-[11px] flex items-center gap-1 transition-all cursor-pointer"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          Download JSON
+                        </button>
+
+                        <button
+                          onClick={() => handleRestoreFromHistory(entry)}
+                          disabled={isRestoring}
+                          className="bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-lg font-mono text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer disabled:opacity-50"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Restore This Version
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Inline JSON Inspector */}
+                    {viewingSnapshot === entry.id && (
+                      <div className="bg-neutral-900/90 border border-white/10 rounded-xl p-3 font-mono text-[10px] text-neutral-300 overflow-x-auto max-h-48 mt-2">
+                        <pre>{JSON.stringify(entry.snapshot, null, 2)}</pre>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
