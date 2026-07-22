@@ -29,7 +29,7 @@ export const COMPANY_DETAILS = {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDtJTJScjD1s9E1gXlzJfWddGbDvVSX1Eh7cDvjCoMr81sYw4pZArZnM0ZZ5oUtaoYur4V-yYXukv1kqHT3iECpg-9uMT3_3nK--tX8irTP9bA1AqCrBte1YO4Y6B6N4nWLywI4REBwFYf3jWP06osetab2iwqHgbxlAtMw28gMhwsSOAPOYu6PUop4hoFmfDsOOKpzbR2ap4Vddzy_0StLNZTEukavQNu0eoyvd2lzSCIIPGj-1VOMPHDnK5ZNDb3ZvNYdJARXSVjN'
     },
     managingDirector: {
-      name: 'Mr. Vetrivel S',
+      name: 'Mr. S. Vetrivel',
       role: 'Managing Director',
       bio: "Mr. Vetrivel S serves as the Managing Director of Sri Velan & Co, overseeing the company's operations across both Chennai and Villupuram project locations. He plays a key role in managing GCC (Greater Chennai Corporation) tenders and CMRL (Chennai Metro Rail Limited) tenders, ensuring compliance, timely execution, and quality delivery across all government engineering projects. With a strong focus on operational efficiency and stakeholder coordination, he bridges strategic planning with on-ground execution across the company's multi-city presence.",
       image: new URL('./assets/images/vetrivel-md.jpg', import.meta.url).href

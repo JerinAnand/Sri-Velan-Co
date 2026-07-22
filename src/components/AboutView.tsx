@@ -475,37 +475,63 @@ export const AboutView: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="about-executive-board">
               {(siteContent?.governingBoard?.boardMembers && siteContent.governingBoard.boardMembers.length > 0) ? (
-                siteContent.governingBoard.boardMembers.map((member) => (
-                  <div key={member.id} className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-gold-500/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-gold-500/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                    {member.imageUrl ? (
-                      <img src={member.imageUrl} alt={member.name} className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
-                    ) : (
-                      <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                        {member.initials || member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                siteContent.governingBoard.boardMembers.map((member) => {
+                  let displayName = member.name;
+                  let displayRole = member.designation || (member as any).role || 'Leadership';
+                  let displayBio = member.bio;
+
+                  if (language === 'ta') {
+                    if ((member as any).taName) displayName = (member as any).taName;
+                    else if (displayName.includes('Selva Kumar')) displayName = 'திரு. ஜி. செல்வ குமார்';
+                    else if (displayName.includes('Vetrivel')) displayName = 'திரு. எஸ். வெற்றிவேல்';
+                    else if (displayName.includes('Dhinakaravel')) displayName = 'திரு. எஸ். தினகரவேல்';
+                    else if (displayName.includes('Jerin Anand')) displayName = 'திரு. ஜெரின் ஆனந்த்';
+
+                    if ((member as any).taDesignation) displayRole = (member as any).taDesignation;
+                    else if (displayRole.toLowerCase().includes('founder') || displayRole.toLowerCase().includes('governing partner')) displayRole = 'நிறுவனர்';
+                    else if (displayRole.toLowerCase().includes('managing director')) displayRole = 'நிர்வாக இயக்குனர்';
+                    else if (displayRole.toLowerCase().includes('financial consultant')) displayRole = 'நிதி ஆலோசகர்';
+                    else if (displayRole.toLowerCase().includes('admin') || displayRole.toLowerCase().includes('developer')) displayRole = 'நிர்வாகி & டெவலப்பர்';
+
+                    if ((member as any).taBio) displayBio = (member as any).taBio;
+                    else if (member.id === 'selva_kumar' || displayName.includes('செல்வ')) displayBio = 'தமிழ்நாட்டில் உத்திகள் சார்ந்த பல மாவட்ட மீட்பு தளவாடங்கள் மற்றும் சிவில் ஒப்பந்தங்களை இயக்குகிறார்.';
+                    else if (member.id === 'vetrivel_s' || displayName.includes('வெற்றிவேல்')) displayBio = 'செயலில் உள்ள கடற்படை பொறியியல், குழு அணிதிரட்டல்கள் மற்றும் பிராந்திய யார்டுகள் மேலாண்மை ஆகியவற்றை மேற்பார்வையிடுகிறார்.';
+                    else if (member.id === 'dhinakaravel' || displayName.includes('தினகரவேல்')) displayBio = 'ஒழுங்குமுறை நிதி தணிக்கைகள், ஜிஎஸ்டி சமர்ப்பிப்புகளின் இணக்கம் மற்றும் வரவு செலவு திட்டமிடல் ஆகியவற்றை நிர்வகிக்கிறார்.';
+                    else if (member.id === 'jerin_anand' || displayName.includes('ஜெரின்')) displayBio = 'நிறுவன தொழில்நுட்ப இணையதளங்கள், பாதுகாப்பான டிஜிட்டல் பதிவுகள் மற்றும் டிஜிட்டல் அடையாளத்தை பராமரிக்கிறார்.';
+                  }
+
+                  return (
+                    <div key={member.id} className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-gold-500/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-gold-500/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                      {(member.photoUrl || (member as any).imageUrl) ? (
+                        <img src={member.photoUrl || (member as any).imageUrl} alt={displayName} className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
+                      ) : (
+                        <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                          {(member as any).initials || member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="space-y-1">
+                        <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{displayName}</h4>
+                        <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
+                          <Award className="w-3.5 h-3.5" />
+                          <span>{displayRole}</span>
+                        </div>
                       </div>
-                    )}
-                    <div className="space-y-1">
-                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{member.name}</h4>
-                      <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
-                        <Award className="w-3.5 h-3.5" />
-                        <span>{member.role}</span>
-                      </div>
+                      <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                        {displayBio}
+                      </p>
                     </div>
-                    <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                      {member.bio}
-                    </p>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <>
                   {/* Default Fallback Cards */}
-                  {/* Mr. Selva Kumar */}
+                  {/* Mr. G. Selva Kumar */}
                   <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-gold-500/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-gold-500/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
                     <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                       SK
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Selva Kumar' : 'திரு. செல்வ குமார்'}</h4>
+                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. G. Selva Kumar' : 'திரு. ஜி. செல்வ குமார்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
                         <Award className="w-3.5 h-3.5" />
                         <span>{language === 'en' ? 'Founder' : 'நிறுவனர்'}</span>
@@ -518,16 +544,16 @@ export const AboutView: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Mr. Vetrivel */}
+                  {/* Mr. S. Vetrivel */}
                   <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
                     <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
                       VV
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Vetrivel' : 'திரு. வெற்றிவேல்'}</h4>
+                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. S. Vetrivel' : 'திரு. எஸ். வெற்றிவேல்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
                         <ShieldCheck className="w-3.5 h-3.5" />
-                        <span>{t('about.leadership.roleMD')}</span>
+                        <span>{language === 'en' ? 'Managing Director' : 'நிர்வாக இயக்குனர்'}</span>
                       </div>
                     </div>
                     <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
@@ -537,13 +563,11 @@ export const AboutView: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Mr. Dhinakaravel */}
+                  {/* Mr. S. Dhinakaravel */}
                   <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-neutral-400/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-neutral-300 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                    <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                      DK
-                    </div>
+                    <img src={new URL('../assets/images/regenerated_image_1784682133184.png', import.meta.url).href} alt="Mr. S. Dhinakaravel" className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
                     <div className="space-y-1">
-                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Dhinakaravel' : 'திரு. தினகரவேல்'}</h4>
+                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. S. Dhinakaravel' : 'திரு. எஸ். தினகரவேல்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-emerald-700 font-mono uppercase tracking-wide font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/50">
                         <Landmark className="w-3.5 h-3.5 text-emerald-600" />
                         <span>{language === 'en' ? 'Financial Consultant' : 'நிதி ஆலோசகர்'}</span>
@@ -558,9 +582,7 @@ export const AboutView: React.FC = () => {
 
                   {/* Mr. Jerin Anand */}
                   <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                    <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
-                      JA
-                    </div>
+                    <img src={new URL('../assets/images/regenerated_image_1784683266108.jpg', import.meta.url).href} alt="Mr. Jerin Anand" className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
                     <div className="space-y-1">
                       <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Jerin Anand' : 'திரு. ஜெரின் ஆனந்த்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
