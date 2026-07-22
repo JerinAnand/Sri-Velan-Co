@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useSiteContent } from '../context/SiteContentContext';
 import { 
   Sparkles, 
   X, 
@@ -21,7 +22,6 @@ import {
   ThumbsUp,
   Award
 } from 'lucide-react';
-import { useEasterEgg } from '../context/EasterEggContext';
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -305,17 +305,23 @@ interface VelanChatBotProps {
 }
 
 export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = false }) => {
-  const { registerClick } = useEasterEgg();
+  const { siteContent } = useSiteContent();
+  const botConfig = siteContent.chatbot;
+
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'model',
-      text: "### Sri Velan & Co • VELAN AI\n\nHello! I am VELAN AI, your real-time intelligent helper. I can answer any questions about our civil engineering services, disaster relief pumping setups, customized hydraulic sweepers, or quotation details.\n\nType any option number below or ask me directly:\n\n- [1] Disaster Dewatering & Emergency Pumping Fleet 💧\n- [2] Tractor-Attached Hydraulic Broomers & Highways 🧹\n- [3] Registered Civil Infrastructure Services 🏗️\n- [4] Corporate Connection Channels & Liaison 📞\n- [5] Corporate Offices & Field Location Hubs 📍\n- [6] Accreditations & Government Credentials 🎖️",
+      text: botConfig?.greetingMessage || "### Sri Velan & Co • VELAN AI\n\nHello! I am VELAN AI, your real-time intelligent helper. I can answer any questions about our civil engineering services, disaster relief pumping setups, customized hydraulic sweepers, or quotation details.\n\nType any option number below or ask me directly:\n\n- [1] Disaster Dewatering & Emergency Pumping Fleet 💧\n- [2] Tractor-Attached Hydraulic Broomers & Highways 🧹\n- [3] Registered Civil Infrastructure Services 🏗️\n- [4] Corporate Connection Channels & Liaison 📞\n- [5] Corporate Offices & Field Location Hubs 📍\n- [6] Accreditations & Government Credentials 🎖️",
       timestamp: new Date()
     }
   ]);
+
+  if (botConfig && botConfig.enabled === false) {
+    return null;
+  }
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -327,7 +333,6 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
   }, [messages, isLoading]);
 
   const handleOpenToggle = () => {
-    registerClick('ai-assistant');
     setIsOpen(!isOpen);
   };
 

@@ -12,10 +12,13 @@ import jsPDF from 'jspdf';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useTranslation } from '../context/TranslationContext';
+import { useSiteContent } from '../context/SiteContentContext';
 
 export const CapabilityStatement: React.FC = () => {
   const navigate = useNavigate();
   const { language, t } = useTranslation();
+  const { siteContent } = useSiteContent();
+  const capData = siteContent.capabilityStatement;
   const [searchParams, setSearchParams] = useSearchParams();
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorLog, setErrorLog] = useState<string | null>(null);

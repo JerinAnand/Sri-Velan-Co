@@ -23,7 +23,7 @@
   "firestore": {
     "/siteContent/{sectionKey}": {
       "schema": "SiteSection",
-      "description": "Collection storing site content sections, including hero, about, services, stats, clients, governingBoard, projects, contact, footer, and translations."
+      "description": "Collection storing site content sections, including hero, about, services, stats, clients, governingBoard, projects, contact, footer, translations, equipment, capabilityStatement, hydraulicBroomer, weatherAlertBanner, chatbot, and navigation."
     },
     "/siteContentHistory/{historyId}": {
       "schema": "SiteSection",

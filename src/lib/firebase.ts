@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 // Import automatically generated Firebase Applet config
 import firebaseAppletConfig from '../../firebase-applet-config.json';
@@ -32,3 +33,7 @@ export const db: Firestore =
   firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== '(default)'
     ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
     : getFirestore(app);
+
+// Initialize Firebase Storage
+export const storage: FirebaseStorage = getStorage(app);
+

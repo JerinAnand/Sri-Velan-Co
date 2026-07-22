@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 import { 
   ShieldCheck, 
@@ -18,10 +17,6 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 
 export function AdminControls() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isAdminPage = location.pathname.startsWith('/admin');
-
   const {
     isAdmin,
     login,
@@ -84,28 +79,6 @@ export function AdminControls() {
 
   return (
     <>
-      {/* Floating Admin Portal Shortcut Button (shown when not logged in & not on admin routes) */}
-      {!isAdmin && !isAdminPage && (
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="fixed bottom-20 left-6 z-40"
-          id="admin-portal-floating-container"
-        >
-          <button
-            onClick={() => navigate('/admin/login')}
-            className="bg-neutral-900/90 hover:bg-neutral-800 text-brand-gold-400 border border-brand-gold-500/30 hover:border-brand-gold-500 rounded-full sm:rounded-xl p-3 sm:px-4 sm:py-2.5 shadow-2xl backdrop-blur-md transition-all flex items-center gap-2 group cursor-pointer active:scale-95"
-            title="Access Admin Portal"
-            aria-label="Admin Portal Gateway"
-          >
-            <ShieldCheck className="w-5 h-5 text-brand-gold-400 shrink-0 group-hover:scale-110 transition-transform" />
-            <span className="hidden sm:inline font-display font-bold text-xs uppercase tracking-wider text-white group-hover:text-brand-gold-400 transition-colors whitespace-nowrap">
-              Admin Portal
-            </span>
-          </button>
-        </motion.div>
-      )}
-
       {/* 1. Admin Mode Status Indicator Panel */}
       <AnimatePresence>
         {isAdmin && (

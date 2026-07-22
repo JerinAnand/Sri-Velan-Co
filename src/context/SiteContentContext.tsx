@@ -97,6 +97,74 @@ export interface FooterContent {
   brochureUrl: string;
 }
 
+export interface EquipmentCategoryItem {
+  id: string;
+  name: string;
+  description: string;
+  count: number;
+  imageUrl: string;
+  specs: string[];
+}
+
+export interface EquipmentContent {
+  fleetIntro: string;
+  categories: EquipmentCategoryItem[];
+}
+
+export interface CertificationItem {
+  id: string;
+  name: string;
+  issuer: string;
+  year: string;
+}
+
+export interface CapabilityStatementContent {
+  headline: string;
+  summary: string;
+  certifications: CertificationItem[];
+  downloadUrl: string;
+}
+
+export interface HydraulicBroomerSpec {
+  label: string;
+  value: string;
+}
+
+export interface HydraulicBroomerContent {
+  title: string;
+  description: string;
+  specs: HydraulicBroomerSpec[];
+  imageUrl: string;
+  videoUrl?: string;
+}
+
+export interface WeatherAlertBannerContent {
+  enabled: boolean;
+  message: string;
+  severity: 'info' | 'warning' | 'critical';
+  dismissible: boolean;
+}
+
+export interface ChatbotContent {
+  greetingMessage: string;
+  systemPromptOverride: string;
+  enabled: boolean;
+  avatarUrl: string;
+}
+
+export interface MenuItem {
+  id: string;
+  labelEn: string;
+  labelTa: string;
+  path: string;
+  order: number;
+}
+
+export interface NavigationContent {
+  logoUrl: string;
+  menuItems: MenuItem[];
+}
+
 export interface FullSiteContent {
   hero: HeroContent;
   about: AboutContent;
@@ -108,6 +176,12 @@ export interface FullSiteContent {
   contact: ContactContent;
   footer: FooterContent;
   translations: Record<string, any>;
+  equipment: EquipmentContent;
+  capabilityStatement: CapabilityStatementContent;
+  hydraulicBroomer: HydraulicBroomerContent;
+  weatherAlertBanner: WeatherAlertBannerContent;
+  chatbot: ChatbotContent;
+  navigation: NavigationContent;
 }
 
 // Default Fallbacks from data.ts
@@ -131,7 +205,7 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
     projectsCompleted: 150,
     clientsServed: 25,
     teamSize: 45,
-    dewateringFleet: 35,
+    dewateringFleet: 400,
   },
   services: {
     services: SERVICE_CATEGORIES.map((s) => ({
@@ -232,6 +306,82 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
     brochureUrl: COMPANY_DETAILS.brochureLink,
   },
   translations: DEFAULT_TRANSLATIONS,
+  equipment: {
+    fleetIntro: 'Heavy-duty dewatering pumps, earthmoving machinery, tractor-mounted broomers, and emergency flood mitigation assets ready for rapid deployment across South India.',
+    categories: [
+      {
+        id: 'eq_pumps',
+        name: 'High-Head Diesel Dewatering Pumps',
+        description: 'Heavy duty 4" & 6" diesel engine pumps with vacuum priming systems designed for continuous 24/7 subway and pit dewatering.',
+        count: 400,
+        imageUrl: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80',
+        specs: ['Head: up to 45m', 'Discharge: 2500-5000 LPM', 'Engine: Kirloskar Diesel'],
+      },
+      {
+        id: 'eq_broomers',
+        name: 'Tractor-Mounted Hydraulic Broomers',
+        description: 'MoRTH compliant highway sweeping broomer attachments featuring dual nylon/steel bristles and 180 Bar hydraulic drive.',
+        count: 25,
+        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAeQt_VRg-Pnvzi83b3kFBXkzvQwauzvPl3BR7b4V5oqXN65xsotHAR8F_J1Cr-ngjTmrsoOZwh5FdVT3Zl2TQdue2Wcd1_ulcn_09y7urzhBo0D1KmgZRjeebjb1XoS7MLrQY1rDu7vusZvj8gxX6MmMm7Y6ahsbChKhEPeKaWr--5Di4PTSUyriXPWgmsdZ1M_J-R4e7yADQG8TSSdoNbot-7Z_BtQhC13Rvz2AqlQI9L_fKhXuf8kddWYkMMsA3Gl_2Q358cGg',
+        specs: ['Sweeping Width: 2.2m', 'Pressure: 180 Bar', 'Tractor Compat: 35-75 HP'],
+      },
+      {
+        id: 'eq_earthmovers',
+        name: 'Excavators & Hydraulic Earthmovers',
+        description: 'Tracked excavators and backhoe loaders equipped for channel desilting, emergency canal breach bunding, and site clearing.',
+        count: 18,
+        imageUrl: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800&q=80',
+        specs: ['Bucket: 0.9 - 1.2 cu.m', 'Brands: JCB, CAT, Hyundai'],
+      },
+    ],
+  },
+  capabilityStatement: {
+    headline: 'Sri Velan & Co - Corporate Capability Statement',
+    summary: 'Class I Registered Government Civil Contractor & Dewatering Enterprise specializing in municipal flood rescue, metro deep pit dewatering, canal stone pitching, and public infrastructure construction.',
+    certifications: [
+      { id: 'cert_1', name: 'Class I Civil Contractor Registration', issuer: 'State PWD & WRD', year: '2006' },
+      { id: 'cert_2', name: 'Greater Chennai Corporation Empaneled Partner', issuer: 'GCC Disaster Cell', year: '2020' },
+      { id: 'cert_3', name: 'CMRL Approved Underground Dewatering Vendor', issuer: 'Chennai Metro Rail Ltd', year: '2022' },
+    ],
+    downloadUrl: '',
+  },
+  hydraulicBroomer: {
+    title: 'Tractor-Mounted Hydraulic Highway Sweeper Broomer',
+    description: 'Engineered for heavy-duty highway sweeping, asphalt dust clearing, and municipal road maintenance with universal 3-point tractor linkage.',
+    specs: [
+      { label: 'Sweeping Width', value: '1.8m to 2.2m Adjustable' },
+      { label: 'Compatible Tractor HP', value: '35 HP to 75 HP' },
+      { label: 'Bristle Composition', value: 'High-Density Polypropylene & Steel Wire' },
+      { label: 'Hydraulic Operating Pressure', value: '160 to 180 Bar' },
+      { label: 'Clearing Speed Capacity', value: 'Up to 10,000 sq.m / hr' },
+    ],
+    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAeQt_VRg-Pnvzi83b3kFBXkzvQwauzvPl3BR7b4V5oqXN65xsotHAR8F_J1Cr-ngjTmrsoOZwh5FdVT3Zl2TQdue2Wcd1_ulcn_09y7urzhBo0D1KmgZRjeebjb1XoS7MLrQY1rDu7vusZvj8gxX6MmMm7Y6ahsbChKhEPeKaWr--5Di4PTSUyriXPWgmsdZ1M_J-R4e7yADQG8TSSdoNbot-7Z_BtQhC13Rvz2AqlQI9L_fKhXuf8kddWYkMMsA3Gl_2Q358cGg',
+    videoUrl: '',
+  },
+  weatherAlertBanner: {
+    enabled: true,
+    message: 'Monsoon Dewatering Fleet Active: 24/7 Emergency Mobilization Units On Standby Across Chennai, Villupuram & Cuddalore Districts.',
+    severity: 'warning',
+    dismissible: true,
+  },
+  chatbot: {
+    greetingMessage: 'Welcome to Sri Velan & Co! I am VELAN AI, your 24/7 assistant for dewatering fleet dispatch, broomer quotes, and civil contract queries.',
+    systemPromptOverride: '',
+    enabled: true,
+    avatarUrl: '',
+  },
+  navigation: {
+    logoUrl: '',
+    menuItems: [
+      { id: 'home', labelEn: 'Home', labelTa: 'முகப்பு', path: '/', order: 1 },
+      { id: 'about', labelEn: 'About Us', labelTa: 'எங்களைப் பற்றி', path: '/about', order: 2 },
+      { id: 'services', labelEn: 'Services', labelTa: 'சேவைகள்', path: '/services', order: 3 },
+      { id: 'equipments', labelEn: 'Equipment Fleet', labelTa: 'இயந்திரங்கள்', path: '/equipments', order: 4 },
+      { id: 'projects', labelEn: 'Projects', labelTa: 'திட்டங்கள்', path: '/projects', order: 5 },
+      { id: 'hydraulic-broomer', labelEn: 'Hydraulic Broomer', labelTa: 'ஹைட்ராலிக் தூரிகை', path: '/hydraulic-broomer', order: 6 },
+      { id: 'contact', labelEn: 'Contact Us', labelTa: 'தொடர்பு கொள்ள', path: '/contact', order: 7 },
+    ],
+  },
 };
 
 export interface HistoryEntry {
@@ -277,6 +427,12 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       'contact',
       'footer',
       'translations',
+      'equipment',
+      'capabilityStatement',
+      'hydraulicBroomer',
+      'weatherAlertBanner',
+      'chatbot',
+      'navigation',
     ];
 
     let pendingReads = sectionKeys.length;

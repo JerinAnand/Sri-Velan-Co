@@ -24,13 +24,32 @@ import {
   CheckCircle,
   Quote,
   BookOpen,
-  Code
+  Code,
+  Crown,
+  Briefcase,
+  Code2
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useAdmin } from '../context/AdminContext';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
-import { EditableValue } from './EditableValue';
+
+export const getRoleIcon = (designation: string) => {
+  const lower = (designation || '').toLowerCase();
+  if (lower.includes('founder') || lower.includes('governing partner') || lower.includes('நிறுவனர்')) {
+    return <Crown className="w-3.5 h-3.5" />;
+  }
+  if (lower.includes('managing director') || lower.includes('இயக்குனர்')) {
+    return <Briefcase className="w-3.5 h-3.5" />;
+  }
+  if (lower.includes('financial') || lower.includes('நிதி')) {
+    return <Landmark className="w-3.5 h-3.5" />;
+  }
+  if (lower.includes('admin') || lower.includes('developer') || lower.includes('நிர்வாகி') || lower.includes('டெவலப்பர்')) {
+    return <Code2 className="w-3.5 h-3.5" />;
+  }
+  return <Award className="w-3.5 h-3.5" />;
+};
 
 export const AboutView: React.FC = () => {
   const { t, language } = useTranslation();
@@ -149,7 +168,7 @@ export const AboutView: React.FC = () => {
                 </h2>
 
                 <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans first-letter:text-4xl first-letter:font-bold first-letter:text-brand-blue-800 first-letter:mr-1">
-                  <EditableValue id="company_incorporation_history" defaultValue={t('about.overview.description1')} />
+                  {siteContent.about?.description1 || t('about.overview.description1')}
                 </p>
 
                 <p className="text-sm text-neutral-550 leading-relaxed font-sans font-light">
@@ -269,7 +288,7 @@ export const AboutView: React.FC = () => {
               <div className="max-w-xl">
                 <span className="text-xs font-mono font-bold tracking-widest text-brand-blue-700 uppercase">{t('about.milestones.evolution')}</span>
                 <h2 className="text-2xl sm:text-3.5xl font-black text-brand-blue-900 tracking-tight mt-1">
-                  <EditableValue id="trajectory_22_year" defaultValue={language === 'en' ? '20-Year' : '20-ஆண்டு'} /> {language === 'en' ? 'Infrastructure Trajectory' : 'உள்கட்டமைப்பு வளர்ச்சிப் பாதை'}
+                  {language === 'en' ? '20-Year Infrastructure Trajectory' : '20-ஆண்டு உள்கட்டமைப்பு வளர்ச்சிப் பாதை'}
                 </h2>
                 <p className="text-neutral-550 text-xs sm:text-sm font-sans font-light">{t('about.milestones.desc')}</p>
               </div>
@@ -289,18 +308,18 @@ export const AboutView: React.FC = () => {
                       <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-250/70 hover:border-brand-blue-700/30 hover:bg-white hover:shadow-lg transition-all max-w-3xl">
                         <div className="flex items-center gap-3 flex-wrap mb-2">
                           <span className="font-mono text-xl sm:text-2xl font-black text-brand-blue-900 tracking-tight">
-                            <EditableValue id={`milestone_year_${idx}`} defaultValue={ms.year} />
+                            {ms.year}
                           </span>
                           <span className="text-[9px] font-mono tracking-widest bg-brand-blue-900/5 text-brand-blue-850 px-2 py-0.5 rounded border border-brand-blue-800/10 uppercase font-semibold">
-                            <EditableValue id={`milestone_tag_${idx}`} defaultValue={milTag} />
+                            {milTag}
                           </span>
                         </div>
                         
                         <h4 className="font-display font-bold text-sm sm:text-base text-neutral-900 mb-1">
-                          <EditableValue id={`milestone_title_${idx}`} defaultValue={milTitle} />
+                          {milTitle}
                         </h4>
                         <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans font-light">
-                          <EditableValue id={`milestone_desc_${idx}`} defaultValue={milDesc} />
+                          {milDesc}
                         </p>
                       </div>
                     </div>
@@ -390,23 +409,23 @@ export const AboutView: React.FC = () => {
                 </div>
                 
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
-                  <EditableValue id="gp_name" defaultValue={COMPANY_DETAILS.leadership.governingPartner.name} />
+                  {COMPANY_DETAILS.leadership.governingPartner.name}
                 </h3>
                 <p className="text-xs sm:text-sm text-brand-gold-500 font-mono tracking-wider uppercase leading-none font-semibold">
-                  <EditableValue id="gp_role" defaultValue={COMPANY_DETAILS.leadership.governingPartner.role} />
+                  {COMPANY_DETAILS.leadership.governingPartner.role}
                 </p>
               </div>
 
               <div className="h-px bg-brand-blue-800/60 w-full" />
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
-                "<EditableValue id="gp_bio" defaultValue={t('about.leadership.gpBio')} />"
+                "{t('about.leadership.gpBio')}"
               </p>
 
               <div className="pt-2 flex items-center gap-3">
                 <span className="text-[10px] text-neutral-400 uppercase font-mono">{t('about.leadership.signAuthority')}</span>
                 <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">
-                  <EditableValue id="gp_signature" defaultValue="G. Selva Kumar" />
+                  G. Selva Kumar
                 </span>
               </div>
             </div>
@@ -440,23 +459,23 @@ export const AboutView: React.FC = () => {
                 </div>
                 
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
-                  <EditableValue id="md_name" defaultValue={COMPANY_DETAILS.leadership.managingDirector.name} />
+                  {COMPANY_DETAILS.leadership.managingDirector.name}
                 </h3>
                 <p className="text-xs sm:text-sm text-brand-gold-500 font-mono tracking-wider uppercase leading-none font-semibold">
-                  <EditableValue id="md_role" defaultValue={COMPANY_DETAILS.leadership.managingDirector.role} />
+                  {COMPANY_DETAILS.leadership.managingDirector.role}
                 </p>
               </div>
 
               <div className="h-px bg-brand-blue-800/60 w-full" />
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
-                "<EditableValue id="md_bio" defaultValue={t('about.leadership.mdBio')} />"
+                "{t('about.leadership.mdBio')}"
               </p>
 
               <div className="pt-2 flex items-center gap-3">
                 <span className="text-[10px] text-neutral-400 uppercase font-mono">{t('about.leadership.signAuthority')}</span>
                 <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">
-                  <EditableValue id="md_signature" defaultValue="Vetrivel S" />
+                  Vetrivel S
                 </span>
               </div>
             </div>
@@ -512,7 +531,7 @@ export const AboutView: React.FC = () => {
                       <div className="space-y-1">
                         <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{displayName}</h4>
                         <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
-                          <Award className="w-3.5 h-3.5" />
+                          {getRoleIcon(displayRole)}
                           <span>{displayRole}</span>
                         </div>
                       </div>
@@ -533,7 +552,7 @@ export const AboutView: React.FC = () => {
                     <div className="space-y-1">
                       <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. G. Selva Kumar' : 'திரு. ஜி. செல்வ குமார்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
-                        <Award className="w-3.5 h-3.5" />
+                        {getRoleIcon(language === 'en' ? 'Founder' : 'நிறுவனர்')}
                         <span>{language === 'en' ? 'Founder' : 'நிறுவனர்'}</span>
                       </div>
                     </div>
@@ -552,7 +571,7 @@ export const AboutView: React.FC = () => {
                     <div className="space-y-1">
                       <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. S. Vetrivel' : 'திரு. எஸ். வெற்றிவேல்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
-                        <ShieldCheck className="w-3.5 h-3.5" />
+                        {getRoleIcon(language === 'en' ? 'Managing Director' : 'நிர்வாக இயக்குனர்')}
                         <span>{language === 'en' ? 'Managing Director' : 'நிர்வாக இயக்குனர்'}</span>
                       </div>
                     </div>
@@ -569,7 +588,7 @@ export const AboutView: React.FC = () => {
                     <div className="space-y-1">
                       <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. S. Dhinakaravel' : 'திரு. எஸ். தினகரவேல்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-emerald-700 font-mono uppercase tracking-wide font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/50">
-                        <Landmark className="w-3.5 h-3.5 text-emerald-600" />
+                        {getRoleIcon(language === 'en' ? 'Financial Consultant' : 'நிதி ஆலோசகர்')}
                         <span>{language === 'en' ? 'Financial Consultant' : 'நிதி ஆலோசகர்'}</span>
                       </div>
                     </div>
@@ -586,7 +605,7 @@ export const AboutView: React.FC = () => {
                     <div className="space-y-1">
                       <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Jerin Anand' : 'திரு. ஜெரின் ஆனந்த்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
-                        <Code className="w-3.5 h-3.5" />
+                        {getRoleIcon(language === 'en' ? 'Admin & Developer' : 'நிர்வாகி & டெவலப்பர்')}
                         <span>{language === 'en' ? 'Admin & Developer' : 'நிர்வாகி & டெவலப்பர்'}</span>
                       </div>
                     </div>

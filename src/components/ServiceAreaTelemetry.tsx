@@ -73,8 +73,14 @@ export const ServiceAreaTelemetry: React.FC = () => {
   const [secondsAgo, setSecondsAgo] = useState<number>(0);
   const [isBackingOff, setIsBackingOff] = useState<boolean>(false);
 
+  const isFetchingRef = React.useRef(false);
+
   // Core data fetch function with defensive parsing
   const fetchTelemetry = async (silent: boolean = false) => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+    setSecondsAgo(0);
+
     if (!silent) {
       setIsLoading(true);
     } else {
@@ -124,9 +130,7 @@ export const ServiceAreaTelemetry: React.FC = () => {
       setError(err?.message || 'Network connectivity error.');
       
       // Fallback to the safety net data if we don't already have good active data
-      if (telemetry.length === 0) {
-        setTelemetry(FALLBACK_TELEMETRY);
-      }
+      setTelemetry((prev) => (prev.length === 0 ? FALLBACK_TELEMETRY : prev));
       
       // Back off for the next refresh interval (skip tick)
       setIsBackingOff(true);
@@ -134,6 +138,7 @@ export const ServiceAreaTelemetry: React.FC = () => {
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
+      isFetchingRef.current = false;
     }
   };
 

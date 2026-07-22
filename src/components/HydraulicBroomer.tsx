@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { COMPANY_DETAILS } from '../data';
 import { useTranslation } from '../context/TranslationContext';
+import { useSiteContent } from '../context/SiteContentContext';
 
 const maskPhoneNumber = (phone: string): string => {
   if (!phone) return '';
@@ -44,6 +45,9 @@ const maskPhoneNumber = (phone: string): string => {
 
 export const HydraulicBroomer: React.FC = () => {
   const { t, language } = useTranslation();
+  const { siteContent } = useSiteContent();
+  const broomerData = siteContent.hydraulicBroomer;
+
   const [tractorHp, setTractorHp] = useState<string>('45-60');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
@@ -56,16 +60,18 @@ export const HydraulicBroomer: React.FC = () => {
     width: '1.8m'
   });
 
-  const broomSpecs = [
-    { label: t('hydraulicBroomer.specs.width.label'), value: t('hydraulicBroomer.specs.width.value') },
-    { label: t('hydraulicBroomer.specs.hp.label'), value: t('hydraulicBroomer.specs.hp.value') },
-    { label: t('hydraulicBroomer.specs.bristle.label'), value: t('hydraulicBroomer.specs.bristle.value') },
-    { label: t('hydraulicBroomer.specs.lifespan.label'), value: t('hydraulicBroomer.specs.lifespan.value') },
-    { label: t('hydraulicBroomer.specs.speed.label'), value: t('hydraulicBroomer.specs.speed.value') },
-    { label: t('hydraulicBroomer.specs.grade.label'), value: t('hydraulicBroomer.specs.grade.value') },
-    { label: t('hydraulicBroomer.specs.volume.label'), value: t('hydraulicBroomer.specs.volume.value') },
-    { label: t('hydraulicBroomer.specs.levers.label'), value: t('hydraulicBroomer.specs.levers.value') }
-  ];
+  const broomSpecs = (broomerData?.specs && broomerData.specs.length > 0)
+    ? broomerData.specs
+    : [
+        { label: t('hydraulicBroomer.specs.width.label'), value: t('hydraulicBroomer.specs.width.value') },
+        { label: t('hydraulicBroomer.specs.hp.label'), value: t('hydraulicBroomer.specs.hp.value') },
+        { label: t('hydraulicBroomer.specs.bristle.label'), value: t('hydraulicBroomer.specs.bristle.value') },
+        { label: t('hydraulicBroomer.specs.lifespan.label'), value: t('hydraulicBroomer.specs.lifespan.value') },
+        { label: t('hydraulicBroomer.specs.speed.label'), value: t('hydraulicBroomer.specs.speed.value') },
+        { label: t('hydraulicBroomer.specs.grade.label'), value: t('hydraulicBroomer.specs.grade.value') },
+        { label: t('hydraulicBroomer.specs.volume.label'), value: t('hydraulicBroomer.specs.volume.value') },
+        { label: t('hydraulicBroomer.specs.levers.label'), value: t('hydraulicBroomer.specs.levers.value') }
+      ];
 
   /* Dynamic hydraulic recommendation matrix from chosen tractor size */
   const getHydroRecommendation = (hp: string) => {

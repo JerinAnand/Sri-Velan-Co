@@ -18,7 +18,6 @@ export const en = {
   instagramHandle: '@sri_velan_co on Instagram',
   allRightsReserved: 'All Corporate Rights Reserved.',
   contractIntakePortal: 'Contract Intake Portal',
-  adminPortal: 'Admin Portal',
   links: {
     home: 'Home Page',
     about: 'About Company',
@@ -50,7 +49,6 @@ export const ta = {
   instagramHandle: 'இன்ஸ்டாகிராமில் @sri_velan_co',
   allRightsReserved: 'அனைத்து கார்ப்பரேட் உரிமைகளும் பாதுகாக்கப்பட்டவை.',
   contractIntakePortal: 'ஒப்பந்த உள்ளீட்டு போர்டல்',
-  adminPortal: 'நிர்வாக போர்டல்',
   links: {
     home: 'முகப்பு பக்கம்',
     about: 'எங்களைப் பற்றி',

@@ -4,25 +4,26 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, Mail, Award, Clock, ChevronRight, Sun, Moon, FileText } from 'lucide-react';
+import { Menu, X, Phone, Mail, Award, Clock, ChevronRight, Sun, Moon, FileText, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { COMPANY_DETAILS } from '../data';
 import { ActiveView } from '../types';
-import { useEasterEgg } from '../context/EasterEggContext';
 import { useTheme } from '../context/ThemeContext';
-import { useAdmin } from '../context/AdminContext';
 import { useTranslation } from '../context/TranslationContext';
-import { EditableValue } from './EditableValue';
+import { useSiteContent } from '../context/SiteContentContext';
+import { useAdmin } from '../context/AdminContext';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { registerClick } = useEasterEgg();
   const { theme, toggleTheme } = useTheme();
-  const { getValue } = useAdmin();
   const { language, changeLanguage, t } = useTranslation();
+  const { siteContent } = useSiteContent();
+  const { isAdmin } = useAdmin();
+  const navData = siteContent.navigation;
+  const logoImage = navData?.logoUrl || companyLogo;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -112,7 +113,7 @@ export const Header: React.FC = () => {
                   className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors"
                   style={{ width: '189.359px', fontSize: '22px', lineHeight: '32px' }}
                 >
-                  <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
+                  {COMPANY_DETAILS.name}
                 </h1>
                 <p 
                   className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase truncate"
@@ -178,6 +179,19 @@ export const Header: React.FC = () => {
                   <Sun className="w-5 h-5 text-yellow-300" />
                 )}
               </button>
+
+              {!isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin/login')}
+                  className="p-2.5 rounded-lg text-neutral-300 hover:text-brand-gold-400 hover:bg-white/10 transition-all flex items-center justify-center cursor-pointer group"
+                  title="Admin Portal"
+                  aria-label="Admin Portal Access"
+                  id="header-admin-toggle-desktop"
+                >
+                  <ShieldCheck className="w-5 h-5 text-neutral-400 group-hover:text-brand-gold-400 transition-colors" />
+                </button>
+              )}
             </div>
 
             {/* Mobile Actions: Theme Toggle & Hamburger Trigger */}
@@ -206,6 +220,18 @@ export const Header: React.FC = () => {
                   <Sun className="w-5 h-5 text-yellow-300" />
                 )}
               </button>
+              {!isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin/login')}
+                  className="p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer group"
+                  title="Admin Portal"
+                  aria-label="Admin Portal Access"
+                  id="header-admin-toggle-mobile"
+                >
+                  <ShieldCheck className="w-5 h-5 text-neutral-400 group-hover:text-brand-gold-400 transition-colors" />
+                </button>
+              )}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 id="mobile-menu-toggle"
@@ -260,10 +286,10 @@ export const Header: React.FC = () => {
                     </div>
                     <div className="truncate">
                       <h3 className="font-display font-bold text-sm text-white tracking-wide uppercase truncate">
-                        <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
+                        {COMPANY_DETAILS.name}
                       </h3>
                       <span className="text-[9px] text-brand-gold-400 font-mono block tracking-widest leading-none">
-                        {t('navigation.establishedIn')} <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
+                        {t('navigation.establishedIn')} {COMPANY_DETAILS.yearEstablished}
                       </span>
                     </div>
                   </div>
@@ -311,7 +337,6 @@ export const Header: React.FC = () => {
                 <div className="flex flex-col gap-2.5">
                   <a 
                     href="tel:+919894218243" 
-                    onClick={() => registerClick('emergency-dial')}
                     aria-label="Call Emergency Dewatering Duty Representative fast coordinate mobilization at +919894218243"
                     title="Call Emergency Dewatering Duty Representative"
                     className="flex justify-center items-center gap-2 bg-gradient-to-r from-brand-gold-500 to-brand-gold-600 hover:from-brand-gold-400 hover:to-brand-gold-500 text-brand-blue-950 font-display font-extrabold text-xs tracking-wider uppercase py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95"

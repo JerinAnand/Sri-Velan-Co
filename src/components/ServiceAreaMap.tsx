@@ -7,7 +7,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShieldAlert, Flame, MapPin, CheckCircle, Droplet, User, Settings, Info, Activity } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
-import { EditableValue } from './EditableValue';
 
 interface DistrictData {
   id: string;
@@ -299,9 +298,11 @@ export const ServiceAreaMap: React.FC = () => {
     const observer = new ResizeObserver((entries) => {
       if (!entries || !entries[0]) return;
       const { width, height } = entries[0].contentRect;
-      setDimensions({
-        width: width || 350,
-        height: height || 460
+      const newW = width || 350;
+      const newH = height || 460;
+      setDimensions((prev) => {
+        if (prev.width === newW && prev.height === newH) return prev;
+        return { width: newW, height: newH };
       });
     });
     observer.observe(containerRef.current);

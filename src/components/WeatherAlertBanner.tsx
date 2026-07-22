@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useSiteContent } from '../context/SiteContentContext';
 import { 
   CloudRain, 
   AlertTriangle, 
@@ -183,17 +184,18 @@ export const WeatherAlertBanner: React.FC = () => {
     if (!autoRefresh) return;
     
     const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          fetchAlerts();
-          return 300;
-        }
-        return prev - 1;
-      });
+      setCountdown((prev) => (prev <= 1 ? 0 : prev - 1));
     }, 1000);
 
     return () => clearInterval(interval);
   }, [autoRefresh]);
+
+  useEffect(() => {
+    if (countdown === 0) {
+      fetchAlerts();
+      setCountdown(300);
+    }
+  }, [countdown]);
 
   const handleManualRefresh = () => {
     fetchAlerts();

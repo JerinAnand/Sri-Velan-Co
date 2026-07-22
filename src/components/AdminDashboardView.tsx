@@ -1,20 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTranslation } from '../context/TranslationContext';
-import { translations as staticTranslations } from '../translations';
-import {
-  useSiteContent,
-  HeroContent,
-  AboutContent,
-  StatsContent,
-  ServiceItem,
-  ClientItem,
-  BoardMemberItem,
-  ProjectItem,
-  ContactContent,
-  FooterContent,
-} from '../context/SiteContentContext';
+import { useSiteContent, FullSiteContent } from '../context/SiteContentContext';
 import {
   ShieldCheck,
   LogOut,
@@ -27,32 +14,41 @@ import {
   FolderKanban,
   PhoneCall,
   FileText,
-  Save,
-  Plus,
-  Trash2,
-  CheckCircle2,
-  AlertCircle,
-  Sparkles,
-  ExternalLink,
-  Image as ImageIcon,
-  ArrowUpRight,
-  Database,
   Globe,
-  Search,
-  Filter,
-  Languages,
-  RefreshCw,
   Download,
   History,
   RotateCcw,
-  FileJson,
   Upload,
   X,
   Clock,
+  Truck,
+  CloudRain,
+  Bot,
+  Menu as MenuIcon,
+  CheckCircle2,
+  AlertCircle,
+  Database,
+  ArrowUpRight,
 } from 'lucide-react';
-import { COMPANY_DETAILS } from '../data';
 
-type ActiveTab =
+import { HeroTab } from './admin/HeroTab';
+import { AboutTab } from './admin/AboutTab';
+import { StatsTab } from './admin/StatsTab';
+import { ServicesTab } from './admin/ServicesTab';
+import { ClientsTab } from './admin/ClientsTab';
+import { GoverningBoardTab } from './admin/GoverningBoardTab';
+import { ProjectsTab } from './admin/ProjectsTab';
+import { ContactTab } from './admin/ContactTab';
+import { FooterTab } from './admin/FooterTab';
+import { TranslationsTab } from './admin/TranslationsTab';
+import { EquipmentTab } from './admin/EquipmentTab';
+import { CapabilityStatementTab } from './admin/CapabilityStatementTab';
+import { HydraulicBroomerTab } from './admin/HydraulicBroomerTab';
+import { WeatherAlertBannerTab } from './admin/WeatherAlertBannerTab';
+import { ChatbotTab } from './admin/ChatbotTab';
+import { NavigationTab } from './admin/NavigationTab';
+
+export type ActiveTab =
   | 'hero'
   | 'about'
   | 'stats'
@@ -60,6 +56,12 @@ type ActiveTab =
   | 'clients'
   | 'governingBoard'
   | 'projects'
+  | 'equipment'
+  | 'capabilityStatement'
+  | 'hydraulicBroomer'
+  | 'weatherAlertBanner'
+  | 'chatbot'
+  | 'navigation'
   | 'contact'
   | 'footer'
   | 'translations';
@@ -82,139 +84,68 @@ export function AdminDashboardView() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('hero');
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [isSeeding, setIsSeeding] = useState<boolean>(false);
   const [isBackingUp, setIsBackingUp] = useState<boolean>(false);
   const [isRestoring, setIsRestoring] = useState<boolean>(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
-  const [viewingSnapshot, setViewingSnapshot] = useState<any | null>(null);
-
-  // Form states for each section
-  const [heroForm, setHeroForm] = useState<HeroContent>(siteContent.hero);
-  const [aboutForm, setAboutForm] = useState<AboutContent>(siteContent.about);
-  const [statsForm, setStatsForm] = useState<StatsContent>(siteContent.stats);
-  const [servicesForm, setServicesForm] = useState<ServiceItem[]>(siteContent.services.services);
-  const [clientsForm, setClientsForm] = useState<ClientItem[]>(siteContent.clients.clients);
-  const [boardForm, setBoardForm] = useState<BoardMemberItem[]>(siteContent.governingBoard.boardMembers);
-  const [projectsForm, setProjectsForm] = useState<ProjectItem[]>(siteContent.projects.projects);
-  const [contactForm, setContactForm] = useState<ContactContent>(siteContent.contact);
-  const [footerForm, setFooterForm] = useState<FooterContent>(siteContent.footer);
-
-  // Sync state when Firestore siteContent changes
-  React.useEffect(() => {
-    setHeroForm(siteContent.hero);
-    setAboutForm(siteContent.about);
-    setStatsForm(siteContent.stats);
-    setServicesForm(siteContent.services.services);
-    setClientsForm(siteContent.clients.clients);
-    setBoardForm(siteContent.governingBoard.boardMembers);
-    setProjectsForm(siteContent.projects.projects);
-    setContactForm(siteContent.contact);
-    setFooterForm(siteContent.footer);
-  }, [siteContent]);
+  const [viewingSnapshot, setViewingSnapshot] = useState<FullSiteContent | null>(null);
 
   const triggerToast = (msg: string) => {
     setSaveSuccess(msg);
     setTimeout(() => setSaveSuccess(null), 4000);
   };
 
-  const handleSaveSection = async (sectionKey: ActiveTab, data: any) => {
-    setIsSaving(true);
-    setSaveError(null);
-    try {
-      await updateSection(sectionKey as any, data);
-      triggerToast(`Successfully saved changes for ${sectionKey.toUpperCase()} section to Firestore!`);
-    } catch (err: any) {
-      console.error('Error saving section:', err);
-      setSaveError(err.message || 'Failed to save changes to Firestore.');
-    } finally {
-      setIsSaving(false);
-    }
+  const triggerError = (msg: string) => {
+    setSaveError(msg);
+    setTimeout(() => setSaveError(null), 5000);
   };
 
-  // 1. Backup Content Handler (Uses onSnapshot listener to fetch full siteContent state & triggers JSON download)
+  const handleLogout = async () => {
+    await logout();
+    navigate('/admin/login');
+  };
+
+  // Backup Content -> JSON File Download
   const handleBackupContent = async () => {
     setIsBackingUp(true);
-    setSaveError(null);
     try {
-      await backupContent();
-      triggerToast('Downloaded siteContent collection JSON backup generated via real-time onSnapshot listener!');
+      const currentData = await backupContent();
+      const blob = new Blob([JSON.stringify(currentData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `srivelan_siteContent_backup_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      triggerToast('Site content backup JSON file downloaded successfully!');
     } catch (err: any) {
-      console.error('Backup error:', err);
-      setSaveError('Failed to generate downloadable JSON backup.');
+      console.error('Backup failed:', err);
+      triggerError('Failed to trigger backup download: ' + err.message);
     } finally {
       setIsBackingUp(false);
     }
   };
 
-  // 2. Restore to Default Handler
+  // Restore Default
   const handleRestoreToDefault = async () => {
-    if (
-      window.confirm(
-        'Are you sure you want to restore the entire site content to default values? Current Firestore state will be overwritten (a safety snapshot will be recorded in History).'
-      )
-    ) {
-      setIsRestoring(true);
-      setSaveError(null);
-      try {
-        await restoreToDefault();
-        triggerToast('Site content restored to default settings in Firestore!');
-      } catch (err: any) {
-        console.error('Restore to default failed:', err);
-        setSaveError('Failed to restore content to default settings.');
-      } finally {
-        setIsRestoring(false);
-      }
+    if (!window.confirm('Are you sure you want to restore ALL site content to factory default settings? This action creates an audit log snapshot before resetting.')) {
+      return;
+    }
+    setIsRestoring(true);
+    try {
+      await restoreToDefault();
+      triggerToast('Site content restored to factory defaults!');
+    } catch (err: any) {
+      console.error('Restore default failed:', err);
+      triggerError('Failed to restore default content: ' + err.message);
+    } finally {
+      setIsRestoring(false);
     }
   };
 
-  // 3. Rollback to Historical Version Handler
-  const handleRestoreFromHistory = async (entry: any) => {
-    const formattedDate = new Date(entry.timestamp).toLocaleString();
-    if (
-      window.confirm(
-        `Are you sure you want to rollback site content to the snapshot recorded on ${formattedDate}?`
-      )
-    ) {
-      setIsRestoring(true);
-      setSaveError(null);
-      try {
-        await restoreFromSnapshot(entry.snapshot, `Rolled back to snapshot from ${formattedDate}`);
-        triggerToast(`Successfully rolled back to site snapshot from ${formattedDate}!`);
-        setIsHistoryOpen(false);
-      } catch (err: any) {
-        console.error('History rollback failed:', err);
-        setSaveError('Failed to restore from historical snapshot.');
-      } finally {
-        setIsRestoring(false);
-      }
-    }
-  };
-
-  // Download individual history entry as JSON
-  const handleDownloadHistoryJSON = (entry: any) => {
-    const dateStr = new Date(entry.timestamp).toISOString().replace(/[:.]/g, '-');
-    const backupPayload = {
-      historyId: entry.id,
-      timestamp: entry.timestamp,
-      action: entry.action,
-      userEmail: entry.userEmail,
-      snapshot: entry.snapshot,
-    };
-    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(backupPayload, null, 2)
-    )}`;
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', jsonString);
-    downloadAnchor.setAttribute('download', `srivelan_snapshot_${dateStr}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-    triggerToast('Historical snapshot downloaded as JSON file!');
-  };
-
-  // Restore from uploaded JSON file
-  const handleUploadJSONBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Upload JSON backup file to restore
+  const handleRestoreFromJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -222,22 +153,18 @@ export function AdminDashboardView() {
     reader.onload = async (event) => {
       try {
         const parsed = JSON.parse(event.target?.result as string);
-        const snapshot = parsed.data || parsed.siteContent || parsed.snapshot || parsed;
-        if (!snapshot.hero || !snapshot.about) {
-          throw new Error('JSON structure does not appear to be a valid siteContent snapshot.');
+        if (!parsed || typeof parsed !== 'object') {
+          throw new Error('Invalid JSON file format.');
         }
-        if (
-          window.confirm(
-            `Valid site content backup detected (${file.name}). Restore Firestore data using this JSON file?`
-          )
-        ) {
-          setIsRestoring(true);
-          await restoreFromSnapshot(snapshot, `Restored from uploaded JSON backup (${file.name})`);
-          triggerToast('Site content restored from uploaded JSON backup!');
-          setIsHistoryOpen(false);
+        if (!window.confirm(`Restore site content from uploaded backup file "${file.name}"?`)) {
+          return;
         }
+        setIsRestoring(true);
+        await restoreFromSnapshot(parsed, `Restored from uploaded JSON backup (${file.name})`);
+        triggerToast('Site content successfully restored from uploaded JSON backup!');
       } catch (err: any) {
-        alert('Failed to parse uploaded backup JSON: ' + err.message);
+        console.error('JSON restore error:', err);
+        triggerError('Failed to restore from JSON: ' + err.message);
       } finally {
         setIsRestoring(false);
       }
@@ -245,1546 +172,282 @@ export function AdminDashboardView() {
     reader.readAsText(file);
   };
 
-  const handleSeedDefaults = async () => {
-    if (window.confirm('Populate Firestore with default site data? This will overwrite existing empty documents with default values.')) {
-      setIsSeeding(true);
-      try {
-        await seedInitialData();
-        triggerToast('Firestore initialized with default site content!');
-      } catch (err: any) {
-        console.error('Seeding failed:', err);
-        setSaveError('Failed to seed default data.');
-      } finally {
-        setIsSeeding(false);
-      }
+  // Rollback to specific history snapshot
+  const handleRollback = async (entry: any) => {
+    if (!window.confirm(`Roll back site content to snapshot from ${new Date(entry.timestamp).toLocaleString()}?`)) {
+      return;
+    }
+    setIsRestoring(true);
+    try {
+      await restoreFromSnapshot(entry.snapshot, `Rollback to version from ${new Date(entry.timestamp).toLocaleString()}`);
+      triggerToast('Site content successfully rolled back!');
+      setIsHistoryOpen(false);
+    } catch (err: any) {
+      console.error('Rollback failed:', err);
+      triggerError('Rollback failed: ' + err.message);
+    } finally {
+      setIsRestoring(false);
     }
   };
 
-  const navItems: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'hero', label: 'Hero Section', icon: <Layout className="w-4 h-4" /> },
-    { id: 'about', label: 'About Us', icon: <Info className="w-4 h-4" /> },
-    { id: 'stats', label: 'Key Statistics', icon: <BarChart3 className="w-4 h-4" /> },
-    { id: 'services', label: 'Services Array', icon: <Wrench className="w-4 h-4" /> },
-    { id: 'clients', label: 'Client Logos', icon: <Building2 className="w-4 h-4" /> },
-    { id: 'governingBoard', label: 'Governing Board', icon: <Users className="w-4 h-4" /> },
-    { id: 'projects', label: 'Project Entries', icon: <FolderKanban className="w-4 h-4" /> },
-    { id: 'contact', label: 'Contact Info', icon: <PhoneCall className="w-4 h-4" /> },
-    { id: 'footer', label: 'Footer & Links', icon: <FileText className="w-4 h-4" /> },
-    { id: 'translations', label: 'Translations (EN & TA)', icon: <Globe className="w-4 h-4 text-amber-400" /> },
+  const navItems = [
+    { id: 'hero' as ActiveTab, label: 'Hero Section', icon: Layout },
+    { id: 'about' as ActiveTab, label: 'About Us', icon: Info },
+    { id: 'stats' as ActiveTab, label: 'Stats & Metrics', icon: BarChart3 },
+    { id: 'services' as ActiveTab, label: 'Services', icon: Wrench },
+    { id: 'clients' as ActiveTab, label: 'Clients & Depts', icon: Building2 },
+    { id: 'governingBoard' as ActiveTab, label: 'Leadership', icon: Users },
+    { id: 'projects' as ActiveTab, label: 'Projects', icon: FolderKanban },
+    { id: 'equipment' as ActiveTab, label: 'Equipment Fleet', icon: Truck },
+    { id: 'capabilityStatement' as ActiveTab, label: 'Capability Statement', icon: FileText },
+    { id: 'hydraulicBroomer' as ActiveTab, label: 'Hydraulic Broomer', icon: Wrench },
+    { id: 'weatherAlertBanner' as ActiveTab, label: 'Weather Alert Banner', icon: CloudRain },
+    { id: 'chatbot' as ActiveTab, label: 'VELAN AI Chatbot', icon: Bot },
+    { id: 'navigation' as ActiveTab, label: 'Navigation Bar', icon: MenuIcon },
+    { id: 'contact' as ActiveTab, label: 'Contact & Offices', icon: PhoneCall },
+    { id: 'footer' as ActiveTab, label: 'Footer Content', icon: FileText },
+    { id: 'translations' as ActiveTab, label: 'Translations (EN/TA)', icon: Globe },
   ];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center p-6 font-mono text-xs">
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 border-2 border-brand-gold-500 border-t-transparent rounded-full animate-spin" />
-          <span>Connecting to Firestore Live Database...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans border-t border-white/5">
-      {/* Upper Navigation Ribbon */}
-      <header className="bg-neutral-900 border-b border-white/10 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-brand-gold-500/15 border border-brand-gold-500/30 rounded-xl text-brand-gold-400">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-display font-black text-lg sm:text-xl text-white uppercase tracking-tight">
-                  Sri Velan & Co — Firestore Admin Portal
-                </h1>
-                <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] font-mono uppercase px-2 py-0.5 rounded-full font-bold">
-                  Firestore Connected
-                </span>
-              </div>
-              <p className="text-xs text-neutral-400 font-light mt-0.5">
-                Logged in as: <strong className="text-neutral-200 font-mono">{user?.email}</strong>
-              </p>
-            </div>
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-brand-gold-500 selection:text-neutral-950">
+      {/* Top Admin Header */}
+      <header className="bg-neutral-900 border-b border-white/10 px-6 py-4 sticky top-0 z-40 backdrop-blur-md bg-neutral-900/90 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-gold-500/10 border border-brand-gold-500/30 flex items-center justify-center text-brand-gold-400 shrink-0">
+            <ShieldCheck className="w-5 h-5" />
           </div>
-
-          <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
-            {/* Backup Content Button */}
-            <button
-              onClick={handleBackupContent}
-              disabled={isBackingUp}
-              className="text-xs font-mono uppercase bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-extrabold px-3.5 py-2 rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-              title="Fetch entire siteContent collection via onSnapshot and download JSON file for offline record-keeping"
-            >
-              <Download className="w-3.5 h-3.5" />
-              {isBackingUp ? 'Fetching...' : 'Backup Content'}
-            </button>
-
-            {/* History of Changes Button */}
-            <button
-              onClick={() => setIsHistoryOpen(true)}
-              className="text-xs font-mono uppercase bg-neutral-800 hover:bg-neutral-700 text-sky-400 border border-sky-500/30 px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-              title="View change history and restore from previous snapshots"
-            >
-              <History className="w-3.5 h-3.5 text-sky-400" />
-              History of Changes ({historyEntries.length})
-            </button>
-
-            {/* Restore to Default Button */}
-            <button
-              onClick={handleRestoreToDefault}
-              disabled={isRestoring}
-              className="text-xs font-mono uppercase bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-900/50 px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-              title="Restore all site content to default settings in Firestore"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-red-400" />
-              {isRestoring ? 'Restoring...' : 'Restore to Default'}
-            </button>
-
-            <button
-              onClick={handleSeedDefaults}
-              disabled={isSeeding}
-              className="text-xs font-mono uppercase bg-neutral-800 hover:bg-neutral-700 text-brand-gold-400 px-3 py-2 rounded-xl border border-brand-gold-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
-              title="Seed default content into Firestore"
-            >
-              <Database className="w-3.5 h-3.5 text-brand-gold-400" />
-              {isSeeding ? 'Seeding...' : 'Seed Data'}
-            </button>
-
-            <button
-              onClick={() => navigate('/')}
-              className="text-xs font-mono uppercase bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-3.5 py-2 rounded-xl border border-white/10 transition-all flex items-center gap-1.5 cursor-pointer"
-            >
-              <ArrowUpRight className="w-3.5 h-3.5" />
-              Live Site
-            </button>
-
-            <button
-              onClick={logout}
-              className="text-xs font-mono uppercase bg-red-950/40 hover:bg-red-900/40 text-red-400 border border-red-900/30 px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              Logout
-            </button>
+          <div>
+            <h1 className="text-base font-display font-bold text-white tracking-wide flex items-center gap-2">
+              Sri Velan & Co
+              <span className="text-[10px] font-mono bg-brand-gold-500/20 text-brand-gold-400 border border-brand-gold-500/40 px-2 py-0.5 rounded-full uppercase font-bold">
+                CMS Portal
+              </span>
+            </h1>
+            <p className="text-xs text-neutral-400 font-mono">Logged in as {user?.email}</p>
           </div>
+        </div>
+
+        {/* Global Toolbar Actions */}
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleBackupContent}
+            disabled={isBackingUp}
+            className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-sm disabled:opacity-50"
+            title="Download full JSON snapshot backup of Firestore siteContent"
+          >
+            <Download className="w-3.5 h-3.5 text-brand-gold-400" />
+            {isBackingUp ? 'Exporting...' : 'Backup Content'}
+          </button>
+
+          <label
+            className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            title="Upload previously downloaded JSON backup file to restore"
+          >
+            <Upload className="w-3.5 h-3.5 text-sky-400" />
+            <span>Upload JSON</span>
+            <input type="file" accept=".json" onChange={handleRestoreFromJSON} className="hidden" />
+          </label>
+
+          <button
+            onClick={() => setIsHistoryOpen(true)}
+            className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            title="View full history of changes and rollback to any prior snapshot"
+          >
+            <History className="w-3.5 h-3.5 text-purple-400" />
+            History of Changes ({historyEntries.length})
+          </button>
+
+          <button
+            onClick={handleRestoreToDefault}
+            disabled={isRestoring}
+            className="bg-neutral-800 hover:bg-red-900/40 text-neutral-300 hover:text-red-300 border border-white/10 hover:border-red-500/30 px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-sm disabled:opacity-50"
+            title="Reset site content to factory default state"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+            Restore to Default
+          </button>
+
+          <a
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all"
+          >
+            <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
+            Live Preview
+          </a>
+
+          <button
+            onClick={handleLogout}
+            className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Sign Out
+          </button>
         </div>
       </header>
 
-      {/* Global Toast Alert */}
-      {saveSuccess && (
-        <div className="fixed top-20 right-6 z-50 bg-emerald-950 border border-emerald-500/50 text-emerald-300 p-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce max-w-md">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-          <p className="text-xs font-medium font-sans">{saveSuccess}</p>
-        </div>
-      )}
-
-      {saveError && (
-        <div className="fixed top-20 right-6 z-50 bg-red-950 border border-red-500/50 text-red-300 p-4 rounded-2xl shadow-2xl flex items-center gap-3 max-w-md">
-          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
-          <p className="text-xs font-medium font-sans">{saveError}</p>
-        </div>
-      )}
-
-      {/* Main Admin Workspace Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Sidebar Tabs */}
-        <div className="space-y-2">
-          <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest px-2 mb-2">
-            Firestore Content Collections
+      {/* Main Admin Portal Shell */}
+      <div className="flex-1 flex flex-col md:flex-row max-w-[1600px] w-full mx-auto p-4 md:p-6 gap-6">
+        {/* Sidebar Nav Tabs */}
+        <aside className="w-full md:w-64 shrink-0 space-y-1 bg-neutral-900/60 border border-white/10 p-3 rounded-2xl h-fit">
+          <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 px-3 py-2">
+            Editable Site Sections
           </p>
-          <div className="bg-neutral-900/60 border border-white/10 rounded-2xl p-2 space-y-1">
+          <nav className="space-y-1">
             {navItems.map((item) => {
-              const active = activeTab === item.id;
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-medium transition-all text-left cursor-pointer ${
-                    active
-                      ? 'bg-gradient-to-r from-brand-gold-500 to-amber-500 text-brand-blue-950 font-bold shadow-md'
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium font-mono transition-all text-left cursor-pointer ${
+                    isActive
+                      ? 'bg-brand-gold-500 text-brand-blue-950 font-bold shadow-md'
                       : 'text-neutral-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  {item.icon}
-                  <span>{item.label}</span>
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-brand-blue-950' : 'text-neutral-500'}`} />
+                  <span className="truncate">{item.label}</span>
                 </button>
               );
             })}
-          </div>
-        </div>
+          </nav>
+        </aside>
 
-        {/* Content Form Panel */}
-        <div className="md:col-span-3 bg-neutral-900/80 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
-          {/* TAB 1: HERO */}
-          {activeTab === 'hero' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">Hero Section</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/hero</code>
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleSaveSection('hero', heroForm)}
-                  disabled={isSaving}
-                  className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-
-              <div className="space-y-4 text-xs">
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Badge Tagline</label>
-                  <input
-                    type="text"
-                    value={heroForm.badge}
-                    onChange={(e) => setHeroForm({ ...heroForm, badge: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Main Title Heading</label>
-                  <input
-                    type="text"
-                    value={heroForm.title}
-                    onChange={(e) => setHeroForm({ ...heroForm, title: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Subheading / Classification</label>
-                  <input
-                    type="text"
-                    value={heroForm.subtitle}
-                    onChange={(e) => setHeroForm({ ...heroForm, subtitle: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Detailed Tagline Paragraph</label>
-                  <textarea
-                    rows={4}
-                    value={heroForm.tagline}
-                    onChange={(e) => setHeroForm({ ...heroForm, tagline: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans leading-relaxed"
-                  />
-                </div>
-              </div>
+        {/* Content Tab Panel */}
+        <main className="flex-1 bg-neutral-900/60 border border-white/10 p-6 rounded-2xl shadow-xl min-w-0">
+          {/* Notifications / Toast Messages */}
+          {saveSuccess && (
+            <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+              {saveSuccess}
             </div>
           )}
 
-          {/* TAB 2: ABOUT */}
-          {activeTab === 'about' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">About Us Details</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/about</code>
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleSaveSection('about', aboutForm)}
-                  disabled={isSaving}
-                  className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Year Established</label>
-                  <input
-                    type="number"
-                    value={aboutForm.yearEstablished}
-                    onChange={(e) => setAboutForm({ ...aboutForm, yearEstablished: Number(e.target.value) })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-mono"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Founder / Governing Partner Name</label>
-                  <input
-                    type="text"
-                    value={aboutForm.founderName}
-                    onChange={(e) => setAboutForm({ ...aboutForm, founderName: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans"
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Contractor Accreditation Designation</label>
-                  <input
-                    type="text"
-                    value={aboutForm.civilContractorText}
-                    onChange={(e) => setAboutForm({ ...aboutForm, civilContractorText: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans"
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Company Overview / History</label>
-                  <textarea
-                    rows={4}
-                    value={aboutForm.companyDescription}
-                    onChange={(e) => setAboutForm({ ...aboutForm, companyDescription: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans leading-relaxed"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Mission Statement</label>
-                  <textarea
-                    rows={3}
-                    value={aboutForm.missionText}
-                    onChange={(e) => setAboutForm({ ...aboutForm, missionText: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans leading-relaxed"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Vision Statement</label>
-                  <textarea
-                    rows={3}
-                    value={aboutForm.visionText}
-                    onChange={(e) => setAboutForm({ ...aboutForm, visionText: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-brand-gold-500 font-sans leading-relaxed"
-                  />
-                </div>
-              </div>
+          {saveError && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+              {saveError}
             </div>
           )}
 
-          {/* TAB 3: STATS */}
-          {activeTab === 'stats' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">Numeric Key Statistics</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/stats</code>
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleSaveSection('stats', statsForm)}
-                  disabled={isSaving}
-                  className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
-                <div className="bg-neutral-950 border border-white/10 p-4 rounded-2xl space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase text-[10px]">Years of Industry Legacy</label>
-                  <input
-                    type="number"
-                    value={statsForm.yearsExperience}
-                    onChange={(e) => setStatsForm({ ...statsForm, yearsExperience: Number(e.target.value) })}
-                    className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-base focus:border-brand-gold-500"
-                  />
-                </div>
-
-                <div className="bg-neutral-950 border border-white/10 p-4 rounded-2xl space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase text-[10px]">Projects Completed</label>
-                  <input
-                    type="number"
-                    value={statsForm.projectsCompleted}
-                    onChange={(e) => setStatsForm({ ...statsForm, projectsCompleted: Number(e.target.value) })}
-                    className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-base focus:border-brand-gold-500"
-                  />
-                </div>
-
-                <div className="bg-neutral-950 border border-white/10 p-4 rounded-2xl space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase text-[10px]">Clients & Departments Served</label>
-                  <input
-                    type="number"
-                    value={statsForm.clientsServed}
-                    onChange={(e) => setStatsForm({ ...statsForm, clientsServed: Number(e.target.value) })}
-                    className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-base focus:border-brand-gold-500"
-                  />
-                </div>
-
-                <div className="bg-neutral-950 border border-white/10 p-4 rounded-2xl space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase text-[10px]">Active Team Size</label>
-                  <input
-                    type="number"
-                    value={statsForm.teamSize}
-                    onChange={(e) => setStatsForm({ ...statsForm, teamSize: Number(e.target.value) })}
-                    className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-base focus:border-brand-gold-500"
-                  />
-                </div>
-
-                <div className="bg-neutral-950 border border-white/10 p-4 rounded-2xl space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase text-[10px]">Dewatering Fleet Pump Count</label>
-                  <input
-                    type="number"
-                    value={statsForm.dewateringFleet}
-                    onChange={(e) => setStatsForm({ ...statsForm, dewateringFleet: Number(e.target.value) })}
-                    className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-base focus:border-brand-gold-500"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: SERVICES ARRAY */}
-          {activeTab === 'services' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">Services Offerings Array</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/services</code>
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      setServicesForm([
-                        ...servicesForm,
-                        {
-                          id: `service_${Date.now()}`,
-                          title: 'New Service Item',
-                          description: 'Description of the new engineering service.',
-                          badge: 'Service Spec',
-                        },
-                      ])
-                    }
-                    className="bg-neutral-800 hover:bg-neutral-700 text-brand-gold-400 border border-brand-gold-500/30 text-xs font-mono uppercase px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Add Service
-                  </button>
-
-                  <button
-                    onClick={() => handleSaveSection('services', { services: servicesForm })}
-                    disabled={isSaving}
-                    className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                  >
-                    <Save className="w-4 h-4" />
-                    {isSaving ? 'Saving...' : 'Save Services'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {servicesForm.map((s, idx) => (
-                  <div key={s.id || idx} className="bg-neutral-950 border border-white/10 rounded-2xl p-4 space-y-3 relative group">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] text-brand-gold-400 uppercase tracking-widest">
-                        Service #{idx + 1}
-                      </span>
-                      <button
-                        onClick={() => setServicesForm(servicesForm.filter((_, i) => i !== idx))}
-                        className="text-red-400 hover:text-red-300 bg-red-950/30 hover:bg-red-900/50 p-1.5 rounded-lg border border-red-900/30 transition-all cursor-pointer"
-                        title="Remove service entry"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                      <div className="space-y-1">
-                        <label className="block text-neutral-400 font-mono">Title</label>
-                        <input
-                          type="text"
-                          value={s.title}
-                          onChange={(e) => {
-                            const copy = [...servicesForm];
-                            copy[idx].title = e.target.value;
-                            setServicesForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="block text-neutral-400 font-mono">Badge Tag</label>
-                        <input
-                          type="text"
-                          value={s.badge || ''}
-                          onChange={(e) => {
-                            const copy = [...servicesForm];
-                            copy[idx].badge = e.target.value;
-                            setServicesForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white"
-                        />
-                      </div>
-
-                      <div className="md:col-span-2 space-y-1">
-                        <label className="block text-neutral-400 font-mono">Description</label>
-                        <textarea
-                          rows={2}
-                          value={s.description}
-                          onChange={(e) => {
-                            const copy = [...servicesForm];
-                            copy[idx].description = e.target.value;
-                            setServicesForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-sans"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: CLIENTS */}
-          {activeTab === 'clients' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">Client Organizations & Logos</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/clients</code>
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      setClientsForm([
-                        ...clientsForm,
-                        {
-                          id: `client_${Date.now()}`,
-                          name: 'New Client Partner',
-                          category: 'Government Department',
-                        },
-                      ])
-                    }
-                    className="bg-neutral-800 hover:bg-neutral-700 text-brand-gold-400 border border-brand-gold-500/30 text-xs font-mono uppercase px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Add Client
-                  </button>
-
-                  <button
-                    onClick={() => handleSaveSection('clients', { clients: clientsForm })}
-                    disabled={isSaving}
-                    className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                  >
-                    <Save className="w-4 h-4" />
-                    {isSaving ? 'Saving...' : 'Save Clients'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {clientsForm.map((c, idx) => (
-                  <div key={c.id || idx} className="bg-neutral-950 border border-white/10 rounded-2xl p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] text-brand-gold-400 uppercase">Client #{idx + 1}</span>
-                      <button
-                        onClick={() => setClientsForm(clientsForm.filter((_, i) => i !== idx))}
-                        className="text-red-400 hover:text-red-300 bg-red-950/30 p-1.5 rounded-lg border border-red-900/30 transition-all cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                    <div className="space-y-2 text-xs">
-                      <div>
-                        <label className="block text-neutral-400 font-mono text-[10px]">Client Name</label>
-                        <input
-                          type="text"
-                          value={c.name}
-                          onChange={(e) => {
-                            const copy = [...clientsForm];
-                            copy[idx].name = e.target.value;
-                            setClientsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-1.5 text-white"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-neutral-400 font-mono text-[10px]">Category</label>
-                        <input
-                          type="text"
-                          value={c.category || ''}
-                          onChange={(e) => {
-                            const copy = [...clientsForm];
-                            copy[idx].category = e.target.value;
-                            setClientsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-1.5 text-white"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-neutral-400 font-mono text-[10px]">Logo Image URL</label>
-                        <input
-                          type="text"
-                          placeholder="https://..."
-                          value={c.logoUrl || ''}
-                          onChange={(e) => {
-                            const copy = [...clientsForm];
-                            copy[idx].logoUrl = e.target.value;
-                            setClientsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-1.5 text-white font-mono text-[11px]"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 6: GOVERNING BOARD */}
-          {activeTab === 'governingBoard' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">Governing Board & Leadership</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/governingBoard</code>
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      setBoardForm([
-                        ...boardForm,
-                        {
-                          id: `board_${Date.now()}`,
-                          name: 'New Board Member',
-                          designation: 'Executive Officer',
-                          photoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80',
-                          bio: 'Executive leader bio text.',
-                        },
-                      ])
-                    }
-                    className="bg-neutral-800 hover:bg-neutral-700 text-brand-gold-400 border border-brand-gold-500/30 text-xs font-mono uppercase px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Add Member
-                  </button>
-
-                  <button
-                    onClick={() => handleSaveSection('governingBoard', { boardMembers: boardForm })}
-                    disabled={isSaving}
-                    className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                  >
-                    <Save className="w-4 h-4" />
-                    {isSaving ? 'Saving...' : 'Save Board'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {boardForm.map((m, idx) => (
-                  <div key={m.id || idx} className="bg-neutral-950 border border-white/10 rounded-2xl p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {m.photoUrl && (
-                          <img
-                            src={m.photoUrl}
-                            alt={m.name}
-                            className="w-10 h-10 rounded-full object-cover border border-brand-gold-500/40"
-                          />
-                        )}
-                        <span className="font-mono text-[10px] text-brand-gold-400 uppercase">
-                          Board Member #{idx + 1}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setBoardForm(boardForm.filter((_, i) => i !== idx))}
-                        className="text-red-400 hover:text-red-300 bg-red-950/30 p-1.5 rounded-lg border border-red-900/30 transition-all cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                      <div>
-                        <label className="block text-neutral-400 font-mono">Full Name</label>
-                        <input
-                          type="text"
-                          value={m.name}
-                          onChange={(e) => {
-                            const copy = [...boardForm];
-                            copy[idx].name = e.target.value;
-                            setBoardForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-neutral-400 font-mono">Designation / Role</label>
-                        <input
-                          type="text"
-                          value={m.designation}
-                          onChange={(e) => {
-                            const copy = [...boardForm];
-                            copy[idx].designation = e.target.value;
-                            setBoardForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white"
-                        />
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label className="block text-neutral-400 font-mono">Photo URL</label>
-                        <input
-                          type="text"
-                          value={m.photoUrl}
-                          onChange={(e) => {
-                            const copy = [...boardForm];
-                            copy[idx].photoUrl = e.target.value;
-                            setBoardForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-[11px]"
-                        />
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label className="block text-neutral-400 font-mono">Biography / Track Record</label>
-                        <textarea
-                          rows={3}
-                          value={m.bio}
-                          onChange={(e) => {
-                            const copy = [...boardForm];
-                            copy[idx].bio = e.target.value;
-                            setBoardForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-sans leading-relaxed"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 7: PROJECTS */}
-          {activeTab === 'projects' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">Project Entries Portfolio</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/projects</code>
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      setProjectsForm([
-                        ...projectsForm,
-                        {
-                          id: `proj_${Date.now()}`,
-                          title: 'New Engineering Project',
-                          description: 'Scope details of the construction or dewatering project.',
-                          imageUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80',
-                          year: new Date().getFullYear().toString(),
-                          status: 'In Progress',
-                          location: 'Tamil Nadu',
-                        },
-                      ])
-                    }
-                    className="bg-neutral-800 hover:bg-neutral-700 text-brand-gold-400 border border-brand-gold-500/30 text-xs font-mono uppercase px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Add Project
-                  </button>
-
-                  <button
-                    onClick={() => handleSaveSection('projects', { projects: projectsForm })}
-                    disabled={isSaving}
-                    className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                  >
-                    <Save className="w-4 h-4" />
-                    {isSaving ? 'Saving...' : 'Save Projects'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {projectsForm.map((p, idx) => (
-                  <div key={p.id || idx} className="bg-neutral-950 border border-white/10 rounded-2xl p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] text-brand-gold-400 uppercase">
-                        Project #{idx + 1}
-                      </span>
-                      <button
-                        onClick={() => setProjectsForm(projectsForm.filter((_, i) => i !== idx))}
-                        className="text-red-400 hover:text-red-300 bg-red-950/30 p-1.5 rounded-lg border border-red-900/30 transition-all cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                      <div className="md:col-span-2">
-                        <label className="block text-neutral-400 font-mono">Project Title</label>
-                        <input
-                          type="text"
-                          value={p.title}
-                          onChange={(e) => {
-                            const copy = [...projectsForm];
-                            copy[idx].title = e.target.value;
-                            setProjectsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-semibold"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-neutral-400 font-mono">Status</label>
-                        <select
-                          value={p.status}
-                          onChange={(e) => {
-                            const copy = [...projectsForm];
-                            copy[idx].status = e.target.value;
-                            setProjectsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono"
-                        >
-                          <option value="Completed">Completed</option>
-                          <option value="In Progress">In Progress</option>
-                          <option value="Mobilizing">Mobilizing</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-neutral-400 font-mono">Execution Year</label>
-                        <input
-                          type="text"
-                          value={p.year}
-                          onChange={(e) => {
-                            const copy = [...projectsForm];
-                            copy[idx].year = e.target.value;
-                            setProjectsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono"
-                        />
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label className="block text-neutral-400 font-mono">Location Coordinates</label>
-                        <input
-                          type="text"
-                          value={p.location || ''}
-                          onChange={(e) => {
-                            const copy = [...projectsForm];
-                            copy[idx].location = e.target.value;
-                            setProjectsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white"
-                        />
-                      </div>
-
-                      <div className="md:col-span-3">
-                        <label className="block text-neutral-400 font-mono">Image URL</label>
-                        <input
-                          type="text"
-                          value={p.imageUrl}
-                          onChange={(e) => {
-                            const copy = [...projectsForm];
-                            copy[idx].imageUrl = e.target.value;
-                            setProjectsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-[11px]"
-                        />
-                      </div>
-
-                      <div className="md:col-span-3">
-                        <label className="block text-neutral-400 font-mono">Description</label>
-                        <textarea
-                          rows={2}
-                          value={p.description}
-                          onChange={(e) => {
-                            const copy = [...projectsForm];
-                            copy[idx].description = e.target.value;
-                            setProjectsForm(copy);
-                          }}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-white font-sans leading-relaxed"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 8: CONTACT */}
-          {activeTab === 'contact' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">Contact & Office Addresses</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/contact</code>
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleSaveSection('contact', contactForm)}
-                  disabled={isSaving}
-                  className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? 'Saving...' : 'Save Contact'}
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Primary Phone</label>
-                  <input
-                    type="text"
-                    value={contactForm.phonePrimary}
-                    onChange={(e) => setContactForm({ ...contactForm, phonePrimary: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Secondary Phone</label>
-                  <input
-                    type="text"
-                    value={contactForm.phoneSecondary}
-                    onChange={(e) => setContactForm({ ...contactForm, phoneSecondary: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Primary Email</label>
-                  <input
-                    type="email"
-                    value={contactForm.emailPrimary}
-                    onChange={(e) => setContactForm({ ...contactForm, emailPrimary: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Secondary Email</label>
-                  <input
-                    type="email"
-                    value={contactForm.emailSecondary}
-                    onChange={(e) => setContactForm({ ...contactForm, emailSecondary: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">WhatsApp Number</label>
-                  <input
-                    type="text"
-                    value={contactForm.whatsappNumber}
-                    onChange={(e) => setContactForm({ ...contactForm, whatsappNumber: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Working Hours</label>
-                  <input
-                    type="text"
-                    value={contactForm.workingHours}
-                    onChange={(e) => setContactForm({ ...contactForm, workingHours: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-sans"
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Villupuram HQ Address</label>
-                  <textarea
-                    rows={2}
-                    value={contactForm.addressVillupuram}
-                    onChange={(e) => setContactForm({ ...contactForm, addressVillupuram: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-sans leading-relaxed"
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Chennai Regional Office Address</label>
-                  <textarea
-                    rows={2}
-                    value={contactForm.addressChennai}
-                    onChange={(e) => setContactForm({ ...contactForm, addressChennai: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-sans leading-relaxed"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 9: FOOTER */}
-          {activeTab === 'footer' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <div>
-                  <h2 className="font-display font-bold text-lg text-white">Footer Content & Links</h2>
-                  <p className="text-xs text-neutral-400 font-light">
-                    Firestore Path: <code className="text-brand-gold-400 font-mono">siteContent/footer</code>
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleSaveSection('footer', footerForm)}
-                  disabled={isSaving}
-                  className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-extrabold text-xs uppercase px-5 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? 'Saving...' : 'Save Footer'}
-                </button>
-              </div>
-
-              <div className="space-y-4 text-xs">
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Footer Tagline Description</label>
-                  <textarea
-                    rows={3}
-                    value={footerForm.description}
-                    onChange={(e) => setFooterForm({ ...footerForm, description: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-sans leading-relaxed"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Copyright Notice</label>
-                  <input
-                    type="text"
-                    value={footerForm.copyright}
-                    onChange={(e) => setFooterForm({ ...footerForm, copyright: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-sans"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Instagram URL</label>
-                  <input
-                    type="text"
-                    value={footerForm.instagramUrl}
-                    onChange={(e) => setFooterForm({ ...footerForm, instagramUrl: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-[11px]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-neutral-300 font-mono uppercase">Company Brochure Drive URL</label>
-                  <input
-                    type="text"
-                    value={footerForm.brochureUrl}
-                    onChange={(e) => setFooterForm({ ...footerForm, brochureUrl: e.target.value })}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-[11px]"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 10: TRANSLATIONS */}
-          {activeTab === 'translations' && (
-            <TranslationsManager triggerToast={triggerToast} setSaveError={setSaveError} />
-          )}
-        </div>
+          {/* Tab Render Switch */}
+          {activeTab === 'hero' && <HeroTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'about' && <AboutTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'stats' && <StatsTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'services' && <ServicesTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'clients' && <ClientsTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'governingBoard' && <GoverningBoardTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'projects' && <ProjectsTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'equipment' && <EquipmentTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'capabilityStatement' && <CapabilityStatementTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'hydraulicBroomer' && <HydraulicBroomerTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'weatherAlertBanner' && <WeatherAlertBannerTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'chatbot' && <ChatbotTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'navigation' && <NavigationTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'contact' && <ContactTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'footer' && <FooterTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'translations' && <TranslationsTab content={siteContent} updateSection={updateSection} />}
+        </main>
       </div>
 
-      {/* HISTORY OF CHANGES & SNAPSHOT BACKUPS MODAL */}
+      {/* History of Changes & Snapshot Modal */}
       {isHistoryOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-          <div className="bg-neutral-900 border border-neutral-700/80 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-neutral-900 border border-white/10 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             {/* Modal Header */}
-            <div className="p-5 bg-neutral-950 border-b border-white/10 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-sky-500/15 border border-sky-500/30 rounded-xl text-sky-400">
-                  <History className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-display font-bold text-lg text-white flex items-center gap-2">
-                    History of Changes & Snapshot Backups
-                    <span className="text-[10px] font-mono bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full">
-                      Real-time onSnapshot Active
-                    </span>
-                  </h3>
-                  <p className="text-xs text-neutral-400">
-                    Track change records, download historical JSON snapshots, or restore previous versions.
-                  </p>
-                </div>
+            <div className="p-4 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <History className="w-5 h-5 text-purple-400" />
+                <h3 className="font-display font-bold text-base text-white">History of Changes & Rollback Snapshots</h3>
               </div>
-
               <button
-                onClick={() => setIsHistoryOpen(false)}
-                className="p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-xl transition-all cursor-pointer"
+                onClick={() => {
+                  setIsHistoryOpen(false);
+                  setViewingSnapshot(null);
+                }}
+                className="p-1 text-neutral-400 hover:text-white rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Action Bar */}
-            <div className="p-4 bg-neutral-900/90 border-b border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2 flex-wrap">
-                <button
-                  onClick={handleBackupContent}
-                  disabled={isBackingUp}
-                  className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer shadow transition-all"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  {isBackingUp ? 'Generating...' : 'Backup Current State (JSON)'}
-                </button>
-
-                <label className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 font-mono text-[11px] uppercase px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer transition-all">
-                  <Upload className="w-3.5 h-3.5 text-amber-400" />
-                  Upload Backup JSON
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={handleUploadJSONBackup}
-                    className="hidden"
-                  />
-                </label>
-
-                <button
-                  onClick={handleRestoreToDefault}
-                  disabled={isRestoring}
-                  className="bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-900/40 font-mono text-[11px] uppercase px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer transition-all"
-                >
-                  <RotateCcw className="w-3.5 h-3.5 text-red-400" />
-                  Restore to Default
-                </button>
-              </div>
-
-              <span className="text-neutral-500 font-mono text-[11px]">
-                {historyEntries.length} Recorded Event{historyEntries.length === 1 ? '' : 's'}
-              </span>
-            </div>
-
-            {/* Modal Body / History Entry List */}
-            <div className="p-5 overflow-y-auto space-y-3 flex-1 max-h-[60vh]">
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
               {historyLoading ? (
-                <div className="py-12 text-center font-mono text-neutral-400 text-xs flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
-                  <span>Loading history logs from Firestore...</span>
-                </div>
+                <div className="text-center py-12 font-mono text-xs text-neutral-400">Loading change audit logs...</div>
               ) : historyEntries.length === 0 ? (
-                <div className="py-12 text-center text-neutral-500 space-y-2">
-                  <Clock className="w-8 h-8 mx-auto text-neutral-600" />
-                  <p className="font-mono text-xs">No change history recorded yet.</p>
-                  <p className="text-xs font-light text-neutral-400">
-                    Edits, backups, or default seedings will automatically record historical snapshot entries here.
-                  </p>
+                <div className="text-center py-12 font-mono text-xs text-neutral-500">
+                  No history logs recorded yet. Changes made in the Admin Portal will automatically generate audit snapshots here.
                 </div>
               ) : (
-                historyEntries.map((entry) => (
-                  <div
-                    key={entry.id || entry.timestamp}
-                    className="bg-neutral-950/80 border border-white/10 hover:border-sky-500/40 rounded-xl p-4 transition-all space-y-3"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-2.5">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="bg-sky-500/10 text-sky-400 border border-sky-500/30 text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-md">
-                          {entry.action}
-                        </span>
-                        {entry.sectionKey && (
-                          <span className="bg-neutral-800 text-neutral-300 text-[10px] font-mono px-2 py-0.5 rounded">
-                            Section: {entry.sectionKey}
-                          </span>
-                        )}
+                <div className="space-y-3">
+                  {historyEntries.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="bg-neutral-950 border border-white/10 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-all"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-bold text-purple-400">{entry.action}</span>
+                          {entry.sectionKey && (
+                            <span className="text-[10px] font-mono bg-neutral-800 text-neutral-300 px-2 py-0.5 rounded-full">
+                              {entry.sectionKey}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-neutral-400 flex items-center gap-1.5 font-mono">
+                          <Clock className="w-3.5 h-3.5 text-neutral-500" />
+                          {new Date(entry.timestamp).toLocaleString()}
+                          {entry.userEmail && <span className="text-neutral-500">by {entry.userEmail}</span>}
+                        </p>
                       </div>
 
-                      <div className="flex items-center gap-2 text-neutral-400 font-mono text-[11px]">
-                        <Clock className="w-3.5 h-3.5 text-neutral-500" />
-                        <span>{new Date(entry.timestamp).toLocaleString()}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
-                      <p className="text-xs text-neutral-400 font-light">
-                        Recorded by: <strong className="text-neutral-200 font-mono">{entry.userEmail || 'admin@srivelan.com'}</strong>
-                      </p>
-
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center gap-2 shrink-0">
                         <button
-                          onClick={() => setViewingSnapshot(viewingSnapshot === entry.id ? null : entry.id)}
-                          className="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-white/10 px-3 py-1.5 rounded-lg font-mono text-[11px] flex items-center gap-1 transition-all cursor-pointer"
+                          onClick={() => setViewingSnapshot(entry.snapshot)}
+                          className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono transition-all"
                         >
-                          <FileJson className="w-3.5 h-3.5 text-amber-400" />
-                          {viewingSnapshot === entry.id ? 'Hide JSON' : 'Inspect JSON'}
+                          View Snapshot
                         </button>
-
                         <button
-                          onClick={() => handleDownloadHistoryJSON(entry)}
-                          className="bg-neutral-800 hover:bg-neutral-700 text-sky-400 border border-sky-500/20 px-3 py-1.5 rounded-lg font-mono text-[11px] flex items-center gap-1 transition-all cursor-pointer"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                          Download JSON
-                        </button>
-
-                        <button
-                          onClick={() => handleRestoreFromHistory(entry)}
+                          onClick={() => handleRollback(entry)}
                           disabled={isRestoring}
-                          className="bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-lg font-mono text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer disabled:opacity-50"
+                          className="bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 px-3 py-1.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer disabled:opacity-50"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
-                          Restore This Version
+                          Rollback
                         </button>
                       </div>
                     </div>
+                  ))}
+                </div>
+              )}
 
-                    {/* Inline JSON Inspector */}
-                    {viewingSnapshot === entry.id && (
-                      <div className="bg-neutral-900/90 border border-white/10 rounded-xl p-3 font-mono text-[10px] text-neutral-300 overflow-x-auto max-h-48 mt-2">
-                        <pre>{JSON.stringify(entry.snapshot, null, 2)}</pre>
-                      </div>
-                    )}
+              {/* Snapshot Inspector Preview */}
+              {viewingSnapshot && (
+                <div className="mt-6 border-t border-white/10 pt-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-mono font-bold text-brand-gold-400">Snapshot JSON Payload Inspector</p>
+                    <button
+                      onClick={() => setViewingSnapshot(null)}
+                      className="text-[11px] font-mono text-neutral-400 hover:text-white"
+                    >
+                      Close Inspector
+                    </button>
                   </div>
-                ))
+                  <pre className="bg-neutral-950 border border-white/10 rounded-xl p-4 text-[11px] font-mono text-emerald-400 max-h-60 overflow-y-auto">
+                    {JSON.stringify(viewingSnapshot, null, 2)}
+                  </pre>
+                </div>
               )}
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function flattenObject(obj: Record<string, any>, prefix = ''): Record<string, string> {
-  const result: Record<string, string> = {};
-  if (!obj || typeof obj !== 'object') return result;
-
-  for (const key of Object.keys(obj)) {
-    const value = obj[key];
-    const newKey = prefix ? `${prefix}.${key}` : key;
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      Object.assign(result, flattenObject(value, newKey));
-    } else if (typeof value === 'string') {
-      result[newKey] = value;
-    }
-  }
-  return result;
-}
-
-function unflattenObject(flatObj: Record<string, string>): Record<string, any> {
-  const result: Record<string, any> = {};
-  for (const key of Object.keys(flatObj)) {
-    const value = flatObj[key];
-    const parts = key.split('.');
-    let current = result;
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-      if (i === parts.length - 1) {
-        current[part] = value;
-      } else {
-        if (!current[part] || typeof current[part] !== 'object') {
-          current[part] = {};
-        }
-        current = current[part];
-      }
-    }
-  }
-  return result;
-}
-
-function TranslationsManager({
-  triggerToast,
-  setSaveError,
-}: {
-  triggerToast: (msg: string) => void;
-  setSaveError: (msg: string | null) => void;
-}) {
-  const { liveTranslations, updateAllTranslations, language, changeLanguage } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [isSaving, setIsSaving] = useState(false);
-
-  const initialPairs = useMemo(() => {
-    const enFlat = flattenObject(liveTranslations?.en || staticTranslations.en);
-    const taFlat = flattenObject(liveTranslations?.ta || staticTranslations.ta);
-
-    const allKeys = Array.from(new Set([...Object.keys(enFlat), ...Object.keys(taFlat)])).sort();
-
-    return allKeys.map((key) => ({
-      key,
-      en: enFlat[key] || '',
-      ta: taFlat[key] || '',
-    }));
-  }, [liveTranslations]);
-
-  const [pairs, setPairs] = useState(initialPairs);
-
-  useEffect(() => {
-    setPairs(initialPairs);
-  }, [initialPairs]);
-
-  const [newKey, setNewKey] = useState('');
-  const [newEn, setNewEn] = useState('');
-  const [newTa, setNewTa] = useState('');
-
-  const categories = [
-    'all',
-    'common',
-    'navigation',
-    'home',
-    'about',
-    'services',
-    'projects',
-    'equipment',
-    'contact',
-    'footer',
-    'ai',
-    'capability',
-  ];
-
-  const handleValueChange = (key: string, field: 'en' | 'ta', value: string) => {
-    setPairs((prev) => prev.map((p) => (p.key === key ? { ...p, [field]: value } : p)));
-  };
-
-  const handleDeleteKey = (keyToDelete: string) => {
-    setPairs((prev) => prev.filter((p) => p.key !== keyToDelete));
-  };
-
-  const handleAddNewKey = () => {
-    if (!newKey.trim()) {
-      alert('Please enter a valid translation key (e.g. common.slogan)');
-      return;
-    }
-    const cleanKey = newKey.trim();
-    if (pairs.some((p) => p.key === cleanKey)) {
-      alert('This translation key already exists!');
-      return;
-    }
-    setPairs((prev) => [...prev, { key: cleanKey, en: newEn, ta: newTa }]);
-    setNewKey('');
-    setNewEn('');
-    setNewTa('');
-  };
-
-  const handleSaveToFirestore = async () => {
-    setIsSaving(true);
-    setSaveError(null);
-    try {
-      const enFlat: Record<string, string> = {};
-      const taFlat: Record<string, string> = {};
-
-      pairs.forEach((p) => {
-        enFlat[p.key] = p.en;
-        taFlat[p.key] = p.ta;
-      });
-
-      const enNested = unflattenObject(enFlat);
-      const taNested = unflattenObject(taFlat);
-
-      await updateAllTranslations({
-        en: { ...enNested, ...enFlat },
-        ta: { ...taNested, ...taFlat },
-      });
-
-      triggerToast('All translations synced live to Firestore siteContent/translations collection!');
-    } catch (err: any) {
-      console.error('Error saving translations:', err);
-      setSaveError(err.message || 'Failed to save translations to Firestore.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const filteredPairs = useMemo(() => {
-    return pairs.filter((p) => {
-      const matchesSearch =
-        p.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.ta.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesCat = selectedCategory === 'all' || p.key.startsWith(`${selectedCategory}.`);
-
-      return matchesSearch && matchesCat;
-    });
-  }, [pairs, searchTerm, selectedCategory]);
-
-  return (
-    <div className="space-y-6">
-      {/* Header Info Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="font-display font-bold text-lg text-white">Dynamic Firestore Translations</h2>
-            <span className="flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Real-time Firestore Sync Active
-            </span>
-          </div>
-          <p className="text-xs text-neutral-400 font-light mt-1">
-            Firestore Collection Path: <code className="text-amber-400 font-mono font-bold">siteContent/translations</code>
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 bg-neutral-950 p-1 border border-white/10 rounded-xl text-xs">
-            <span className="text-neutral-400 font-mono text-[10px] px-2">Language:</span>
-            <button
-              onClick={() => changeLanguage('en')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                language === 'en' ? 'bg-amber-500 text-neutral-950 shadow-sm' : 'text-neutral-400 hover:text-white'
-              }`}
-            >
-              English
-            </button>
-            <button
-              onClick={() => changeLanguage('ta')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                language === 'ta' ? 'bg-amber-500 text-neutral-950 shadow-sm' : 'text-neutral-400 hover:text-white'
-              }`}
-            >
-              தமிழ் (Tamil)
-            </button>
-          </div>
-
-          <button
-            onClick={handleSaveToFirestore}
-            disabled={isSaving}
-            className="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-display font-extrabold text-xs uppercase px-5 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-          >
-            <Save className="w-4 h-4" />
-            {isSaving ? 'Syncing...' : 'Save Translations'}
-          </button>
-        </div>
-      </div>
-
-      {/* Add New Key Form */}
-      <div className="bg-neutral-950/80 border border-amber-500/30 rounded-2xl p-4 sm:p-5 space-y-4">
-        <div className="flex items-center gap-2 text-amber-400 font-display font-bold text-xs uppercase tracking-wider">
-          <Plus className="w-4 h-4" />
-          <span>Add New Translation Key</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label className="block text-[10px] font-mono text-neutral-400 uppercase mb-1">Key Path (e.g. common.slogan)</label>
-            <input
-              type="text"
-              placeholder="category.key_name"
-              value={newKey}
-              onChange={(e) => setNewKey(e.target.value)}
-              className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-[10px] font-mono text-neutral-400 uppercase mb-1">English Value</label>
-            <input
-              type="text"
-              placeholder="English translation text..."
-              value={newEn}
-              onChange={(e) => setNewEn(e.target.value)}
-              className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
-            />
-          </div>
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="block text-[10px] font-mono text-neutral-400 uppercase mb-1">Tamil Value</label>
-              <input
-                type="text"
-                placeholder="தமிழ் உரை..."
-                value={newTa}
-                onChange={(e) => setNewTa(e.target.value)}
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-sans"
-              />
-            </div>
-            <button
-              onClick={handleAddNewKey}
-              className="self-end bg-amber-500 hover:bg-amber-400 text-neutral-950 font-mono text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer shrink-0"
-            >
-              Add
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Search & Filter Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Search translation keys or text (English or Tamil)..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white"
-          />
-        </div>
-
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          <Filter className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-mono uppercase transition-all whitespace-nowrap cursor-pointer ${
-                selectedCategory === cat
-                  ? 'bg-amber-500 text-neutral-950 font-bold'
-                  : 'bg-neutral-900 text-neutral-400 hover:text-white border border-white/5'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Translations List */}
-      <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
-        <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest flex justify-between px-2">
-          <span>Showing {filteredPairs.length} of {pairs.length} Translation Keys</span>
-        </div>
-
-        {filteredPairs.map((item) => (
-          <div
-            key={item.key}
-            className="bg-neutral-950/60 border border-white/10 hover:border-white/20 rounded-xl p-3.5 space-y-2 transition-all"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-mono text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-md">
-                {item.key}
-              </span>
-              <button
-                onClick={() => handleDeleteKey(item.key)}
-                className="text-neutral-500 hover:text-red-400 transition-colors p-1"
-                title="Delete Key"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-              <div>
-                <label className="block text-[9px] font-mono text-neutral-500 uppercase mb-0.5">English (en)</label>
-                <textarea
-                  rows={item.en.length > 80 ? 2 : 1}
-                  value={item.en}
-                  onChange={(e) => handleValueChange(item.key, 'en', e.target.value)}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-neutral-100 focus:border-amber-500/50 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-[9px] font-mono text-neutral-500 uppercase mb-0.5">Tamil (ta)</label>
-                <textarea
-                  rows={item.ta.length > 80 ? 2 : 1}
-                  value={item.ta}
-                  onChange={(e) => handleValueChange(item.key, 'ta', e.target.value)}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-neutral-100 focus:border-amber-500/50 outline-none font-sans"
-                />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

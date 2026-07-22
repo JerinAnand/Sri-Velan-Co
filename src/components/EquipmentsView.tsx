@@ -19,9 +19,8 @@ import {
 } from 'lucide-react';
 import { EQUIPMENTS } from '../data';
 import { EquipmentItem } from '../types';
-import { useAdmin } from '../context/AdminContext';
 import { useTranslation } from '../context/TranslationContext';
-import { EditableValue } from './EditableValue';
+import { useSiteContent } from '../context/SiteContentContext';
 import { translations, getValueByPath } from '../translations';
 
 const METRIC_HELP_TEXTS_EN: Record<string, string> = {
@@ -43,11 +42,10 @@ const METRIC_HELP_TEXTS_TA: Record<string, string> = {
 };
 
 export const EquipmentsView: React.FC = () => {
-  const { getValue } = useAdmin();
   const { t, language } = useTranslation();
 
-  const getSpecValue = (equipId: string, label: string, defaultVal: string) => {
-    return getValue(`eq_spec_${equipId}_${label}`, defaultVal);
+  const getSpecValue = (_equipId: string, _label: string, defaultVal: string) => {
+    return defaultVal;
   };
 
   const [activeCategory, setActiveCategory] = useState<'all' | 'tractor-mounted' | 'earth-moving'>('all');
@@ -357,10 +355,7 @@ export const EquipmentsView: React.FC = () => {
                                 {label}
                               </span>
                               <span className="text-neutral-800 font-mono text-left sm:text-right font-medium">
-                                <EditableValue
-                                  id={`eq_spec_${selectedEquip.id}_${label}`}
-                                  defaultValue={specVal}
-                                />
+                                {specVal}
                               </span>
                             </div>
                           );

@@ -8,16 +8,17 @@ import { Phone, Mail, MapPin, Award, ArrowUpRight, Instagram, FileText } from 'l
 import { useNavigate } from 'react-router-dom';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { ActiveView } from '../types';
-import { useAdmin } from '../context/AdminContext';
 import { useTranslation } from '../context/TranslationContext';
-import { EditableValue } from './EditableValue';
+import { useSiteContent } from '../context/SiteContentContext';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
-  const { setShowLoginModal, getValue } = useAdmin();
   const { t } = useTranslation();
+  const { siteContent } = useSiteContent();
+  const footerData = siteContent.footer;
+  const contactData = siteContent.contact;
 
   const quickLinks = [
     { label: t('footer.links.home'), view: 'home' as ActiveView },
@@ -57,16 +58,16 @@ export const Footer: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-display font-bold text-lg tracking-wide uppercase text-brand-gold-500">
-                  <EditableValue id="company_name" defaultValue={COMPANY_DETAILS.name} />
+                  {COMPANY_DETAILS.name}
                 </h3>
                 <span className="text-[10px] text-brand-gold-400 font-mono block tracking-widest leading-none">
-                  {t('navigation.establishedIn')} <EditableValue id="company_year_established" defaultValue={COMPANY_DETAILS.yearEstablished} />
+                  {t('navigation.establishedIn')} {COMPANY_DETAILS.yearEstablished}
                 </span>
               </div>
             </div>
             
             <p className="text-sm text-neutral-300 leading-relaxed font-sans">
-              {t('footer.companyDesc')}
+              {footerData?.description || t('footer.companyDesc')}
             </p>
 
             {/* Registration Tags Bento Box */}
@@ -74,14 +75,14 @@ export const Footer: React.FC = () => {
               <div className="flex justify-between items-center text-xs">
                 <span className="text-neutral-400">{t('footer.gstRegistry')}</span>
                 <span className="text-brand-gold-400 font-mono font-medium select-all">
-                  <EditableValue id="company_gstin" defaultValue={COMPANY_DETAILS.gstin} />
+                  {COMPANY_DETAILS.gstin}
                 </span>
               </div>
               <div className="h-px bg-brand-blue-800/40 w-full" />
               <div className="flex justify-between items-center text-xs">
                 <span className="text-neutral-400">{t('footer.msmeUdyam')}</span>
                 <span className="text-brand-gold-400 font-mono font-medium select-all">
-                  <EditableValue id="company_msme" defaultValue={COMPANY_DETAILS.msme} />
+                  {COMPANY_DETAILS.msme}
                 </span>
               </div>
             </div>
@@ -117,45 +118,33 @@ export const Footer: React.FC = () => {
             <div className="space-y-3.5 text-sm text-neutral-300">
               <div className="space-y-2">
                 <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">{t('footer.emergencyHotlines')}</p>
-                {COMPANY_DETAILS.phones.map((phone, idx) => {
-                  const phoneId = `company_phone_${idx}`;
-                  const displayPhone = getValue(phoneId, phone);
-                  return (
-                    <a
-                      key={phone}
-                      href={`tel:${String(displayPhone).replace(/\s+/g, '')}`}
-                      aria-label={`Call emergency duty hotline at ${phone}`}
-                      title={`Call Emergency Duty Hotline: ${phone}`}
-                      className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors font-medium text-white"
-                    >
-                      <Phone className="w-4 h-4 text-brand-gold-500 shrink-0" />
-                      <EditableValue id={phoneId} defaultValue={phone} />
-                    </a>
-                  );
-                })}
+                <a
+                  href={`tel:${(contactData?.phonePrimary || COMPANY_DETAILS.phones[0]).replace(/\s+/g, '')}`}
+                  className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors font-medium text-white"
+                >
+                  <Phone className="w-4 h-4 text-brand-gold-500 shrink-0" />
+                  <span>{contactData?.phonePrimary || COMPANY_DETAILS.phones[0]}</span>
+                </a>
+                {contactData?.phoneSecondary && (
+                  <a
+                    href={`tel:${contactData.phoneSecondary.replace(/\s+/g, '')}`}
+                    className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors font-medium text-white"
+                  >
+                    <Phone className="w-4 h-4 text-brand-gold-500 shrink-0" />
+                    <span>{contactData.phoneSecondary}</span>
+                  </a>
+                )}
               </div>
 
               <div className="space-y-2 pt-2">
                 <p className="text-xs font-mono tracking-wider text-neutral-400 uppercase">{t('footer.adminEmail')}</p>
-                <div className="space-y-1">
-                  {COMPANY_DETAILS.emails.slice(0, 2).map((email, idx) => {
-                    const emailId = `company_email_${idx}`;
-                    return (
-                      <a
-                        key={email}
-                        href={`mailto:${getValue(emailId, email)}`}
-                        aria-label={`Email Sri Velan and Co administration office at ${email}`}
-                        className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors truncate"
-                        title={`Email administration: ${email}`}
-                      >
-                        <Mail className="w-4 h-4 text-brand-gold-500 shrink-0" />
-                        <span className="truncate">
-                          <EditableValue id={emailId} defaultValue={email} />
-                        </span>
-                      </a>
-                    );
-                  })}
-                </div>
+                <a
+                  href={`mailto:${contactData?.emailPrimary || COMPANY_DETAILS.emails[0]}`}
+                  className="flex items-center gap-2 hover:text-brand-gold-400 transition-colors truncate"
+                >
+                  <Mail className="w-4 h-4 text-brand-gold-500 shrink-0" />
+                  <span className="truncate">{contactData?.emailPrimary || COMPANY_DETAILS.emails[0]}</span>
+                </a>
               </div>
             </div>
           </div>
@@ -243,7 +232,7 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-1.5 flex-wrap justify-center text-center">
             <span>© {currentYear}</span>
             <span className="font-semibold text-white">
-              <EditableValue id="company_legal_name" defaultValue={COMPANY_DETAILS.legalName} />.
+              {COMPANY_DETAILS.legalName}.
             </span>
             <span>{t('footer.allRightsReserved')}</span>
           </div>
@@ -256,13 +245,6 @@ export const Footer: React.FC = () => {
             <span>•</span>
             <button onClick={() => handleLinkClick('contact')} className="hover:text-brand-gold-400 transition-colors">
               {t('footer.contractIntakePortal')}
-            </button>
-            <span>•</span>
-            <button 
-              onClick={() => navigate('/admin/login')} 
-              className="hover:text-brand-gold-400 transition-colors text-[10px] text-neutral-400 hover:underline uppercase tracking-wider font-mono cursor-pointer flex items-center gap-1"
-            >
-              <span>{t('footer.adminPortal')}</span>
             </button>
           </div>
         </div>

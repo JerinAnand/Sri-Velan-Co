@@ -31,7 +31,6 @@ import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { useAdmin } from '../context/AdminContext';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
-import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 import pwdLogo from '../assets/images/pwd_logo_1784540042820.jpg';
 import gccLogo from '../assets/images/gcc_logo_1784540058542.jpg';
@@ -116,7 +115,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
   const { getValue, isAdmin } = useAdmin();
   const yoeTarget = siteContent?.stats?.yearsExperience ?? getValue('home_years_of_legacy', 20);
-  const pumpCountTarget = siteContent?.stats?.dewateringFleet ?? getValue('home_heavy_machineries', 35);
+  const pumpCountTarget = siteContent?.stats?.dewateringFleet ?? getValue('home_heavy_machineries', 400);
 
   // Triggering hooks for numbers
   const yoeAnim = useCountUp(yoeTarget, 1800);
@@ -441,20 +440,16 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  {isAdmin ? (
-                    <EditableValue id="home_years_of_legacy" defaultValue={20} displaySuffix="+" />
-                  ) : (
-                    <>{yoeAnim}+</>
-                  )}
+                  {siteContent.stats?.yearsExperience || `${yoeAnim}+`}
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   {t('home.stats.yearsLegacy')}
                 </p>
                 <p className="text-xs text-neutral-500 leading-tight">
                   {language === 'en' ? (
-                    <>Founded in <EditableValue id="company_year_established" defaultValue={2006} /> in Villupuram</>
+                    <>Founded in {COMPANY_DETAILS.yearEstablished} in Villupuram</>
                   ) : (
-                    <><EditableValue id="company_year_established" defaultValue={2006} /> ஆம் ஆண்டு விழுப்புரத்தில் நிறுவப்பட்டது</>
+                    <>{COMPANY_DETAILS.yearEstablished} ஆம் ஆண்டு விழுப்புரத்தில் நிறுவப்பட்டது</>
                   )}
                 </p>
               </div>
@@ -467,7 +462,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  <EditableValue id="home_gov_registrations" defaultValue={5} displaySuffix="+" />
+                  5+
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   {t('home.stats.govContractor')}
@@ -483,11 +478,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  {isAdmin ? (
-                    <EditableValue id="home_heavy_machineries" defaultValue={400} displaySuffix="+" />
-                  ) : (
-                    <>{pumpCount}+</>
-                  )}
+                  {siteContent.stats?.heavyMachineries || `${pumpCount}+`}
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   {t('home.stats.machineryFleet')}
@@ -503,7 +494,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
               </div>
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-4xl font-display font-black text-white leading-none font-mono">
-                  <EditableValue id="home_dispatch_hours" defaultValue="24/7" />
+                  24/7
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-mono uppercase tracking-widest">
                   {t('home.stats.dispatchDesk')}

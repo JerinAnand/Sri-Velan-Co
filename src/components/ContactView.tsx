@@ -33,10 +33,8 @@ import {
   User
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
-import { useEasterEgg } from '../context/EasterEggContext';
 import { useLoading } from '../context/LoadingContext';
 import { useAdmin } from '../context/AdminContext';
-import { EditableValue } from './EditableValue';
 import { useTranslation } from '../context/TranslationContext';
 
 interface VCardContact {
@@ -129,7 +127,6 @@ export const maskPhoneNumber = (phone: string): string => {
 
 export const ContactView: React.FC = () => {
   const { t, language } = useTranslation();
-  const { registerClick } = useEasterEgg();
   const { runWithLoader } = useLoading();
   const { getValue, isAdmin } = useAdmin();
 
@@ -576,12 +573,11 @@ export const ContactView: React.FC = () => {
                           <a 
                             key={p}
                             href={`tel:${String(displayPhone).replace(/\s+/g, '')}`} 
-                            onClick={() => registerClick('emergency-dial')}
                             aria-label={`Call general inquiries and rapid operations desk at mobile number ${p}`}
                             title={`Call operations representative at ${p}`}
                             className="block font-display font-semibold text-base text-brand-blue-900 hover:text-brand-gold-600 transition-colors truncate"
                           >
-                            <EditableValue id={phoneId} defaultValue={p} />
+                            {p}
                           </a>
                         );
                       })}
@@ -591,7 +587,6 @@ export const ContactView: React.FC = () => {
                   {/* Instant WhatsApp */}
                   <button
                     onClick={() => {
-                      registerClick('whatsapp');
                       sendWhatsApp();
                     }}
                     aria-label="Launch secure encrypted WhatsApp Chat panel directly to inquire with our Estimating Officer"
@@ -637,7 +632,7 @@ export const ContactView: React.FC = () => {
                           className="block text-neutral-600 hover:text-brand-blue-700 hover:underline py-1 truncate text-left"
                           title={email}
                         >
-                          <EditableValue id={emailId} defaultValue={email} />
+                          {email}
                         </a>
                       );
                     })}
@@ -714,10 +709,10 @@ export const ContactView: React.FC = () => {
                         <div className="space-y-2 text-left min-w-0 flex-1 w-full">
                           <div className="space-y-0.5 text-left">
                             <h4 className="font-display font-black text-sm text-brand-blue-950 tracking-tight truncate text-left">
-                              <EditableValue id={`vcard_${activeContact.id}_title`} defaultValue={originalContact.title} />
+                              {originalContact.title}
                             </h4>
                             <p className="text-[11px] text-brand-gold-600 font-mono font-bold uppercase tracking-wider text-left">
-                              <EditableValue id={`vcard_${activeContact.id}_role`} defaultValue={originalContact.role} />
+                              {originalContact.role}
                             </p>
                           </div>
 
@@ -725,19 +720,19 @@ export const ContactView: React.FC = () => {
                             <div className="flex items-center gap-2 min-w-0 text-left">
                               <Phone className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
                               <span className="font-medium text-neutral-800 truncate text-left">
-                                <EditableValue id={`vcard_${activeContact.id}_phone`} defaultValue={originalContact.phone} />
+                                {originalContact.phone}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 min-w-0 text-left">
                               <Mail className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
                               <span className="truncate text-left">
-                                <EditableValue id={`vcard_${activeContact.id}_email`} defaultValue={originalContact.email} />
+                                {originalContact.email}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 min-w-0 text-left">
                               <MapPin className="w-3.5 h-3.5 text-brand-blue-800 shrink-0" />
                               <span className="truncate text-left">
-                                <EditableValue id={`vcard_${activeContact.id}_office`} defaultValue={originalContact.office} />
+                                {originalContact.office}
                               </span>
                             </div>
                           </div>
