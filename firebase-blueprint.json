@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "SiteSection": {
+      "title": "Site Section Content",
+      "description": "Stores content for various sections of the web application",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "Translations": {
+      "title": "Translations Data",
+      "description": "Stores key-value translation dictionaries for English and Tamil",
+      "type": "object",
+      "properties": {
+        "en": { "type": "object", "description": "English translation dictionary" },
+        "ta": { "type": "object", "description": "Tamil translation dictionary" }
+      }
+    }
+  },
+  "firestore": {
+    "/siteContent/{sectionKey}": {
+      "schema": "SiteSection",
+      "description": "Collection storing site content sections, including hero, about, services, stats, clients, governingBoard, projects, contact, footer, and translations."
+    }
+  }
+}

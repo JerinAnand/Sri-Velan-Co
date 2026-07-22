@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../context/TranslationContext';
+import { translations as staticTranslations } from '../translations';
 import {
   useSiteContent,
   HeroContent,
@@ -35,6 +37,11 @@ import {
   Image as ImageIcon,
   ArrowUpRight,
   Database,
+  Globe,
+  Search,
+  Filter,
+  Languages,
+  RefreshCw,
 } from 'lucide-react';
 import { COMPANY_DETAILS } from '../data';
 
@@ -47,7 +54,8 @@ type ActiveTab =
   | 'governingBoard'
   | 'projects'
   | 'contact'
-  | 'footer';
+  | 'footer'
+  | 'translations';
 
 export function AdminDashboardView() {
   const { user, logout } = useAuth();
@@ -128,6 +136,7 @@ export function AdminDashboardView() {
     { id: 'projects', label: 'Project Entries', icon: <FolderKanban className="w-4 h-4" /> },
     { id: 'contact', label: 'Contact Info', icon: <PhoneCall className="w-4 h-4" /> },
     { id: 'footer', label: 'Footer & Links', icon: <FileText className="w-4 h-4" /> },
+    { id: 'translations', label: 'Translations (EN & TA)', icon: <Globe className="w-4 h-4 text-amber-400" /> },
   ];
 
   if (loading) {
@@ -1116,7 +1125,344 @@ export function AdminDashboardView() {
               </div>
             </div>
           )}
+
+          {/* TAB 10: TRANSLATIONS */}
+          {activeTab === 'translations' && (
+            <TranslationsManager triggerToast={triggerToast} setSaveError={setSaveError} />
+          )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function flattenObject(obj: Record<string, any>, prefix = ''): Record<string, string> {
+  const result: Record<string, string> = {};
+  if (!obj || typeof obj !== 'object') return result;
+
+  for (const key of Object.keys(obj)) {
+    const value = obj[key];
+    const newKey = prefix ? `${prefix}.${key}` : key;
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      Object.assign(result, flattenObject(value, newKey));
+    } else if (typeof value === 'string') {
+      result[newKey] = value;
+    }
+  }
+  return result;
+}
+
+function unflattenObject(flatObj: Record<string, string>): Record<string, any> {
+  const result: Record<string, any> = {};
+  for (const key of Object.keys(flatObj)) {
+    const value = flatObj[key];
+    const parts = key.split('.');
+    let current = result;
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (i === parts.length - 1) {
+        current[part] = value;
+      } else {
+        if (!current[part] || typeof current[part] !== 'object') {
+          current[part] = {};
+        }
+        current = current[part];
+      }
+    }
+  }
+  return result;
+}
+
+function TranslationsManager({
+  triggerToast,
+  setSaveError,
+}: {
+  triggerToast: (msg: string) => void;
+  setSaveError: (msg: string | null) => void;
+}) {
+  const { liveTranslations, updateAllTranslations, language, changeLanguage } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const initialPairs = useMemo(() => {
+    const enFlat = flattenObject(liveTranslations?.en || staticTranslations.en);
+    const taFlat = flattenObject(liveTranslations?.ta || staticTranslations.ta);
+
+    const allKeys = Array.from(new Set([...Object.keys(enFlat), ...Object.keys(taFlat)])).sort();
+
+    return allKeys.map((key) => ({
+      key,
+      en: enFlat[key] || '',
+      ta: taFlat[key] || '',
+    }));
+  }, [liveTranslations]);
+
+  const [pairs, setPairs] = useState(initialPairs);
+
+  useEffect(() => {
+    setPairs(initialPairs);
+  }, [initialPairs]);
+
+  const [newKey, setNewKey] = useState('');
+  const [newEn, setNewEn] = useState('');
+  const [newTa, setNewTa] = useState('');
+
+  const categories = [
+    'all',
+    'common',
+    'navigation',
+    'home',
+    'about',
+    'services',
+    'projects',
+    'equipment',
+    'contact',
+    'footer',
+    'ai',
+    'capability',
+  ];
+
+  const handleValueChange = (key: string, field: 'en' | 'ta', value: string) => {
+    setPairs((prev) => prev.map((p) => (p.key === key ? { ...p, [field]: value } : p)));
+  };
+
+  const handleDeleteKey = (keyToDelete: string) => {
+    setPairs((prev) => prev.filter((p) => p.key !== keyToDelete));
+  };
+
+  const handleAddNewKey = () => {
+    if (!newKey.trim()) {
+      alert('Please enter a valid translation key (e.g. common.slogan)');
+      return;
+    }
+    const cleanKey = newKey.trim();
+    if (pairs.some((p) => p.key === cleanKey)) {
+      alert('This translation key already exists!');
+      return;
+    }
+    setPairs((prev) => [...prev, { key: cleanKey, en: newEn, ta: newTa }]);
+    setNewKey('');
+    setNewEn('');
+    setNewTa('');
+  };
+
+  const handleSaveToFirestore = async () => {
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const enFlat: Record<string, string> = {};
+      const taFlat: Record<string, string> = {};
+
+      pairs.forEach((p) => {
+        enFlat[p.key] = p.en;
+        taFlat[p.key] = p.ta;
+      });
+
+      const enNested = unflattenObject(enFlat);
+      const taNested = unflattenObject(taFlat);
+
+      await updateAllTranslations({
+        en: { ...enNested, ...enFlat },
+        ta: { ...taNested, ...taFlat },
+      });
+
+      triggerToast('All translations synced live to Firestore siteContent/translations collection!');
+    } catch (err: any) {
+      console.error('Error saving translations:', err);
+      setSaveError(err.message || 'Failed to save translations to Firestore.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const filteredPairs = useMemo(() => {
+    return pairs.filter((p) => {
+      const matchesSearch =
+        p.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.ta.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesCat = selectedCategory === 'all' || p.key.startsWith(`${selectedCategory}.`);
+
+      return matchesSearch && matchesCat;
+    });
+  }, [pairs, searchTerm, selectedCategory]);
+
+  return (
+    <div className="space-y-6">
+      {/* Header Info Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="font-display font-bold text-lg text-white">Dynamic Firestore Translations</h2>
+            <span className="flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              Real-time Firestore Sync Active
+            </span>
+          </div>
+          <p className="text-xs text-neutral-400 font-light mt-1">
+            Firestore Collection Path: <code className="text-amber-400 font-mono font-bold">siteContent/translations</code>
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 bg-neutral-950 p-1 border border-white/10 rounded-xl text-xs">
+            <span className="text-neutral-400 font-mono text-[10px] px-2">Language:</span>
+            <button
+              onClick={() => changeLanguage('en')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                language === 'en' ? 'bg-amber-500 text-neutral-950 shadow-sm' : 'text-neutral-400 hover:text-white'
+              }`}
+            >
+              English
+            </button>
+            <button
+              onClick={() => changeLanguage('ta')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                language === 'ta' ? 'bg-amber-500 text-neutral-950 shadow-sm' : 'text-neutral-400 hover:text-white'
+              }`}
+            >
+              தமிழ் (Tamil)
+            </button>
+          </div>
+
+          <button
+            onClick={handleSaveToFirestore}
+            disabled={isSaving}
+            className="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-display font-extrabold text-xs uppercase px-5 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
+          >
+            <Save className="w-4 h-4" />
+            {isSaving ? 'Syncing...' : 'Save Translations'}
+          </button>
+        </div>
+      </div>
+
+      {/* Add New Key Form */}
+      <div className="bg-neutral-950/80 border border-amber-500/30 rounded-2xl p-4 sm:p-5 space-y-4">
+        <div className="flex items-center gap-2 text-amber-400 font-display font-bold text-xs uppercase tracking-wider">
+          <Plus className="w-4 h-4" />
+          <span>Add New Translation Key</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label className="block text-[10px] font-mono text-neutral-400 uppercase mb-1">Key Path (e.g. common.slogan)</label>
+            <input
+              type="text"
+              placeholder="category.key_name"
+              value={newKey}
+              onChange={(e) => setNewKey(e.target.value)}
+              className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white"
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] font-mono text-neutral-400 uppercase mb-1">English Value</label>
+            <input
+              type="text"
+              placeholder="English translation text..."
+              value={newEn}
+              onChange={(e) => setNewEn(e.target.value)}
+              className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
+            />
+          </div>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <label className="block text-[10px] font-mono text-neutral-400 uppercase mb-1">Tamil Value</label>
+              <input
+                type="text"
+                placeholder="தமிழ் உரை..."
+                value={newTa}
+                onChange={(e) => setNewTa(e.target.value)}
+                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-sans"
+              />
+            </div>
+            <button
+              onClick={handleAddNewKey}
+              className="self-end bg-amber-500 hover:bg-amber-400 text-neutral-950 font-mono text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer shrink-0"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Search & Filter Toolbar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search translation keys or text (English or Tamil)..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-neutral-950 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white"
+          />
+        </div>
+
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          <Filter className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-mono uppercase transition-all whitespace-nowrap cursor-pointer ${
+                selectedCategory === cat
+                  ? 'bg-amber-500 text-neutral-950 font-bold'
+                  : 'bg-neutral-900 text-neutral-400 hover:text-white border border-white/5'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Translations List */}
+      <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+        <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest flex justify-between px-2">
+          <span>Showing {filteredPairs.length} of {pairs.length} Translation Keys</span>
+        </div>
+
+        {filteredPairs.map((item) => (
+          <div
+            key={item.key}
+            className="bg-neutral-950/60 border border-white/10 hover:border-white/20 rounded-xl p-3.5 space-y-2 transition-all"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-mono text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-md">
+                {item.key}
+              </span>
+              <button
+                onClick={() => handleDeleteKey(item.key)}
+                className="text-neutral-500 hover:text-red-400 transition-colors p-1"
+                title="Delete Key"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+              <div>
+                <label className="block text-[9px] font-mono text-neutral-500 uppercase mb-0.5">English (en)</label>
+                <textarea
+                  rows={item.en.length > 80 ? 2 : 1}
+                  value={item.en}
+                  onChange={(e) => handleValueChange(item.key, 'en', e.target.value)}
+                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-neutral-100 focus:border-amber-500/50 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-[9px] font-mono text-neutral-500 uppercase mb-0.5">Tamil (ta)</label>
+                <textarea
+                  rows={item.ta.length > 80 ? 2 : 1}
+                  value={item.ta}
+                  onChange={(e) => handleValueChange(item.key, 'ta', e.target.value)}
+                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-neutral-100 focus:border-amber-500/50 outline-none font-sans"
+                />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

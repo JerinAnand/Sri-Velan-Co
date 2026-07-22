@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { COMPANY_DETAILS, OFFICES, SERVICE_CATEGORIES } from '../data';
+import { translations as DEFAULT_TRANSLATIONS } from '../translations';
 
 // Interfaces for structured site content sections
 export interface HeroContent {
@@ -106,6 +107,7 @@ export interface FullSiteContent {
   projects: ProjectsContent;
   contact: ContactContent;
   footer: FooterContent;
+  translations: Record<string, any>;
 }
 
 // Default Fallbacks from data.ts
@@ -229,6 +231,7 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
     instagramUrl: COMPANY_DETAILS.instagramUrl,
     brochureUrl: COMPANY_DETAILS.brochureLink,
   },
+  translations: DEFAULT_TRANSLATIONS,
 };
 
 interface SiteContentContextType {
@@ -256,6 +259,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       'projects',
       'contact',
       'footer',
+      'translations',
     ];
 
     let pendingReads = sectionKeys.length;

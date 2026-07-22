@@ -51,6 +51,13 @@ export type TranslationKey = string;
  */
 export function getValueByPath(obj: any, path: string): any {
   if (!obj || !path) return undefined;
+  
+  // Check if flat key exists directly on object
+  if (typeof obj === 'object' && path in obj && obj[path] !== undefined) {
+    return obj[path];
+  }
+
+  // Otherwise traverse nested keys
   const parts = path.split('.');
   let current = obj;
   for (const part of parts) {
