@@ -32,17 +32,36 @@ import { PROJECTS, CYCLONE_RELIEF_TIMELINE } from '../data';
 import { ProjectItem } from '../types';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 import { useTranslation } from '../context/TranslationContext';
+import { useSiteContent } from '../context/SiteContentContext';
 import { translations, getValueByPath } from '../translations';
 
 export const ProjectsView: React.FC = () => {
   const { t, language } = useTranslation();
+  const { siteContent } = useSiteContent();
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'government' | 'water-resource' | 'infrastructure' | 'emergency-relief'>('all');
   const [activeCaseStudy, setActiveCaseStudy] = useState<ProjectItem | null>(null);
 
+  const projectsList: ProjectItem[] = (siteContent?.projects?.projects && siteContent.projects.projects.length > 0)
+    ? siteContent.projects.projects.map((p: any) => ({
+        id: p.id || `proj-${p.title?.replace(/\s+/g, '-').toLowerCase()}`,
+        title: p.title || '',
+        category: (p.category as any) || 'infrastructure',
+        description: p.description || '',
+        image: p.imageUrl || p.image || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&q=80',
+        details: Array.isArray(p.details) && p.details.length > 0 
+          ? p.details 
+          : [
+              p.year ? `Year: ${p.year}` : 'Completed', 
+              p.location ? `Location: ${p.location}` : 'Tamil Nadu', 
+              p.status ? `Status: ${p.status}` : 'Verified'
+            ]
+      }))
+    : PROJECTS;
+
   // Filter projects based on categories
   const filteredProjects = selectedCategory === 'all' 
-    ? PROJECTS 
-    : PROJECTS.filter(p => p.category === selectedCategory);
+    ? projectsList 
+    : projectsList.filter(p => p.category === selectedCategory);
 
   const getCategoryLabel = (cat: string) => {
     switch (cat) {

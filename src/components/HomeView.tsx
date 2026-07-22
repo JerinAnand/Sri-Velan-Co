@@ -29,6 +29,7 @@ import { COMPANY_DETAILS, SERVICE_CATEGORIES } from '../data';
 import { ActiveView } from '../types';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { useAdmin } from '../context/AdminContext';
+import { useSiteContent } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
 import { EditableValue } from './EditableValue';
 import companyLogo from '../assets/images/sri-velan-logo.png';
@@ -77,14 +78,16 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const [simVolume, setSimVolume] = useState<number>(45000); // 45,000 Liters default
   const [simPumps, setSimPumps] = useState<number>(6); // Default 6 pumps matching 45,000 Liters recommended deployment
 
-  // Hero slideshow content
+  const { siteContent } = useSiteContent();
+
+  // Hero slideshow content (Slide 1 dynamically updated via Firestore Admin Portal)
   const heroSlides = [
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ',
-      title: t('home.hero.slide1.title'),
-      subtitle: t('home.hero.slide1.subtitle'),
-      tagline: t('home.hero.slide1.tagline'),
-      badge: t('home.hero.slide1.badge')
+      title: siteContent?.hero?.title || t('home.hero.slide1.title'),
+      subtitle: siteContent?.hero?.subtitle || t('home.hero.slide1.subtitle'),
+      tagline: siteContent?.hero?.tagline || t('home.hero.slide1.tagline'),
+      badge: siteContent?.hero?.badge || t('home.hero.slide1.badge')
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAtF7lQsjygWGM_wckM4HW-z2nj4oRbJglwvqyPrBOopVct0FaNayNZmcV2KclNO_D91euKAKDATiy4EK6o8y08eifUUdU9GA78MFSpP7NkllTKFnMKwV2APckmltuCrXUOQ2QX-mPrSukG22c432b0rw_ra7cIVWQ5YMRbkiKoaxjYQSkKOA0fHzRDt2xaNGGRmo0bxs0IfA74U3H4Ui_SKCTZsfqfa5zC0T4xCPuTqFNiP7LpEsi5NCEKk8KnMbTz7GUcXkKOd5t1',
@@ -112,8 +115,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   }, [isCarouselPaused, heroSlides.length]);
 
   const { getValue, isAdmin } = useAdmin();
-  const yoeTarget = getValue('home_years_of_legacy', 20);
-  const pumpCountTarget = getValue('home_heavy_machineries', 400);
+  const yoeTarget = siteContent?.stats?.yearsExperience ?? getValue('home_years_of_legacy', 20);
+  const pumpCountTarget = siteContent?.stats?.dewateringFleet ?? getValue('home_heavy_machineries', 35);
 
   // Triggering hooks for numbers
   const yoeAnim = useCountUp(yoeTarget, 1800);

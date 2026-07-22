@@ -28,12 +28,14 @@ import {
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useAdmin } from '../context/AdminContext';
+import { useSiteContent } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
 import { EditableValue } from './EditableValue';
 
 export const AboutView: React.FC = () => {
   const { t, language } = useTranslation();
   const { isAdmin } = useAdmin();
+  const { siteContent } = useSiteContent();
   const [activeTab, setActiveTab] = useState<'profile' | 'credentials' | 'milestones'>('profile');
 
   // Strategic milestones structured from the incorporation history
@@ -326,7 +328,7 @@ export const AboutView: React.FC = () => {
                 </div>
                 <h3 className="font-display font-black text-xl text-white tracking-tight uppercase">{t('about.visionMission.vision.title')}</h3>
                 <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                  {t('about.visionMission.vision.desc')}
+                  {siteContent?.about?.visionText || t('about.visionMission.vision.desc')}
                 </p>
               </div>
               <div className="h-1 w-20 bg-brand-gold-500 rounded mt-4" />
@@ -340,7 +342,7 @@ export const AboutView: React.FC = () => {
                 </div>
                 <h3 className="font-display font-black text-xl text-white tracking-tight uppercase">{t('about.visionMission.mission.title')}</h3>
                 <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                  {t('about.visionMission.mission.desc')}
+                  {siteContent?.about?.missionText || t('about.visionMission.mission.desc')}
                 </p>
               </div>
               <div className="h-1 w-20 bg-brand-blue-600 rounded mt-4" />
@@ -472,83 +474,108 @@ export const AboutView: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="about-executive-board">
-              
-              {/* Mr. Selva Kumar */}
-              <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-gold-500/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-gold-500/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  SK
-                </div>
-                <div className="space-y-1">
-                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Selva Kumar' : 'திரு. செல்வ குமார்'}</h4>
-                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
-                    <Award className="w-3.5 h-3.5" />
-                    <span>{language === 'en' ? 'Founder' : 'நிறுவனர்'}</span>
+              {(siteContent?.governingBoard?.boardMembers && siteContent.governingBoard.boardMembers.length > 0) ? (
+                siteContent.governingBoard.boardMembers.map((member) => (
+                  <div key={member.id} className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-gold-500/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-gold-500/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                    {member.imageUrl ? (
+                      <img src={member.imageUrl} alt={member.name} className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                        {member.initials || member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="space-y-1">
+                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{member.name}</h4>
+                      <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
+                        <Award className="w-3.5 h-3.5" />
+                        <span>{member.role}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                      {member.bio}
+                    </p>
                   </div>
-                </div>
-                <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                  {language === 'en' 
-                    ? 'Directs strategic multi-district rescue logistics and civil contracts in Tamil Nadu.' 
-                    : 'தமிழ்நாட்டில் உத்திகள் சார்ந்த பல மாவட்ட மீட்பு தளவாடங்கள் மற்றும் சிவில் ஒப்பந்தங்களை இயக்குகிறார்.'}
-                </p>
-              </div>
-
-              {/* Mr. Vetrivel */}
-              <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
-                  VV
-                </div>
-                <div className="space-y-1">
-                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Vetrivel' : 'திரு. வெற்றிவேல்'}</h4>
-                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>{t('about.leadership.roleMD')}</span>
+                ))
+              ) : (
+                <>
+                  {/* Default Fallback Cards */}
+                  {/* Mr. Selva Kumar */}
+                  <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-gold-500/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-gold-500/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                    <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                      SK
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Selva Kumar' : 'திரு. செல்வ குமார்'}</h4>
+                      <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-gold-600 font-mono uppercase tracking-wide font-bold bg-brand-gold-50 px-2.5 py-1 rounded-full border border-brand-gold-200/50">
+                        <Award className="w-3.5 h-3.5" />
+                        <span>{language === 'en' ? 'Founder' : 'நிறுவனர்'}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                      {language === 'en' 
+                        ? 'Directs strategic multi-district rescue logistics and civil contracts in Tamil Nadu.' 
+                        : 'தமிழ்நாட்டில் உத்திகள் சார்ந்த பல மாவட்ட மீட்பு தளவாடங்கள் மற்றும் சிவில் ஒப்பந்தங்களை இயக்குகிறார்.'}
+                    </p>
                   </div>
-                </div>
-                <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                  {language === 'en' 
-                    ? 'Oversees active fleet engineering, team mobilizations, and regional yards management.' 
-                    : 'செயலில் உள்ள கடற்படை பொறியியல், குழு அணிதிரட்டல்கள் மற்றும் பிராந்திய யார்டுகள் மேலாண்மை ஆகியவற்றை மேற்பார்வையிடுகிறார்.'}
-                </p>
-              </div>
 
-              {/* Mr. Dhinakaravel */}
-              <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-neutral-400/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-neutral-300 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                  DK
-                </div>
-                <div className="space-y-1">
-                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Dhinakaravel' : 'திரு. தினகரவேல்'}</h4>
-                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-emerald-700 font-mono uppercase tracking-wide font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/50">
-                    <Landmark className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{language === 'en' ? 'Financial Consultant' : 'நிதி ஆலோசகர்'}</span>
+                  {/* Mr. Vetrivel */}
+                  <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                    <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
+                      VV
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Vetrivel' : 'திரு. வெற்றிவேல்'}</h4>
+                      <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>{t('about.leadership.roleMD')}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                      {language === 'en' 
+                        ? 'Oversees active fleet engineering, team mobilizations, and regional yards management.' 
+                        : 'செயலில் உள்ள கடற்படை பொறியியல், குழு அணிதிரட்டல்கள் மற்றும் பிராந்திய யார்டுகள் மேலாண்மை ஆகியவற்றை மேற்பார்வையிடுகிறார்.'}
+                    </p>
                   </div>
-                </div>
-                <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                  {language === 'en' 
-                    ? 'Manages regulatory financial audits, GST submissions compliance, and budget planning.' 
-                    : 'ஒழுங்குமுறை நிதி தணிக்கைகள், ஜிஎஸ்டி சமர்ப்பிப்புகளின் இணக்கம் மற்றும் வரவு செலவு திட்டமிடல் ஆகியவற்றை நிர்வகிக்கிறார்.'}
-                </p>
-              </div>
 
-              {/* Mr. Jerin Anand */}
-              <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
-                  JA
-                </div>
-                <div className="space-y-1">
-                  <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Jerin Anand' : 'திரு. ஜெரின் ஆனந்த்'}</h4>
-                  <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
-                    <Code className="w-3.5 h-3.5" />
-                    <span>{language === 'en' ? 'Admin & Developer' : 'நிர்வாகி & டெவலப்பர்'}</span>
+                  {/* Mr. Dhinakaravel */}
+                  <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-neutral-400/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-neutral-300 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                    <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                      DK
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Dhinakaravel' : 'திரு. தினகரவேல்'}</h4>
+                      <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-emerald-700 font-mono uppercase tracking-wide font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/50">
+                        <Landmark className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>{language === 'en' ? 'Financial Consultant' : 'நிதி ஆலோசகர்'}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                      {language === 'en' 
+                        ? 'Manages regulatory financial audits, GST submissions compliance, and budget planning.' 
+                        : 'ஒழுங்குமுறை நிதி தணிக்கைகள், ஜிஎஸ்டி சமர்ப்பிப்புகளின் இணக்கம் மற்றும் வரவு செலவு திட்டமிடல் ஆகியவற்றை நிர்வகிக்கிறார்.'}
+                    </p>
                   </div>
-                </div>
-                <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
-                  {language === 'en' 
-                    ? 'Maintains enterprise tech portals, secure digital records, and digital identity.' 
-                    : 'நிறுவன தொழில்நுட்ப இணையதளங்கள், பாதுகாப்பான டிஜிட்டல் பதிவுகள் மற்றும் டிஜிட்டல் அடையாளத்தை பராமரிக்கிறார்.'}
-                </p>
-              </div>
 
+                  {/* Mr. Jerin Anand */}
+                  <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
+                    <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
+                      JA
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Jerin Anand' : 'திரு. ஜெரின் ஆனந்த்'}</h4>
+                      <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
+                        <Code className="w-3.5 h-3.5" />
+                        <span>{language === 'en' ? 'Admin & Developer' : 'நிர்வாகி & டெவலப்பர்'}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-neutral-550 leading-relaxed font-sans font-light">
+                      {language === 'en' 
+                        ? 'Maintains enterprise tech portals, secure digital records, and digital identity.' 
+                        : 'நிறுவன தொழில்நுட்ப இணையதளங்கள், பாதுகாப்பான டிஜிட்டல் பதிவுகள் மற்றும் டிஜிட்டல் அடையாளத்தை பராமரிக்கிறார்.'}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

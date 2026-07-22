@@ -18,13 +18,20 @@ import {
 } from 'lucide-react';
 import { SERVICE_CATEGORIES } from '../data';
 import { useTranslation } from '../context/TranslationContext';
+import { useSiteContent } from '../context/SiteContentContext';
 import { translations, getValueByPath } from '../translations';
 import { ServiceAreaMap } from './ServiceAreaMap';
 import { ServiceAreaTelemetry } from './ServiceAreaTelemetry';
 
 export const ServicesView: React.FC = () => {
   const { t, language } = useTranslation();
-  const [selectedService, setSelectedService] = useState<string | null>(SERVICE_CATEGORIES[0].id);
+  const { siteContent } = useSiteContent();
+
+  const servicesList = (siteContent?.services?.services && siteContent.services.services.length > 0)
+    ? siteContent.services.services
+    : SERVICE_CATEGORIES;
+
+  const [selectedService, setSelectedService] = useState<string | null>(servicesList[0]?.id || SERVICE_CATEGORIES[0].id);
 
   // Map icon comp to specific service id
   const getIcon = (id: string) => {
@@ -44,7 +51,7 @@ export const ServicesView: React.FC = () => {
     }
   };
 
-  const activeSvc = SERVICE_CATEGORIES.find(s => s.id === selectedService) || SERVICE_CATEGORIES[0];
+  const activeSvc = servicesList.find(s => s.id === selectedService) || servicesList[0] || SERVICE_CATEGORIES[0];
 
   // Helper to fetch translated arrays safely
   const getTranslatedArray = (path: string, fallback: string[]): string[] => {
@@ -52,9 +59,11 @@ export const ServicesView: React.FC = () => {
     return Array.isArray(value) ? value : fallback;
   };
 
-  const activeTitle = t(`services.${activeSvc.id}.title`, activeSvc.title);
-  const activeFullDesc = t(`services.${activeSvc.id}.fullDescription`, activeSvc.fullDescription);
-  const activeHighlights = getTranslatedArray(`services.${activeSvc.id}.highlights`, activeSvc.highlights);
+  const activeTitle = activeSvc.title ? t(`services.${activeSvc.id}.title`, activeSvc.title) : 'Service';
+  const activeFullDesc = activeSvc.fullDescription ? t(`services.${activeSvc.id}.fullDescription`, activeSvc.fullDescription) : activeSvc.description;
+  const activeHighlights = activeSvc.highlights && activeSvc.highlights.length > 0
+    ? activeSvc.highlights
+    : getTranslatedArray(`services.${activeSvc.id}.highlights`, []);
 
   return (
     <div className="w-full pt-20" id="services-page-container">
@@ -99,7 +108,7 @@ export const ServicesView: React.FC = () => {
             <div className="lg:col-span-4 space-y-3" id="services-sidebar-nav">
               <p className="text-xs font-mono text-neutral-400 tracking-wider uppercase mb-5 text-left">{t('services.sidebarTitle')}</p>
               
-              {SERVICE_CATEGORIES.map((svc) => {
+              {servicesList.map((svc) => {
                 const isSelected = selectedService === svc.id;
                 const svcTitle = t(`services.${svc.id}.title`, svc.title);
 

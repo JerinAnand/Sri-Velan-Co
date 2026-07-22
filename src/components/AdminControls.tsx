@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 import { 
   ShieldCheck, 
@@ -17,6 +18,10 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 
 export function AdminControls() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith('/admin');
+
   const {
     isAdmin,
     login,
@@ -79,6 +84,28 @@ export function AdminControls() {
 
   return (
     <>
+      {/* Floating Admin Portal Shortcut Button (shown when not logged in & not on admin routes) */}
+      {!isAdmin && !isAdminPage && (
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="fixed bottom-6 left-20 sm:left-24 z-40"
+          id="admin-portal-floating-container"
+        >
+          <button
+            onClick={() => navigate('/admin/login')}
+            className="bg-neutral-900/90 hover:bg-neutral-800 text-brand-gold-400 border border-brand-gold-500/30 hover:border-brand-gold-500 rounded-full sm:rounded-xl p-3 sm:px-4 sm:py-2.5 shadow-2xl backdrop-blur-md transition-all flex items-center gap-2 group cursor-pointer active:scale-95"
+            title="Access Admin Portal"
+            aria-label="Admin Portal Gateway"
+          >
+            <ShieldCheck className="w-5 h-5 text-brand-gold-400 shrink-0 group-hover:scale-110 transition-transform" />
+            <span className="hidden sm:inline font-display font-bold text-xs uppercase tracking-wider text-white group-hover:text-brand-gold-400 transition-colors whitespace-nowrap">
+              Admin Portal
+            </span>
+          </button>
+        </motion.div>
+      )}
+
       {/* 1. Admin Mode Status Indicator Panel */}
       <AnimatePresence>
         {isAdmin && (
@@ -87,31 +114,32 @@ export function AdminControls() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 50, opacity: 0 }}
             transition={{ type: 'spring', damping: 25 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-neutral-900/95 border-t-2 border-brand-gold-500 backdrop-blur-md text-white py-3.5 px-4 sm:px-6 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4 select-none font-sans"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-neutral-900/95 border-t-2 border-brand-gold-500 backdrop-blur-md text-white py-2.5 px-3 sm:py-3.5 sm:px-6 shadow-2xl flex flex-row items-center justify-between gap-2 sm:gap-4 select-none font-sans"
             id="admin-status-bar"
           >
-            <div className="flex items-center gap-3">
-              <div className="p-1.5 bg-brand-gold-500/10 border border-brand-gold-500/30 rounded-lg text-brand-gold-400 animate-pulse">
-                <ShieldCheck className="w-5 h-5" />
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="p-1 sm:p-1.5 bg-brand-gold-500/10 border border-brand-gold-500/30 rounded-lg text-brand-gold-400 animate-pulse shrink-0">
+                <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <div className="text-center sm:text-left">
-                <p className="font-display font-black text-xs uppercase tracking-widest text-brand-gold-400">
-                  Sri Velan Admin Mode: Active
+              <div className="text-left min-w-0">
+                <p className="font-display font-black text-[11px] sm:text-xs uppercase tracking-widest text-brand-gold-400 truncate">
+                  <span className="sm:hidden">Admin Active</span>
+                  <span className="hidden sm:inline">Sri Velan Admin Mode: Active</span>
                 </p>
-                <p className="text-[10px] text-neutral-400 font-mono">
+                <p className="hidden md:block text-[10px] text-neutral-400 font-mono truncate">
                   All inline numbers are editable. Hover or click to alter parameters.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-center">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setShowBulkResetModal(true)}
-                className="flex items-center justify-center gap-2 bg-neutral-800 hover:bg-neutral-750 text-brand-gold-400 font-display font-bold text-[10px] uppercase tracking-wider py-2 px-4 rounded-xl border border-neutral-700 hover:border-brand-gold-500/30 transition-all cursor-pointer"
+                className="flex items-center justify-center gap-1.5 bg-neutral-800 hover:bg-neutral-750 text-brand-gold-400 font-display font-bold text-[10px] uppercase tracking-wider py-1.5 px-2.5 sm:py-2 sm:px-4 rounded-lg sm:rounded-xl border border-neutral-700 hover:border-brand-gold-500/30 transition-all cursor-pointer"
                 title="Granularly reset overrides by category"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-brand-gold-400 shrink-0" />
-                Bulk Reset
+                <span className="hidden sm:inline">Bulk Reset</span>
               </button>
 
               <button
@@ -119,11 +147,11 @@ export function AdminControls() {
                   logout();
                   window.location.reload();
                 }}
-                className="flex items-center justify-center gap-2 bg-red-950/40 hover:bg-red-900/30 text-red-300 font-display font-black text-[10px] uppercase tracking-wider py-2 px-4 rounded-xl border border-red-900/40 hover:border-red-500/30 transition-colors cursor-pointer"
+                className="flex items-center justify-center gap-1.5 bg-red-950/40 hover:bg-red-900/30 text-red-300 font-display font-black text-[10px] uppercase tracking-wider py-1.5 px-2.5 sm:py-2 sm:px-4 rounded-lg sm:rounded-xl border border-red-900/40 hover:border-red-500/30 transition-colors cursor-pointer"
                 title="End administrator session"
               >
-                <LogOut className="w-3.5 h-3.5" />
-                Logout
+                <LogOut className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </motion.div>

@@ -35,7 +35,7 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-brand-blue-950 text-white pt-16 pb-8 border-t border-brand-blue-900 overflow-hidden relative">
+    <footer className="bg-brand-blue-950 text-white pt-16 pb-20 sm:pb-24 border-t border-brand-blue-900 overflow-hidden relative">
       {/* Decorative Blueprint Background Accent */}
       <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
 
@@ -259,10 +259,10 @@ export const Footer: React.FC = () => {
             </button>
             <span>•</span>
             <button 
-              onClick={() => setShowLoginModal(true)} 
-              className="hover:text-brand-gold-400 transition-colors text-[10px] text-neutral-500 hover:underline uppercase tracking-wider font-mono cursor-pointer"
+              onClick={() => navigate('/admin/login')} 
+              className="hover:text-brand-gold-400 transition-colors text-[10px] text-neutral-400 hover:underline uppercase tracking-wider font-mono cursor-pointer flex items-center gap-1"
             >
-              {t('footer.adminPortal')}
+              <span>{t('footer.adminPortal')}</span>
             </button>
           </div>
         </div>

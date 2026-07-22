@@ -18,7 +18,10 @@ import { VelanChatBot } from './components/VelanChatBot';
 import { BrandedLoader } from './components/BrandedLoader';
 import { AdminControls } from './components/AdminControls';
 import { AdminDashboardView } from './components/AdminDashboardView';
+import { AdminLoginView } from './components/AdminLoginView';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { CapabilityStatement } from './components/CapabilityStatement';
+import { useAdmin } from './context/AdminContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle, ShieldCheck, Award } from 'lucide-react';
@@ -29,6 +32,7 @@ import confetti from 'canvas-confetti';
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAdmin } = useAdmin();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const { showEasterEgg, registerClick, closeEasterEgg } = useEasterEgg();
   const [stamped, setStamped] = useState(false);
@@ -44,7 +48,7 @@ export default function App() {
   };
 
   const activeView = pathMap[location.pathname] || 'home';
-  const isAdminDashboard = location.pathname.startsWith('/admin/dashboard');
+  const isAdminDashboard = location.pathname.startsWith('/admin');
   const isCapabilityStatement = location.pathname === '/capability-statement';
 
   const setActiveView = (view: ActiveView) => {
@@ -138,7 +142,7 @@ export default function App() {
   }, []);
 
   return (
-    <div id="application-layout-root" className="min-h-screen bg-neutral-50 flex flex-col justify-between overflow-x-hidden font-sans relative">
+    <div id="application-layout-root" className={`min-h-screen bg-neutral-50 flex flex-col justify-between overflow-x-hidden font-sans relative ${isAdmin ? 'pb-14 sm:pb-16' : ''}`}>
       
       {/* Premium Cinematic Branded Loader Overlay */}
       <BrandedLoader />
@@ -166,7 +170,15 @@ export default function App() {
               <Route path="/hydraulic-broomer" element={<HydraulicBroomer />} />
               <Route path="/contact" element={<ContactView />} />
               <Route path="/capability-statement" element={<CapabilityStatement />} />
-              <Route path="/admin/dashboard/*" element={<AdminDashboardView />} />
+              <Route path="/admin/login" element={<AdminLoginView />} />
+              <Route
+                path="/admin/dashboard/*"
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboardView />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<HomeView setActiveView={setActiveView} />} />
             </Routes>
           </motion.div>

@@ -7,22 +7,29 @@ import { LoadingProvider } from './context/LoadingContext.tsx';
 import { ThemeProvider } from './context/ThemeContext.tsx';
 import { AdminProvider } from './context/AdminContext.tsx';
 import { TranslationProvider } from './context/TranslationContext.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
+import { SiteContentProvider } from './context/SiteContentContext.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <LoadingProvider>
-        <AdminProvider>
-          <EasterEggProvider>
-            <ThemeProvider>
-              <TranslationProvider>
-                <App />
-              </TranslationProvider>
-            </ThemeProvider>
-          </EasterEggProvider>
-        </AdminProvider>
-      </LoadingProvider>
+      <AuthProvider>
+        <SiteContentProvider>
+          <LoadingProvider>
+            <AdminProvider>
+              <EasterEggProvider>
+                <ThemeProvider>
+                  <TranslationProvider>
+                    <App />
+                  </TranslationProvider>
+                </ThemeProvider>
+              </EasterEggProvider>
+            </AdminProvider>
+          </LoadingProvider>
+        </SiteContentProvider>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 );
+
