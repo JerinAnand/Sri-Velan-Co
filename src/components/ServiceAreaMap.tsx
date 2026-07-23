@@ -5,7 +5,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShieldAlert, Flame, MapPin, CheckCircle, Droplet, User, Settings, Info, Activity } from 'lucide-react';
+import { ShieldAlert, MapPin, CheckCircle, Info, Activity, Navigation, Maximize2 } from 'lucide-react';
+import { useTranslation } from '../context/TranslationContext';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 interface DistrictData {
   id: string;
@@ -26,7 +29,7 @@ interface DistrictData {
 const DISTRICT_RECORDS: Record<string, DistrictData> = {
   zone1: {
     id: 'zone1',
-    name: 'Zone 1: Thiruvottiyur',
+    name: 'Zone I: Thiruvottiyur',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 18,
@@ -38,7 +41,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone2: {
     id: 'zone2',
-    name: 'Zone 2: Manali',
+    name: 'Zone II: Manali',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 24,
@@ -50,7 +53,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone3: {
     id: 'zone3',
-    name: 'Zone 3: Madhavaram',
+    name: 'Zone III: Madhavaram',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 15,
@@ -62,7 +65,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone4: {
     id: 'zone4',
-    name: 'Zone 4: Tondiarpet',
+    name: 'Zone IV: Tondiarpet',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 20,
@@ -74,7 +77,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone5: {
     id: 'zone5',
-    name: 'Zone 5: Royapuram',
+    name: 'Zone V: Royapuram',
     isActive: true,
     status: 'active-hq',
     pumpsDeployed: 35,
@@ -86,7 +89,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone6: {
     id: 'zone6',
-    name: 'Zone 6: Thiru-Vi-Ka-Nagar',
+    name: 'Zone VI: Thiru-Vi-Ka-Nagar',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 22,
@@ -98,7 +101,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone7: {
     id: 'zone7',
-    name: 'Zone 7: Ambattur',
+    name: 'Zone VII: Ambattur',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 26,
@@ -110,7 +113,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone8: {
     id: 'zone8',
-    name: 'Zone 8: Anna Nagar',
+    name: 'Zone VIII: Anna Nagar',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 19,
@@ -122,7 +125,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone9: {
     id: 'zone9',
-    name: 'Zone 9: Teynampet',
+    name: 'Zone IX: Teynampet',
     isActive: true,
     status: 'active-hq',
     pumpsDeployed: 40,
@@ -134,7 +137,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone10: {
     id: 'zone10',
-    name: 'Zone 10: Kodambakkam',
+    name: 'Zone X: Kodambakkam',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 25,
@@ -146,7 +149,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone11: {
     id: 'zone11',
-    name: 'Zone 11: Valasaravakkam',
+    name: 'Zone XI: Valasaravakkam',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 14,
@@ -158,7 +161,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone12: {
     id: 'zone12',
-    name: 'Zone 12: Alandur',
+    name: 'Zone XII: Alandur',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 16,
@@ -170,7 +173,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone13: {
     id: 'zone13',
-    name: 'Zone 13: Adyar',
+    name: 'Zone XIII: Adyar',
     isActive: true,
     status: 'active-hq',
     pumpsDeployed: 30,
@@ -182,7 +185,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone14: {
     id: 'zone14',
-    name: 'Zone 14: Perungudi',
+    name: 'Zone XIV: Perungudi',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 12,
@@ -194,7 +197,7 @@ const DISTRICT_RECORDS: Record<string, DistrictData> = {
   },
   zone15: {
     id: 'zone15',
-    name: 'Zone 15: Sholinganallur',
+    name: 'Zone XV: Sholinganallur',
     isActive: true,
     status: 'active-node',
     pumpsDeployed: 15,
@@ -224,46 +227,151 @@ const ZONE_METRIC_DEFAULTS: Record<string, { totalPumps: number; wardRange: stri
   zone15: { totalPumps: 22, wardRange: '192–200' }
 };
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.04
-    }
-  }
+const ROMAN_MAP: Record<string, number> = {
+  'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5,
+  'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10,
+  'XI': 11, 'XII': 12, 'XIII': 13, 'XIV': 14, 'XV': 15
 };
 
-const districtVariants = {
-  hidden: { 
-    opacity: 0, 
-    scale: 0.95,
-    transformOrigin: '50% 50%'
-  },
-  visible: { 
-    opacity: 1, 
-    scale: 1,
-    transformOrigin: '50% 50%',
-    transition: {
-      type: 'spring',
-      stiffness: 80,
-      damping: 12
-    }
-  }
+function getZoneKeyFromGeoJSON(zoneNoStr: string): string {
+  if (!zoneNoStr) return 'zone1';
+  const clean = String(zoneNoStr).trim().toUpperCase();
+  const num = ROMAN_MAP[clean] || parseInt(clean, 10);
+  return num ? `zone${num}` : 'zone1';
+}
+
+const ZONE_PALETTE: Record<string, { fill: string; stroke: string; label: string }> = {
+  zone1:  { fill: '#0ea5e9', stroke: '#0284c7', label: 'Sky Blue' },
+  zone2:  { fill: '#3b82f6', stroke: '#1d4ed8', label: 'Royal Blue' },
+  zone3:  { fill: '#14b8a6', stroke: '#0f766e', label: 'Teal' },
+  zone4:  { fill: '#06b6d4', stroke: '#0891b2', label: 'Cyan' },
+  zone5:  { fill: '#2563eb', stroke: '#1e3a8a', label: 'Cobalt' },
+  zone6:  { fill: '#0d9488', stroke: '#115e59', label: 'Emerald' },
+  zone7:  { fill: '#6366f1', stroke: '#4338ca', label: 'Indigo' },
+  zone8:  { fill: '#f59e0b', stroke: '#b45309', label: 'Amber' },
+  zone9:  { fill: '#4f46e5', stroke: '#312e81', label: 'Deep Indigo' },
+  zone10: { fill: '#8b5cf6', stroke: '#5b21b6', label: 'Purple' },
+  zone11: { fill: '#ec4899', stroke: '#9d174d', label: 'Pink' },
+  zone12: { fill: '#f43f5e', stroke: '#9f1239', label: 'Rose' },
+  zone13: { fill: '#10b981', stroke: '#047857', label: 'Mint' },
+  zone14: { fill: '#64748b', stroke: '#334155', label: 'Slate' },
+  zone15: { fill: '#84cc16', stroke: '#3f6212', label: 'Lime' },
 };
+
+function renderTelemetryTooltipHTML(record: DistrictData, zoneNo: string, zoneName: string): string {
+  const activePumps = record?.pumpsDeployed ?? 0;
+  const totalPumps = record?.totalPumps || 25;
+  const pumpRatio = Math.round((activePumps / Math.max(totalPumps, 1)) * 100);
+  const staff = record?.activeStaff ?? 0;
+  const wardRange = record?.wardRange || '';
+  const areaName = record?.areas || (record?.name ? record.name.split(': ')[1] : zoneName);
+  const isHq = record?.status === 'active-hq';
+
+  return `
+    <div style="font-family: system-ui, -apple-system, sans-serif; padding: 4px; min-width: 200px; color: #0f172a;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 6px;">
+        <div>
+          <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;">GCC ZONE ${zoneNo}</span>
+          <div style="font-size: 13px; font-weight: 800; color: #0f172a; line-height: 1.2;">${areaName}</div>
+        </div>
+        <span style="background: ${isHq ? '#0e2954' : '#0284c7'}; color: #ffffff; font-size: 8px; font-weight: 800; padding: 2px 5px; border-radius: 4px; text-transform: uppercase;">
+          ${isHq ? 'Command HQ' : 'Active'}
+        </span>
+      </div>
+
+      ${wardRange ? `<div style="font-size: 10px; color: #475569; margin-bottom: 6px;">Ward Scope: <strong style="color: #0f172a;">${wardRange}</strong></div>` : ''}
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; margin-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
+          <span style="color: #64748b; font-weight: 500;">Active Pumps:</span>
+          <strong style="color: #0284c7; font-family: monospace;">${activePumps} / ${totalPumps} (${pumpRatio}%)</strong>
+        </div>
+        <div style="width: 100%; background: #e2e8f0; height: 5px; border-radius: 3px; overflow: hidden; margin-bottom: 4px;">
+          <div style="width: ${Math.min(pumpRatio, 100)}%; background: ${pumpRatio > 70 ? '#0284c7' : '#0d9488'}; height: 100%;"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: #64748b; font-weight: 500;">On-Field Crew:</span>
+          <strong style="color: ${staff > 45 ? '#dc2626' : '#0f172a'}; font-family: monospace;">${staff} Staff ${staff > 45 ? '⚠️' : ''}</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; font-size: 9px; color: #059669; font-weight: 700; padding-top: 2px;">
+        <span style="display: inline-flex; align-items: center; gap: 4px;">
+          <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block;"></span>
+          Live Telemetry
+        </span>
+        <span style="color: #64748b; font-weight: 500;">Click to select</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderTelemetryPopupHTML(record: DistrictData, zoneNo: string, zoneName: string): string {
+  const activePumps = record?.pumpsDeployed ?? 0;
+  const totalPumps = record?.totalPumps || 25;
+  const pumpRatio = Math.round((activePumps / Math.max(totalPumps, 1)) * 100);
+  const staff = record?.activeStaff ?? 0;
+  const wardRange = record?.wardRange || '';
+  const areaName = record?.areas || (record?.name ? record.name.split(': ')[1] : zoneName);
+  const isHq = record?.status === 'active-hq';
+
+  return `
+    <div style="font-family: system-ui, -apple-system, sans-serif; padding: 6px; min-width: 220px; color: #0f172a;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
+        <div>
+          <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #0284c7; letter-spacing: 0.5px;">GCC Zone ${zoneNo}</div>
+          <div style="font-size: 15px; font-weight: 900; color: #0f172a; margin-top: 1px;">${areaName}</div>
+        </div>
+        <span style="background: ${isHq ? '#0e2954' : '#0284c7'}; color: #ffffff; font-size: 9px; font-weight: 800; padding: 2.5px 6px; border-radius: 4px; text-transform: uppercase;">
+          ${isHq ? 'Command HQ' : 'Active Sector'}
+        </span>
+      </div>
+
+      ${wardRange ? `<div style="font-size: 11px; color: #334155; margin-bottom: 8px; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; display: inline-block; font-weight: 600;">Ward Scope: <strong style="color: #0f172a;">${wardRange}</strong></div>` : ''}
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+          <span style="color: #64748b; font-weight: 600;">Pumps Deployed:</span>
+          <strong style="color: #0284c7; font-family: monospace;">${activePumps} / ${totalPumps} (${pumpRatio}%)</strong>
+        </div>
+        <div style="width: 100%; background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 6px;">
+          <div style="width: ${Math.min(pumpRatio, 100)}%; background: ${pumpRatio > 70 ? '#0284c7' : '#0d9488'}; height: 100%;"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: #64748b; font-weight: 600;">On-Field Staff:</span>
+          <strong style="color: ${staff > 45 ? '#dc2626' : '#0f172a'}; font-family: monospace;">${staff} Staff</strong>
+        </div>
+      </div>
+
+      ${staff > 45 ? `
+        <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; font-size: 10px; padding: 6px; border-radius: 6px; margin-bottom: 8px; font-weight: 500;">
+          ⚠️ <strong>Staff Safety Threshold Exceeded:</strong> Current staff (${staff}) exceeds maximum 45 capacity.
+        </div>
+      ` : ''}
+
+      <div style="font-size: 10px; color: #059669; font-weight: 700; display: flex; align-items: center; gap: 4px; border-top: 1px solid #f1f5f9; padding-top: 4px;">
+        <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block;"></span>
+        Synchronized with Service Area Telemetry Dashboard
+      </div>
+    </div>
+  `;
+}
 
 export const ServiceAreaMap: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 350, height: 460 });
+  const { language } = useTranslation();
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
+  const markersGroupRef = useRef<L.LayerGroup | null>(null);
+  const layersByZoneRef = useRef<Record<string, L.Layer>>({});
+
   const [selectedDistrict, setSelectedDistrict] = useState<string>('zone9');
-  const [hoveredDistrict, setHoveredDistrict] = useState<string | null>(null);
-  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-
-
+  const selectedDistrictRef = useRef<string>('zone9');
+  selectedDistrictRef.current = selectedDistrict;
 
   const [zonalRecords, setZonalRecords] = useState<Record<string, DistrictData>>(() => {
-    const records = JSON.parse(JSON.stringify(DISTRICT_RECORDS)); // Deep copy to avoid mutating source constants
+    const records = JSON.parse(JSON.stringify(DISTRICT_RECORDS));
     try {
-      // Add defaults
       Object.keys(records).forEach(zoneId => {
         const defaults = ZONE_METRIC_DEFAULTS[zoneId] || { totalPumps: 25, wardRange: '' };
         records[zoneId].totalPumps = defaults.totalPumps;
@@ -292,23 +400,205 @@ export const ServiceAreaMap: React.FC = () => {
     return records;
   });
 
+  const zonalRecordsRef = useRef(zonalRecords);
+  zonalRecordsRef.current = zonalRecords;
+
+  // Initialize Leaflet Map
   useEffect(() => {
-    if (!containerRef.current) return;
-    const observer = new ResizeObserver((entries) => {
-      if (!entries || !entries[0]) return;
-      const { width, height } = entries[0].contentRect;
-      const newW = width || 350;
-      const newH = height || 460;
-      setDimensions((prev) => {
-        if (prev.width === newW && prev.height === newH) return prev;
-        return { width: newW, height: newH };
-      });
+    if (!mapContainerRef.current) return;
+    if (mapInstanceRef.current) return;
+
+    // Center on Chennai
+    const map = L.map(mapContainerRef.current, {
+      center: [13.0827, 80.2707],
+      zoom: 11,
+      zoomControl: true,
+      scrollWheelZoom: false,
     });
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    const markersGroup = L.layerGroup().addTo(map);
+    markersGroupRef.current = markersGroup;
+    mapInstanceRef.current = map;
+
+    // Fetch GeoJSON boundary data
+    fetch('/chennai_gcc_zones.json')
+      .then((res) => res.json())
+      .then((geoJsonData) => {
+        if (!mapInstanceRef.current) return;
+
+        const layersMap: Record<string, L.Layer> = {};
+
+        const geoJsonLayer = L.geoJSON(geoJsonData, {
+          style: (feature) => {
+            if (!feature) return {};
+            const zoneKey = getZoneKeyFromGeoJSON(feature.properties.zone_no);
+            const palette = ZONE_PALETTE[zoneKey] || { fill: '#3b82f6', stroke: '#1d4ed8' };
+            const isSelected = selectedDistrictRef.current === zoneKey;
+
+            return {
+              fillColor: palette.fill,
+              fillOpacity: isSelected ? 0.8 : 0.45,
+              color: isSelected ? '#ffffff' : palette.stroke,
+              weight: isSelected ? 3.5 : 1.5,
+              dashArray: isSelected ? '' : '2',
+            };
+          },
+          onEachFeature: (feature, layer) => {
+            const zoneNo = feature.properties.zone_no;
+            const zoneName = feature.properties.zone_name;
+            const zoneKey = getZoneKeyFromGeoJSON(zoneNo);
+
+            layersMap[zoneKey] = layer;
+
+            const record = zonalRecordsRef.current[zoneKey];
+            const tooltipHTML = renderTelemetryTooltipHTML(record || DISTRICT_RECORDS[zoneKey], zoneNo, zoneName);
+            const popupHTML = renderTelemetryPopupHTML(record || DISTRICT_RECORDS[zoneKey], zoneNo, zoneName);
+
+            layer.bindTooltip(tooltipHTML, {
+              sticky: true,
+              direction: 'auto',
+              opacity: 0.98
+            });
+
+            layer.bindPopup(popupHTML);
+
+            layer.on({
+              click: () => {
+                setSelectedDistrict(zoneKey);
+              },
+              mouseover: (e) => {
+                const l = e.target;
+                if (selectedDistrictRef.current !== zoneKey) {
+                  l.setStyle({
+                    fillOpacity: 0.75,
+                    weight: 2.5
+                  });
+                }
+              },
+              mouseout: (e) => {
+                const l = e.target;
+                if (selectedDistrictRef.current !== zoneKey) {
+                  const palette = ZONE_PALETTE[zoneKey] || { fill: '#3b82f6', stroke: '#1d4ed8' };
+                  l.setStyle({
+                    fillColor: palette.fill,
+                    fillOpacity: 0.45,
+                    color: palette.stroke,
+                    weight: 1.5,
+                    dashArray: '2'
+                  });
+                }
+              }
+            });
+
+            // Add centroid marker
+            if ('getBounds' in layer && typeof (layer as any).getBounds === 'function') {
+              const bounds = (layer as any).getBounds();
+              const center = bounds.getCenter();
+              const isHq = record?.status === 'active-hq';
+
+              const marker = L.circleMarker(center, {
+                radius: isHq ? 7 : 5,
+                fillColor: isHq ? '#0e2954' : '#eab308',
+                color: '#ffffff',
+                weight: 2,
+                fillOpacity: 0.95
+              });
+
+              marker.bindTooltip(tooltipHTML, {
+                direction: 'top',
+                offset: [0, -6],
+                opacity: 0.98
+              });
+
+              marker.bindPopup(popupHTML);
+
+              marker.on('click', () => {
+                setSelectedDistrict(zoneKey);
+              });
+
+              markersGroup.addLayer(marker);
+            }
+          }
+        }).addTo(map);
+
+        geoJsonLayerRef.current = geoJsonLayer;
+        layersByZoneRef.current = layersMap;
+
+        // Auto-fit bounds of all zones
+        const bounds = geoJsonLayer.getBounds();
+        if (bounds.isValid()) {
+          map.fitBounds(bounds, { padding: [20, 20] });
+        }
+      })
+      .catch((err) => {
+        console.warn('Failed to load chennai_gcc_zones.json:', err);
+      });
+
+    return () => {
+      map.remove();
+      mapInstanceRef.current = null;
+      geoJsonLayerRef.current = null;
+      markersGroupRef.current = null;
+    };
   }, []);
 
-  // Fetch real-time telemetry on mount and keep map metrics synchronized
+  // Sync layer tooltips and popups with live zonal telemetry data
+  useEffect(() => {
+    if (!geoJsonLayerRef.current) return;
+
+    geoJsonLayerRef.current.eachLayer((layer: any) => {
+      if (!layer.feature) return;
+      const zoneNo = layer.feature.properties.zone_no;
+      const zoneName = layer.feature.properties.zone_name;
+      const zoneKey = getZoneKeyFromGeoJSON(zoneNo);
+      const record = zonalRecords[zoneKey];
+
+      if (record) {
+        const tooltipHTML = renderTelemetryTooltipHTML(record, zoneNo, zoneName);
+        const popupHTML = renderTelemetryPopupHTML(record, zoneNo, zoneName);
+
+        if (typeof layer.setTooltipContent === 'function' && layer.getTooltip()) {
+          layer.setTooltipContent(tooltipHTML);
+        }
+        if (typeof layer.setPopupContent === 'function' && layer.getPopup()) {
+          layer.setPopupContent(popupHTML);
+        }
+      }
+    });
+  }, [zonalRecords]);
+
+  // Sync highlighting when selectedDistrict changes
+  useEffect(() => {
+    selectedDistrictRef.current = selectedDistrict;
+
+    if (!geoJsonLayerRef.current) return;
+
+    geoJsonLayerRef.current.eachLayer((layer: any) => {
+      if (!layer.feature) return;
+      const zoneKey = getZoneKeyFromGeoJSON(layer.feature.properties.zone_no);
+      const palette = ZONE_PALETTE[zoneKey] || { fill: '#3b82f6', stroke: '#1d4ed8' };
+      const isSelected = zoneKey === selectedDistrict;
+
+      layer.setStyle({
+        fillColor: palette.fill,
+        fillOpacity: isSelected ? 0.8 : 0.45,
+        color: isSelected ? '#ffffff' : palette.stroke,
+        weight: isSelected ? 3.5 : 1.5,
+        dashArray: isSelected ? '' : '2'
+      });
+
+      if (isSelected && typeof layer.bringToFront === 'function') {
+        layer.bringToFront();
+      }
+    });
+  }, [selectedDistrict]);
+
+  // Fetch real-time telemetry on mount
   useEffect(() => {
     const fetchLiveTelemetry = async () => {
       try {
@@ -360,375 +650,116 @@ export const ServiceAreaMap: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const activeRegions = (Object.values(zonalRecords) as DistrictData[]).filter(d => d.isActive);
-  const currentRecord = zonalRecords[selectedDistrict];
+  const currentRecord = zonalRecords[selectedDistrict] || DISTRICT_RECORDS['zone9'];
 
-  // Dynamic data-driven configuration of Chennai Greater Chennai Corporation (GCC) Zonal Geography paths
-  const ZONE_CONFIGS = [
-    { id: 'zone1', d: 'M 230 10 L 340 10 L 340 100 L 250 120 L 230 70 Z', color: '#0ea5e9', selectedColor: '#0369a1', hoverColor: '#38bdf8', inactiveColor: '#f0f9ff' },
-    { id: 'zone2', d: 'M 120 20 L 230 10 L 230 70 L 140 85 Z', color: '#3b82f6', selectedColor: '#1d4ed8', hoverColor: '#60a5fa', inactiveColor: '#eff6ff' },
-    { id: 'zone3', d: 'M 120 85 L 230 70 L 210 135 L 125 145 Z', color: '#14b8a6', selectedColor: '#0f766e', hoverColor: '#2dd4bf', inactiveColor: '#ccfbf1' },
-    { id: 'zone4', d: 'M 250 120 L 340 100 L 350 170 L 260 175 Z', color: '#06b6d4', selectedColor: '#0e7490', hoverColor: '#22d3ee', inactiveColor: '#ecfeff' },
-    { id: 'zone5', d: 'M 260 175 L 350 170 L 360 250 L 255 240 Z', color: '#2563eb', selectedColor: '#1e3a8a', hoverColor: '#3b82f6', inactiveColor: '#f0f4ff' },
-    { id: 'zone6', d: 'M 125 145 L 210 135 L 220 200 L 145 210 Z', color: '#0d9488', selectedColor: '#115e59', hoverColor: '#14b8a6', inactiveColor: '#f0fdfa' },
-    { id: 'zone7', d: 'M 20 100 L 120 85 L 125 145 L 145 210 L 95 240 L 30 190 Z', color: '#6366f1', selectedColor: '#4338ca', hoverColor: '#818cf8', inactiveColor: '#e0e7ff' },
-    { id: 'zone8', d: 'M 95 240 L 180 230 L 170 300 L 80 295 Z', color: '#f59e0b', selectedColor: '#b45309', hoverColor: '#fbbf24', inactiveColor: '#fef3c7' },
-    { id: 'zone9', d: 'M 220 200 L 255 240 L 360 250 L 330 330 L 240 320 L 230 260 Z', color: '#4f46e5', selectedColor: '#3730a3', hoverColor: '#6366f1', inactiveColor: '#f5f3ff' },
-    { id: 'zone10', d: 'M 170 300 L 240 320 L 230 390 L 150 380 Z', color: '#8b5cf6', selectedColor: '#5b21b6', hoverColor: '#a78bfa', inactiveColor: '#f3e8ff' },
-    { id: 'zone11', d: 'M 30 190 L 95 240 L 80 295 L 150 300 L 130 360 L 50 350 Z', color: '#ec4899', selectedColor: '#9d174d', hoverColor: '#f472b6', inactiveColor: '#fce7f3' },
-    { id: 'zone12', d: 'M 50 350 L 130 360 L 150 380 L 140 450 L 60 440 Z', color: '#f43f5e', selectedColor: '#9f1239', hoverColor: '#fb7185', inactiveColor: '#ffe4e6' },
-    { id: 'zone13', d: 'M 240 320 L 330 330 L 310 440 L 210 420 Z', color: '#10b981', selectedColor: '#047857', hoverColor: '#34d399', inactiveColor: '#d1fae5' },
-    { id: 'zone14', d: 'M 140 450 L 210 420 L 310 440 L 280 510 L 170 520 Z', color: '#64748b', selectedColor: '#334155', hoverColor: '#94a3b8', inactiveColor: '#f1f5f9' },
-    { id: 'zone15', d: 'M 170 520 L 280 510 L 260 590 L 150 580 Z', color: '#475569', selectedColor: '#1e293b', hoverColor: '#64748b', inactiveColor: '#f8fafc' }
-  ];
+  const resetMapView = () => {
+    if (mapInstanceRef.current && geoJsonLayerRef.current) {
+      const bounds = geoJsonLayerRef.current.getBounds();
+      if (bounds.isValid()) {
+        mapInstanceRef.current.fitBounds(bounds, { padding: [20, 20] });
+      }
+    }
+  };
 
   return (
     <div className="bg-neutral-50 rounded-3xl border border-neutral-200 shadow-sm p-6 sm:p-10 text-left space-y-8" id="disaster-relief-service-map">
+      {/* Header Bar */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-neutral-200 pb-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 bg-red-50 text-red-700 border border-red-200 text-[10px] font-mono font-bold uppercase py-1 px-2.5 rounded-full">
-            <ShieldAlert className="w-3.5 h-3.5 animate-pulse text-red-650" />
-            <span>Emergency Operations Zone Map</span>
+            <ShieldAlert className="w-3.5 h-3.5 animate-pulse text-red-600" />
+            <span>{language === 'ta' ? 'அவசரக்கால செயல்பாட்டு வரைபடம்' : 'Emergency Operations Map'}</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-brand-blue-900 tracking-tight font-display">
-            Disaster Relief Service Areas
+            {language === 'ta' ? 'சென்னை மண்டல பாதுகாப்பு வரைபடம்' : 'Chennai Zonal Coverage Map'}
           </h2>
-          <p className="text-xs sm:text-sm text-neutral-550 max-w-xl">
-            Click on active colored sectors or use the sidebar directory to inspect on-field pump capacities, response hubs, and emergency staff metrics.
+          <p className="text-xs sm:text-sm text-neutral-600 max-w-xl">
+            {language === 'ta'
+              ? 'பெருநகர சென்னை மாநகராட்சி (GCC) மண்டலங்களின் ஊடாடும் GIS வரைபடம். கள உந்தி திறன்கள் மற்றும் அதிகாரப் பிரிவுகளை ஆராய மண்டல எல்லைகளில் கிளிக் செய்யவும்.'
+              : 'Interactive GIS view of Greater Chennai Corporation (GCC) administrative zones. Click on any zone boundary to inspect on-field pump capacities, response hubs, and emergency staff metrics.'}
           </p>
         </div>
 
-        <div className="flex items-center gap-4 bg-white px-4 py-2 border border-neutral-200 rounded-xl shadow-xs">
-          <div className="flex items-center gap-1.5 text-xs font-mono font-semibold text-neutral-600">
-            <span className="w-2.5 h-2.5 bg-brand-blue-700 rounded-full inline-block animate-ping mr-0.5" />
-            <span>Active Sector</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-mono font-semibold text-neutral-400">
-            <span className="w-2.5 h-2.5 bg-neutral-300 rounded-full inline-block mr-0.5" />
-            <span>Standby/Reserve</span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={resetMapView}
+            id="reset-map-view-btn"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-200 hover:border-neutral-300 rounded-xl text-xs font-mono font-semibold text-neutral-700 shadow-xs hover:bg-neutral-50 transition-all cursor-pointer"
+          >
+            <Maximize2 className="w-3.5 h-3.5 text-neutral-500" />
+            <span>{language === 'ta' ? 'வரைபடத்தை மீட்டமைக்க' : 'Fit Whole Map'}</span>
+          </button>
+          
+          <div className="hidden sm:flex items-center gap-4 bg-white px-3.5 py-1.5 border border-neutral-200 rounded-xl shadow-xs">
+            <div className="flex items-center gap-1.5 text-xs font-mono font-semibold text-neutral-600">
+              <span className="w-2.5 h-2.5 bg-brand-blue-700 rounded-full inline-block animate-ping mr-0.5" />
+              <span>{language === 'ta' ? 'செயலில் உள்ள பிரிவு' : 'Active Sector'}</span>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-2">
-        {/* Left Grid: SVG Scaled state map representation (lg:col-span-6) */}
-        <div 
-          ref={containerRef}
-          className="lg:col-span-6 bg-white border border-neutral-200 rounded-2xl p-4 sm:p-6 flex flex-col justify-between items-center relative overflow-visible z-20 min-h-[380px] sm:min-h-[460px] w-full"
-          onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            setTooltipPos({
-              x: e.clientX - rect.left,
-              y: e.clientY - rect.top
-            });
-          }}
-        >
-          {/* Subtle blueprint coordinate background */}
-          <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none rounded-2xl" />
-          
-          <div className="w-full text-center py-2 absolute top-4 z-10">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-450 bg-neutral-100/80 px-2.5 py-1 rounded-md border border-neutral-200/50">
-              {hoveredDistrict ? `Hovering: ${DISTRICT_RECORDS[hoveredDistrict]?.name || hoveredDistrict}` : 'Live Geographic Response Grid'}
-            </span>
-          </div>
+        {/* Left Column: Leaflet GIS Interactive Map Container (lg:col-span-7) */}
+        <div className="lg:col-span-7 flex flex-col space-y-3">
+          <div className="relative w-full rounded-2xl overflow-hidden border border-neutral-300 bg-white shadow-xs">
+            {/* Leaflet Map Div */}
+            <div 
+              ref={mapContainerRef} 
+              id="leaflet-gcc-map"
+              className="w-full h-[420px] sm:h-[480px] z-0"
+            />
 
-          <div className="w-full h-full flex items-center justify-center pt-8 overflow-visible">
-            <svg 
-              viewBox="0 0 400 600" 
-              className="w-full select-none filter drop-shadow-md duration-350 transition-all overflow-visible"
-              style={{ 
-                maxWidth: '100%',
-                aspectRatio: '400/600',
-                height: 'auto'
-              }}
-            >
-              <defs>
-                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="4" result="blur" />
-                  <feComponentTransfer in="blur" result="boost">
-                    <feFuncA type="linear" slope="1.5"/>
-                  </feComponentTransfer>
-                  <feMerge>
-                    <feMergeNode in="boost" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-
-              {/* Regional outlines */}
-              <motion.g 
-                id="state-districts"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-40px" }}
-              >
-                {ZONE_CONFIGS.map((path) => {
-                  const data = zonalRecords[path.id];
-                  const hasData = !!data;
-                  const isActive = data?.isActive;
-                  const isSelected = selectedDistrict === path.id;
-                  const isHovered = hoveredDistrict === path.id;
-
-                  // Dynamic color fills based on state from a distinct, cohesive palette
-                  let fill = '#f1f5f9';
-                  let stroke = isSelected ? '#ffffff' : '#ffffff';
-                  let strokeWidth = isSelected ? '2.5' : '1';
-
-                  if (hasData) {
-                    if (!isActive) {
-                      fill = path.inactiveColor;
-                    } else if (isSelected) {
-                      fill = path.selectedColor;
-                    } else if (isHovered) {
-                      fill = path.hoverColor;
-                    } else {
-                      fill = path.color;
-                    }
-                  }
-
-                  return (
-                    <motion.g 
-                      key={path.id}
-                      variants={districtVariants}
-                      className="cursor-pointer transition-all duration-300"
-                      onClick={() => {
-                        if (hasData) {
-                          setSelectedDistrict(path.id);
-                        }
-                      }}
-                      onMouseEnter={() => setHoveredDistrict(path.id)}
-                      onMouseLeave={() => setHoveredDistrict(null)}
-                    >
-                      <motion.path 
-                        d={path.d}
-                        animate={{ 
-                          fill, 
-                          stroke, 
-                          strokeWidth: Number(strokeWidth) 
-                        }}
-                        transition={{ 
-                          duration: 0.35,
-                          ease: "easeInOut"
-                        }}
-                        whileHover={{ 
-                          scale: 1.018,
-                          filter: hasData ? "brightness(1.06) drop-shadow(0px 4px 8px rgba(0,0,0,0.15))" : "brightness(1.02)",
-                        }}
-                        filter={isSelected ? "url(#glow)" : "none"}
-                        style={{ transformOrigin: 'center' }}
-                        className="transition-all cursor-pointer"
-                      />
-                      
-                      {/* Active Hub Locator Ring Beacon */}
-                      {isActive && data.status === 'active-hq' && (
-                        <circle 
-                          cx={data.coordinateLabel.x} 
-                          cy={data.coordinateLabel.y} 
-                          r="4" 
-                          fill="#eab308"
-                          className="animate-ping"
-                          style={{ transformOrigin: `${data.coordinateLabel.x}px ${data.coordinateLabel.y}px` }}
-                        />
-                      )}
-                    </motion.g>
-                  );
-                })}
-              </motion.g>
-
-              {/* Major District Labels & Response Hub Markers */}
-              <g id="district-labels" className="pointer-events-none">
-                {(Object.values(zonalRecords) as DistrictData[]).map((dist) => {
-                  const isSelected = selectedDistrict === dist.id;
-                  const isOverLimit = dist.activeStaff > 45 && dist.isActive;
-                  
-                  return (
-                    <g key={dist.id} className="transition-all duration-350">
-                      {/* Plotting Small Circles matching the Legend: Navy for Primary, Amber for Secondary */}
-                      {dist.isActive && (
-                        dist.status === 'active-hq' ? (
-                          // Primary response hub (dark navy dot)
-                          <circle 
-                            cx={dist.coordinateLabel.x} 
-                            cy={dist.coordinateLabel.y} 
-                            r={isSelected ? '6.5' : '5'} 
-                            fill="#0e2954"
-                            stroke="#ffffff"
-                            strokeWidth="1.5"
-                            className="transition-all duration-300 filter drop-shadow-sm"
-                          />
-                        ) : (
-                          // Secondary response hub (amber/yellow dot)
-                          <circle 
-                            cx={dist.coordinateLabel.x} 
-                            cy={dist.coordinateLabel.y} 
-                            r={isSelected ? '5.5' : '4.5'} 
-                            fill="#eab308"
-                            stroke="#ffffff"
-                            strokeWidth="1.2"
-                            className="transition-all duration-300 filter drop-shadow-sm"
-                          />
-                        )
-                      )}
-
-                      {!dist.isActive && (
-                        // Standby/Inactive Zone Muted Small Dot
-                        <circle 
-                          cx={dist.coordinateLabel.x} 
-                          cy={dist.coordinateLabel.y} 
-                          r="3" 
-                          fill="#94a3b8"
-                          stroke="#ffffff"
-                          strokeWidth="1"
-                          className="transition-all duration-300"
-                        />
-                      )}
-
-                      {/* Responsive Label Text: hidden on mobile (<640px) to prevent layout clutter, tap-to-reveal tooltips are active */}
-                      <text
-                        x={dist.coordinateLabel.x}
-                        y={dist.coordinateLabel.y + 15}
-                        textAnchor="middle"
-                        className={`hidden sm:block font-mono text-[8px] font-bold tracking-tight pointer-events-none transition-all duration-300 ${
-                          isSelected 
-                            ? isOverLimit 
-                              ? 'fill-red-700 font-black scale-105' 
-                              : 'fill-neutral-900 font-black' 
-                            : isOverLimit 
-                              ? 'fill-red-500 font-semibold' 
-                              : 'fill-neutral-600'
-                        }`}
-                      >
-                        {dist.name.split(': ')[1] || dist.name}
-                      </text>
-                    </g>
-                  );
-                })}
-              </g>
-            </svg>
-          </div>
-
-          {/* Map Legend: Responsive and fully matching markers & active state */}
-          <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center bg-neutral-50 p-4 border border-neutral-150 rounded-xl mt-4 gap-2.5">
-            <span className="text-[10px] font-mono text-neutral-450 uppercase font-bold">Chennai Zonal Coverage Map</span>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-600">
-                <span className="w-3 h-3 rounded-full bg-[#0e2954] border border-white shadow-xs inline-block" />
-                <span>Primary Hub (Navy)</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-600">
-                <span className="w-3 h-3 rounded-full bg-[#eab308] border border-white shadow-xs inline-block" />
-                <span>Secondary Hub (Amber)</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-450">
-                <span className="w-3 h-3 rounded-full bg-neutral-250 border border-white inline-block" />
-                <span>Standby / Inactive</span>
-              </div>
+            {/* Overlaid Zone Indicator Badge */}
+            <div className="absolute top-3 left-3 z-[1000] pointer-events-none bg-neutral-900/90 backdrop-blur-md text-white px-3 py-1.5 rounded-xl border border-neutral-700/80 shadow-md flex items-center gap-2">
+              <Navigation className="w-3.5 h-3.5 text-brand-gold-400 animate-pulse" />
+              <span className="text-xs font-mono font-bold text-brand-gold-400">
+                {zonalRecords[selectedDistrict]?.name || 'GCC Chennai'}
+              </span>
             </div>
           </div>
 
-          {/* Floating Hover Tooltip */}
-          <AnimatePresence>
-            {hoveredDistrict && (() => {
-              const hoveredData = zonalRecords[hoveredDistrict];
-              const name = hoveredData ? hoveredData.name : (zonalRecords[hoveredDistrict]?.name || hoveredDistrict);
-              const projectCount = hoveredData ? hoveredData.floodsManaged : 0;
-              const areaName = hoveredData?.areas || (hoveredData?.name?.split(': ')[1] || hoveredDistrict);
-              const zoneName = hoveredData ? hoveredData.name.split(': ')[0] : hoveredDistrict;
-              
-              // Smart quadrant positioning to prevent tooltip from clipping or hiding outside the parent container
-              const showBelow = tooltipPos.y < 165;
-              const showLeft = tooltipPos.x > 175;
-              
-              const xOffset = showLeft ? -256 : 12;
-              const yOffset = showBelow ? 12 : -12;
-              const transformValue = showBelow ? 'none' : 'translateY(-100%)';
-
-              return (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.12 }}
-                  className="absolute bg-neutral-900 border border-neutral-800 text-white p-3.5 rounded-xl shadow-2xl pointer-events-none z-[100] w-60 text-left overflow-visible space-y-2"
-                  style={{
-                    left: `${tooltipPos.x + xOffset}px`,
-                    top: `${tooltipPos.y + yOffset}px`,
-                    transform: transformValue
-                  }}
-                >
-                  <div className="flex items-center justify-between gap-2 border-b border-neutral-800 pb-2">
-                    <div className="space-y-0.5">
-                      <p className="font-display font-black text-xs text-brand-gold-400 leading-tight">
-                        {zoneName}: {areaName}
-                      </p>
-                      {hoveredData?.wardRange && (
-                        <p className="font-mono text-[9px] text-neutral-400">
-                          Wards Scope: {hoveredData.wardRange}
-                        </p>
-                      )}
-                    </div>
-                    <span className={`text-[8px] font-mono font-bold uppercase px-1.5 py-0.5 rounded shrink-0 self-start ${
-                      hoveredData?.status === 'active-hq' 
-                        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
-                        : hoveredData?.isActive 
-                          ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
-                          : 'bg-neutral-800 text-neutral-400 border border-neutral-700/50'
-                    }`}>
-                      {hoveredData?.status === 'active-hq' ? 'Command HQ' : hoveredData?.isActive ? 'Active' : 'Standby'}
-                    </span>
-                  </div>
-                  
-                  <div className="space-y-1 font-sans text-xs">
-                    <div className="flex justify-between gap-6">
-                      <span className="text-neutral-400">Active Pumps:</span>
-                      <span className="font-mono font-bold text-neutral-100">
-                        {hoveredData?.pumpsDeployed} / {hoveredData?.totalPumps || 25}
-                      </span>
-                    </div>
-                    <div className="flex justify-between gap-6">
-                      <span className="text-neutral-400">On-field Crews:</span>
-                      <span className="font-mono font-bold text-neutral-100">
-                        {hoveredData?.activeStaff} Staff
-                      </span>
-                    </div>
-                    <div className="flex justify-between gap-6 pt-1 border-t border-neutral-850/50 text-[10px]">
-                      <span className="text-neutral-500">Relief Projects:</span>
-                      <span className="font-mono text-neutral-400">{projectCount} Completed</span>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })()}
-          </AnimatePresence>
+          {/* Map Attribution & Reference Note */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] text-neutral-600 bg-neutral-100/90 p-3 rounded-xl border border-neutral-200/80 gap-2 font-sans">
+            <div className="flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+              <span>
+                {language === 'ta' ? 'மண்டல எல்லைகள்:' : 'Zone boundaries:'} <strong>DataMeet India community</strong> (CC BY 4.0)
+              </span>
+            </div>
+            <p className="text-[10px] text-neutral-500 italic leading-snug">
+              {language === 'ta'
+                ? '*குறிப்பு: பொதுவான பார்வைக்காக. எல்லைகள் GCC 15-மண்டல அமைப்பை சித்தரிக்கின்றன.'
+                : '*Note: For general reference. Boundaries depict GCC 15-zone system and may not reflect recent 20-zone expansion.'}
+            </p>
+          </div>
         </div>
 
-        {/* Right Grid: Detailed parameters card and list selection (lg:col-span-6) */}
-        <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
-
-          {/* Quick district selector buttons pile */}
+        {/* Right Column: Fleet Index & Selected Zone Details Panel (lg:col-span-5) */}
+        <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+          {/* Quick zone selector buttons */}
           <div className="space-y-2">
             <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest pl-1">
-              Command Center Fleet Index
+              {language === 'ta' ? 'மண்டல பட்டியல்' : 'GCC Zone Command Fleet Index'}
             </p>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-1.5 flex-wrap max-h-48 overflow-y-auto p-1 bg-white border border-neutral-200/80 rounded-xl">
               {(Object.values(zonalRecords) as DistrictData[]).map((dist) => {
                 const isSelected = selectedDistrict === dist.id;
                 const isOverLimit = dist.activeStaff > 45 && dist.isActive;
+                const zoneNoLabel = dist.name.split(':')[0] || dist.id;
+                const areaName = dist.name.split(': ')[1] || dist.name;
                 
                 return (
                   <button
                     key={dist.id}
                     onClick={() => setSelectedDistrict(dist.id)}
-                    className={`px-3 py-2 rounded-xl text-xs font-display font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-display font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
                       isSelected 
                         ? isOverLimit
                           ? 'bg-red-600 text-white border-red-700 shadow-sm ring-2 ring-red-500/40'
                           : 'bg-brand-blue-900 text-white border-brand-blue-950 shadow-sm' 
                         : dist.isActive 
-                          ? isOverLimit
-                            ? 'bg-red-50/80 text-red-700 border-red-200 hover:bg-red-100/90'
-                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50' 
+                          ? 'bg-neutral-50 text-neutral-700 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100' 
                           : 'bg-neutral-100 text-neutral-400 border-neutral-200/50 opacity-60'
                     }`}
                   >
@@ -737,25 +768,23 @@ export const ServiceAreaMap: React.FC = () => {
                         ? 'bg-red-600 animate-ping'
                         : dist.status === 'active-hq' 
                           ? 'bg-brand-gold-500' 
-                          : dist.isActive 
-                            ? 'bg-brand-blue-500' 
-                            : 'bg-neutral-400'
+                          : 'bg-brand-blue-500'
                     }`} />
-                    <span>{dist.name.split(': ')[1] || dist.name}</span>
+                    <span>{zoneNoLabel}: {areaName}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Active Detail Display Sheet with AnimatePresence */}
+          {/* Selected Zone Detail Display Card */}
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedDistrict}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.2 }}
               className="bg-white border border-neutral-200/80 rounded-2xl p-6 flex-1 flex flex-col justify-between space-y-6 shadow-xs relative"
             >
               {currentRecord.status === 'active-hq' && (
@@ -769,9 +798,7 @@ export const ServiceAreaMap: React.FC = () => {
                   <div className={`p-2.5 rounded-xl ${
                     currentRecord.status === 'active-hq' 
                       ? 'bg-brand-gold-500/10 text-brand-gold-600' 
-                      : currentRecord.isActive 
-                        ? 'bg-brand-blue-50 text-brand-blue-700' 
-                        : 'bg-neutral-100 text-neutral-400'
+                      : 'bg-brand-blue-50 text-brand-blue-700'
                   }`}>
                     <MapPin className="w-5 h-5" />
                   </div>
@@ -784,11 +811,9 @@ export const ServiceAreaMap: React.FC = () => {
                       <span className={`text-[10px] font-mono font-bold uppercase rounded px-1.5 ${
                         currentRecord.status === 'active-hq' 
                           ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/25' 
-                          : currentRecord.isActive 
-                            ? 'bg-brand-blue-600/10 text-brand-blue-600' 
-                            : 'bg-neutral-100 text-neutral-400'
+                          : 'bg-brand-blue-600/10 text-brand-blue-600'
                       }`}>
-                        {currentRecord.status === 'active-hq' ? 'Primary Yard Command' : currentRecord.isActive ? 'Active Support Sector' : 'Standby / Reserve'}
+                        {currentRecord.status === 'active-hq' ? 'Primary Yard Command' : 'Active Support Sector'}
                       </span>
                     </div>
                   </div>
@@ -798,46 +823,63 @@ export const ServiceAreaMap: React.FC = () => {
                   {currentRecord.description}
                 </p>
 
-                {/* Quantitative statistics strip */}
-                {currentRecord.isActive ? (
-                  <div className="space-y-4">
-                    {currentRecord.activeStaff > 45 && (
-                      <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-800 text-xs flex items-start gap-2.5 animate-pulse">
-                        <ShieldAlert className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="font-bold">Staff Capacity Safety Ceiling Exceeded</p>
-                          <p className="text-[11px] text-red-700 font-light mt-0.5 leading-relaxed">
-                            Operational protocols strictly limit on-field dewatering staff to a maximum of 45 per zone to ensure field safety. Current deployment of {currentRecord.activeStaff} violates this ceiling. Please reduce the staffing immediately.
-                          </p>
-                        </div>
-                      </div>
-                    )}
+                {/* Metrics */}
+                <div className="grid grid-cols-3 gap-2.5 pt-2">
+                  <div className="bg-neutral-50 border border-neutral-200/80 p-3 rounded-xl space-y-0.5">
+                    <p className="text-[10px] font-mono text-neutral-400 uppercase">Active Pumps</p>
+                    <p className="text-base sm:text-lg font-bold font-display text-brand-blue-950">
+                      {currentRecord.pumpsDeployed} <span className="text-xs text-neutral-400 font-normal">/ {currentRecord.totalPumps || 25}</span>
+                    </p>
+                    <p className="text-[10px] text-brand-blue-600 font-mono font-semibold">
+                      {Math.round((currentRecord.pumpsDeployed / (currentRecord.totalPumps || 25)) * 100)}% Deployed
+                    </p>
+                  </div>
+                  <div className="bg-neutral-50 border border-neutral-200/80 p-3 rounded-xl space-y-0.5">
+                    <p className="text-[10px] font-mono text-neutral-400 uppercase">Field Crew</p>
+                    <p className="text-base sm:text-lg font-bold font-display text-brand-blue-950">
+                      {currentRecord.activeStaff} <span className="text-xs text-neutral-400 font-normal">Staff</span>
+                    </p>
+                    <p className={`text-[10px] font-mono font-semibold ${currentRecord.activeStaff > 45 ? 'text-red-600 font-bold' : 'text-emerald-600'}`}>
+                      {currentRecord.activeStaff > 45 ? '⚠️ High Load' : 'Optimal'}
+                    </p>
+                  </div>
+                  <div className="bg-neutral-50 border border-neutral-200/80 p-3 rounded-xl space-y-0.5">
+                    <p className="text-[10px] font-mono text-neutral-400 uppercase">Ward Scope</p>
+                    <p className="text-base sm:text-lg font-bold font-display text-brand-blue-950">
+                      {currentRecord.wardRange || '1–14'}
+                    </p>
+                    <p className="text-[10px] text-neutral-500 font-mono">GCC Wards</p>
+                  </div>
+                </div>
 
-                    <div className="bg-brand-blue-50/50 border border-brand-blue-100 rounded-xl p-4 text-brand-blue-800 text-xs flex items-start gap-2.5 mt-4">
-                      <Activity className="w-4 h-4 text-brand-blue-600 shrink-0 mt-0.5 animate-pulse" />
+                {/* Quantitative statistics strip */}
+                <div className="space-y-4">
+                  {currentRecord.activeStaff > 45 && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-800 text-xs flex items-start gap-2.5 animate-pulse">
+                      <ShieldAlert className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-bold">Real-time Telemetry Active</p>
-                        <p className="text-[11px] text-brand-blue-700/95 font-medium mt-0.5 leading-relaxed">
-                          Kindly check the Emergency Telemetry Feed for Real Time Data.
+                        <p className="font-bold">Staff Capacity Safety Ceiling Exceeded</p>
+                        <p className="text-[11px] text-red-700 font-light mt-0.5 leading-relaxed">
+                          Operational protocols strictly limit on-field dewatering staff to a maximum of 45 per zone to ensure field safety.
                         </p>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-200/60 flex items-start gap-2.5 text-amber-800 text-xs">
-                    <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  )}
+
+                  <div className="bg-brand-blue-50/50 border border-brand-blue-100 rounded-xl p-3.5 text-brand-blue-800 text-xs flex items-start gap-2.5">
+                    <Activity className="w-4 h-4 text-brand-blue-600 shrink-0 mt-0.5 animate-pulse" />
                     <div>
-                      <p className="font-semibold">Standby Command Area</p>
-                      <p className="text-[11px] text-amber-700 font-light mt-0.5">
-                        This sector is maintained on standby. Emergency pumps are ready to deploy within 180 minutes of callout notification from our core Villupuram Headquarters.
+                      <p className="font-bold">Real-time Telemetry Active</p>
+                      <p className="text-[11px] text-brand-blue-700/95 font-medium mt-0.5 leading-relaxed">
+                        Telemetry synchronized with Emergency Operations Feed.
                       </p>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Stationed assets checklist */}
-              {currentRecord.isActive && currentRecord.facilities.length > 0 && (
+              {currentRecord.facilities.length > 0 && (
                 <div className="border-t border-neutral-150/80 pt-4 space-y-2">
                   <h4 className="text-[10px] font-mono tracking-widest text-neutral-450 uppercase font-bold">
                     Stationed Response Assets & Facilities
@@ -854,6 +896,48 @@ export const ServiceAreaMap: React.FC = () => {
               )}
             </motion.div>
           </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Map Legend & Color Palette Key */}
+      <div className="w-full bg-white p-4 border border-neutral-200/90 rounded-2xl space-y-3">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-150 pb-2.5">
+          <span className="text-[11px] font-mono font-bold text-neutral-500 uppercase tracking-wider">
+            {language === 'ta' ? 'வரைபட குறியீடு & மண்டல வண்ண விவரிப்பு' : 'GCC Map Legend & Zonal Color Palette'}
+          </span>
+          <div className="flex flex-wrap items-center gap-4 text-[11px] font-mono text-neutral-600">
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#0e2954] border border-white shadow-xs inline-block" />
+              <span>Primary Command HQ</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#eab308] border border-white shadow-xs inline-block" />
+              <span>Support Node</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Color Palette Grid */}
+        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-15 gap-2 pt-1">
+          {Object.entries(ZONE_PALETTE).map(([key, val]) => {
+            const numStr = key.replace('zone', '');
+            const isSelected = selectedDistrict === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setSelectedDistrict(key)}
+                className={`flex flex-col items-center justify-center p-1.5 rounded-lg border text-center transition-all cursor-pointer ${
+                  isSelected ? 'ring-2 ring-brand-blue-600 border-white shadow-sm scale-105' : 'border-neutral-200/80 hover:bg-neutral-50'
+                }`}
+              >
+                <span
+                  className="w-4 h-4 rounded-full border border-black/10 shadow-xs mb-1"
+                  style={{ backgroundColor: val.fill }}
+                />
+                <span className="text-[9px] font-mono font-bold text-neutral-700">Zone {numStr}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
