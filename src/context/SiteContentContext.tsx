@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { doc, onSnapshot, setDoc, collection, addDoc, query, orderBy, limit } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { COMPANY_DETAILS, OFFICES, SERVICE_CATEGORIES } from '../data';
+import { INITIAL_CONSTRUCTION_EXPERIENCE } from '../data/constructionExperience';
+import { ConstructionExperienceContent } from '../types';
 import { translations as DEFAULT_TRANSLATIONS } from '../translations';
 
 // Interfaces for structured site content sections
@@ -182,6 +184,7 @@ export interface FullSiteContent {
   weatherAlertBanner: WeatherAlertBannerContent;
   chatbot: ChatbotContent;
   navigation: NavigationContent;
+  constructionExperience: ConstructionExperienceContent;
 }
 
 // Default Fallbacks from data.ts
@@ -382,6 +385,9 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
       { id: 'contact', labelEn: 'Contact Us', labelTa: 'தொடர்பு கொள்ள', path: '/contact', order: 7 },
     ],
   },
+  constructionExperience: {
+    categories: INITIAL_CONSTRUCTION_EXPERIENCE,
+  },
 };
 
 export interface HistoryEntry {
@@ -433,6 +439,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       'weatherAlertBanner',
       'chatbot',
       'navigation',
+      'constructionExperience',
     ];
 
     const loadedKeys = new Set<string>();

@@ -29,6 +29,7 @@ import {
   AlertCircle,
   Database,
   ArrowUpRight,
+  Layers,
 } from 'lucide-react';
 
 import { HeroTab } from './admin/HeroTab';
@@ -47,6 +48,7 @@ import { HydraulicBroomerTab } from './admin/HydraulicBroomerTab';
 import { WeatherAlertBannerTab } from './admin/WeatherAlertBannerTab';
 import { ChatbotTab } from './admin/ChatbotTab';
 import { NavigationTab } from './admin/NavigationTab';
+import { ConstructionExperienceTab } from './admin/ConstructionExperienceTab';
 
 export type ActiveTab =
   | 'hero'
@@ -56,6 +58,7 @@ export type ActiveTab =
   | 'clients'
   | 'governingBoard'
   | 'projects'
+  | 'constructionExperience'
   | 'equipment'
   | 'capabilityStatement'
   | 'hydraulicBroomer'
@@ -198,6 +201,7 @@ export function AdminDashboardView() {
     { id: 'clients' as ActiveTab, label: 'Clients & Depts', icon: Building2 },
     { id: 'governingBoard' as ActiveTab, label: 'Leadership', icon: Users },
     { id: 'projects' as ActiveTab, label: 'Projects', icon: FolderKanban },
+    { id: 'constructionExperience' as ActiveTab, label: 'Construction Experience', icon: Layers },
     { id: 'equipment' as ActiveTab, label: 'Equipment Fleet', icon: Truck },
     { id: 'capabilityStatement' as ActiveTab, label: 'Capability Statement', icon: FileText },
     { id: 'hydraulicBroomer' as ActiveTab, label: 'Hydraulic Broomer', icon: Wrench },
@@ -342,6 +346,7 @@ export function AdminDashboardView() {
           {activeTab === 'clients' && <ClientsTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'governingBoard' && <GoverningBoardTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'projects' && <ProjectsTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'constructionExperience' && <ConstructionExperienceTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'equipment' && <EquipmentTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'capabilityStatement' && <CapabilityStatementTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'hydraulicBroomer' && <HydraulicBroomerTab content={siteContent} updateSection={updateSection} />}

@@ -28,6 +28,8 @@ import {
   Sparkles
 } from 'lucide-react';
 
+import { INITIAL_CONSTRUCTION_EXPERIENCE } from '../data/constructionExperience';
+import { ConstructionCategory } from '../types';
 import { PROJECTS, CYCLONE_RELIEF_TIMELINE } from '../data';
 import { ProjectItem } from '../types';
 import companyLogo from '../assets/images/sri-velan-logo.png';
@@ -57,6 +59,10 @@ export const ProjectsView: React.FC = () => {
             ]
       }))
     : PROJECTS;
+
+  const constructionCategories: ConstructionCategory[] = siteContent?.constructionExperience?.categories?.length
+    ? siteContent.constructionExperience.categories
+    : INITIAL_CONSTRUCTION_EXPERIENCE;
 
   // Filter projects based on categories
   const filteredProjects = selectedCategory === 'all' 
@@ -196,144 +202,7 @@ export const ProjectsView: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. Main Project Case-Studies Grid */}
-      <section className="py-20 bg-white" id="projects-cases-grid-group">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16 border-b border-neutral-150 pb-8 text-left">
-            <div className="space-y-1.5 text-left">
-              <span className="text-xs font-mono text-neutral-400 uppercase tracking-widest leading-none">
-                {language === 'en' ? 'Portfolio Directory' : 'போர்ட்ஃபோலியோ அடைவு'}
-              </span>
-              <h2 className="text-3xl font-black font-display text-brand-blue-900">
-                {language === 'en' ? 'Executed State Tenders' : 'நிறைவேற்றப்பட்ட அரசு ஒப்பந்தங்கள்'}
-              </h2>
-              <p className="text-xs sm:text-sm text-neutral-500 font-sans font-light">
-                {language === 'en' 
-                  ? 'Select a category below to filter works. Click on any project card to read the complete executive case study.'
-                  : 'பணிகளை வடிகட்ட கீழே உள்ள ஒரு பிரிவைத் தேர்ந்தெடுக்கவும். முழுமையான ஆய்வு விவரங்களைப் படிக்க ஏதேனும் ஒரு திட்ட அட்டையை கிளிக் செய்யவும்.'}
-              </p>
-            </div>
 
-            {/* Filter buttons line */}
-            <div className="flex flex-wrap items-center gap-2" id="portfolio-filters">
-              {[
-                { id: 'all', label: language === 'en' ? 'All Projects' : 'அனைத்து திட்டங்கள்' },
-                { id: 'government', label: language === 'en' ? 'HR&CE Temple' : 'இந்து சமய அறநிலையத் துறை கோயில்' },
-                { id: 'infrastructure', label: language === 'en' ? 'Public Buildings' : 'பொதுக் கட்டிடங்கள்' },
-                { id: 'water-resource', label: language === 'en' ? 'WRD Canals' : 'WRD கால்வாய்கள்' },
-                { id: 'emergency-relief', label: language === 'en' ? 'Dewatering Logs' : 'நீர் வெளியேற்றப் பதிவுகள்' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setSelectedCategory(tab.id as any)}
-                  className={`px-4 py-2.5 rounded-lg font-display text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                    selectedCategory === tab.id 
-                      ? 'bg-brand-blue-700 text-white border border-brand-blue-800 shadow-md scale-[1.02]' 
-                      : 'bg-neutral-50 text-neutral-600 border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100/50'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <AnimatePresence mode="popLayout">
-              {filteredProjects.map((p) => {
-                const imgUrl = p.id === 'proj-pwd' ? p.fallbackImage || p.image : p.image;
-                const projTitle = t(`projects.${p.id}.title`, p.title);
-                const projDesc = t(`projects.${p.id}.description`, p.description);
-                const projDetails = getTranslatedArray(`projects.${p.id}.details`, p.details);
-
-                return (
-                  <motion.div
-                    key={p.id}
-                    layout
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 30 }}
-                    transition={{ duration: 0.35 }}
-                    onClick={() => setActiveCaseStudy(p)}
-                    className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-xs hover:shadow-xl group transition-all duration-300 flex flex-col justify-between cursor-pointer text-left relative"
-                    id={`project-card-${p.id}`}
-                  >
-                    <div className="flex flex-col">
-                      {/* Project Header Image */}
-                      <div className="h-64 overflow-hidden relative border-b border-neutral-200 shrink-0">
-                        <img 
-                          src={imgUrl} 
-                          alt={projTitle}
-                          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 filter brightness-95"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => { (e.target as HTMLImageElement).src = companyLogo; }}
-                          loading="lazy"
-                          width="600"
-                          height="400"
-                        />
-                        {/* Dynamic category label */}
-                        <div className="absolute top-4 left-4 bg-brand-blue-900/90 text-brand-gold-400 font-mono text-[9px] font-bold py-1.5 px-3.5 rounded-full uppercase border border-brand-blue-800/40 backdrop-blur-md">
-                          {getCategoryLabel(p.category)}
-                        </div>
-
-                        {/* Slide-in View Case Study prompt */}
-                        <div className="absolute inset-0 bg-brand-blue-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white">
-                          <span className="font-display font-bold text-sm tracking-wider uppercase text-brand-gold-400">
-                            {language === 'en' ? 'View Detailed Case Study' : 'முழு விவரங்களை ஆராய்க'}
-                          </span>
-                          <ArrowUpRight className="w-4 h-4 text-brand-gold-400" />
-                        </div>
-                      </div>
-
-                      {/* Content Section */}
-                      <div className="p-6 sm:p-8 space-y-4">
-                        <h3 className="font-display font-bold text-lg sm:text-xl text-brand-blue-950 group-hover:text-brand-blue-800 transition-colors">
-                          {projTitle}
-                        </h3>
-
-                        <p className="text-neutral-600 font-sans text-xs sm:text-sm leading-relaxed font-light">
-                          {projDesc}
-                        </p>
-
-                        <div className="h-px bg-neutral-200 w-full" />
-
-                        {/* List of specifics checkpoints info */}
-                        <div className="space-y-2.5 text-left">
-                          <p className="text-[9px] font-mono uppercase tracking-widest text-brand-gold-700 font-bold">
-                            {language === 'en' ? 'Execution Highlights' : 'செயல்படுத்தப்பட்ட சிறப்பம்சங்கள்'}
-                          </p>
-                          <div className="grid grid-cols-1 gap-2">
-                            {projDetails.slice(0, 3).map((dtl, idx) => (
-                              <div key={idx} className="flex gap-2.5 items-start text-xs sm:text-sm text-left">
-                                <CheckCircle className="w-4 h-4 text-brand-blue-700 mt-0.5 shrink-0" />
-                                <span className="text-neutral-700 font-sans text-left">{dtl}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Bottom visual anchor bar */}
-                    <div className="px-6 py-4 bg-neutral-50 border-t border-neutral-200 flex justify-between items-center">
-                      <span className="text-[10px] font-mono text-neutral-400 uppercase">
-                        {language === 'en' ? 'TENDER REFERENCE LOGGED' : 'அரசு டெண்டர் குறிப்புப் பதிவு'}
-                      </span>
-                      <span className="text-brand-blue-800 hover:text-brand-blue-900 font-display font-semibold text-xs flex items-center gap-1">
-                        <span>{language === 'en' ? 'Read full specs' : 'முழு விவரங்களைக் காண்க'}</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-brand-gold-500" />
-                      </span>
-                    </div>
-
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
-
-        </div>
-      </section>
 
       {/* 3. Deep Case-Study Detail Modal overlay using Framer Motion */}
       <AnimatePresence>
@@ -470,6 +339,99 @@ export const ProjectsView: React.FC = () => {
           </>
         )}
       </AnimatePresence>
+
+      {/* 3. Construction Experience Section (from Company Brochure) */}
+      <section className="py-20 bg-neutral-950 text-white relative overflow-hidden" id="construction-experience-section">
+        {/* Subtle grid pattern background */}
+        <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 border-b border-white/10 pb-8 text-left">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-brand-gold-400 uppercase bg-brand-gold-500/10 px-3 py-1 rounded-full border border-brand-gold-500/20">
+                <Building2 className="w-3.5 h-3.5" />
+                {language === 'en' ? 'COMPANY BROCHURE ARCHIVES' : 'நிறுவனக் கையேடு காப்பகம்'}
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-black font-display text-white">
+                {language === 'en' ? 'Construction Experience' : 'கட்டுமான அனுபவம்'}
+              </h2>
+              <p className="text-sm text-neutral-400 font-sans max-w-2xl leading-relaxed">
+                {language === 'en'
+                  ? 'Key engineering, department building, water resources, rural road, and special election infrastructure projects executed by Sri Velan & Co.'
+                  : 'ஸ்ரீ வேலன் & கோவால் நிறைவேற்றப்பட்ட முக்கிய பொறியியல், அரசு கட்டிடங்கள், நீர்வளம், கிராமப்புற சாலை மற்றும் சிறப்புத் திட்டங்கள்.'}
+              </p>
+            </div>
+            <div className="shrink-0">
+              <span className="text-xs font-mono text-neutral-300 bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
+                {language === 'en' ? 'Verified Brochure Record' : 'சரிபார்க்கப்பட்ட நிறுவனப் பதிவு'}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {constructionCategories.map((cat: ConstructionCategory) => {
+              const catTitle = cat.title?.[language] || cat.title?.en || cat.id;
+              const projectList = cat.projects || [];
+
+              return (
+                <div
+                  key={cat.id}
+                  className="bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden hover:border-brand-gold-500/50 transition-all duration-300 flex flex-col shadow-xl group"
+                >
+                  {/* Category Card Header Image */}
+                  <div className="relative h-48 overflow-hidden bg-neutral-950 shrink-0">
+                    <img
+                      src={cat.image}
+                      alt={catTitle}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/40 to-transparent" />
+                    <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-brand-gold-400 bg-neutral-950/80 backdrop-blur-xs px-2.5 py-1 rounded-md border border-brand-gold-500/30">
+                        {cat.id.replace('-', ' ')}
+                      </span>
+                      <span className="text-xs text-neutral-300 font-mono">
+                        {projectList.length} {language === 'en' ? 'Projects' : 'திட்டங்கள்'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Category Content */}
+                  <div className="p-6 flex-1 flex flex-col justify-between space-y-4 text-left">
+                    <div>
+                      <h3 className="text-xl font-bold font-display text-white mb-4 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-brand-gold-500"></span>
+                        {catTitle}
+                      </h3>
+
+                      <ul className="space-y-3 font-sans">
+                        {projectList.map((proj, pIdx) => {
+                          const projText = typeof proj === 'string' ? proj : (proj[language] || proj.en || '');
+                          return (
+                            <li key={pIdx} className="flex items-start gap-2.5 text-xs text-neutral-300 leading-relaxed">
+                              <span className="mt-1 shrink-0 text-brand-gold-400 font-bold">•</span>
+                              <span>{projText}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-neutral-500">
+                      <span>SRI VELAN & CO • BROCHURE LOG</span>
+                      <span className="text-emerald-400 font-semibold">100% EXECUTED</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       {/* 4. Extreme Dewatering Storm history logs timeline */}
       <section className="py-20 sm:py-28 bg-neutral-50 border-t border-neutral-200" id="project-timeline-relief">

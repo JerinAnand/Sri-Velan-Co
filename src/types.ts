@@ -47,3 +47,25 @@ export interface OfficeLocation {
   mapImage: string;
   type: 'Head Office' | 'Chennai Office';
 }
+
+export interface LocalizedText {
+  en: string;
+  ta: string;
+}
+
+export interface ConstructionProjectEntry {
+  en: string;
+  ta: string;
+}
+
+export interface ConstructionCategory {
+  id: string;
+  title: LocalizedText;
+  image: string;
+  projects: ConstructionProjectEntry[];
+}
+
+export interface ConstructionExperienceContent {
+  categories: ConstructionCategory[];
+}
+
