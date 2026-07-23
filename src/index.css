@@ -492,5 +492,24 @@ html.dark-high-contrast #state-districts path[fill="#f87171"] {
   }
 }
 
+/* Map container section overrides & touch optimizations */
+#disaster-relief-service-map,
+#disaster-relief-service-map:hover,
+#service-area-section,
+#service-area-section:hover {
+  transform: none !important;
+}
+
+#leaflet-gcc-map {
+  touch-action: pan-x pan-y;
+  isolation: isolate;
+}
+
+.leaflet-container {
+  font-family: inherit;
+  z-index: 1;
+}
+
+
 
 

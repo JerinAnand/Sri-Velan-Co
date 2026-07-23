@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShieldAlert, MapPin, CheckCircle, Info, Activity, Navigation, Maximize2 } from 'lucide-react';
+import { ShieldAlert, MapPin, CheckCircle, Info, Activity, Navigation, Maximize2, Plus, Minus } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -403,6 +403,8 @@ export const ServiceAreaMap: React.FC = () => {
   const zonalRecordsRef = useRef(zonalRecords);
   zonalRecordsRef.current = zonalRecords;
 
+  const [currentZoom, setCurrentZoom] = useState<number>(11);
+
   // Initialize Leaflet Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -412,8 +414,14 @@ export const ServiceAreaMap: React.FC = () => {
     const map = L.map(mapContainerRef.current, {
       center: [13.0827, 80.2707],
       zoom: 11,
-      zoomControl: true,
+      minZoom: 9,
+      maxZoom: 18,
+      zoomControl: false,
       scrollWheelZoom: false,
+    });
+
+    map.on('zoomend', () => {
+      setCurrentZoom(map.getZoom());
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -652,6 +660,22 @@ export const ServiceAreaMap: React.FC = () => {
 
   const currentRecord = zonalRecords[selectedDistrict] || DISTRICT_RECORDS['zone9'];
 
+  const handleZoomIn = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (mapInstanceRef.current && mapInstanceRef.current.getZoom() < 18) {
+      mapInstanceRef.current.zoomIn();
+    }
+  };
+
+  const handleZoomOut = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (mapInstanceRef.current && mapInstanceRef.current.getZoom() > 9) {
+      mapInstanceRef.current.zoomOut();
+    }
+  };
+
   const resetMapView = () => {
     if (mapInstanceRef.current && geoJsonLayerRef.current) {
       const bounds = geoJsonLayerRef.current.getBounds();
@@ -716,6 +740,57 @@ export const ServiceAreaMap: React.FC = () => {
               <span className="text-xs font-mono font-bold text-brand-gold-400">
                 {zonalRecords[selectedDistrict]?.name || 'GCC Chennai'}
               </span>
+            </div>
+
+            {/* Dedicated Custom Zoom & Map Controls (Top Right Overlay) */}
+            <div 
+              className="absolute top-3 right-3 z-[1000] flex items-center gap-1.5 bg-neutral-900/90 backdrop-blur-md p-1.5 rounded-xl border border-neutral-700/80 shadow-md"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onDoubleClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                disabled={currentZoom >= 18}
+                title={language === 'ta' ? 'பெரிதாக்கவும்' : 'Zoom In (+)'}
+                aria-label="Zoom In"
+                className="w-8 h-8 flex items-center justify-center bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-600 disabled:opacity-40 disabled:hover:bg-neutral-800 text-white rounded-lg border border-neutral-600/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
+              >
+                <Plus className="w-4 h-4 text-brand-gold-400" />
+              </button>
+
+              <div className="px-2 py-1 bg-neutral-950 text-brand-gold-400 font-mono text-xs font-bold rounded-md border border-neutral-800 select-none min-w-[36px] text-center">
+                {currentZoom}x
+              </div>
+
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                disabled={currentZoom <= 9}
+                title={language === 'ta' ? 'சிறிதாக்கவும்' : 'Zoom Out (-)'}
+                aria-label="Zoom Out"
+                className="w-8 h-8 flex items-center justify-center bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-600 disabled:opacity-40 disabled:hover:bg-neutral-800 text-white rounded-lg border border-neutral-600/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
+              >
+                <Minus className="w-4 h-4 text-brand-gold-400" />
+              </button>
+
+              <div className="w-px h-5 bg-neutral-700/80 my-auto" />
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  resetMapView();
+                }}
+                title={language === 'ta' ? 'வரைபடத்தை மீட்டமைக்கவும்' : 'Reset View'}
+                aria-label="Reset View"
+                className="w-8 h-8 flex items-center justify-center bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-600 text-white rounded-lg border border-neutral-600/60 transition-colors cursor-pointer"
+              >
+                <Maximize2 className="w-3.5 h-3.5 text-neutral-300" />
+              </button>
             </div>
           </div>
 
