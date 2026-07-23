@@ -319,10 +319,6 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
     }
   ]);
 
-  if (botConfig && botConfig.enabled === false) {
-    return null;
-  }
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll on changes
@@ -331,6 +327,10 @@ export const VelanChatBot: React.FC<VelanChatBotProps> = ({ showScrollTop = fals
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isLoading]);
+
+  if (botConfig && botConfig.enabled === false) {
+    return null;
+  }
 
   const handleOpenToggle = () => {
     setIsOpen(!isOpen);

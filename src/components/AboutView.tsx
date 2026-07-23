@@ -30,7 +30,6 @@ import {
   Code2
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
-import { useAdmin } from '../context/AdminContext';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
 
@@ -53,7 +52,6 @@ export const getRoleIcon = (designation: string) => {
 
 export const AboutView: React.FC = () => {
   const { t, language } = useTranslation();
-  const { isAdmin } = useAdmin();
   const { siteContent } = useSiteContent();
   const [activeTab, setActiveTab] = useState<'profile' | 'credentials' | 'milestones'>('profile');
 

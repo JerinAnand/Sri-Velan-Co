@@ -34,7 +34,6 @@ import {
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
 import { useLoading } from '../context/LoadingContext';
-import { useAdmin } from '../context/AdminContext';
 import { useTranslation } from '../context/TranslationContext';
 
 interface VCardContact {
@@ -128,27 +127,8 @@ export const maskPhoneNumber = (phone: string): string => {
 export const ContactView: React.FC = () => {
   const { t, language } = useTranslation();
   const { runWithLoader } = useLoading();
-  const { getValue, isAdmin } = useAdmin();
 
-  const dynamicContacts: VCardContact[] = VCARD_CONTACTS.map(contact => {
-    const title = getValue(`vcard_${contact.id}_title`, contact.title);
-    const role = getValue(`vcard_${contact.id}_role`, contact.role);
-    const phone = getValue(`vcard_${contact.id}_phone`, contact.phone);
-    const email = getValue(`vcard_${contact.id}_email`, contact.email);
-    const office = getValue(`vcard_${contact.id}_office`, contact.office);
-    
-    const updatedVcard = `BEGIN:VCARD\r\nVERSION:3.0\r\nFN:${title}\r\nORG:Sri Velan & Co\r\nTITLE:${role}\r\nTEL;TYPE=WORK,VOICE:${phone}\r\nEMAIL;TYPE=PREF,INTERNET:${email}\r\nNOTE:${role} of Sri Velan & Co.\r\nURL:https://srivelanandco.com\r\nEND:VCARD`;
-
-    return {
-      ...contact,
-      title,
-      role,
-      phone,
-      email,
-      office,
-      vcard: updatedVcard
-    };
-  });
+  const dynamicContacts: VCardContact[] = VCARD_CONTACTS;
   const [loading, setLoading] = useState(false);
   const [complete, setComplete] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -566,21 +546,17 @@ export const ContactView: React.FC = () => {
                       <p className="text-[10px] text-neutral-400 uppercase font-mono tracking-widest">
                         {language === 'en' ? 'General Inquiries & Operations' : 'பொதுவான வினவல்கள் மற்றும் செயல்பாடுகள்'}
                       </p>
-                      {COMPANY_DETAILS.phones.map((p, idx) => {
-                        const phoneId = `company_phone_${idx}`;
-                        const displayPhone = getValue(phoneId, p);
-                        return (
-                          <a 
-                            key={p}
-                            href={`tel:${String(displayPhone).replace(/\s+/g, '')}`} 
-                            aria-label={`Call general inquiries and rapid operations desk at mobile number ${p}`}
-                            title={`Call operations representative at ${p}`}
-                            className="block font-display font-semibold text-base text-brand-blue-900 hover:text-brand-gold-600 transition-colors truncate"
-                          >
-                            {p}
-                          </a>
-                        );
-                      })}
+                      {COMPANY_DETAILS.phones.map((p) => (
+                        <a 
+                          key={p}
+                          href={`tel:${String(p).replace(/\s+/g, '')}`} 
+                          aria-label={`Call general inquiries and rapid operations desk at mobile number ${p}`}
+                          title={`Call operations representative at ${p}`}
+                          className="block font-display font-semibold text-base text-brand-blue-900 hover:text-brand-gold-600 transition-colors truncate"
+                        >
+                          {p}
+                        </a>
+                      ))}
                     </div>
                   </div>
 
@@ -623,19 +599,16 @@ export const ContactView: React.FC = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm font-sans text-left" id="contact-emails-list">
-                    {COMPANY_DETAILS.emails.map((email, idx) => {
-                      const emailId = `company_email_${idx}`;
-                      return (
-                        <a 
-                          key={email}
-                          href={`mailto:${getValue(emailId, email)}`} 
-                          className="block text-neutral-600 hover:text-brand-blue-700 hover:underline py-1 truncate text-left"
-                          title={email}
-                        >
-                          {email}
-                        </a>
-                      );
-                    })}
+                    {COMPANY_DETAILS.emails.map((email) => (
+                      <a 
+                        key={email}
+                        href={`mailto:${email}`} 
+                        className="block text-neutral-600 hover:text-brand-blue-700 hover:underline py-1 truncate text-left"
+                        title={email}
+                      >
+                        {email}
+                      </a>
+                    ))}
                   </div>
                 </div>
               </div>

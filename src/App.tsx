@@ -16,12 +16,10 @@ import { HydraulicBroomer } from './components/HydraulicBroomer';
 import { ContactView } from './components/ContactView';
 import { VelanChatBot } from './components/VelanChatBot';
 import { BrandedLoader } from './components/BrandedLoader';
-import { AdminControls } from './components/AdminControls';
 import { AdminDashboardView } from './components/AdminDashboardView';
 import { AdminLoginView } from './components/AdminLoginView';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { CapabilityStatement } from './components/CapabilityStatement';
-import { useAdmin } from './context/AdminContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle } from 'lucide-react';
@@ -30,7 +28,6 @@ import { COMPANY_DETAILS, OFFICES } from './data';
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAdmin } = useAdmin();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const pathMap: Record<string, ActiveView> = {
@@ -138,7 +135,7 @@ export default function App() {
   }, []);
 
   return (
-    <div id="application-layout-root" className={`min-h-screen bg-neutral-50 flex flex-col justify-between overflow-x-hidden font-sans relative ${isAdmin ? 'pb-14 sm:pb-16' : ''}`}>
+    <div id="application-layout-root" className="min-h-screen bg-neutral-50 flex flex-col justify-between overflow-x-hidden font-sans relative">
       
       {/* Premium Cinematic Branded Loader Overlay */}
       <BrandedLoader />
@@ -243,7 +240,7 @@ export default function App() {
        {/* Offline Intelligent AI Assistant */}
        
         {!isAdminDashboard && !isCapabilityStatement && <VelanChatBot showScrollTop={showScrollTop} />}
-        <AdminControls />
+
 
     </div>
   );

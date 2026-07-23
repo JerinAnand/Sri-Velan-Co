@@ -12,7 +12,7 @@ import { ActiveView } from '../types';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from '../context/TranslationContext';
 import { useSiteContent } from '../context/SiteContentContext';
-import { useAdmin } from '../context/AdminContext';
+import { useAuth } from '../context/AuthContext';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 
 export const Header: React.FC = () => {
@@ -21,7 +21,7 @@ export const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const { language, changeLanguage, t } = useTranslation();
   const { siteContent } = useSiteContent();
-  const { isAdmin } = useAdmin();
+  const { user } = useAuth();
   const navData = siteContent.navigation;
   const logoImage = navData?.logoUrl || companyLogo;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -180,18 +180,16 @@ export const Header: React.FC = () => {
                 )}
               </button>
 
-              {!isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/login')}
-                  className="p-2.5 rounded-lg text-neutral-300 hover:text-brand-gold-400 hover:bg-white/10 transition-all flex items-center justify-center cursor-pointer group"
-                  title="Admin Portal"
-                  aria-label="Admin Portal Access"
-                  id="header-admin-toggle-desktop"
-                >
-                  <ShieldCheck className="w-5 h-5 text-neutral-400 group-hover:text-brand-gold-400 transition-colors" />
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => navigate(user ? '/admin/dashboard' : '/admin/login')}
+                className="p-2.5 rounded-lg text-neutral-300 hover:text-brand-gold-400 hover:bg-white/10 transition-all flex items-center justify-center cursor-pointer group"
+                title={user ? "Admin Dashboard" : "Admin Portal"}
+                aria-label={user ? "Admin Dashboard Access" : "Admin Portal Access"}
+                id="header-admin-toggle-desktop"
+              >
+                <ShieldCheck className={`w-5 h-5 transition-colors ${user ? 'text-brand-gold-400' : 'text-neutral-400 group-hover:text-brand-gold-400'}`} />
+              </button>
             </div>
 
             {/* Mobile Actions: Theme Toggle & Hamburger Trigger */}
@@ -220,18 +218,16 @@ export const Header: React.FC = () => {
                   <Sun className="w-5 h-5 text-yellow-300" />
                 )}
               </button>
-              {!isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => navigate('/admin/login')}
-                  className="p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer group"
-                  title="Admin Portal"
-                  aria-label="Admin Portal Access"
-                  id="header-admin-toggle-mobile"
-                >
-                  <ShieldCheck className="w-5 h-5 text-neutral-400 group-hover:text-brand-gold-400 transition-colors" />
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => navigate(user ? '/admin/dashboard' : '/admin/login')}
+                className="p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer group"
+                title={user ? "Admin Dashboard" : "Admin Portal"}
+                aria-label={user ? "Admin Dashboard Access" : "Admin Portal Access"}
+                id="header-admin-toggle-mobile"
+              >
+                <ShieldCheck className={`w-5 h-5 transition-colors ${user ? 'text-brand-gold-400' : 'text-neutral-400 group-hover:text-brand-gold-400'}`} />
+              </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 id="mobile-menu-toggle"

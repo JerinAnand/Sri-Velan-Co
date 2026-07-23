@@ -14,7 +14,9 @@ import {
   FileText, 
   ArrowRight, 
   CalendarCheck,
-  Award
+  Award,
+  ExternalLink,
+  Navigation
 } from 'lucide-react';
 import { SERVICE_CATEGORIES } from '../data';
 import { useTranslation } from '../context/TranslationContext';
@@ -137,6 +139,38 @@ export const ServicesView: React.FC = () => {
                   </button>
                 );
               })}
+
+              {/* GCC Zone & Division Service Card/Button */}
+              <div className="pt-3 border-t border-neutral-200 mt-4 space-y-2">
+                <p className="text-xs font-mono text-neutral-400 tracking-wider uppercase text-left">
+                  {language === 'ta' ? 'மாநகராட்சி பொது சேவை' : 'Civic Location Utility'}
+                </p>
+                <a
+                  href="https://chennaicorporation.gov.in/gcc/citizen-details/location-service/find_zone.jsp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  id="service-card-gcc-zone-finder"
+                  className="w-full flex items-start gap-4 p-5 rounded-2xl border text-left cursor-pointer transition-all bg-gradient-to-br from-brand-blue-950 via-brand-blue-900 to-neutral-900 text-white border-brand-gold-500/40 hover:border-brand-gold-400 hover:shadow-lg group relative overflow-hidden block"
+                >
+                  <div className="p-2.5 rounded-xl shrink-0 bg-brand-gold-500/20 text-brand-gold-400 border border-brand-gold-500/30 group-hover:bg-brand-gold-500 group-hover:text-brand-blue-950 transition-all duration-300">
+                    <Navigation className="w-6 h-6" />
+                  </div>
+                  
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-center justify-between gap-1.5">
+                      <h3 className="font-display font-bold text-sm sm:text-base tracking-tight leading-snug text-brand-gold-400 group-hover:text-brand-gold-300 transition-colors">
+                        {language === 'ta' ? 'உங்கள் மண்டலம் & பிரிவை அறியவும் (GCC)' : 'Check Your Zone & Division (GCC)'}
+                      </h3>
+                      <ExternalLink className="w-4 h-4 text-brand-gold-400/80 shrink-0 group-hover:text-brand-gold-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                    </div>
+                    <p className="text-xs text-neutral-300 leading-relaxed font-sans">
+                      {language === 'ta'
+                        ? 'உங்கள் சொத்து எந்த பெருநகர சென்னை மாநகராட்சி மண்டலம் மற்றும் பிரிவின் கீழ் வருகிறது என்பதை அறியவும்.'
+                        : 'Find which Greater Chennai Corporation zone and division your property falls under.'}
+                    </p>
+                  </div>
+                </a>
+              </div>
             </div>
 
             {/* Right Detailed Panel Column (2/3 width) */}
@@ -197,6 +231,45 @@ export const ServicesView: React.FC = () => {
                 </motion.div>
               </AnimatePresence>
             </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* GCC Zone & Division Public Citizen Utility Section */}
+      <section className="py-12 bg-neutral-900 text-white border-t border-neutral-800" id="gcc-citizen-utility-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-brand-blue-950 via-neutral-900 to-brand-blue-950 rounded-3xl border border-brand-gold-500/30 p-6 sm:p-8 lg:p-10 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+            
+            <div className="flex items-start gap-5 text-left max-w-3xl">
+              <div className="p-3.5 rounded-2xl bg-brand-gold-500/20 text-brand-gold-400 border border-brand-gold-500/30 shrink-0 mt-1">
+                <MapPin className="w-8 h-8" />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[11px] font-mono font-semibold tracking-widest text-brand-gold-400 uppercase">
+                  {language === 'ta' ? 'பெருநகர சென்னை மாநகராட்சி (GCC) போர்டல்' : 'Greater Chennai Corporation (GCC) Portal'}
+                </span>
+                <h3 className="text-xl sm:text-2xl font-bold font-display text-white">
+                  {language === 'ta' ? 'உங்கள் மண்டலம் & பிரிவை அறியவும் (GCC)' : 'Check Your Zone & Division (GCC)'}
+                </h3>
+                <p className="text-sm text-neutral-300 leading-relaxed font-sans">
+                  {language === 'ta'
+                    ? 'உங்கள் சொத்து எந்த பெருநகர சென்னை மாநகராட்சி மண்டலம் மற்றும் பிரிவின் கீழ் வருகிறது என்பதை அறியவும்.'
+                    : 'Find which Greater Chennai Corporation zone and division your property falls under.'}
+                </p>
+              </div>
+            </div>
+
+            <a
+              href="https://chennaicorporation.gov.in/gcc/citizen-details/location-service/find_zone.jsp"
+              target="_blank"
+              rel="noopener noreferrer"
+              id="gcc-zone-finder-btn-section"
+              className="inline-flex items-center gap-3 px-6 py-3.5 rounded-xl bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-display font-bold text-sm tracking-wide transition-all shadow-md hover:shadow-lg shrink-0 cursor-pointer group"
+            >
+              <span>{language === 'ta' ? 'போர்ட்டலை திறக்கவும்' : 'Find Your Zone & Division'}</span>
+              <ExternalLink className="w-4 h-4 text-brand-blue-950 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
 
           </div>
         </div>

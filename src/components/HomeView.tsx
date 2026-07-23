@@ -28,7 +28,6 @@ import { useNavigate } from 'react-router-dom';
 import { COMPANY_DETAILS, SERVICE_CATEGORIES } from '../data';
 import { ActiveView } from '../types';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
-import { useAdmin } from '../context/AdminContext';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
 import companyLogo from '../assets/images/sri-velan-logo.png';
@@ -113,9 +112,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
     return () => clearInterval(timer);
   }, [isCarouselPaused, heroSlides.length]);
 
-  const { getValue, isAdmin } = useAdmin();
-  const yoeTarget = siteContent?.stats?.yearsExperience ?? getValue('home_years_of_legacy', 20);
-  const pumpCountTarget = siteContent?.stats?.dewateringFleet ?? getValue('home_heavy_machineries', 400);
+  const yoeTarget = siteContent?.stats?.yearsExperience ?? 20;
+  const pumpCountTarget = siteContent?.stats?.dewateringFleet ?? 400;
 
   // Triggering hooks for numbers
   const yoeAnim = useCountUp(yoeTarget, 1800);

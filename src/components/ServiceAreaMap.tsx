@@ -6,7 +6,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShieldAlert, Flame, MapPin, CheckCircle, Droplet, User, Settings, Info, Activity } from 'lucide-react';
-import { useAdmin } from '../context/AdminContext';
 
 interface DistrictData {
   id: string;
@@ -259,7 +258,7 @@ export const ServiceAreaMap: React.FC = () => {
   const [hoveredDistrict, setHoveredDistrict] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  const { getValue, updateValue, isAdmin } = useAdmin();
+
 
   const [zonalRecords, setZonalRecords] = useState<Record<string, DistrictData>>(() => {
     const records = JSON.parse(JSON.stringify(DISTRICT_RECORDS)); // Deep copy to avoid mutating source constants

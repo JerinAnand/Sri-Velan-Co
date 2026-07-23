@@ -70,6 +70,10 @@ export const en = {
       'Industrial Base Floor slabs',
       'Precision Temple Masonry / HR&CE standards'
     ]
+  },
+  'gccZoneFinder': {
+    title: 'Check Your Zone & Division (GCC)',
+    description: 'Find which Greater Chennai Corporation zone and division your property falls under.'
   }
 };
 
@@ -145,5 +149,9 @@ export const ta = {
       'தொழில்துறை தரைத்தளங்கள்',
       'துல்லியமான கோயில் கட்டுமானங்கள் / HR&CE தரநிலைகள்'
     ]
+  },
+  'gccZoneFinder': {
+    title: 'உங்கள் மண்டலம் & பிரிவை அறியவும் (GCC)',
+    description: 'உங்கள் சொத்து எந்த பெருநகர சென்னை மாநகராட்சி மண்டலம் மற்றும் பிரிவின் கீழ் வருகிறது என்பதை அறியவும்.'
   }
 };

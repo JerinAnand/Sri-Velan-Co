@@ -435,7 +435,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       'navigation',
     ];
 
-    let pendingReads = sectionKeys.length;
+    const loadedKeys = new Set<string>();
 
     const unsubscribes = sectionKeys.map((sectionKey) => {
       const docRef = doc(db, 'siteContent', sectionKey);
@@ -452,15 +452,15 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
               },
             }));
           }
-          pendingReads--;
-          if (pendingReads <= 0) {
+          loadedKeys.add(sectionKey);
+          if (loadedKeys.size >= sectionKeys.length) {
             setLoading(false);
           }
         },
         (error) => {
           console.warn(`Firestore read warning for siteContent/${sectionKey}:`, error);
-          pendingReads--;
-          if (pendingReads <= 0) {
+          loadedKeys.add(sectionKey);
+          if (loadedKeys.size >= sectionKeys.length) {
             setLoading(false);
           }
         }
