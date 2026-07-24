@@ -42,11 +42,16 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
     const cleanedProjects: ProjectItem[] = projects.map((proj) => ({
       id: proj.id || `project_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       title: proj.title.trim(),
+      category: proj.category || 'infrastructure',
       description: proj.description.trim(),
-      imageUrl: proj.imageUrl || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80',
+      imageUrl: proj.imageUrl || proj.image || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80',
+      image: proj.imageUrl || proj.image || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80',
       year: proj.year ? String(proj.year).trim() : '2025',
       status: proj.status ? String(proj.status).trim() : 'Completed',
       location: proj.location ? String(proj.location).trim() : 'Tamil Nadu Region',
+      details: Array.isArray(proj.details) && proj.details.length > 0
+        ? proj.details.map((d) => d.trim()).filter(Boolean)
+        : ['Verified engineering execution'],
     }));
 
     try {
@@ -66,11 +71,14 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
     (): ProjectItem => ({
       id: `project_${Date.now()}`,
       title: 'New Infrastructure Works Project',
+      category: 'infrastructure',
       description: 'Detailed description of execution and equipment deployed...',
       imageUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80',
       year: '2025',
       status: 'Completed',
       location: 'Tamil Nadu Region',
+      details: ['Verified engineering execution', 'State PWD/WRD compliant'],
     }),
     []
   );
@@ -81,7 +89,7 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
         <div>
           <h2 className="text-lg font-display font-bold text-white">Projects Showcase</h2>
           <p className="text-xs text-neutral-400">
-            Manage featured projects, descriptions, execution photos, locations, and completion status.
+            Manage featured projects, categories, descriptions, execution photos, locations, status, and detail bullet points.
           </p>
         </div>
         <button
@@ -117,7 +125,7 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
         addButtonText="Add New Project"
         renderItemFields={(item, idx, updateItem) => (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
+            <div>
               <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
                 Project Title *
               </label>
@@ -132,11 +140,27 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
 
             <div>
               <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
+                Project Category *
+              </label>
+              <select
+                value={item.category || 'infrastructure'}
+                onChange={(e) => updateItem({ ...item, category: e.target.value as any })}
+                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
+              >
+                <option value="government">Government & Public Sector</option>
+                <option value="water-resource">Water Resource Department (WRD)</option>
+                <option value="infrastructure">Infrastructure & Metro Rail</option>
+                <option value="emergency-relief">Emergency Disaster Relief</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
                 Execution Year
               </label>
               <input
                 type="text"
-                value={item.year}
+                value={item.year || ''}
                 onChange={(e) => updateItem({ ...item, year: e.target.value })}
                 placeholder="2025"
                 className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
@@ -149,7 +173,7 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
               </label>
               <input
                 type="text"
-                value={item.status}
+                value={item.status || ''}
                 onChange={(e) => updateItem({ ...item, status: e.target.value })}
                 placeholder="Completed"
                 className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
@@ -162,7 +186,7 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
               </label>
               <input
                 type="text"
-                value={item.location}
+                value={item.location || ''}
                 onChange={(e) => updateItem({ ...item, location: e.target.value })}
                 placeholder="Chennai / Tamil Nadu"
                 className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
@@ -172,8 +196,8 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
             <div className="md:col-span-2">
               <ImageField
                 label="Project Execution Image"
-                value={item.imageUrl}
-                onChange={(url) => updateItem({ ...item, imageUrl: url })}
+                value={item.imageUrl || item.image || ''}
+                onChange={(url) => updateItem({ ...item, imageUrl: url, image: url })}
                 section="projects"
               />
             </div>
@@ -187,6 +211,24 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
                 value={item.description}
                 onChange={(e) => updateItem({ ...item, description: e.target.value })}
                 placeholder="Details of machinery, execution timeline, and volume handled..."
+                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
+                Project Highlights / Bullet Points (One per line)
+              </label>
+              <textarea
+                rows={3}
+                value={(item.details || []).join('\n')}
+                onChange={(e) =>
+                  updateItem({
+                    ...item,
+                    details: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
+                  })
+                }
+                placeholder="Enter each project detail bullet point on a new line..."
                 className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
               />
             </div>

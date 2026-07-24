@@ -92,6 +92,10 @@ export const ProjectsView: React.FC = () => {
         category: (p.category as any) || 'infrastructure',
         description: p.description || '',
         image: p.imageUrl || p.image || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&q=80',
+        imageUrl: p.imageUrl || p.image || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&q=80',
+        year: p.year,
+        status: p.status,
+        location: p.location,
         details: Array.isArray(p.details) && p.details.length > 0 
           ? p.details 
           : [

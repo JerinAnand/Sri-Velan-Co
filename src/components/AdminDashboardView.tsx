@@ -51,12 +51,14 @@ import { WeatherAlertBannerTab } from './admin/WeatherAlertBannerTab';
 import { ChatbotTab } from './admin/ChatbotTab';
 import { NavigationTab } from './admin/NavigationTab';
 import { ConstructionExperienceTab } from './admin/ConstructionExperienceTab';
+import { ChennaiTab } from './admin/ChennaiTab';
 
 export type ActiveTab =
   | 'hero'
   | 'about'
   | 'stats'
   | 'services'
+  | 'chennai'
   | 'clients'
   | 'governingBoard'
   | 'projects'
@@ -203,6 +205,7 @@ export function AdminDashboardView() {
       { id: 'about' as ActiveTab, label: 'About Us', icon: Info },
       { id: 'stats' as ActiveTab, label: 'Stats & Metrics', icon: BarChart3 },
       { id: 'services' as ActiveTab, label: 'Chennai Operations & Services', icon: MapPin },
+      { id: 'chennai' as ActiveTab, label: 'Chennai Page CMS', icon: MapPin },
       { id: 'clients' as ActiveTab, label: 'Clients & Depts', icon: Building2 },
       { id: 'governingBoard' as ActiveTab, label: 'Leadership', icon: Users },
       { id: 'projects' as ActiveTab, label: 'Projects', icon: FolderKanban },
@@ -397,6 +400,7 @@ export function AdminDashboardView() {
           {activeTab === 'about' && <AboutTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'stats' && <StatsTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'services' && <ServicesTab content={siteContent} updateSection={updateSection} />}
+          {activeTab === 'chennai' && <ChennaiTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'clients' && <ClientsTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'governingBoard' && <GoverningBoardTab content={siteContent} updateSection={updateSection} />}
           {activeTab === 'projects' && <ProjectsTab content={siteContent} updateSection={updateSection} />}

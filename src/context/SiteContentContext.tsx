@@ -71,15 +71,34 @@ export interface GoverningBoardContent {
 export interface ProjectItem {
   id: string;
   title: string;
+  category?: 'government' | 'water-resource' | 'infrastructure' | 'emergency-relief';
   description: string;
   imageUrl: string;
+  image?: string;
   year: string;
   status: string;
   location?: string;
+  details?: string[];
+  fallbackImage?: string;
 }
 
 export interface ProjectsContent {
   projects: ProjectItem[];
+}
+
+export interface ChennaiContent {
+  bannerTagEn: string;
+  bannerTagTa: string;
+  bannerTitleEn: string;
+  bannerTitleTa: string;
+  bannerSubtitleEn: string;
+  bannerSubtitleTa: string;
+  bannerImageUrl: string;
+  gccCardTitleEn: string;
+  gccCardTitleTa: string;
+  gccCardDescriptionEn: string;
+  gccCardDescriptionTa: string;
+  gccPortalUrl: string;
 }
 
 export interface ContactContent {
@@ -176,6 +195,7 @@ export interface FullSiteContent {
   clients: ClientsContent;
   governingBoard: GoverningBoardContent;
   projects: ProjectsContent;
+  chennai: ChennaiContent;
   contact: ContactContent;
   footer: FooterContent;
   translations: Record<string, any>;
@@ -267,31 +287,63 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
       {
         id: 'proj_1',
         title: 'Cyclone Fengal Subway Dewatering Operations',
+        category: 'emergency-relief',
         description: 'Deployed high-head diesel pumps and continuous shift emergency crews across Chennai subways during historic rainfall.',
         imageUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80',
         year: '2024',
         status: 'Completed',
         location: 'Chennai Suburbs',
+        details: [
+          '24/7 continuous shift emergency crews deployed across subways',
+          'High-head diesel suction pumps deployed during peak downpours',
+          'Rapid dewatering under active cyclone condition'
+        ],
       },
       {
         id: 'proj_2',
         title: 'WRD Canal Bank Stone Pitching & Drainage Corridor',
+        category: 'water-resource',
         description: 'Constructed reinforced concrete spillways and stone-pitched retaining barriers along agricultural canal distribution routes.',
         imageUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80',
         year: '2023',
         status: 'Completed',
         location: 'Villupuram Region',
+        details: [
+          'Reinforced concrete spillway construction',
+          'Stone-pitched retaining barriers along distribution canals',
+          'Flood prevention for agricultural corridors'
+        ],
       },
       {
         id: 'proj_3',
         title: 'CMRL Metro Excavation Pit Dewatering',
+        category: 'infrastructure',
         description: 'Provided specialized high-volume deep foundation dewatering and wellpoint systems for underground subway stations.',
         imageUrl: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80',
         year: '2025',
         status: 'In Progress',
         location: 'Chennai Metro Phase II',
+        details: [
+          'Deep foundation wellpoint dewatering systems',
+          'High-volume suction for underground station pits',
+          'Continuous water table stabilization'
+        ],
       },
     ],
+  },
+  chennai: {
+    bannerTagEn: 'Chennai Zone & Disaster Readiness Hub',
+    bannerTagTa: 'சென்னை மண்டலம் & பேரிடர் ஆயத்த மையம்',
+    bannerTitleEn: 'Chennai Zone & Monsoon Info',
+    bannerTitleTa: 'சென்னை மண்டல செயல்பாடுகள் & பருவமழை தகவல்',
+    bannerSubtitleEn: 'Real-time monsoon tracking, Greater Chennai Corporation (GCC) zonal mapping, dewatering pump allocations, and 24/7 emergency disaster response readiness across Chennai.',
+    bannerSubtitleTa: 'நிகழ்நேர பருவமழை கண்காணிப்பு, பெருநகர சென்னை மாநகராட்சி (GCC) மண்டல வரைபடம், நீர் வெளியேற்றும் பம்ப் ஒதுக்கீடுகள் மற்றும் 24/7 அவசரகால பேரிடர் நிவாரண தகவல்கள்.',
+    bannerImageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAeQt_VRg-Pnvzi83b3kFBXkzvQwauzvPl3BR7b4V5oqXN65xsotHAR8F_J1Cr-ngjTmrsoOZwh5FdVT3Zl2TQdue2Wcd1_ulcn_09y7urzhBo0D1KmgZRjeebjb1XoS7MLrQY1rDu7vusZvj8gxX6MmMm7Y6ahsbChKhEPeKaWr--5Di4PTSUyriXPWgmsdZ1M_J-R4e7yADQG8TSSdoNbot-7Z_BtQhC13Rvz2AqlQI9L_fKhXuf8kddWYkMMsA3Gl_2Q358cGg',
+    gccCardTitleEn: 'Check Your Zone & Division (GCC)',
+    gccCardTitleTa: 'உங்கள் மண்டலம் & பிரிவை அறியவும் (GCC)',
+    gccCardDescriptionEn: 'Find which Greater Chennai Corporation zone and division your property falls under.',
+    gccCardDescriptionTa: 'உங்கள் சொத்து எந்த பெருநகர சென்னை மாநகராட்சி மண்டலம் மற்றும் பிரிவின் கீழ் வருகிறது என்பதை அறியவும்.',
+    gccPortalUrl: 'https://chennaicorporation.gov.in/gcc/citizen-details/location-service/find_zone.jsp',
   },
   contact: {
     phonePrimary: COMPANY_DETAILS.phones[0],
@@ -431,6 +483,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       'clients',
       'governingBoard',
       'projects',
+      'chennai',
       'contact',
       'footer',
       'translations',

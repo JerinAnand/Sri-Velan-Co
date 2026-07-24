@@ -20,6 +20,10 @@ export interface ProjectItem {
   image: string;
   details: string[];
   fallbackImage?: string;
+  imageUrl?: string;
+  year?: string;
+  status?: string;
+  location?: string;
 }
 
 export interface EquipmentItem {

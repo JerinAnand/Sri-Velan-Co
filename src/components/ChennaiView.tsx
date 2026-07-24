@@ -9,6 +9,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useTranslation } from '../context/TranslationContext';
+import { useSiteContent } from '../context/SiteContentContext';
 import { ServiceAreaMap } from './ServiceAreaMap';
 import { ServiceAreaTelemetry } from './ServiceAreaTelemetry';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
@@ -16,6 +17,33 @@ import chennaiBannerImg from '../assets/images/regenerated_image_1784867041914.j
 
 export const ChennaiView: React.FC = () => {
   const { language } = useTranslation();
+  const { siteContent } = useSiteContent();
+
+  const chennaiData = siteContent?.chennai;
+
+  const bannerTag = language === 'ta'
+    ? (chennaiData?.bannerTagTa || 'சென்னை மண்டலம் & பேரிடர் ஆயத்த மையம்')
+    : (chennaiData?.bannerTagEn || 'Chennai Zone & Disaster Readiness Hub');
+
+  const bannerTitle = language === 'ta'
+    ? (chennaiData?.bannerTitleTa || 'சென்னை மண்டல செயல்பாடுகள் & பருவமழை தகவல்')
+    : (chennaiData?.bannerTitleEn || 'Chennai Zone & Monsoon Info');
+
+  const bannerSubtitle = language === 'ta'
+    ? (chennaiData?.bannerSubtitleTa || 'நிகழ்நேர பருவமழை கண்காணிப்பு, பெருநகர சென்னை மாநகராட்சி (GCC) மண்டல வரைபடம், நீர் வெளியேற்றும் பம்ப் ஒதுக்கீடுகள் மற்றும் 24/7 அவசரகால பேரிடர் நிவாரண தகவல்கள்.')
+    : (chennaiData?.bannerSubtitleEn || 'Real-time monsoon tracking, Greater Chennai Corporation (GCC) zonal mapping, dewatering pump allocations, and 24/7 emergency disaster response readiness across Chennai.');
+
+  const bannerImage = chennaiData?.bannerImageUrl || chennaiBannerImg;
+
+  const gccCardTitle = language === 'ta'
+    ? (chennaiData?.gccCardTitleTa || 'உங்கள் மண்டலம் & பிரிவை அறியவும் (GCC)')
+    : (chennaiData?.gccCardTitleEn || 'Check Your Zone & Division (GCC)');
+
+  const gccCardDescription = language === 'ta'
+    ? (chennaiData?.gccCardDescriptionTa || 'உங்கள் சொத்து எந்த பெருநகர சென்னை மாநகராட்சி மண்டலம் மற்றும் பிரிவின் கீழ் வருகிறது என்பதை அறியவும்.')
+    : (chennaiData?.gccCardDescriptionEn || 'Find which Greater Chennai Corporation zone and division your property falls under.');
+
+  const gccPortalUrl = chennaiData?.gccPortalUrl || 'https://chennaicorporation.gov.in/gcc/citizen-details/location-service/find_zone.jsp';
 
   return (
     <div className="w-full pt-20" id="chennai-page-container">
@@ -24,7 +52,7 @@ export const ChennaiView: React.FC = () => {
       <section className="relative overflow-hidden bg-brand-blue-950 py-16 sm:py-24 text-white" id="chennai-header-banner">
         <div className="absolute inset-0 z-0">
           <img 
-            src={chennaiBannerImg}
+            src={bannerImage}
             alt="Chennai Zonal Grid background"
             className="w-full h-full object-cover opacity-15 filter saturate-50"
             referrerPolicy="no-referrer"
@@ -40,15 +68,13 @@ export const ChennaiView: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4 text-left">
           <span className="text-xs font-mono font-semibold tracking-widest text-brand-gold-400 uppercase">
-            {language === 'ta' ? 'சென்னை மண்டலம் & பேரிடர் ஆயத்த மையம்' : 'Chennai Zone & Disaster Readiness Hub'}
+            {bannerTag}
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-gold-500">
-            {language === 'ta' ? 'சென்னை மண்டல செயல்பாடுகள் & பருவமழை தகவல்' : 'Chennai Zone & Monsoon Info'}
+            {bannerTitle}
           </h1>
           <p className="max-w-3xl text-sm sm:text-base text-neutral-300 leading-relaxed font-sans font-light">
-            {language === 'ta'
-              ? 'நிகழ்நேர பருவமழை கண்காணிப்பு, பெருநகர சென்னை மாநகராட்சி (GCC) மண்டல வரைபடம், நீர் வெளியேற்றும் பம்ப் ஒதுக்கீடுகள் மற்றும் 24/7 அவசரகால பேரிடர் நிவாரண தகவல்கள்.'
-              : 'Real-time monsoon tracking, Greater Chennai Corporation (GCC) zonal mapping, dewatering pump allocations, and 24/7 emergency disaster response readiness across Chennai.'}
+            {bannerSubtitle}
           </p>
         </div>
       </section>
@@ -70,18 +96,16 @@ export const ChennaiView: React.FC = () => {
                   {language === 'ta' ? 'பெருநகர சென்னை மாநகராட்சி (GCC) போர்டல்' : 'Greater Chennai Corporation (GCC) Portal'}
                 </span>
                 <h3 className="text-xl sm:text-2xl font-bold font-display text-white">
-                  {language === 'ta' ? 'உங்கள் மண்டலம் & பிரிவை அறியவும் (GCC)' : 'Check Your Zone & Division (GCC)'}
+                  {gccCardTitle}
                 </h3>
                 <p className="text-sm text-neutral-300 leading-relaxed font-sans">
-                  {language === 'ta'
-                    ? 'உங்கள் சொத்து எந்த பெருநகர சென்னை மாநகராட்சி மண்டலம் மற்றும் பிரிவின் கீழ் வருகிறது என்பதை அறியவும்.'
-                    : 'Find which Greater Chennai Corporation zone and division your property falls under.'}
+                  {gccCardDescription}
                 </p>
               </div>
             </div>
 
             <a
-              href="https://chennaicorporation.gov.in/gcc/citizen-details/location-service/find_zone.jsp"
+              href={gccPortalUrl}
               target="_blank"
               rel="noopener noreferrer"
               id="gcc-zone-finder-btn-section"
