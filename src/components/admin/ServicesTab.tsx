@@ -52,7 +52,7 @@ export const ServicesTabComponent: React.FC<ServicesTabProps> = ({ content, upda
     try {
       await updateSection('services', { services: cleanedServices });
       const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      setSaveSuccess(`Chennai Operations & Services updated successfully at ${now}!`);
+      setSaveSuccess(`Projects Page – Services Dashboard updated successfully at ${now}!`);
       setTimeout(() => setSaveSuccess(null), 4000);
     } catch (err: any) {
       console.error('Error saving Services section:', err);
@@ -78,9 +78,9 @@ export const ServicesTabComponent: React.FC<ServicesTabProps> = ({ content, upda
     <form onSubmit={handleSave} className="space-y-6">
       <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div>
-          <h2 className="text-lg font-display font-bold text-white">Chennai Operations & Services Section</h2>
+          <h2 className="text-lg font-display font-bold text-white">Projects Page – Services Dashboard</h2>
           <p className="text-xs text-neutral-400">
-            Manage Chennai region dewatering services, emergency response cards, titles, descriptions, highlights, and execution photos.
+            Manage dewatering services cards, titles, descriptions, highlights, and execution photos rendered on the Projects page.
           </p>
         </div>
         <button

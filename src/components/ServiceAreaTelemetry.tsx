@@ -150,22 +150,22 @@ export const ServiceAreaTelemetry: React.FC = () => {
     fetchTelemetry();
   }, [fetchTelemetry]);
 
-  // Set up 1-second interval tracker for the live ticker and auto-fetch
+  // Set up 1-second interval tracker for the live ticker
   useEffect(() => {
     const clockTimer = setInterval(() => {
-      setSecondsAgo(prev => {
-        const next = prev + 1;
-        const targetInterval = isBackingOff ? 60 : 30;
-        if (next >= targetInterval) {
-          fetchTelemetry(true);
-          return 0;
-        }
-        return next;
-      });
+      setSecondsAgo((prev) => prev + 1);
     }, 1000);
 
     return () => clearInterval(clockTimer);
-  }, [isBackingOff, fetchTelemetry]);
+  }, []);
+
+  // Auto-refetch telemetry when ticker reaches target interval
+  useEffect(() => {
+    const targetInterval = isBackingOff ? 60 : 30;
+    if (secondsAgo >= targetInterval) {
+      fetchTelemetry(true);
+    }
+  }, [secondsAgo, isBackingOff, fetchTelemetry]);
 
   // Color-coding calculations based on pump deployment capacity ratio
   const getPumpStatusClass = (active: number, total: number) => {
