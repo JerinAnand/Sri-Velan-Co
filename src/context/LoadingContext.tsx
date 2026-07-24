@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 interface LoadingContextType {
   isBootLoading: boolean;
@@ -27,26 +27,26 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [loadingProgress, setLoadingProgressState] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState('Initializing Sri Velan & Co systems...');
 
-  const setLoadingProgress = (progress: number) => {
+  const setLoadingProgress = useCallback((progress: number) => {
     setLoadingProgressState(Math.min(100, Math.max(0, progress)));
-  };
+  }, []);
 
-  const setBootFinished = () => {
+  const setBootFinished = useCallback(() => {
     setIsBootLoading(false);
-  };
+  }, []);
 
-  const startActionLoading = (message: string) => {
+  const startActionLoading = useCallback((message: string) => {
     setLoadingProgressState(0);
     setLoadingMessage(message);
     setIsActionLoading(true);
-  };
+  }, []);
 
-  const stopActionLoading = () => {
+  const stopActionLoading = useCallback(() => {
     setIsActionLoading(false);
-  };
+  }, []);
 
   // Helper function to auto-increment progress smoothly over a duration
-  const runWithLoader = async <T,>(message: string, task: () => Promise<T>): Promise<T> => {
+  const runWithLoader = useCallback(async <T,>(message: string, task: () => Promise<T>): Promise<T> => {
     setLoadingProgressState(0);
     setLoadingMessage(message);
     setIsActionLoading(true);
@@ -87,7 +87,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setIsActionLoading(false);
       }, 400);
     }
-  };
+  }, []);
 
   // Initial App Simulation Loader sequence
   useEffect(() => {
@@ -132,21 +132,35 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return () => clearInterval(interval);
   }, [isBootLoading]);
 
+  const contextValue = useMemo(
+    () => ({
+      isBootLoading,
+      isActionLoading,
+      loadingProgress,
+      loadingMessage,
+      setBootFinished,
+      startActionLoading,
+      stopActionLoading,
+      setLoadingProgress,
+      setLoadingMessage,
+      runWithLoader,
+    }),
+    [
+      isBootLoading,
+      isActionLoading,
+      loadingProgress,
+      loadingMessage,
+      setBootFinished,
+      startActionLoading,
+      stopActionLoading,
+      setLoadingProgress,
+      setLoadingMessage,
+      runWithLoader,
+    ]
+  );
+
   return (
-    <LoadingContext.Provider
-      value={{
-        isBootLoading,
-        isActionLoading,
-        loadingProgress,
-        loadingMessage,
-        setBootFinished,
-        startActionLoading,
-        stopActionLoading,
-        setLoadingProgress,
-        setLoadingMessage,
-        runWithLoader,
-      }}
-    >
+    <LoadingContext.Provider value={contextValue}>
       {children}
     </LoadingContext.Provider>
   );

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { useTheme } from '../context/ThemeContext';
 import { 
@@ -76,7 +76,7 @@ export const ServiceAreaTelemetry: React.FC = () => {
   const isFetchingRef = React.useRef(false);
 
   // Core data fetch function with defensive parsing
-  const fetchTelemetry = async (silent: boolean = false) => {
+  const fetchTelemetry = useCallback(async (silent: boolean = false) => {
     if (isFetchingRef.current) {
       setSecondsAgo(0);
       return;
@@ -143,31 +143,29 @@ export const ServiceAreaTelemetry: React.FC = () => {
       setIsRefreshing(false);
       isFetchingRef.current = false;
     }
-  };
+  }, []);
 
   // Initial mount fetch
   useEffect(() => {
     fetchTelemetry();
-  }, []);
+  }, [fetchTelemetry]);
 
-  // Set up 1-second interval tracker for the live ticker
+  // Set up 1-second interval tracker for the live ticker and auto-fetch
   useEffect(() => {
     const clockTimer = setInterval(() => {
-      setSecondsAgo(prev => prev + 1);
+      setSecondsAgo(prev => {
+        const next = prev + 1;
+        const targetInterval = isBackingOff ? 60 : 30;
+        if (next >= targetInterval) {
+          fetchTelemetry(true);
+          return 0;
+        }
+        return next;
+      });
     }, 1000);
 
     return () => clearInterval(clockTimer);
-  }, []);
-
-  // Monitor seconds since last update to trigger scheduled re-fetches
-  useEffect(() => {
-    // Standard interval is 30s. If backing off due to connection errors, wait 60s
-    const targetInterval = isBackingOff ? 60 : 30;
-    
-    if (secondsAgo >= targetInterval) {
-      fetchTelemetry(true);
-    }
-  }, [secondsAgo, isBackingOff]);
+  }, [isBackingOff, fetchTelemetry]);
 
   // Color-coding calculations based on pump deployment capacity ratio
   const getPumpStatusClass = (active: number, total: number) => {

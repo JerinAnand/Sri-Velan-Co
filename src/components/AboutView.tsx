@@ -166,7 +166,7 @@ export const AboutView: React.FC = () => {
                 </h2>
 
                 <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans first-letter:text-4xl first-letter:font-bold first-letter:text-brand-blue-800 first-letter:mr-1">
-                  {siteContent.about?.description1 || t('about.overview.description1')}
+                  {siteContent.about?.companyDescription || siteContent.about?.description1 || t('about.overview.description1')}
                 </p>
 
                 <p className="text-sm text-neutral-550 leading-relaxed font-sans font-light">

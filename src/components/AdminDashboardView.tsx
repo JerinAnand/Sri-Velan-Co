@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSiteContent, FullSiteContent } from '../context/SiteContentContext';
@@ -30,6 +30,8 @@ import {
   Database,
   ArrowUpRight,
   Layers,
+  MapPin,
+  Search,
 } from 'lucide-react';
 
 import { HeroTab } from './admin/HeroTab';
@@ -91,24 +93,26 @@ export function AdminDashboardView() {
   const [isRestoring, setIsRestoring] = useState<boolean>(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
   const [viewingSnapshot, setViewingSnapshot] = useState<FullSiteContent | null>(null);
+  const [tabSearchQuery, setTabSearchQuery] = useState<string>('');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
 
-  const triggerToast = (msg: string) => {
+  const triggerToast = useCallback((msg: string) => {
     setSaveSuccess(msg);
     setTimeout(() => setSaveSuccess(null), 4000);
-  };
+  }, []);
 
-  const triggerError = (msg: string) => {
+  const triggerError = useCallback((msg: string) => {
     setSaveError(msg);
     setTimeout(() => setSaveError(null), 5000);
-  };
+  }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     await logout();
     navigate('/admin/login');
-  };
+  }, [logout, navigate]);
 
   // Backup Content -> JSON File Download
-  const handleBackupContent = async () => {
+  const handleBackupContent = useCallback(async () => {
     setIsBackingUp(true);
     try {
       const currentData = await backupContent();
@@ -128,10 +132,10 @@ export function AdminDashboardView() {
     } finally {
       setIsBackingUp(false);
     }
-  };
+  }, [backupContent, triggerToast, triggerError]);
 
   // Restore Default
-  const handleRestoreToDefault = async () => {
+  const handleRestoreToDefault = useCallback(async () => {
     if (!window.confirm('Are you sure you want to restore ALL site content to factory default settings? This action creates an audit log snapshot before resetting.')) {
       return;
     }
@@ -145,10 +149,10 @@ export function AdminDashboardView() {
     } finally {
       setIsRestoring(false);
     }
-  };
+  }, [restoreToDefault, triggerToast, triggerError]);
 
   // Upload JSON backup file to restore
-  const handleRestoreFromJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRestoreFromJSON = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -173,10 +177,10 @@ export function AdminDashboardView() {
       }
     };
     reader.readAsText(file);
-  };
+  }, [restoreFromSnapshot, triggerToast, triggerError]);
 
   // Rollback to specific history snapshot
-  const handleRollback = async (entry: any) => {
+  const handleRollback = useCallback(async (entry: any) => {
     if (!window.confirm(`Roll back site content to snapshot from ${new Date(entry.timestamp).toLocaleString()}?`)) {
       return;
     }
@@ -191,27 +195,40 @@ export function AdminDashboardView() {
     } finally {
       setIsRestoring(false);
     }
-  };
+  }, [restoreFromSnapshot, triggerToast, triggerError]);
 
-  const navItems = [
-    { id: 'hero' as ActiveTab, label: 'Hero Section', icon: Layout },
-    { id: 'about' as ActiveTab, label: 'About Us', icon: Info },
-    { id: 'stats' as ActiveTab, label: 'Stats & Metrics', icon: BarChart3 },
-    { id: 'services' as ActiveTab, label: 'Services', icon: Wrench },
-    { id: 'clients' as ActiveTab, label: 'Clients & Depts', icon: Building2 },
-    { id: 'governingBoard' as ActiveTab, label: 'Leadership', icon: Users },
-    { id: 'projects' as ActiveTab, label: 'Projects', icon: FolderKanban },
-    { id: 'constructionExperience' as ActiveTab, label: 'Construction Experience', icon: Layers },
-    { id: 'equipment' as ActiveTab, label: 'Equipment Fleet', icon: Truck },
-    { id: 'capabilityStatement' as ActiveTab, label: 'Capability Statement', icon: FileText },
-    { id: 'hydraulicBroomer' as ActiveTab, label: 'Hydraulic Broomer', icon: Wrench },
-    { id: 'weatherAlertBanner' as ActiveTab, label: 'Weather Alert Banner', icon: CloudRain },
-    { id: 'chatbot' as ActiveTab, label: 'VELAN AI Chatbot', icon: Bot },
-    { id: 'navigation' as ActiveTab, label: 'Navigation Bar', icon: MenuIcon },
-    { id: 'contact' as ActiveTab, label: 'Contact & Offices', icon: PhoneCall },
-    { id: 'footer' as ActiveTab, label: 'Footer Content', icon: FileText },
-    { id: 'translations' as ActiveTab, label: 'Translations (EN/TA)', icon: Globe },
-  ];
+  const navItems = useMemo(
+    () => [
+      { id: 'hero' as ActiveTab, label: 'Hero Section', icon: Layout },
+      { id: 'about' as ActiveTab, label: 'About Us', icon: Info },
+      { id: 'stats' as ActiveTab, label: 'Stats & Metrics', icon: BarChart3 },
+      { id: 'services' as ActiveTab, label: 'Chennai Operations & Services', icon: MapPin },
+      { id: 'clients' as ActiveTab, label: 'Clients & Depts', icon: Building2 },
+      { id: 'governingBoard' as ActiveTab, label: 'Leadership', icon: Users },
+      { id: 'projects' as ActiveTab, label: 'Projects', icon: FolderKanban },
+      { id: 'constructionExperience' as ActiveTab, label: 'Construction Experience', icon: Layers },
+      { id: 'equipment' as ActiveTab, label: 'Equipment Fleet', icon: Truck },
+      { id: 'capabilityStatement' as ActiveTab, label: 'Capability Statement', icon: FileText },
+      { id: 'hydraulicBroomer' as ActiveTab, label: 'Hydraulic Broomer', icon: Wrench },
+      { id: 'weatherAlertBanner' as ActiveTab, label: 'Weather Alert Banner', icon: CloudRain },
+      { id: 'chatbot' as ActiveTab, label: 'VELAN AI Chatbot', icon: Bot },
+      { id: 'navigation' as ActiveTab, label: 'Navigation Bar', icon: MenuIcon },
+      { id: 'contact' as ActiveTab, label: 'Contact & Offices', icon: PhoneCall },
+      { id: 'footer' as ActiveTab, label: 'Footer Content', icon: FileText },
+      { id: 'translations' as ActiveTab, label: 'Translations (EN/TA)', icon: Globe },
+    ],
+    []
+  );
+
+  const filteredNavItems = useMemo(
+    () =>
+      navItems.filter(
+        (item) =>
+          item.label.toLowerCase().includes(tabSearchQuery.toLowerCase()) ||
+          item.id.toLowerCase().includes(tabSearchQuery.toLowerCase())
+      ),
+    [navItems, tabSearchQuery]
+  );
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-brand-gold-500 selection:text-neutral-950">
@@ -295,29 +312,66 @@ export function AdminDashboardView() {
       {/* Main Admin Portal Shell */}
       <div className="flex-1 flex flex-col md:flex-row max-w-[1600px] w-full mx-auto p-4 md:p-6 gap-6">
         {/* Sidebar Nav Tabs */}
-        <aside className="w-full md:w-64 shrink-0 space-y-1 bg-neutral-900/60 border border-white/10 p-3 rounded-2xl h-fit">
-          <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 px-3 py-2">
-            Editable Site Sections
-          </p>
-          <nav className="space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium font-mono transition-all text-left cursor-pointer ${
-                    isActive
-                      ? 'bg-brand-gold-500 text-brand-blue-950 font-bold shadow-md'
-                      : 'text-neutral-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-brand-blue-950' : 'text-neutral-500'}`} />
-                  <span className="truncate">{item.label}</span>
-                </button>
-              );
-            })}
+        <aside className="w-full md:w-64 shrink-0 space-y-3 bg-neutral-900/60 border border-white/10 p-3 rounded-2xl h-fit">
+          <div className="flex items-center justify-between px-2 pt-1">
+            <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
+              CMS Sections ({filteredNavItems.length})
+            </p>
+            <button
+              onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+              className="md:hidden p-1 text-neutral-400 hover:text-white rounded-lg bg-neutral-800 border border-white/10 text-xs font-mono flex items-center gap-1"
+            >
+              <MenuIcon className="w-3.5 h-3.5" />
+              <span>{mobileSidebarOpen ? 'Hide' : 'Menu'}</span>
+            </button>
+          </div>
+
+          {/* Quick Search Filter Input */}
+          <div className="relative px-1">
+            <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3.5 top-2.5 pointer-events-none" />
+            <input
+              type="text"
+              value={tabSearchQuery}
+              onChange={(e) => setTabSearchQuery(e.target.value)}
+              placeholder="Search section..."
+              className="w-full bg-neutral-950 border border-white/10 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-brand-gold-500/80 font-mono"
+            />
+            {tabSearchQuery && (
+              <button
+                onClick={() => setTabSearchQuery('')}
+                className="absolute right-3 top-2 text-neutral-500 hover:text-white"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          <nav className={`space-y-1 ${mobileSidebarOpen ? 'block' : 'hidden md:block'}`}>
+            {filteredNavItems.length === 0 ? (
+              <p className="text-xs font-mono text-neutral-500 px-3 py-4 text-center">No matching sections found.</p>
+            ) : (
+              filteredNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setMobileSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium font-mono transition-all text-left cursor-pointer ${
+                      isActive
+                        ? 'bg-brand-gold-500 text-brand-blue-950 font-bold shadow-md'
+                        : 'text-neutral-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-brand-blue-950' : 'text-neutral-500'}`} />
+                    <span className="truncate">{item.label}</span>
+                  </button>
+                );
+              })
+            )}
           </nav>
         </aside>
 

@@ -21,7 +21,7 @@ import { AdminLoginView } from './components/AdminLoginView';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { CapabilityStatement } from './components/CapabilityStatement';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
+import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom';
 import { ArrowUp, Phone, MessageCircle } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from './data';
 
@@ -163,6 +163,7 @@ export default function App() {
               <Route path="/hydraulic-broomer" element={<HydraulicBroomer />} />
               <Route path="/contact" element={<ContactView />} />
               <Route path="/capability-statement" element={<CapabilityStatement />} />
+              <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/admin/login" element={<AdminLoginView />} />
               <Route
                 path="/admin/dashboard/*"

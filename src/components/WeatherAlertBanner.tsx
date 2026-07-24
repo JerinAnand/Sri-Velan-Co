@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSiteContent } from '../context/SiteContentContext';
 import { 
@@ -56,7 +56,7 @@ export const WeatherAlertBanner: React.FC = () => {
   const [thresholdType, setThresholdType] = useState<'forecast' | 'realtime'>('forecast');
   const [showConfig, setShowConfig] = useState<boolean>(false);
 
-  const fetchAlerts = async () => {
+  const fetchAlerts = useCallback(async () => {
     try {
       setIsRefreshing(true);
       setError(null);
@@ -174,28 +174,27 @@ export const WeatherAlertBanner: React.FC = () => {
       setLoading(false);
       setIsRefreshing(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchAlerts();
-  }, []);
+  }, [fetchAlerts]);
 
   useEffect(() => {
     if (!autoRefresh) return;
     
     const interval = setInterval(() => {
-      setCountdown((prev) => (prev <= 1 ? 0 : prev - 1));
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          fetchAlerts();
+          return 300;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [autoRefresh]);
-
-  useEffect(() => {
-    if (countdown === 0) {
-      fetchAlerts();
-      setCountdown(300);
-    }
-  }, [countdown]);
+  }, [autoRefresh, fetchAlerts]);
 
   const handleManualRefresh = () => {
     fetchAlerts();
@@ -559,10 +558,10 @@ export const WeatherAlertBanner: React.FC = () => {
               </div>
 
               {/* Server Grounded AI Weather Advisory Panel */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-neutral-900/20 border border-neutral-800 rounded-3xl p-6 sm:p-8">
+              <div className="bg-neutral-900/20 border border-neutral-800 rounded-3xl p-6 sm:p-8">
                 
-                {/* Left side briefing text */}
-                <div className="lg:col-span-8 text-left space-y-4">
+                {/* Briefing text */}
+                <div className="w-full text-left space-y-4">
                   <div className="inline-flex items-center gap-1.5 bg-brand-gold-500/10 text-brand-gold-400 border border-brand-gold-500/20 px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider">
                     <Compass className="w-3.5 h-3.5 text-brand-gold-400 animate-spin" />
                     <span>Gemini AI Grounded Cyclone Analysis</span>
@@ -579,44 +578,6 @@ export const WeatherAlertBanner: React.FC = () => {
                   <p className="text-[10px] text-neutral-500 font-mono">
                     *Grounded analysis utilizes continuous web searches linking current Indian Meteorological Department (IMD) bulletins to ensure optimal tractor pump deployment layouts.
                   </p>
-                </div>
-
-                {/* Right side operational standby checklists */}
-                <div className="lg:col-span-4 bg-neutral-950 border border-neutral-800/80 rounded-2xl p-5 sm:p-6 text-left space-y-4">
-                  <div className="flex items-center gap-2 border-b border-neutral-800 pb-3">
-                    <Activity className="w-4 h-4 text-brand-gold-400" />
-                    <span className="text-xs font-mono font-bold uppercase tracking-widest text-neutral-400">
-                      Standby Mobilization checklist
-                    </span>
-                  </div>
-
-                  <div className="space-y-3">
-                    {[
-                      { label: "Prime trailer-mounted 400HP dewatering pumps", status: "Ready" },
-                      { label: "Lubricating PTO shafts for agricultural tractors", status: "Verified" },
-                      { label: "Double-braided PVC layout layflat hoses status check", status: "Completed" },
-                      { label: "Emergency operators shift rotation docket setup", status: "On-Call" },
-                      { label: "Liaison desks connected for quick WRD permits", status: "Active" }
-                    ].map((chk, idx) => (
-                      <div key={idx} className="flex justify-between items-center text-xs border-b border-neutral-900 pb-2 last:border-0 last:pb-0">
-                        <span className="text-neutral-400 flex items-center gap-2">
-                          <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full shrink-0" />
-                          {chk.label}
-                        </span>
-                        <span className="text-[9px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900 px-1.5 py-0.5 rounded uppercase">
-                          {chk.status}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="h-px bg-neutral-900 w-full" />
-
-                  <div className="pt-2 text-center">
-                    <p className="text-[10px] text-neutral-500 leading-tight">
-                      Under severe flood warning, call regional dispatch hotline on VHF channels or standard emergency landlines directly.
-                    </p>
-                  </div>
                 </div>
 
               </div>

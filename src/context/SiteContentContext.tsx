@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { doc, onSnapshot, setDoc, collection, addDoc, query, orderBy, limit } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { COMPANY_DETAILS, OFFICES, SERVICE_CATEGORIES } from '../data';
@@ -38,6 +38,7 @@ export interface ServiceItem {
   badge?: string;
   highlights?: string[];
   image?: string;
+  imageUrl?: string;
 }
 
 export interface ServicesContent {
@@ -362,7 +363,7 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
     videoUrl: '',
   },
   weatherAlertBanner: {
-    enabled: true,
+    enabled: false,
     message: 'Monsoon Dewatering Fleet Active: 24/7 Emergency Mobilization Units On Standby Across Chennai, Villupuram & Cuddalore Districts.',
     severity: 'warning',
     dismissible: true,
@@ -517,7 +518,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, []);
 
   // Helper to record history log entries
-  const addHistoryRecord = async (action: string, snapshot: FullSiteContent, sectionKey?: string) => {
+  const addHistoryRecord = useCallback(async (action: string, snapshot: FullSiteContent, sectionKey?: string) => {
     const entryData = {
       timestamp: new Date().toISOString(),
       action,
@@ -542,10 +543,10 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     } catch (e) {
       console.warn('LocalStorage write failed:', e);
     }
-  };
+  }, []);
 
   // Helper to fetch the entire current state of 'siteContent' collection using an onSnapshot listener
-  const fetchFullCollectionViaOnSnapshot = (): Promise<FullSiteContent> => {
+  const fetchFullCollectionViaOnSnapshot = useCallback((): Promise<FullSiteContent> => {
     return new Promise((resolve, reject) => {
       const colRef = collection(db, 'siteContent');
       const unsubscribe = onSnapshot(
@@ -569,10 +570,10 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
       );
     });
-  };
+  }, []);
 
   // Backup Content: Uses an onSnapshot listener to fetch full state and triggers a downloadable JSON file
-  const backupContent = async (): Promise<FullSiteContent> => {
+  const backupContent = useCallback(async (): Promise<FullSiteContent> => {
     const fullSnapshot = await fetchFullCollectionViaOnSnapshot();
 
     const backupPayload = {
@@ -597,10 +598,10 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     await addHistoryRecord('Offline Backup Downloaded', fullSnapshot);
     return fullSnapshot;
-  };
+  }, [fetchFullCollectionViaOnSnapshot, addHistoryRecord]);
 
   // Restore to Default: Restores all documents in 'siteContent' to default values
-  const restoreToDefault = async () => {
+  const restoreToDefault = useCallback(async () => {
     // Save current state as safety backup first
     await addHistoryRecord('Pre-Restore State Backup', siteContent);
 
@@ -611,10 +612,10 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
 
     await addHistoryRecord('Restored to Default Settings', DEFAULT_SITE_CONTENT);
-  };
+  }, [addHistoryRecord, siteContent]);
 
   // Restore from a historical snapshot
-  const restoreFromSnapshot = async (snapshot: FullSiteContent, actionLabel?: string) => {
+  const restoreFromSnapshot = useCallback(async (snapshot: FullSiteContent, actionLabel?: string) => {
     await addHistoryRecord('Pre-Rollback State Backup', siteContent);
 
     const keys = Object.keys(snapshot) as (keyof FullSiteContent)[];
@@ -626,10 +627,10 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
 
     await addHistoryRecord(actionLabel || 'Restored From Historical Snapshot', snapshot);
-  };
+  }, [addHistoryRecord, siteContent]);
 
   // Update a single section in Firestore
-  const updateSection = async <K extends keyof FullSiteContent>(sectionKey: K, data: FullSiteContent[K]) => {
+  const updateSection = useCallback(async <K extends keyof FullSiteContent>(sectionKey: K, data: FullSiteContent[K]) => {
     try {
       const docRef = doc(db, 'siteContent', sectionKey);
       await setDoc(docRef, data, { merge: true });
@@ -643,33 +644,47 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       console.error(`Error saving siteContent/${sectionKey} to Firestore:`, error);
       throw error;
     }
-  };
+  }, [addHistoryRecord, siteContent]);
 
   // Populate Firestore with default values if empty
-  const seedInitialData = async () => {
+  const seedInitialData = useCallback(async () => {
     const keys = Object.keys(DEFAULT_SITE_CONTENT) as (keyof FullSiteContent)[];
     for (const key of keys) {
       const docRef = doc(db, 'siteContent', key);
       await setDoc(docRef, DEFAULT_SITE_CONTENT[key], { merge: true });
     }
     await addHistoryRecord('Seeded Default Data to Firestore', DEFAULT_SITE_CONTENT);
-  };
+  }, [addHistoryRecord]);
+
+  const contextValue = useMemo(
+    () => ({
+      siteContent,
+      loading,
+      historyEntries,
+      historyLoading,
+      updateSection,
+      seedInitialData,
+      restoreToDefault,
+      backupContent,
+      restoreFromSnapshot,
+      addHistoryRecord,
+    }),
+    [
+      siteContent,
+      loading,
+      historyEntries,
+      historyLoading,
+      updateSection,
+      seedInitialData,
+      restoreToDefault,
+      backupContent,
+      restoreFromSnapshot,
+      addHistoryRecord,
+    ]
+  );
 
   return (
-    <SiteContentContext.Provider
-      value={{
-        siteContent,
-        loading,
-        historyEntries,
-        historyLoading,
-        updateSection,
-        seedInitialData,
-        restoreToDefault,
-        backupContent,
-        restoreFromSnapshot,
-        addHistoryRecord,
-      }}
-    >
+    <SiteContentContext.Provider value={contextValue}>
       {children}
     </SiteContentContext.Provider>
   );

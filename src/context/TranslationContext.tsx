@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { translations as staticTranslations, Language, getValueByPath } from '../translations';
 import { useSiteContent } from './SiteContentContext';
 
@@ -84,17 +84,20 @@ export const TranslationProvider: React.FC<{ children: React.ReactNode }> = ({ c
     await updateSection('translations', translationsMap);
   }, [updateSection]);
 
+  const contextValue = useMemo(
+    () => ({
+      language,
+      changeLanguage,
+      t,
+      updateTranslationKey,
+      updateAllTranslations,
+      liveTranslations,
+    }),
+    [language, changeLanguage, t, updateTranslationKey, updateAllTranslations, liveTranslations]
+  );
+
   return (
-    <TranslationContext.Provider
-      value={{
-        language,
-        changeLanguage,
-        t,
-        updateTranslationKey,
-        updateAllTranslations,
-        liveTranslations,
-      }}
-    >
+    <TranslationContext.Provider value={contextValue}>
       {children}
     </TranslationContext.Provider>
   );

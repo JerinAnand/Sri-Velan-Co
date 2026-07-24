@@ -44,21 +44,25 @@ const useCountUp = (target: number, duration: number = 2000, trigger: boolean = 
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (!trigger) return;
-    let start = 0;
-    const end = target;
-    const totalMiliseconds = duration;
-    const incrementTime = Math.max(Math.floor(totalMiliseconds / end), 15);
+    if (!trigger || !target || target <= 0 || !Number.isFinite(target)) {
+      setCount(target || 0);
+      return;
+    }
+    const end = Math.floor(target);
+    const steps = 30; // 30 updates max over animation duration
+    const stepDuration = Math.max(20, Math.floor(duration / steps));
+    const stepValue = Math.max(1, Math.ceil(end / steps));
     
+    let current = 0;
     const timer = setInterval(() => {
-      start += 1;
-      if (start > end) {
+      current += stepValue;
+      if (current >= end) {
         setCount(end);
         clearInterval(timer);
       } else {
-        setCount(start);
+        setCount(current);
       }
-    }, incrementTime);
+    }, stepDuration);
 
     return () => clearInterval(timer);
   }, [target, duration, trigger]);
@@ -631,38 +635,47 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {SERVICE_CATEGORIES.slice(0, 3).map((svc) => (
-              <div 
-                key={svc.id}
-                className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-md group hover:border-brand-gold-500/30 hover:shadow-brand-gold-500/5 transition-all duration-350 flex flex-col justify-between"
-                id={`home-service-card-${svc.id}`}
-              >
-                <div className="h-56 relative overflow-hidden bg-neutral-950">
-                  <img 
-                    src={svc.image} 
-                    alt={t(`services.${svc.id}.title`)} 
-                    className="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                    width="600"
-                    height="400"
-                    onError={(e) => { (e.target as HTMLImageElement).src = companyLogo; }}
-                  />
-                  {/* Subtle technical ribbon indicator */}
-                  <div className="absolute top-4 right-4 bg-brand-gold-500 text-brand-blue-950 font-mono text-[9px] font-bold py-1 px-2.5 rounded-full uppercase tracking-wider">
-                    {language === 'en' ? 'SPEC COMPLIANT' : 'விதிமுறை இணக்கமானது'}
-                  </div>
-                </div>
+            {((siteContent?.services?.services && siteContent.services.services.length > 0)
+              ? siteContent.services.services.slice(0, 3)
+              : SERVICE_CATEGORIES.slice(0, 3)
+            ).map((svc: any) => {
+              const title = svc.title || (svc.id ? t(`services.${svc.id}.title`) : 'Infrastructure Service');
+              const description = svc.description || (svc.id ? t(`services.${svc.id}.shortDescription`) : '');
+              const image = svc.image || svc.imageUrl || companyLogo;
+              const badge = svc.badge || (language === 'en' ? 'SPEC COMPLIANT' : 'விதிமுறை இணக்கமானது');
 
-                <div className="p-6 sm:p-8 space-y-4 flex-1 flex flex-col justify-between text-left">
-                  <div className="space-y-2">
-                    <h3 className="font-display font-bold text-lg text-white group-hover:text-brand-gold-400 transition-colors">
-                      {t(`services.${svc.id}.title`)}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                      {t(`services.${svc.id}.shortDescription`)}
-                    </p>
+              return (
+                <div 
+                  key={svc.id}
+                  className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-md group hover:border-brand-gold-500/30 hover:shadow-brand-gold-500/5 transition-all duration-350 flex flex-col justify-between"
+                  id={`home-service-card-${svc.id}`}
+                >
+                  <div className="h-56 relative overflow-hidden bg-neutral-950">
+                    <img 
+                      src={image} 
+                      alt={title} 
+                      className="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-500"
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                      width="600"
+                      height="400"
+                      onError={(e) => { (e.target as HTMLImageElement).src = companyLogo; }}
+                    />
+                    {/* Subtle technical ribbon indicator */}
+                    <div className="absolute top-4 right-4 bg-brand-gold-500 text-brand-blue-950 font-mono text-[9px] font-bold py-1 px-2.5 rounded-full uppercase tracking-wider">
+                      {badge}
+                    </div>
                   </div>
+
+                  <div className="p-6 sm:p-8 space-y-4 flex-1 flex flex-col justify-between text-left">
+                    <div className="space-y-2">
+                      <h3 className="font-display font-bold text-lg text-white group-hover:text-brand-gold-400 transition-colors">
+                        {title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
+                        {description}
+                      </p>
+                    </div>
 
                   <div className="pt-4 border-t border-neutral-800 flex items-center justify-between">
                     <button 
@@ -673,9 +686,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
         </div>
