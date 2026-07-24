@@ -6,7 +6,7 @@
 export type ActiveView = 
   | 'home' 
   | 'about' 
-  | 'services' 
+  | 'chennai' 
   | 'equipments' 
   | 'projects' 
   | 'hydraulic-broomer' 

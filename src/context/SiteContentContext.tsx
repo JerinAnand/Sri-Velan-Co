@@ -378,7 +378,7 @@ export const DEFAULT_SITE_CONTENT: FullSiteContent = {
     menuItems: [
       { id: 'home', labelEn: 'Home', labelTa: 'முகப்பு', path: '/', order: 1 },
       { id: 'about', labelEn: 'About Us', labelTa: 'எங்களைப் பற்றி', path: '/about', order: 2 },
-      { id: 'services', labelEn: 'Services', labelTa: 'சேவைகள்', path: '/services', order: 3 },
+      { id: 'chennai', labelEn: 'Chennai', labelTa: 'சென்னை', path: '/chennai', order: 3 },
       { id: 'equipments', labelEn: 'Equipment Fleet', labelTa: 'இயந்திரங்கள்', path: '/equipments', order: 4 },
       { id: 'projects', labelEn: 'Projects', labelTa: 'திட்டங்கள்', path: '/projects', order: 5 },
       { id: 'hydraulic-broomer', labelEn: 'Hydraulic Broomer', labelTa: 'ஹைட்ராலிக் தூரிகை', path: '/hydraulic-broomer', order: 6 },

@@ -30,7 +30,7 @@ export const Header: React.FC = () => {
   const activeViewMap: Record<string, ActiveView> = {
     '/': 'home',
     '/about': 'about',
-    '/services': 'services',
+    '/chennai': 'chennai',
     '/equipments': 'equipments',
     '/projects': 'projects',
     '/hydraulic-broomer': 'hydraulic-broomer',
@@ -54,7 +54,7 @@ export const Header: React.FC = () => {
   const navItems = [
     { label: t('navigation.home'), view: 'home' as ActiveView },
     { label: t('navigation.about'), view: 'about' as ActiveView },
-    { label: t('navigation.services'), view: 'services' as ActiveView },
+    { label: t('navigation.services'), view: 'chennai' as ActiveView },
     { label: t('navigation.equipments'), view: 'equipments' as ActiveView },
     { label: t('navigation.projects'), view: 'projects' as ActiveView },
     { label: t('navigation.hydraulicBroomer'), view: 'hydraulic-broomer' as ActiveView },

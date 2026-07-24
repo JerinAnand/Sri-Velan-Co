@@ -23,7 +23,7 @@ export const Footer: React.FC = () => {
   const quickLinks = [
     { label: t('footer.links.home'), view: 'home' as ActiveView },
     { label: t('footer.links.about'), view: 'about' as ActiveView },
-    { label: t('footer.links.services'), view: 'services' as ActiveView },
+    { label: t('footer.links.services'), view: 'chennai' as ActiveView },
     { label: t('footer.links.equipments'), view: 'equipments' as ActiveView },
     { label: t('footer.links.projects'), view: 'projects' as ActiveView },
     { label: t('footer.links.hydraulicBroomer'), view: 'hydraulic-broomer' as ActiveView },

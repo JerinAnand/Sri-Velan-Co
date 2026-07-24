@@ -27,7 +27,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { COMPANY_DETAILS, SERVICE_CATEGORIES } from '../data';
 import { ActiveView } from '../types';
-import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { useSiteContent } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
 import companyLogo from '../assets/images/sri-velan-logo.png';
@@ -623,7 +622,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             </div>
             
             <button
-              onClick={() => setActiveView('services')}
+              onClick={() => setActiveView('projects')}
               className="inline-flex items-center gap-1.5 text-brand-gold-400 hover:text-white text-xs font-semibold uppercase tracking-wider shrink-0 transition-colors"
             >
               <span>{language === 'en' ? 'View All 6 Specialized Sectors' : 'அனைத்து 6 சிறப்புப் பிரிவுகளையும் காண்க'}</span>
@@ -667,7 +666,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
                   <div className="pt-4 border-t border-neutral-800 flex items-center justify-between">
                     <button 
-                      onClick={() => setActiveView('services')}
+                      onClick={() => setActiveView('projects')}
                       className="text-brand-gold-400 hover:text-white text-xs font-semibold flex items-center gap-1 transition-all"
                     >
                       <span>{language === 'en' ? 'Explore Technical Standards' : 'தொழில்நுட்ப தரங்களை ஆராயுங்கள்'}</span>
@@ -923,9 +922,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
 
         </div>
       </section>
-
-      {/* 7. Real-Time Disaster Weather Alert Panel */}
-      <WeatherAlertBanner />
 
     </div>
   );

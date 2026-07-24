@@ -21,7 +21,7 @@ export const en = {
   links: {
     home: 'Home Page',
     about: 'About Company',
-    services: 'Our Services',
+    services: 'Chennai',
     equipments: 'Machinery & Fleet',
     projects: 'Project Portfolio',
     hydraulicBroomer: 'Hydraulic Broomer spec',
@@ -52,7 +52,7 @@ export const ta = {
   links: {
     home: 'முகப்பு பக்கம்',
     about: 'எங்களைப் பற்றி',
-    services: 'எங்கள் சேவைகள்',
+    services: 'Chennai',
     equipments: 'இயந்திரங்கள் & கடற்படை',
     projects: 'திட்டப் போர்ட்ஃபோலியோ',
     hydraulicBroomer: 'ஹைட்ராலிக் ப்ரூமர் விவரங்கள்',

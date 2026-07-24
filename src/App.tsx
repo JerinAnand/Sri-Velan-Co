@@ -9,7 +9,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomeView } from './components/HomeView';
 import { AboutView } from './components/AboutView';
-import { ServicesView } from './components/ServicesView';
+import { ChennaiView } from './components/ChennaiView';
 import { EquipmentsView } from './components/EquipmentsView';
 import { ProjectsView } from './components/ProjectsView';
 import { HydraulicBroomer } from './components/HydraulicBroomer';
@@ -33,7 +33,7 @@ export default function App() {
   const pathMap: Record<string, ActiveView> = {
     '/': 'home',
     '/about': 'about',
-    '/services': 'services',
+    '/chennai': 'chennai',
     '/equipments': 'equipments',
     '/projects': 'projects',
     '/hydraulic-broomer': 'hydraulic-broomer',
@@ -55,8 +55,8 @@ export default function App() {
       case 'about':
         title = `About Us | ${COMPANY_DETAILS.name} Contractor`;
         break;
-      case 'services':
-        title = `Our Services | State PWD & WRD Contracts`;
+      case 'chennai':
+        title = `Chennai Zone & Monsoon Info | Sri Velan & Co`;
         break;
       case 'equipments':
         title = `Machinery Fleet | Suction Pumps & Earthmovers`;
@@ -157,7 +157,7 @@ export default function App() {
             <Routes location={location}>
               <Route path="/" element={<HomeView setActiveView={setActiveView} />} />
               <Route path="/about" element={<AboutView />} />
-              <Route path="/services" element={<ServicesView />} />
+              <Route path="/chennai" element={<ChennaiView />} />
               <Route path="/equipments" element={<EquipmentsView />} />
               <Route path="/projects" element={<ProjectsView />} />
               <Route path="/hydraulic-broomer" element={<HydraulicBroomer />} />

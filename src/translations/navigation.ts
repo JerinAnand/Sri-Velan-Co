@@ -1,7 +1,7 @@
 export const en = {
   home: 'Home',
   about: 'About Us',
-  services: 'Services',
+  services: 'Chennai',
   equipments: 'Equipments',
   projects: 'Projects',
   hydraulicBroomer: 'Hydraulic Broomer',
@@ -20,7 +20,7 @@ export const en = {
 export const ta = {
   home: 'முகப்பு',
   about: 'எங்களைப் பற்றி',
-  services: 'சேவைகள்',
+  services: 'Chennai',
   equipments: 'இயந்திரங்கள்',
   projects: 'திட்டங்கள்',
   hydraulicBroomer: 'ஹைட்ராலிக் ப்ரூமர்',

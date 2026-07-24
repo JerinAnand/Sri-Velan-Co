@@ -25,12 +25,18 @@ import {
   Zap,
   Lock,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Award,
+  FileText,
+  CalendarCheck,
+  CheckCircle2,
+  ExternalLink,
+  Navigation
 } from 'lucide-react';
 
 import { INITIAL_CONSTRUCTION_EXPERIENCE } from '../data/constructionExperience';
 import { ConstructionCategory } from '../types';
-import { PROJECTS, CYCLONE_RELIEF_TIMELINE } from '../data';
+import { PROJECTS, CYCLONE_RELIEF_TIMELINE, SERVICE_CATEGORIES } from '../data';
 import { ProjectItem } from '../types';
 import companyLogo from '../assets/images/sri-velan-logo.png';
 import { useTranslation } from '../context/TranslationContext';
@@ -42,6 +48,42 @@ export const ProjectsView: React.FC = () => {
   const { siteContent } = useSiteContent();
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'government' | 'water-resource' | 'infrastructure' | 'emergency-relief'>('all');
   const [activeCaseStudy, setActiveCaseStudy] = useState<ProjectItem | null>(null);
+
+  const servicesList = (siteContent?.services?.services && siteContent.services.services.length > 0)
+    ? siteContent.services.services
+    : SERVICE_CATEGORIES;
+
+  const [selectedService, setSelectedService] = useState<string | null>(servicesList[0]?.id || SERVICE_CATEGORIES[0].id);
+
+  const getIcon = (id: string) => {
+    switch(id) {
+      case 'pwd-buildings':
+        return <Building2 className="w-6 h-6" />;
+      case 'wrd-projects':
+        return <Droplet className="w-6 h-6" />;
+      case 'rural-development':
+        return <MapPin className="w-6 h-6" />;
+      case 'urban-development':
+        return <Award className="w-6 h-6" />;
+      case 'flood-relief':
+        return <Hammer className="w-6 h-6" />;
+      default:
+        return <FileText className="w-6 h-6" />;
+    }
+  };
+
+  // Helper to fetch translated arrays safely
+  const getTranslatedArray = (path: string, fallback: string[]): string[] => {
+    const value = getValueByPath(translations[language], path) ?? getValueByPath(translations.en, path);
+    return Array.isArray(value) ? value : fallback;
+  };
+
+  const activeSvc = servicesList.find(s => s.id === selectedService) || servicesList[0] || SERVICE_CATEGORIES[0];
+  const activeTitle = activeSvc.title ? t(`services.${activeSvc.id}.title`, activeSvc.title) : 'Service';
+  const activeFullDesc = activeSvc.fullDescription ? t(`services.${activeSvc.id}.fullDescription`, activeSvc.fullDescription) : activeSvc.description;
+  const activeHighlights = activeSvc.highlights && activeSvc.highlights.length > 0
+    ? activeSvc.highlights
+    : getTranslatedArray(`services.${activeSvc.id}.highlights`, []);
 
   const projectsList: ProjectItem[] = (siteContent?.projects?.projects && siteContent.projects.projects.length > 0)
     ? siteContent.projects.projects.map((p: any) => ({
@@ -77,12 +119,6 @@ export const ProjectsView: React.FC = () => {
       case 'emergency-relief': return language === 'en' ? 'Disaster Flood Relief' : 'பேரிடர் வெள்ள நிவாரணம்';
       default: return language === 'en' ? 'General Civil Contract' : 'பொது சிவில் ஒப்பந்தம்';
     }
-  };
-
-  // Helper to fetch translated arrays safely
-  const getTranslatedArray = (path: string, fallback: string[]): string[] => {
-    const value = getValueByPath(translations[language], path) ?? getValueByPath(translations.en, path);
-    return Array.isArray(value) ? value : fallback;
   };
 
   // Pre-configured structured case-study content to populate dynamically based on clicked project id
@@ -202,7 +238,115 @@ export const ProjectsView: React.FC = () => {
         </div>
       </section>
 
+      {/* Specialized Infrastructure Verticals Dashboard */}
+      <section className="py-20 bg-white" id="services-interactive-dashboard">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-left mb-10 space-y-2">
+            <span className="text-xs font-mono font-bold tracking-widest text-brand-gold-500 uppercase">
+              {t('services.badge')}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-brand-blue-900">
+              {t('services.sidebarTitle')}
+            </h2>
+          </div>
 
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            {/* Left Nav menu Column (1/3 width) */}
+            <div className="lg:col-span-4 space-y-3" id="services-sidebar-nav">
+              {servicesList.map((svc) => {
+                const isSelected = selectedService === svc.id;
+                const svcTitle = t(`services.${svc.id}.title`, svc.title);
+
+                return (
+                  <button
+                    key={svc.id}
+                    id={`services-tab-${svc.id}`}
+                    onClick={() => setSelectedService(svc.id)}
+                    className={`w-full flex items-center gap-4 p-5 rounded-2xl border text-left cursor-pointer transition-all ${
+                      isSelected 
+                        ? 'bg-brand-blue-700 border-brand-blue-800 text-white shadow-md font-bold' 
+                        : 'bg-neutral-50 text-neutral-800 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100/50'
+                    }`}
+                  >
+                    <div className={`p-2.5 rounded-lg shrink-0 ${
+                      isSelected ? 'bg-white/20 text-brand-gold-400' : 'bg-white text-brand-blue-700 border border-neutral-200'
+                    }`}>
+                      {getIcon(svc.id)}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-display font-medium text-sm sm:text-base tracking-tight leading-snug group-hover:text-brand-gold-500">
+                        {svcTitle}
+                      </h3>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Right Detailed Panel Column (2/3 width) */}
+            <div className="lg:col-span-8 bg-neutral-50 rounded-3xl border border-neutral-200/80 p-6 sm:p-10 shadow-xs relative overflow-hidden" id="services-details-pane">
+              <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
+              
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSvc.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-8 relative z-10"
+                >
+                  {/* Service Photo with accent card */}
+                  <div className="h-64 sm:h-80 w-full rounded-2xl overflow-hidden border border-neutral-200 relative">
+                    <img 
+                      src={activeSvc.image} 
+                      alt={activeTitle}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                      width="800"
+                      height="530"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent" />
+                  </div>
+
+                  <div className="space-y-4 text-left">
+                    <h2 className="text-2xl sm:text-3xl font-black font-display text-brand-blue-900">
+                      {activeTitle}
+                    </h2>
+                    <p className="text-neutral-600 text-sm sm:text-base leading-relaxed font-sans first-letter:text-2xl first-letter:font-bold first-letter:text-brand-blue-800">
+                      {activeFullDesc}
+                    </p>
+                  </div>
+
+                  {/* Highlights list checkmark bento */}
+                  <div className="bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200/80 space-y-4 text-left">
+                    <div className="flex items-center gap-2 border-b border-neutral-100 pb-3">
+                      <CalendarCheck className="w-5 h-5 text-brand-gold-500 shrink-0" />
+                      <h4 className="font-display font-bold text-sm tracking-wide text-brand-blue-900 uppercase">
+                        {t('services.highlightsHeader')}
+                      </h4>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {activeHighlights.map((hlt, index) => (
+                        <div key={index} className="flex gap-2.5 items-start">
+                          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                          <p className="text-xs sm:text-sm text-neutral-700 leading-snug">{hlt}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       {/* 3. Deep Case-Study Detail Modal overlay using Framer Motion */}
       <AnimatePresence>
