@@ -34,8 +34,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
       document.documentElement.classList.add('dark-high-contrast');
     } else {
+      document.documentElement.classList.remove('dark');
       document.documentElement.classList.remove('dark-high-contrast');
     }
   }, [theme]);

@@ -77,7 +77,10 @@ export const ServiceAreaTelemetry: React.FC = () => {
 
   // Core data fetch function with defensive parsing
   const fetchTelemetry = async (silent: boolean = false) => {
-    if (isFetchingRef.current) return;
+    if (isFetchingRef.current) {
+      setSecondsAgo(0);
+      return;
+    }
     isFetchingRef.current = true;
     setSecondsAgo(0);
 

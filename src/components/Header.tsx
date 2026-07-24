@@ -27,17 +27,6 @@ export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const activeViewMap: Record<string, ActiveView> = {
-    '/': 'home',
-    '/about': 'about',
-    '/chennai': 'chennai',
-    '/equipments': 'equipments',
-    '/projects': 'projects',
-    '/hydraulic-broomer': 'hydraulic-broomer',
-    '/contact': 'contact'
-  };
-  const activeView = activeViewMap[location.pathname] || 'home';
-
   // Scroll visibility indicator
   useEffect(() => {
     const handleScroll = () => {
@@ -51,18 +40,10 @@ export const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems = [
-    { label: t('navigation.home'), view: 'home' as ActiveView },
-    { label: t('navigation.about'), view: 'about' as ActiveView },
-    { label: t('navigation.services'), view: 'chennai' as ActiveView },
-    { label: t('navigation.equipments'), view: 'equipments' as ActiveView },
-    { label: t('navigation.projects'), view: 'projects' as ActiveView },
-    { label: t('navigation.hydraulicBroomer'), view: 'hydraulic-broomer' as ActiveView },
-    { label: t('navigation.contact'), view: 'contact' as ActiveView },
-  ];
+  const menuItems = [...(navData?.menuItems || [])].sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  const handleNavClick = (view: ActiveView) => {
-    navigate(view === 'home' ? '/' : '/' + view);
+  const handleNavClick = (path: string) => {
+    navigate(path);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -90,17 +71,17 @@ export const Header: React.FC = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             {/* Elegant Corporate Title Logo */}
             <div 
-              onClick={() => handleNavClick('home')} 
-              className="flex items-center gap-3 cursor-pointer group"
+              onClick={() => handleNavClick('/')} 
+              className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0 shrink"
               id="header-logo-container"
             >
               {/* Symbolic Monogram */}
-              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg overflow-hidden shadow-md group-hover:scale-110 transition-transform duration-300 shrink-0 bg-black">
+              <div className="h-9 w-9 sm:h-12 sm:w-12 rounded-lg overflow-hidden shadow-md group-hover:scale-110 transition-transform duration-300 shrink-0 bg-black">
                <img
-                  src={companyLogo}
+                  src={logoImage}
                   alt="Sri Velan & Co"
                   className="h-full w-full object-contain"
                   loading="lazy"
@@ -108,16 +89,14 @@ export const Header: React.FC = () => {
                   height="48"
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col min-w-0">
                 <h1 
-                  className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors"
-                  style={{ width: '189.359px', fontSize: '22px', lineHeight: '32px' }}
+                  className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors text-sm sm:text-lg lg:text-xl truncate leading-tight"
                 >
                   {COMPANY_DETAILS.name}
                 </h1>
                 <p 
-                  className="text-[7px] leading-[13.25px] h-[12.25px] text-brand-gold-400 font-mono tracking-widest uppercase truncate"
-                  style={{ maxWidth: '189.359px' }}
+                  className="hidden min-[380px]:block text-[7px] sm:text-[8px] leading-tight text-brand-gold-400 font-mono tracking-widest uppercase truncate max-w-[140px] sm:max-w-none"
                   title="Powered by Trust, Proven by Provision"
                 >
                   Powered by Trust, Proven by Provision
@@ -127,22 +106,23 @@ export const Header: React.FC = () => {
 
             {/* Desktop Navigation Links */}
             <div className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1.5 py-1 max-w-[34rem] xl:max-w-[48rem] 2xl:max-w-5xl flex-1 px-2" role="menubar">
-              {navItems.map((item) => {
-                const isActive = activeView === item.view;
+              {menuItems.map((item) => {
+                const label = language === 'ta' ? (item.labelTa || item.labelEn) : (item.labelEn || item.labelTa);
+                const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
                 return (
                   <button
-                    key={item.view}
-                    id={`nav-item-${item.view}`}
-                    onClick={() => handleNavClick(item.view)}
+                    key={item.id || item.path}
+                    id={`nav-item-${item.id || item.path}`}
+                    onClick={() => handleNavClick(item.path)}
                     aria-current={isActive ? 'page' : undefined}
                     role="menuitem"
-                    className={`px-2 py-1.5 xl:px-3 xl:py-2 rounded-md font-display lg:text-[11px] xl:text-xs 2xl:text-sm font-medium transition-all duration-300 relative overflow-hidden group max-w-[90px] xl:max-w-[130px] 2xl:max-w-none text-center shrink-0 ${
+                    className={`px-2 py-1.5 xl:px-3 xl:py-2 rounded-md font-display lg:text-[11px] xl:text-xs 2xl:text-sm font-medium transition-all duration-300 relative overflow-hidden group max-w-[90px] xl:max-w-[130px] 2xl:max-w-none text-center shrink-0 cursor-pointer ${
                       isActive 
                         ? 'text-brand-gold-400' 
                         : 'text-neutral-200 hover:text-white'
                     }`}
                   >
-                    <span className="relative z-10 block truncate" title={item.label}>{item.label}</span>
+                    <span className="relative z-10 block truncate" title={label}>{label}</span>
                     {/* Hover slider indicator */}
                     <span className={`absolute bottom-0 left-0 w-full h-[3px] bg-brand-gold-500 transform origin-left transition-transform duration-350 ${
                       isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -193,11 +173,11 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Mobile Actions: Theme Toggle & Hamburger Trigger */}
-            <div className="lg:hidden flex items-center gap-2">
+            <div className="lg:hidden flex items-center gap-1 min-[400px]:gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => changeLanguage(language === 'en' ? 'ta' : 'en')}
-                className="px-2.5 py-1.5 rounded border border-neutral-300/20 text-neutral-200 hover:text-brand-gold-400 transition-colors font-display text-xs font-semibold cursor-pointer shrink-0"
+                className="px-1.5 min-[400px]:px-2.5 py-1 min-[400px]:py-1.5 rounded border border-neutral-300/20 text-neutral-200 hover:text-brand-gold-400 transition-colors font-display text-[10px] min-[400px]:text-xs font-semibold cursor-pointer shrink-0"
                 aria-label={`Switch language to ${language === 'en' ? 'Tamil' : 'English'}`}
                 title={`Switch language to ${language === 'en' ? 'Tamil' : 'English'}`}
                 id="header-lang-toggle-mobile"
@@ -207,36 +187,36 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer"
+                className="p-1 min-[400px]:p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer shrink-0"
                 title={theme === 'light' ? 'Switch to High-Contrast Dark Mode' : 'Switch to Clean Light Theme'}
                 aria-label="Theme toggle button"
                 id="header-theme-toggle-mobile"
               >
                 {theme === 'light' ? (
-                  <Moon className="w-5 h-5 text-brand-gold-400" />
+                  <Moon className="w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 text-brand-gold-400" />
                 ) : (
-                  <Sun className="w-5 h-5 text-yellow-300" />
+                  <Sun className="w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 text-yellow-300" />
                 )}
               </button>
               <button
                 type="button"
                 onClick={() => navigate(user ? '/admin/dashboard' : '/admin/login')}
-                className="p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer group"
+                className="p-1 min-[400px]:p-2 rounded-lg text-neutral-200 hover:text-brand-gold-400 hover:bg-white/10 transition-colors cursor-pointer group shrink-0"
                 title={user ? "Admin Dashboard" : "Admin Portal"}
                 aria-label={user ? "Admin Dashboard Access" : "Admin Portal Access"}
                 id="header-admin-toggle-mobile"
               >
-                <ShieldCheck className={`w-5 h-5 transition-colors ${user ? 'text-brand-gold-400' : 'text-neutral-400 group-hover:text-brand-gold-400'}`} />
+                <ShieldCheck className={`w-4 h-4 min-[400px]:w-5 min-[400px]:h-5 transition-colors ${user ? 'text-brand-gold-400' : 'text-neutral-400 group-hover:text-brand-gold-400'}`} />
               </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 id="mobile-menu-toggle"
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-menu"
-                className="p-2 rounded-lg text-neutral-200 hover:text-white hover:bg-brand-blue-700/40 transition-colors focus:outline-none"
+                className="p-1 min-[400px]:p-2 rounded-lg text-neutral-200 hover:text-white hover:bg-brand-blue-700/40 transition-colors focus:outline-none shrink-0"
                 aria-label="Toggle Navigation Menu"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? <X className="w-5 h-5 min-[400px]:w-6 min-[400px]:h-6" /> : <Menu className="w-5 h-5 min-[400px]:w-6 min-[400px]:h-6" />}
               </button>
             </div>
           </div>
@@ -272,7 +252,7 @@ export const Header: React.FC = () => {
                   <div className="flex items-center gap-2.5 flex-1 min-w-0" id="drawer-logo-block">
                     <div className="h-9 w-9 rounded overflow-hidden shrink-0 bg-black">
                       <img
-                        src={companyLogo}
+                        src={logoImage}
                         alt="Sri Velan & Co"
                         className="h-full w-full object-contain"
                         loading="lazy"
@@ -291,7 +271,7 @@ export const Header: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setMobileMenuOpen(false)}
-                    className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-brand-blue-900/60 transition-colors focus:outline-none shrink-0"
+                    className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-brand-blue-900/60 transition-colors focus:outline-none shrink-0 cursor-pointer"
                     aria-label="Close menu"
                   >
                     <X className="w-6 h-6" />
@@ -301,20 +281,21 @@ export const Header: React.FC = () => {
                 {/* Nav Links List */}
                 <div className="space-y-1">
                   <p className="text-[9px] text-brand-gold-400 uppercase font-mono tracking-widest mb-3 pl-2">{t('navigation.navigationDeck')}</p>
-                  {navItems.map((item) => {
-                    const isActive = activeView === item.view;
+                  {menuItems.map((item) => {
+                    const label = language === 'ta' ? (item.labelTa || item.labelEn) : (item.labelEn || item.labelTa);
+                    const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
                     return (
                       <button
-                        key={item.view}
-                        id={`mobile-nav-item-${item.view}`}
-                        onClick={() => handleNavClick(item.view)}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left font-display text-base font-bold transition-all ${
+                        key={item.id || item.path}
+                        id={`mobile-nav-item-${item.id || item.path}`}
+                        onClick={() => handleNavClick(item.path)}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left font-display text-base font-bold transition-all cursor-pointer ${
                           isActive 
                             ? 'bg-brand-blue-900 text-brand-gold-400 border-l-4 border-brand-gold-500 pl-3' 
                             : 'text-neutral-300 hover:bg-brand-blue-900/60 hover:text-white'
                         }`}
                       >
-                        <span>{item.label}</span>
+                        <span>{label}</span>
                         <ChevronRight className={`w-4 h-4 transition-transform ${isActive ? 'text-brand-gold-400' : 'text-neutral-500'}`} />
                       </button>
                     );

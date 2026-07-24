@@ -12,6 +12,7 @@ import { useTranslation } from '../context/TranslationContext';
 import { ServiceAreaMap } from './ServiceAreaMap';
 import { ServiceAreaTelemetry } from './ServiceAreaTelemetry';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
+import chennaiBannerImg from '../assets/images/regenerated_image_1784867041914.jpg';
 
 export const ChennaiView: React.FC = () => {
   const { language } = useTranslation();
@@ -23,7 +24,7 @@ export const ChennaiView: React.FC = () => {
       <section className="relative overflow-hidden bg-brand-blue-950 py-16 sm:py-24 text-white" id="chennai-header-banner">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ"
+            src={chennaiBannerImg}
             alt="Chennai Zonal Grid background"
             className="w-full h-full object-cover opacity-15 filter saturate-50"
             referrerPolicy="no-referrer"

@@ -15,23 +15,17 @@ import companyLogo from '../assets/images/sri-velan-logo.png';
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
-  const { t } = useTranslation();
+  const { language, t } = useTranslation();
   const { siteContent } = useSiteContent();
   const footerData = siteContent.footer;
   const contactData = siteContent.contact;
+  const navData = siteContent.navigation;
+  const logoImage = navData?.logoUrl || companyLogo;
 
-  const quickLinks = [
-    { label: t('footer.links.home'), view: 'home' as ActiveView },
-    { label: t('footer.links.about'), view: 'about' as ActiveView },
-    { label: t('footer.links.services'), view: 'chennai' as ActiveView },
-    { label: t('footer.links.equipments'), view: 'equipments' as ActiveView },
-    { label: t('footer.links.projects'), view: 'projects' as ActiveView },
-    { label: t('footer.links.hydraulicBroomer'), view: 'hydraulic-broomer' as ActiveView },
-    { label: t('footer.links.contact'), view: 'contact' as ActiveView },
-  ];
+  const menuItems = [...(navData?.menuItems || [])].sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  const handleLinkClick = (view: ActiveView) => {
-    navigate(view === 'home' ? '/' : '/' + view);
+  const handleLinkClick = (path: string) => {
+    navigate(path);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -48,7 +42,7 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-2.5">
               <div className="h-9 w-9 rounded overflow-hidden shrink-0 bg-black shadow-inner">
                 <img
-                  src={companyLogo}
+                  src={logoImage}
                   alt="Sri Velan & Co"
                   className="h-full w-full object-contain"
                   loading="lazy"
@@ -95,17 +89,20 @@ export const Footer: React.FC = () => {
             </h4>
             
             <ul className="grid grid-cols-1 gap-2.5 text-sm" id="footer-directory-ul">
-              {quickLinks.map((link) => (
-                <li key={link.label}>
-                  <button
-                    onClick={() => handleLinkClick(link.view)}
-                    className="flex items-center gap-1.5 text-neutral-300 hover:text-brand-gold-400 transition-colors text-left group"
-                  >
-                    <span className="h-1.5 w-1.5 bg-brand-gold-500 rounded-full group-hover:scale-150 transition-transform" />
-                    <span>{link.label}</span>
-                  </button>
-                </li>
-              ))}
+              {menuItems.map((item) => {
+                const label = language === 'ta' ? (item.labelTa || item.labelEn) : (item.labelEn || item.labelTa);
+                return (
+                  <li key={item.id || item.path}>
+                    <button
+                      onClick={() => handleLinkClick(item.path)}
+                      className="flex items-center gap-1.5 text-neutral-300 hover:text-brand-gold-400 transition-colors text-left group cursor-pointer"
+                    >
+                      <span className="h-1.5 w-1.5 bg-brand-gold-500 rounded-full group-hover:scale-150 transition-transform" />
+                      <span>{label}</span>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
