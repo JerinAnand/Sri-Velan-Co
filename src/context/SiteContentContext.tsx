@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { doc, onSnapshot, setDoc, collection, addDoc, query, orderBy, limit, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, collection, addDoc, query, orderBy, limit, getDoc, getDocs, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { COMPANY_DETAILS, OFFICES, SERVICE_CATEGORIES } from '../data';
 import { INITIAL_CONSTRUCTION_EXPERIENCE } from '../data/constructionExperience';
@@ -229,6 +229,7 @@ interface SiteContentContextType {
   seedInitialData: () => Promise<void>;
   restoreToDefault: () => Promise<void>;
   setCurrentAsDefault: () => Promise<void>;
+  clearHistory: () => Promise<void>;
   backupContent: () => Promise<FullSiteContent>;
   restoreFromSnapshot: (snapshot: FullSiteContent, actionLabel?: string) => Promise<void>;
   addHistoryRecord: (action: string, snapshot: FullSiteContent, sectionKey?: string) => Promise<void>;
@@ -430,6 +431,26 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     await addHistoryRecord('Current Content Saved as New Default', fullSnapshot);
   }, [fetchFullCollectionViaOnSnapshot, addHistoryRecord]);
 
+  // Clear History: Deletes all documents in 'siteContentHistory' and adds a single fresh starting record
+  const clearHistory = useCallback(async () => {
+    try {
+      const historyCol = collection(db, 'siteContentHistory');
+      const querySnapshot = await getDocs(historyCol);
+      const deletePromises = querySnapshot.docs.map((docSnap) => deleteDoc(docSnap.ref));
+      await Promise.all(deletePromises);
+    } catch (err) {
+      console.warn('Error clearing siteContentHistory collection from Firestore:', err);
+    }
+
+    try {
+      localStorage.removeItem('siteContentHistory');
+    } catch (e) {
+      console.warn('LocalStorage clear error:', e);
+    }
+
+    await addHistoryRecord('History Cleared - Fresh Start', siteContent);
+  }, [addHistoryRecord, siteContent]);
+
   // Restore to Default: Restores all documents in 'siteContent' from systemConfig/defaultContent or fallback DEFAULT_SITE_CONTENT
   const restoreToDefault = useCallback(async () => {
     // Save current state as safety backup first
@@ -515,6 +536,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       seedInitialData,
       restoreToDefault,
       setCurrentAsDefault,
+      clearHistory,
       backupContent,
       restoreFromSnapshot,
       addHistoryRecord,
@@ -528,6 +550,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       seedInitialData,
       restoreToDefault,
       setCurrentAsDefault,
+      clearHistory,
       backupContent,
       restoreFromSnapshot,
       addHistoryRecord,

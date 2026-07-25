@@ -33,6 +33,7 @@ import {
   MapPin,
   Search,
   BookmarkPlus,
+  Trash2,
 } from 'lucide-react';
 
 import { HeroTab } from './admin/HeroTab';
@@ -83,6 +84,7 @@ export function AdminDashboardView() {
     seedInitialData,
     restoreToDefault,
     setCurrentAsDefault,
+    clearHistory,
     backupContent,
     historyEntries,
     historyLoading,
@@ -97,6 +99,9 @@ export function AdminDashboardView() {
   const [isRestoring, setIsRestoring] = useState<boolean>(false);
   const [isSavingDefault, setIsSavingDefault] = useState<boolean>(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
+  const [isClearHistoryConfirmOpen, setIsClearHistoryConfirmOpen] = useState<boolean>(false);
+  const [clearConfirmationText, setClearConfirmationText] = useState<string>('');
+  const [isClearingHistory, setIsClearingHistory] = useState<boolean>(false);
   const [viewingSnapshot, setViewingSnapshot] = useState<FullSiteContent | null>(null);
   const [tabSearchQuery, setTabSearchQuery] = useState<string>('');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
@@ -136,6 +141,25 @@ export function AdminDashboardView() {
       setIsSavingDefault(false);
     }
   }, [setCurrentAsDefault, triggerToast, triggerError]);
+
+  // Clear History
+  const handleClearHistoryConfirm = useCallback(async () => {
+    if (clearConfirmationText.trim() !== 'CLEAR') {
+      return;
+    }
+    setIsClearingHistory(true);
+    try {
+      await clearHistory();
+      setIsClearHistoryConfirmOpen(false);
+      setClearConfirmationText('');
+      triggerToast('History logs cleared successfully. A fresh starting checkpoint was created.');
+    } catch (err: any) {
+      console.error('Clear history failed:', err);
+      triggerError('Failed to clear history: ' + (err?.message || 'Unknown error'));
+    } finally {
+      setIsClearingHistory(false);
+    }
+  }, [clearConfirmationText, clearHistory, triggerToast, triggerError]);
 
   // Backup Content -> JSON File Download
   const handleBackupContent = useCallback(async () => {
@@ -461,15 +485,30 @@ export function AdminDashboardView() {
                 <History className="w-5 h-5 text-purple-400" />
                 <h3 className="font-display font-bold text-base text-white">History of Changes & Rollback Snapshots</h3>
               </div>
-              <button
-                onClick={() => {
-                  setIsHistoryOpen(false);
-                  setViewingSnapshot(null);
-                }}
-                className="p-1 text-neutral-400 hover:text-white rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                {historyEntries.length > 0 && (
+                  <button
+                    onClick={() => {
+                      setClearConfirmationText('');
+                      setIsClearHistoryConfirmOpen(true);
+                    }}
+                    className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                    title="Clear all history entries"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Clear History
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    setIsHistoryOpen(false);
+                    setViewingSnapshot(null);
+                  }}
+                  className="p-1 text-neutral-400 hover:text-white rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Modal Content */}
@@ -541,6 +580,67 @@ export function AdminDashboardView() {
                   </pre>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear History Safety Confirmation Modal */}
+      {isClearHistoryConfirmOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-neutral-900 border border-red-500/30 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 text-red-400">
+              <div className="p-2 bg-red-500/10 rounded-xl border border-red-500/20">
+                <Trash2 className="w-5 h-5 text-red-400" />
+              </div>
+              <div>
+                <h4 className="font-display font-bold text-base text-white">Clear History Log</h4>
+                <p className="text-xs text-neutral-400 font-mono">Irreversible Action</p>
+              </div>
+            </div>
+
+            <p className="text-xs font-sans text-neutral-300 leading-relaxed bg-neutral-950 p-3.5 rounded-xl border border-white/5">
+              This will permanently delete all <strong className="text-white font-mono">{historyEntries.length}</strong> history entries. This cannot be undone, and past rollback points will be lost. Your live content and saved default are NOT affected. Continue?
+            </p>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono text-neutral-400 block">
+                Type <span className="text-red-400 font-bold">CLEAR</span> to confirm:
+              </label>
+              <input
+                type="text"
+                value={clearConfirmationText}
+                onChange={(e) => setClearConfirmationText(e.target.value)}
+                placeholder="Type CLEAR here"
+                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs font-mono text-white placeholder-neutral-600 focus:outline-none focus:border-red-500"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setIsClearHistoryConfirmOpen(false);
+                  setClearConfirmationText('');
+                }}
+                className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-mono rounded-xl transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleClearHistoryConfirm}
+                disabled={clearConfirmationText.trim() !== 'CLEAR' || isClearingHistory}
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:bg-neutral-800 disabled:text-neutral-600 disabled:border-transparent text-white text-xs font-mono font-bold rounded-xl border border-red-500/50 shadow-lg transition-all flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed"
+              >
+                {isClearingHistory ? (
+                  'Clearing...'
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Permanently Clear History
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
