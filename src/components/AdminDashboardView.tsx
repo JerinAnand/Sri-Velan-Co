@@ -32,6 +32,7 @@ import {
   Layers,
   MapPin,
   Search,
+  BookmarkPlus,
 } from 'lucide-react';
 
 import { HeroTab } from './admin/HeroTab';
@@ -81,6 +82,7 @@ export function AdminDashboardView() {
     updateSection,
     seedInitialData,
     restoreToDefault,
+    setCurrentAsDefault,
     backupContent,
     historyEntries,
     historyLoading,
@@ -93,6 +95,7 @@ export function AdminDashboardView() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isBackingUp, setIsBackingUp] = useState<boolean>(false);
   const [isRestoring, setIsRestoring] = useState<boolean>(false);
+  const [isSavingDefault, setIsSavingDefault] = useState<boolean>(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
   const [viewingSnapshot, setViewingSnapshot] = useState<FullSiteContent | null>(null);
   const [tabSearchQuery, setTabSearchQuery] = useState<string>('');
@@ -112,6 +115,27 @@ export function AdminDashboardView() {
     await logout();
     navigate('/admin/login');
   }, [logout, navigate]);
+
+  // Save Current as Default
+  const handleSetCurrentAsDefault = useCallback(async () => {
+    if (
+      !window.confirm(
+        "This will save the current live content as the new default. 'Restore to Default' will bring back THIS version from now on. Continue?"
+      )
+    ) {
+      return;
+    }
+    setIsSavingDefault(true);
+    try {
+      await setCurrentAsDefault();
+      triggerToast('Current live content saved as the new default!');
+    } catch (err: any) {
+      console.error('Save current as default failed:', err);
+      triggerError('Failed to save current content as default: ' + err.message);
+    } finally {
+      setIsSavingDefault(false);
+    }
+  }, [setCurrentAsDefault, triggerToast, triggerError]);
 
   // Backup Content -> JSON File Download
   const handleBackupContent = useCallback(async () => {
@@ -283,10 +307,20 @@ export function AdminDashboardView() {
           </button>
 
           <button
+            onClick={handleSetCurrentAsDefault}
+            disabled={isSavingDefault}
+            className="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-sm disabled:opacity-50"
+            title="Save current live content as the default settings"
+          >
+            <BookmarkPlus className="w-3.5 h-3.5 text-blue-400" />
+            {isSavingDefault ? 'Saving Default...' : 'Save Current as Default'}
+          </button>
+
+          <button
             onClick={handleRestoreToDefault}
             disabled={isRestoring}
             className="bg-neutral-800 hover:bg-red-900/40 text-neutral-300 hover:text-red-300 border border-white/10 hover:border-red-500/30 px-3 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-sm disabled:opacity-50"
-            title="Reset site content to factory default state"
+            title="Reset site content to default state"
           >
             <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
             Restore to Default

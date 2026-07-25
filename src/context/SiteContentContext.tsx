@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { doc, onSnapshot, setDoc, collection, addDoc, query, orderBy, limit } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, collection, addDoc, query, orderBy, limit, getDoc } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { COMPANY_DETAILS, OFFICES, SERVICE_CATEGORIES } from '../data';
 import { INITIAL_CONSTRUCTION_EXPERIENCE } from '../data/constructionExperience';
@@ -228,6 +228,7 @@ interface SiteContentContextType {
   updateSection: <K extends keyof FullSiteContent>(sectionKey: K, data: FullSiteContent[K]) => Promise<void>;
   seedInitialData: () => Promise<void>;
   restoreToDefault: () => Promise<void>;
+  setCurrentAsDefault: () => Promise<void>;
   backupContent: () => Promise<FullSiteContent>;
   restoreFromSnapshot: (snapshot: FullSiteContent, actionLabel?: string) => Promise<void>;
   addHistoryRecord: (action: string, snapshot: FullSiteContent, sectionKey?: string) => Promise<void>;
@@ -421,18 +422,45 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     return fullSnapshot;
   }, [fetchFullCollectionViaOnSnapshot, addHistoryRecord]);
 
-  // Restore to Default: Restores all documents in 'siteContent' to default values
+  // Save current live siteContent as new default snapshot in systemConfig/defaultContent
+  const setCurrentAsDefault = useCallback(async () => {
+    const fullSnapshot = await fetchFullCollectionViaOnSnapshot();
+    const docRef = doc(db, 'systemConfig', 'defaultContent');
+    await setDoc(docRef, fullSnapshot);
+    await addHistoryRecord('Current Content Saved as New Default', fullSnapshot);
+  }, [fetchFullCollectionViaOnSnapshot, addHistoryRecord]);
+
+  // Restore to Default: Restores all documents in 'siteContent' from systemConfig/defaultContent or fallback DEFAULT_SITE_CONTENT
   const restoreToDefault = useCallback(async () => {
     // Save current state as safety backup first
     await addHistoryRecord('Pre-Restore State Backup', siteContent);
 
-    const keys = Object.keys(DEFAULT_SITE_CONTENT) as (keyof FullSiteContent)[];
-    for (const key of keys) {
-      const docRef = doc(db, 'siteContent', key);
-      await setDoc(docRef, DEFAULT_SITE_CONTENT[key], { merge: false });
+    let defaultSnapshot: FullSiteContent = DEFAULT_SITE_CONTENT;
+    try {
+      const defaultDocRef = doc(db, 'systemConfig', 'defaultContent');
+      const defaultDocSnap = await getDoc(defaultDocRef);
+      if (defaultDocSnap.exists()) {
+        const customDefault = defaultDocSnap.data() as FullSiteContent;
+        if (customDefault && typeof customDefault === 'object' && Object.keys(customDefault).length > 0) {
+          defaultSnapshot = {
+            ...DEFAULT_SITE_CONTENT,
+            ...customDefault,
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('Could not read defaultContent from Firestore, falling back to DEFAULT_SITE_CONTENT:', err);
     }
 
-    await addHistoryRecord('Restored to Default Settings', DEFAULT_SITE_CONTENT);
+    const keys = Object.keys(defaultSnapshot) as (keyof FullSiteContent)[];
+    for (const key of keys) {
+      if (defaultSnapshot[key]) {
+        const docRef = doc(db, 'siteContent', key);
+        await setDoc(docRef, defaultSnapshot[key], { merge: false });
+      }
+    }
+
+    await addHistoryRecord('Restored to Default Settings', defaultSnapshot);
   }, [addHistoryRecord, siteContent]);
 
   // Restore from a historical snapshot
@@ -486,6 +514,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       updateSection,
       seedInitialData,
       restoreToDefault,
+      setCurrentAsDefault,
       backupContent,
       restoreFromSnapshot,
       addHistoryRecord,
@@ -498,6 +527,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       updateSection,
       seedInitialData,
       restoreToDefault,
+      setCurrentAsDefault,
       backupContent,
       restoreFromSnapshot,
       addHistoryRecord,

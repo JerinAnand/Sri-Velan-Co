@@ -28,6 +28,10 @@
     "/siteContentHistory/{historyId}": {
       "schema": "SiteSection",
       "description": "Collection storing historical change logs and backup snapshots of site content."
+    },
+    "/systemConfig/{configDoc}": {
+      "schema": "SiteSection",
+      "description": "System configuration documents, including defaultContent snapshot."
     }
   }
 }
