@@ -7,11 +7,19 @@ import { ConstructionExperienceContent } from '../types';
 import { translations as DEFAULT_TRANSLATIONS } from '../translations';
 
 // Interfaces for structured site content sections
-export interface HeroContent {
+export interface HeroSlide {
+  badge: string;
   title: string;
   subtitle: string;
   tagline: string;
-  badge: string;
+}
+
+export interface HeroContent {
+  slides: HeroSlide[];
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  badge?: string;
 }
 
 export interface AboutContent {

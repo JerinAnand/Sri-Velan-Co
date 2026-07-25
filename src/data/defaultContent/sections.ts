@@ -2,7 +2,27 @@ export const defaultHero = {
   "title": "Precision Civil Engineering & Heavy Dewatering Solutions",
   "subtitle": "Government Accredited Contractor",
   "badge": "State PWD & WRD Empaneled",
-  "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations."
+  "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations.",
+  "slides": [
+    {
+      "badge": "State PWD & WRD Empaneled",
+      "title": "Precision Civil Engineering & Heavy Dewatering Solutions",
+      "subtitle": "Government Accredited Contractor",
+      "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations."
+    },
+    {
+      "badge": "WRD Irrigation",
+      "title": "Roads, Water Resources &\nRural Development",
+      "subtitle": "Hydraulic Flow Management",
+      "tagline": "Executing roads, culverts, dredging works, retaining walls, under-sluices, and water resource projects that strengthen communities and support sustainable growth."
+    },
+    {
+      "badge": "Emergency Ready",
+      "title": "Tractor-Driven Dewatering Pumps &\nHigh-Capacity 100 HP Pumping Solutions",
+      "subtitle": "Disaster Relief Management",
+      "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations."
+    }
+  ]
 };
 
 export const defaultAbout = {
