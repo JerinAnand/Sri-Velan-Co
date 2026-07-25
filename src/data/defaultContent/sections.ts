@@ -1,6 +1,6 @@
 export const defaultHero = {
   "title": "Precision Civil Engineering & Heavy Dewatering Solutions",
-  "subtitle": "Government Accredited Class-I Contractor",
+  "subtitle": "Government Accredited Contractor",
   "badge": "State PWD & WRD Empaneled",
   "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations."
 };
