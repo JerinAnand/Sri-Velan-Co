@@ -1,0 +1,506 @@
+export const defaultHero = {
+  "title": "Precision Civil Engineering & Heavy Dewatering Solutions",
+  "subtitle": "Government Accredited Class-I Contractor",
+  "badge": "State PWD & WRD Empaneled",
+  "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations."
+};
+
+export const defaultAbout = {
+  "yearEstablished": 2006,
+  "founderName": "Mr. G. Selva Kumar",
+  "companyDescription": "Founded in 2006 in Villupuram, Tamil Nadu, Sri Velan & Co has grown into a leading contracting and infrastructure enterprise accredited by state departments, delivering complex civil contracts, water resource networks, and state-of-the-art heavy dewatering services.",
+  "visionText": "To be South India’s most dependable infrastructure partner for municipal disaster management, rapid dewatering, and state public works.",
+  "civilContractorText": "Class I Registered Government Civil Contractor",
+  "missionText": "Deliver resilient public infrastructure, emergency flood relief, and robust civil works across Tamil Nadu with uncompromised engineering precision."
+};
+
+export const defaultStats = {
+  "teamSize": 45,
+  "dewateringFleet": 400,
+  "projectsCompleted": 150,
+  "yearsExperience": 20,
+  "clientsServed": 25
+};
+
+export const defaultServices = {
+  "services": [
+    {
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ",
+      "highlights": [
+        "Superior RCC Framed Structures",
+        "PWD standard materials & vetting",
+        "On-time delivery schedules",
+        "Certified technical supervisors"
+      ],
+      "description": "Our group is recognized for building resilient public infrastructure including administrative complexes, school campuses, healthcare facilities, and government housings. Every structure is engineered to withstand modern seismic and climatic variations with zero performance compromises.",
+      "badge": "Certified Capability",
+      "id": "pwd-buildings",
+      "title": "PWD Buildings & Institutional Construction"
+    },
+    {
+      "highlights": [
+        "Irrigation Canal Earthworks",
+        "Concrete Retaining Structures",
+        "Stone pitched protective embankments",
+        "Masonry weirs and distribution boxes"
+      ],
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAtF7lQsjygWGM_wckM4HW-z2nj4oRbJglwvqyPrBOopVct0FaNayNZmcV2KclNO_D91euKAKDATiy4EK6o8y08eifUUdU9GA78MFSpP7NkllTKFnMKwV2APckmltuCrXUOQ2QX-mPrSukG22c432b0rw_ra7cIVWQ5YMRbkiKoaxjYQSkKOA0fHzRDt2xaNGGRmo0bxs0IfA74U3H4Ui_SKCTZsfqfa5zC0T4xCPuTqFNiP7LpEsi5NCEKk8KnMbTz7GUcXkKOd5t1",
+      "id": "wrd-projects",
+      "title": "Water Resources Department (WRD) Networks",
+      "description": "We specialize in water resource infrastructure. From digging massive dynamic distribution main canals, constructing concrete structural spillways, to reinforcing bank stability through top-tier stone pitching and concrete retaining walls, we help secure agricultural irrigator routes.",
+      "badge": "Certified Capability"
+    },
+    {
+      "id": "rural-development",
+      "title": "Rural Reconstruction & Arterial Roads",
+      "description": "Enabling dynamic regional connectivity by constructing long-lasting concrete and asphalt road corridors, heavy box culverts for surface water crossings, and concrete retaining walls matching M30/M40 specifications designed for village routes.",
+      "badge": "Certified Capability",
+      "highlights": [
+        "State-of-the-Art Asphaltic Paving",
+        "Heavy Box Culvert Engineering",
+        "Rigid Cement Concrete Roads (CC Roads)",
+        "Precast road drainage channels"
+      ],
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDxiIxXaP9soAHm6-AUxFu9k89Az7nDFLazdwJh_z3UFdWCCQ2CmObJ9Llgwyd9kdp4rtRZ3M9NoGTscfFyQyKwUmpwD-BxDY6k3vWRGa-UvbVy12oEPIUtYhVtX8xZs_gJZ6XlNrtDyEmLPtpX2GEYQQ12yMzuQLhAhsrPb-v8zRuPjE_hCXHKjRCG2ahP8DkHzcKVWZapAkQUP7K0x3rOWO5m-ve244E0MBc3M34GDCkLM3OKPTjtsgxG0HXa6X6mGx75-g1oHQ"
+    },
+    {
+      "highlights": [
+        "High-Strength RCC Drain Channels",
+        "Precast Conduit Placements",
+        "Structural Manhole & Junction boxes",
+        "System Integration & Utility relocations"
+      ],
+      "image": "https://srivelan.vercel.app/assets/regenerated_image_1784369432168-BJHyOYnu.jpg",
+      "id": "urban-development",
+      "title": "Urban Water Drainage & Multi-Utility Corridors",
+      "description": "Designing and executing reinforced concrete storm water systems beneath urban limits to prevent chronic waterlogging: placing precast heavy box conduits and casting in-situ dynamic storm trunks engineered for multi-ton vehicle traffic crossings.",
+      "badge": "Certified Capability"
+    },
+    {
+      "highlights": [
+        "4\", 6\" Air-Assist Vacuum Dewatering Pumps",
+        "High capacity 100 HP Submersible Dewatering Units",
+        "Rapid canal breach sandbagging and earthworks",
+        "Continuous 24/7 operator supervision"
+      ],
+      "image": "https://srivelan.vercel.app/assets/regenerated_image_1784369789659-CfpWkI3Q.jpg",
+      "title": "Disaster Relief & Heavy Dewatering Operations",
+      "id": "flood-relief",
+      "badge": "Certified Capability",
+      "description": "Our emergency fleet operates around the clock during severe environmental storms across Chennai and coastal regions. Guided by expert technical engineers, we deploy extremely high-volume custom dewatering setups (up to 100 HP) and heavy earth movers to safeguard civilians and city grids."
+    },
+    {
+      "title": "Comprehensive Structural Civil Engineering",
+      "id": "civil-engineering",
+      "badge": "Certified Capability",
+      "description": "Executing deep pile foundations, highly integrated brick masonry complexes, protective grade beams, and heavy architectural load-bearing columns. Every design incorporates high-durability concrete matrices, ensuring lasting performance in highly corrosive saline coastal environments.",
+      "highlights": [
+        "Deep Foundational Engineering",
+        "Reinforced Retaining Frameworks",
+        "Industrial Base Floor slabs",
+        "Precision Temple Masonry / HR&CE standards"
+      ],
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAsLe8RVCX-svxbnqxFJ_BPhxbnekwLOEgfVlyQzSrhvDeUt8fIVs9SucJNQthvJzl0Zd0k8ayEQyIMdk-yMQTZ-VCfgG6s2Pt0mqNSyWMOYliYNkWQUN7Z-utomnPg8ZXDSeXgpPMcrAxVHUxYD347dQz5u9vn8IDBkjE2KGkITZu1zt3pI_V_6J28abZWLv2kZNmwa9YQ2x3tJroBG1NzIXu-mD4uXsLMWZTzJmVk8tk7_gF0AlF8gcG-_gALsq-UwfoR9L4QPg"
+    }
+  ]
+};
+
+export const defaultClients = {
+  "clients": [
+    {
+      "id": "gcc",
+      "name": "Greater Chennai Corporation (GCC)",
+      "category": "Municipal Government"
+    },
+    {
+      "id": "cmrl",
+      "category": "Metropolitan Rail Transit",
+      "name": "Chennai Metro Rail Limited (CMRL)"
+    },
+    {
+      "category": "State Infrastructure",
+      "name": "Public Works Department (PWD)",
+      "id": "pwd"
+    },
+    {
+      "name": "Water Resources Department (WRD)",
+      "category": "Irrigation & Water Networks",
+      "id": "wrd"
+    },
+    {
+      "category": "Railway Infrastructure",
+      "name": "Rail Vikas Nigam Limited (RVNL)",
+      "id": "rvnl"
+    }
+  ]
+};
+
+export const defaultGoverningBoard = {
+  "boardMembers": [
+    {
+      "bio": "Directs strategic multi-district rescue logistics and civil contracts in Tamil Nadu.",
+      "designation": "Founder",
+      "photoUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuDtJTJScjD1s9E1gXlzJfWddGbDvVSX1Eh7cDvjCoMr81sYw4pZArZnM0ZZ5oUtaoYur4V-yYXukv1kqHT3iECpg-9uMT3_3nK--tX8irTP9bA1AqCrBte1YO4Y6B6N4nWLywI4REBwFYf3jWP06osetab2iwqHgbxlAtMw28gMhwsSOAPOYu6PUop4hoFmfDsOOKpzbR2ap4Vddzy_0StLNZTEukavQNu0eoyvd2lzSCIIPGj-1VOMPHDnK5ZNDb3ZvNYdJARXSVjN",
+      "name": "Mr. G. Selva Kumar",
+      "id": "selva_kumar"
+    },
+    {
+      "designation": "Managing Director",
+      "bio": "Oversees active fleet engineering, team mobilizations, and regional yards management.",
+      "photoUrl": "https://srivelan.vercel.app/assets/vetrivel-md-51g0mCAE.jpg",
+      "id": "vetrivel_s",
+      "name": "Mr. S. Vetrivel"
+    },
+    {
+      "name": "Mr. S. Dhinakaravel",
+      "id": "dhinakaravel",
+      "designation": "Financial Consultant",
+      "bio": "Manages regulatory financial audits, GST submissions compliance, and budget planning.",
+      "photoUrl": "https://srivelan.vercel.app/assets/regenerated_image_1784682133184-DFWCSf57.png"
+    },
+    {
+      "name": "Mr. Jerin Anand",
+      "id": "jerin_anand",
+      "bio": "Maintains enterprise tech portals, secure digital records, and digital identity.",
+      "designation": "Admin & Developer",
+      "photoUrl": "https://srivelan.vercel.app/assets/regenerated_image_1784683266108-BtH3aU2x.jpg"
+    }
+  ]
+};
+
+export const defaultProjects = {
+  "projects": [
+    {
+      "id": "proj_1",
+      "imageUrl": "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=800&q=80",
+      "year": "2024",
+      "title": "Cyclone Fengal Subway Dewatering Operations",
+      "location": "Chennai Suburbs",
+      "description": "Deployed high-head diesel pumps and continuous shift emergency crews across Chennai subways during historic rainfall.",
+      "status": "Completed"
+    },
+    {
+      "description": "Constructed reinforced concrete spillways and stone-pitched retaining barriers along agricultural canal distribution routes.",
+      "id": "proj_2",
+      "year": "2023",
+      "imageUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80",
+      "location": "Villupuram Region",
+      "title": "WRD Canal Bank Stone Pitching & Drainage Corridor",
+      "status": "Completed"
+    },
+    {
+      "status": "In Progress",
+      "id": "proj_3",
+      "imageUrl": "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80",
+      "title": "CMRL Metro Excavation Pit Dewatering",
+      "location": "Chennai Metro Phase II",
+      "year": "2025",
+      "description": "Provided specialized high-volume deep foundation dewatering and wellpoint systems for underground subway stations."
+    }
+  ]
+};
+
+export const defaultChennai = {
+  "bannerTagEn": "Chennai Zone & Disaster Readiness Hub",
+  "bannerTagTa": "சென்னை மண்டலம் & பேரிடர் ஆயத்த மையம்",
+  "bannerTitleEn": "Chennai Zone & Monsoon Info",
+  "bannerTitleTa": "சென்னை மண்டல செயல்பாடுகள் & பருவமழை தகவல்",
+  "bannerSubtitleEn": "Real-time monsoon tracking, Greater Chennai Corporation (GCC) zonal mapping, dewatering pump allocations, and 24/7 emergency disaster response readiness across Chennai.",
+  "bannerSubtitleTa": "நிகழ்நேர பருவமழை கண்காணிப்பு, பெருநகர சென்னை மாநகராட்சி (GCC) மண்டல வரைபடம், நீர் வெளியேற்றும் பம்ப் ஒதுக்கீடுகள் மற்றும் 24/7 அவசரகால பேரிடர் நிவாரண தகவல்கள்.",
+  "bannerImageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAeQt_VRg-Pnvzi83b3kFBXkzvQwauzvPl3BR7b4V5oqXN65xsotHAR8F_J1Cr-ngjTmrsoOZwh5FdVT3Zl2TQdue2Wcd1_ulcn_09y7urzhBo0D1KmgZRjeebjb1XoS7MLrQY1rDu7vusZvj8gxX6MmMm7Y6ahsbChKhEPeKaWr--5Di4PTSUyriXPWgmsdZ1M_J-R4e7yADQG8TSSdoNbot-7Z_BtQhC13Rvz2AqlQI9L_fKhXuf8kddWYkMMsA3Gl_2Q358cGg",
+  "gccCardTitleEn": "Check Your Zone & Division (GCC)",
+  "gccCardTitleTa": "உங்கள் மண்டலம் & பிரிவை அறியவும் (GCC)",
+  "gccCardDescriptionEn": "Find which Greater Chennai Corporation zone and division your property falls under.",
+  "gccCardDescriptionTa": "உங்கள் சொத்து எந்த பெருநகர சென்னை மாநகராட்சி மண்டலம் மற்றும் பிரிவின் கீழ் வருகிறது என்பதை அறியவும்.",
+  "gccPortalUrl": "https://chennaicorporation.gov.in/gcc/citizen-details/location-service/find_zone.jsp"
+};
+
+export const defaultContact = {
+  "phoneSecondary": "+91 98427 18243",
+  "emailSecondary": "pgselva45@gmail.com",
+  "workingHours": "24/7 Emergency Dispatch Center",
+  "addressVillupuram": "2/112 Post Office Street, Pillur, Viluppuram, Tamilnadu - 605103.",
+  "phonePrimary": "+91 98942 18243",
+  "emailPrimary": "srivelan2004@gmail.com",
+  "addressChennai": "S2, Second Floor, A Block, 8th Cross Street, Ram Nagar South, Madipakkam, Chennai, Tamilnadu - 600091.",
+  "whatsappNumber": "+91 98942 18243"
+};
+
+export const defaultFooter = {
+  "instagramUrl": "https://www.instagram.com/sri_velan_co?igsh=aTV3eWthZ3lqZXBq",
+  "copyright": "© 2026 Sri Velan & Co. All Rights Reserved.",
+  "brochureUrl": "https://drive.google.com/file/d/1yu8HZ3-IJyMsoSwUTJXvZQvFvmV-ftVV/view?usp=drive_link",
+  "description": "Empaneled Class I Civil Contracting Enterprise delivering state public works, heavy dewatering systems, and disaster relief solutions across South India."
+};
+
+export const defaultEquipment = {
+  "fleetIntro": "Heavy-duty dewatering pumps, earthmoving machinery, tractor-mounted broomers, and emergency flood mitigation assets ready for rapid deployment across South India.",
+  "categories": [
+    {
+      "specs": [
+        "Head: up to 45m",
+        "Discharge: 2500-5000 LPM",
+        "Engine: Kirloskar Diesel"
+      ],
+      "count": 400,
+      "id": "eq_pumps",
+      "imageUrl": "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80",
+      "name": "High-Head Diesel Dewatering Pumps",
+      "description": "Heavy duty 4\" & 6\" diesel engine pumps with vacuum priming systems designed for continuous 24/7 subway and pit dewatering."
+    },
+    {
+      "count": 25,
+      "specs": [
+        "Sweeping Width: 2.2m",
+        "Pressure: 180 Bar",
+        "Tractor Compat: 35-75 HP"
+      ],
+      "description": "MoRTH compliant highway sweeping broomer attachments featuring dual nylon/steel bristles and 180 Bar hydraulic drive.",
+      "name": "Tractor-Mounted Hydraulic Broomers",
+      "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAeQt_VRg-Pnvzi83b3kFBXkzvQwauzvPl3BR7b4V5oqXN65xsotHAR8F_J1Cr-ngjTmrsoOZwh5FdVT3Zl2TQdue2Wcd1_ulcn_09y7urzhBo0D1KmgZRjeebjb1XoS7MLrQY1rDu7vusZvj8gxX6MmMm7Y6ahsbChKhEPeKaWr--5Di4PTSUyriXPWgmsdZ1M_J-R4e7yADQG8TSSdoNbot-7Z_BtQhC13Rvz2AqlQI9L_fKhXuf8kddWYkMMsA3Gl_2Q358cGg",
+      "id": "eq_broomers"
+    },
+    {
+      "specs": [
+        "Bucket: 0.9 - 1.2 cu.m",
+        "Brands: JCB, CAT, Hyundai"
+      ],
+      "count": 18,
+      "name": "Excavators & Hydraulic Earthmovers",
+      "imageUrl": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800&q=80",
+      "id": "eq_earthmovers",
+      "description": "Tracked excavators and backhoe loaders equipped for channel desilting, emergency canal breach bunding, and site clearing."
+    }
+  ]
+};
+
+export const defaultCapabilityStatement = {
+  "downloadUrl": "",
+  "headline": "Sri Velan & Co - Corporate Capability Statement",
+  "certifications": [
+    {
+      "name": "Civil Contractor Registration",
+      "year": "2006",
+      "id": "cert_1",
+      "issuer": "State PWD & WRD"
+    },
+    {
+      "issuer": "GCC Disaster Cell",
+      "name": "Greater Chennai Corporation Empaneled Partner",
+      "year": "2020",
+      "id": "cert_2"
+    },
+    {
+      "issuer": "Chennai Metro Rail Ltd",
+      "id": "cert_3",
+      "year": "2022",
+      "name": "CMRL Approved Underground Dewatering Vendor"
+    }
+  ],
+  "summary": "Class I Registered Government Civil Contractor & Dewatering Enterprise specializing in municipal flood rescue, metro deep pit dewatering, canal stone pitching, and public infrastructure construction."
+};
+
+export const defaultHydraulicBroomer = {
+  "videoUrl": "",
+  "specs": [
+    {
+      "value": "1.8m to 2.2m Adjustable",
+      "label": "Sweeping Width"
+    },
+    {
+      "label": "Compatible Tractor HP",
+      "value": "35 HP to 75 HP"
+    },
+    {
+      "value": "High-Density Polypropylene & Steel Wire",
+      "label": "Bristle Composition"
+    },
+    {
+      "value": "160 to 180 Bar",
+      "label": "Hydraulic Operating Pressure"
+    },
+    {
+      "value": "Up to 10,000 sq.m / hr",
+      "label": "Clearing Speed Capacity"
+    }
+  ],
+  "description": "Engineered for heavy-duty highway sweeping, asphalt dust clearing, and municipal road maintenance with universal 3-point tractor linkage.",
+  "title": "Tractor-Mounted Hydraulic Highway Sweeper Broomer",
+  "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAeQt_VRg-Pnvzi83b3kFBXkzvQwauzvPl3BR7b4V5oqXN65xsotHAR8F_J1Cr-ngjTmrsoOZwh5FdVT3Zl2TQdue2Wcd1_ulcn_09y7urzhBo0D1KmgZRjeebjb1XoS7MLrQY1rDu7vusZvj8gxX6MmMm7Y6ahsbChKhEPeKaWr--5Di4PTSUyriXPWgmsdZ1M_J-R4e7yADQG8TSSdoNbot-7Z_BtQhC13Rvz2AqlQI9L_fKhXuf8kddWYkMMsA3Gl_2Q358cGg"
+};
+
+export const defaultWeatherAlertBanner = {
+  "dismissible": true,
+  "severity": "warning" as const,
+  "message": "Monsoon Dewatering Fleet Active: 24/7 Emergency Mobilization Units On Standby Across Chennai, Villupuram & Cuddalore Districts.",
+  "enabled": true
+};
+
+export const defaultChatbot = {
+  "avatarUrl": "",
+  "greetingMessage": "Welcome to Sri Velan & Co! I am VELAN AI, your 24/7 assistant for dewatering fleet dispatch, broomer quotes, and civil contract queries.",
+  "enabled": true,
+  "systemPromptOverride": ""
+};
+
+export const defaultNavigation = {
+  "logoUrl": "",
+  "menuItems": [
+    {
+      "labelTa": "முகப்பு",
+      "id": "home",
+      "path": "/",
+      "order": 1,
+      "labelEn": "Home"
+    },
+    {
+      "id": "about",
+      "labelTa": "எங்களைப் பற்றி",
+      "path": "/about",
+      "labelEn": "About Us",
+      "order": 2
+    },
+    {
+      "labelTa": "சென்னை",
+      "id": "services",
+      "order": 3,
+      "labelEn": "Chennai",
+      "path": "/Chennai"
+    },
+    {
+      "path": "/equipments",
+      "order": 4,
+      "labelEn": "Equipment Fleet",
+      "id": "equipments",
+      "labelTa": "இயந்திரங்கள்"
+    },
+    {
+      "path": "/projects",
+      "order": 5,
+      "labelEn": "Projects",
+      "id": "projects",
+      "labelTa": "திட்டங்கள்"
+    },
+    {
+      "id": "hydraulic-broomer",
+      "labelTa": "ஹைட்ராலிக் தூரிகை",
+      "path": "/hydraulic-broomer",
+      "labelEn": "Hydraulic Broomer",
+      "order": 6
+    },
+    {
+      "path": "/contact",
+      "order": 7,
+      "labelEn": "Contact Us",
+      "labelTa": "தொடர்பு கொள்ள",
+      "id": "contact"
+    }
+  ]
+};
+
+export const defaultConstructionExperience = {
+  "categories": [
+    {
+      "id": "pwd-buildings",
+      "title": {
+        "en": "PWD Buildings",
+        "ta": "பொதுப்பணித் துறை கட்டிடங்கள்"
+      },
+      "image": "/assets/pwd-buildings-7cnpGo-k.jpg",
+      "projects": [
+        {
+          "en": "Constructed a G+1 government school building in Vikravandi, Villupuram within a short span of 5 months (2018).",
+          "ta": "விழுப்புரம் விக்கிரவாண்டியில் அரசு பள்ளி கட்டிடத்தை (G+1) வெறும் 5 மாதங்களில் நிர்மாணித்தோம் (2018)."
+        },
+        {
+          "en": "Constructed a government college along with cement concrete pavement in Tindivanam (2022).",
+          "ta": "திண்டிவனத்தில் அரசு கல்லூரி மற்றும் சிமெண்ட் காங்கிரீட் பாதையை நிர்மாணித்தோம் (2022)."
+        },
+        {
+          "en": "Constructed a two-story government school with an associated laboratory in Siruvathadu, Villupuram (2013–2014).",
+          "ta": "விழுப்புரம் சிறுவத்தாடு-வில் இரண்டு மாடிகள் கொண்ட அரசு பள்ளி மற்றும் ஆய்வகத்தை நிர்மாணித்தோம் (2013–2014)."
+        },
+        {
+          "en": "Constructed a sustainable government school building in Mambalapattu (2020–2021).",
+          "ta": "மம்பலப்பட்டுவில் நிலைத்தன்மையான அரசு பள்ளி கட்டிடத்தை நிர்மாணித்தோம் (2020–2021)."
+        },
+        {
+          "en": "Renovated the hostel building of Government Law College, Villupuram (2021).",
+          "ta": "விழுப்புரம் அரசு சட்டக் கல்லூரி விடுதி கட்டிடத்தை புதுப்பித்தோம் (2021)."
+        }
+      ]
+    },
+    {
+      "id": "wrd-works",
+      "title": {
+        "en": "WRD Works",
+        "ta": "நீர்வளத் துறை பணிகள்"
+      },
+      "image": "/assets/wrd-works-C4RujCuu.jpg",
+      "projects": [
+        {
+          "en": "Executed dredging of the main channel connecting the lake to the Sathanur Reservoir in the Thenpennai River bed (2017).",
+          "ta": "தென்பெண்ணை நதிப்படுகையில் ஏரியை சாத்தனூர் நீர்த்தேக்கத்துடன் இணைக்கும் முதன்மை கால்வாயை வண்டல் அகற்றும் பணி செய்தோம் (2017)."
+        },
+        {
+          "en": "Carried out dredging and construction of a retaining wall along a lake in Thiruvennainallur, Villupuram (2022).",
+          "ta": "விழுப்புரம் திருவெண்ணைநல்லூரில் ஏரிக்கரையில் வண்டல் அகற்றுதல் மற்றும் தடுப்புச் சுவர் கட்டுமானப் பணி செய்தோம் (2022)."
+        },
+        {
+          "en": "Constructed an under-sluice in Irruvelpattu, Villupuram (2021).",
+          "ta": "விழுப்புரம் இறுவேல்பட்டுவில் அடிக்கீழ் வாய்க்கால் (அண்டர்-ஸ்லூஸ்) அமைத்தோம் (2021)."
+        }
+      ]
+    },
+    {
+      "id": "rural-department",
+      "title": {
+        "en": "Rural Department",
+        "ta": "ஊரக வளர்ச்சித் துறை"
+      },
+      "image": "/assets/rural-department-D4Pv9-7s.jpg",
+      "projects": [
+        {
+          "en": "Constructed roadways connecting villages with cement concrete (CC) and bituminous pavements, including Pillur–Pillaiyarkuppam, Pillur–Agaram, and Thirupachanur–Serndanur (2023).",
+          "ta": "பிள்ளூர்–பிள்ளையார்குப்பம், பிள்ளூர்–அகரம், திருபாச்சனூர்–செரண்டனூர் உள்ளிட்ட கிராமங்களை இணைக்கும் சிமெண்ட் காங்கிரீட் மற்றும் தார் சாலைகளை நிர்மாணித்தோம் (2023)."
+        },
+        {
+          "en": "Constructed a culvert on Pillayarkuppam Village Road.",
+          "ta": "பிள்ளையார்குப்பம் கிராம சாலையில் ஒரு பாலம் (culvert) கட்டினோம்."
+        }
+      ]
+    },
+    {
+      "id": "hrce-works",
+      "title": {
+        "en": "HR&CE Works",
+        "ta": "இந்து சமய அறநிலையத் துறை பணிகள்"
+      },
+      "image": "/assets/hrce-works-C3iTSjtO.jpg",
+      "projects": [
+        {
+          "en": "Constructed a wedding pavilion, formerly known as Kambar Mandapam, in Thiruvennainallur (2019–2021).",
+          "ta": "திருவெண்ணைநல்லூரில் முன்பு கம்பர் மண்டபம் என அழைக்கப்பட்ட திருமண மண்டபத்தை நிர்மாணித்தோம் (2019–2021)."
+        }
+      ]
+    },
+    {
+      "id": "special-projects",
+      "title": {
+        "en": "Special Projects",
+        "ta": "சிறப்புத் திட்டங்கள்"
+      },
+      "image": "/assets/special-projects-B4RMtr-t.jpg",
+      "projects": [
+        {
+          "en": "During the COVID-19 pandemic, we converted classrooms into hospital ward rooms for patients, and ensured their cleaning and maintenance.",
+          "ta": "கோவிட்-19 பெருந்தொற்று காலத்தில், வகுப்பறைகளை நோயாளிகளுக்கான மருத்துவமனை வார்டு அறைகளாக மாற்றி, சுத்தம் மற்றும் பராமரிப்பை உறுதி செய்தோம்."
+        },
+        {
+          "en": "Constructed polling booths and strong rooms within existing structures for rural, state, and central elections, without causing any structural damage.",
+          "ta": "ஊரக, மாநில மற்றும் மத்திய தேர்தல்களுக்கான வாக்குச் சாவடிகள் மற்றும் ஸ்ட்ராங் ரூம்களை, இருக்கும் கட்டமைப்புகளுக்குள் எந்த சேதமும் ஏற்படுத்தாமல் அமைத்தோம்."
+        }
+      ]
+    }
+  ]
+};
