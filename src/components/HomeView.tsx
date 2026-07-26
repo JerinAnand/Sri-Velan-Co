@@ -250,20 +250,17 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentSlide}
-                initial={{ opacity: 0, y: 25 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-                className="space-y-4"
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="space-y-4 sm:space-y-5"
               >
-                <p className="text-brand-gold-400 font-mono text-sm uppercase tracking-widest font-semibold">{heroSlides[currentSlide].subtitle}</p>
-                <h1 
-                  className="text-3xl sm:text-[40px] font-bold text-white text-left leading-tight sm:leading-[48.84px] tracking-tight font-display whitespace-pre-line"
-                  style={{ fontSize: '40px', lineHeight: '48.84px', height: '92.688px' }}
-                >
+                <p className="text-brand-gold-400 font-mono text-xs sm:text-sm uppercase tracking-widest font-semibold">{heroSlides[currentSlide].subtitle}</p>
+                <h1 className="text-2xl sm:text-3xl lg:text-[40px] font-bold text-white text-left leading-snug sm:leading-tight lg:leading-[48.84px] tracking-tight font-display whitespace-pre-line">
                   {heroSlides[currentSlide].title}
                 </h1>
-                <p className="max-w-2xl text-neutral-300 font-sans font-light text-sm sm:text-base lg:text-lg leading-relaxed">
+                <p className="max-w-2xl text-neutral-300 font-sans font-light text-sm sm:text-base lg:text-lg leading-relaxed pt-1 sm:pt-0">
                   {heroSlides[currentSlide].tagline}
                 </p>
               </motion.div>
