@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Phone, Mail, Award, Clock, ChevronRight, Sun, Moon, FileText, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -26,6 +26,61 @@ export const Header: React.FC = () => {
   const logoImage = navData?.logoUrl || companyLogo;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const taglineRef = useRef<HTMLParagraphElement>(null);
+
+  // Align tagline right edge precisely with title right edge via letter-spacing
+  useEffect(() => {
+    const updateTaglineSpacing = () => {
+      if (!titleRef.current || !taglineRef.current) return;
+
+      const titleWidth = titleRef.current.getBoundingClientRect().width;
+      if (!titleWidth) return;
+
+      // Temporarily reset letterSpacing to 0px to measure natural base width
+      taglineRef.current.style.letterSpacing = '0px';
+      const taglineBaseWidth = taglineRef.current.getBoundingClientRect().width;
+
+      const text = taglineRef.current.textContent || '';
+      const charCount = text.length;
+
+      if (charCount > 1 && taglineBaseWidth > 0) {
+        const extraSpace = titleWidth - taglineBaseWidth;
+        const spacingPx = extraSpace / (charCount - 1);
+        taglineRef.current.style.letterSpacing = `${spacingPx}px`;
+      }
+    };
+
+    updateTaglineSpacing();
+
+    // Re-calculate when fonts finish loading
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(updateTaglineSpacing);
+    }
+
+    // Observe size changes on title element
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && titleRef.current) {
+      resizeObserver = new ResizeObserver(() => {
+        updateTaglineSpacing();
+      });
+      resizeObserver.observe(titleRef.current);
+    }
+
+    const handleResize = () => {
+      updateTaglineSpacing();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, [language]);
 
   // Scroll visibility indicator
   useEffect(() => {
@@ -91,12 +146,14 @@ export const Header: React.FC = () => {
               </div>
               <div className="flex flex-col min-w-0">
                 <h1 
-                  className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors text-xs sm:text-base md:text-lg lg:text-xl truncate leading-tight"
+                  ref={titleRef}
+                  className="text-white font-display font-bold uppercase tracking-wider group-hover:text-brand-gold-400 transition-colors text-xs sm:text-base md:text-lg lg:text-xl truncate leading-tight whitespace-nowrap w-fit"
                 >
                   {COMPANY_DETAILS.name}
                 </h1>
                 <p 
-                  className="hidden min-[380px]:block text-[6px] min-[380px]:text-[7px] sm:text-[8px] leading-tight text-brand-gold-400 font-mono tracking-wider sm:tracking-widest uppercase sm:truncate sm:max-w-none"
+                  ref={taglineRef}
+                  className="hidden min-[380px]:block text-[6px] min-[380px]:text-[7px] sm:text-[8px] lg:text-[9.5px] leading-tight text-brand-gold-400 font-mono uppercase whitespace-nowrap w-fit"
                   title="Powered by Trust, Proven by Provision"
                 >
                   Powered by Trust, Proven by Provision
