@@ -25,6 +25,7 @@ export const CapabilityStatement: React.FC = () => {
   const [logoLoaded, setLogoLoaded] = useState(false);
   const documentRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLImageElement>(null);
+  const hasTriggeredDownloadRef = useRef(false);
 
   const shouldTriggerDownload = searchParams.get('download') === 'true';
 
@@ -95,11 +96,6 @@ export const CapabilityStatement: React.FC = () => {
 
       pdf.addImage(imgData, 'PNG', marginLeft, marginTop, printableWidth, imgHeight);
       pdf.save('Sri-Velan-Co-Capability-Statement.pdf');
-      
-      // Clean up search query param after successful download
-      if (shouldTriggerDownload) {
-        setSearchParams({}, { replace: true });
-      }
     } catch (err: any) {
       console.error('CRITICAL ERROR DURING PDF GENERATION (Full details):', err);
       if (err && typeof err === 'object') {
@@ -114,10 +110,12 @@ export const CapabilityStatement: React.FC = () => {
     }
   };
 
-  // Automatically trigger PDF download if URL parameter ?download=true is detected
+  // Automatically trigger PDF download once if URL parameter ?download=true is detected
   useEffect(() => {
-    if (shouldTriggerDownload && logoLoaded) {
-      // Small timeout to allow render paint cycles to settle
+    if (shouldTriggerDownload && logoLoaded && !hasTriggeredDownloadRef.current) {
+      hasTriggeredDownloadRef.current = true;
+      // Clean up search query param immediately to prevent replaceState loop
+      setSearchParams({}, { replace: true });
       const timeout = setTimeout(() => {
         handleDownloadPDF();
       }, 600);

@@ -6,21 +6,33 @@ export const defaultHero = {
   "slides": [
     {
       "badge": "State PWD & WRD Empaneled",
+      "badgeTa": "மாநில PWD & WRD சான்றளிக்கப்பட்டவை",
       "title": "Precision Civil Engineering & Heavy Dewatering Solutions",
+      "titleTa": "அரசு கட்டிடங்கள் மற்றும்\nபொது உள்கட்டமைப்பு",
       "subtitle": "Government Accredited Contractor",
-      "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations."
+      "subtitleTa": "அங்கீகரிக்கப்பட்ட சிவில் கட்டுமானம்",
+      "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations.",
+      "taglineTa": "பள்ளிகள், கல்லூரிகள், ஆய்வகங்கள், விடுதிகள் போன்ற கல்வி மற்றும் பொது வசதிகளை பொறியியல் சிறப்பம்சங்கள், தரமான வேலைப்பாடு மற்றும் சரியான நேரத்தில் செயல்படுத்துதல் ஆகியவற்றுடன் உருவாக்குதல் மற்றும் புதுப்பித்தல்."
     },
     {
       "badge": "WRD Irrigation",
+      "badgeTa": "நீர்வளத் துறை பாசனம்",
       "title": "Roads, Water Resources &\nRural Development",
+      "titleTa": "சாலைகள், நீர் வளங்கள் மற்றும்\nஊரக வளர்ச்சி",
       "subtitle": "Hydraulic Flow Management",
-      "tagline": "Executing roads, culverts, dredging works, retaining walls, under-sluices, and water resource projects that strengthen communities and support sustainable growth."
+      "subtitleTa": "ஹைட்ராலிக் ஓட்ட மேலாண்மை",
+      "tagline": "Executing roads, culverts, dredging works, retaining walls, under-sluices, and water resource projects that strengthen communities and support sustainable growth.",
+      "taglineTa": "சமூகங்களை வலுப்படுத்தும் மற்றும் நிலையான வளர்ச்சியை ஆதரிக்கும் சாலைகள், பாலங்கள், தூர்வாருதல் பணிகள், தடுப்புச் சுவர்கள், மதகுகள் மற்றும் நீர் வளத் திட்டங்களை செயல்படுத்துதல்."
     },
     {
       "badge": "Emergency Ready",
+      "badgeTa": "அவசரகால தயார் நிலை",
       "title": "Tractor-Driven Dewatering Pumps &\nHigh-Capacity 100 HP Pumping Solutions",
+      "titleTa": "டிராக்டர் மூலம் இயக்கப்படும் நீர் வெளியேற்றும் பம்புகள் மற்றும்\nஅதிவேக 100 HP நீர் வெளியேற்றும் தீர்வுகள்",
       "subtitle": "Disaster Relief Management",
-      "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations."
+      "subtitleTa": "பேரிடர் நிவாரண மேலாண்மை",
+      "tagline": "Delivering reliable dewatering, flood control, excavation drainage, lake desilting, and emergency pumping solutions for construction and CMRL projects, with expertise in dewatering for metro construction works, including column pit excavations.",
+      "taglineTa": "கட்டுமானம் மற்றும் CMRL திட்டங்களுக்கு நம்பகமான நீர் வெளியேற்றம், வெள்ளக் கட்டுப்பாடு, அகழ்வாராய்ச்சி வடிகால், ஏரி தூர்வாருதல் மற்றும் அவசர பம்பிங் தீர்வுகளை வழங்குதல், தூண் குழி அகழ்வாராய்ச்சி உட்பட மெட்ரோ கட்டுமானப் பணிகளுக்கான நீர் வெளியேற்ற நிபுணத்துவத்துடன்."
     }
   ]
 };

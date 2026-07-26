@@ -85,24 +85,48 @@ export const HomeView: React.FC<HomeViewProps> = ({ setActiveView }) => {
   const heroSlides = [
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCK_bu3E2eTRWLjgafWhf9bOZLuHqdot7H5WSM93CAJX7nMvM9Fty8GZDgrMx6eNWZKenj6QIipjw1oA4zaOBskKBz7WcaoTKBg1s1RTXIKFr8K84CxNSjpD4Lu2IZ_Xi61jCzNWNfbBvcLQ55aFy8L8hgkylmQxFTfd-5Gle-M9pgdYML2f4flRzPefmGt-I7EqcosyMkqeX5zhdoVLmhiIHmAIfrCWoeDiK0g6dybplX21LQwD16s9fOIr8Sz5RO7lSXKTMDGFQ',
-      title: siteContent?.hero?.slides?.[0]?.title || siteContent?.hero?.title || t('home.hero.slide1.title'),
-      subtitle: siteContent?.hero?.slides?.[0]?.subtitle || siteContent?.hero?.subtitle || t('home.hero.slide1.subtitle'),
-      tagline: siteContent?.hero?.slides?.[0]?.tagline || siteContent?.hero?.tagline || t('home.hero.slide1.tagline'),
-      badge: siteContent?.hero?.slides?.[0]?.badge || siteContent?.hero?.badge || t('home.hero.slide1.badge')
+      title: language === 'ta'
+        ? (siteContent?.hero?.slides?.[0]?.titleTa || t('home.hero.slide1.title'))
+        : (siteContent?.hero?.slides?.[0]?.title || siteContent?.hero?.title || t('home.hero.slide1.title')),
+      subtitle: language === 'ta'
+        ? (siteContent?.hero?.slides?.[0]?.subtitleTa || t('home.hero.slide1.subtitle'))
+        : (siteContent?.hero?.slides?.[0]?.subtitle || siteContent?.hero?.subtitle || t('home.hero.slide1.subtitle')),
+      tagline: language === 'ta'
+        ? (siteContent?.hero?.slides?.[0]?.taglineTa || t('home.hero.slide1.tagline'))
+        : (siteContent?.hero?.slides?.[0]?.tagline || siteContent?.hero?.tagline || t('home.hero.slide1.tagline')),
+      badge: language === 'ta'
+        ? (siteContent?.hero?.slides?.[0]?.badgeTa || t('home.hero.slide1.badge'))
+        : (siteContent?.hero?.slides?.[0]?.badge || siteContent?.hero?.badge || t('home.hero.slide1.badge'))
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAtF7lQsjygWGM_wckM4HW-z2nj4oRbJglwvqyPrBOopVct0FaNayNZmcV2KclNO_D91euKAKDATiy4EK6o8y08eifUUdU9GA78MFSpP7NkllTKFnMKwV2APckmltuCrXUOQ2QX-mPrSukG22c432b0rw_ra7cIVWQ5YMRbkiKoaxjYQSkKOA0fHzRDt2xaNGGRmo0bxs0IfA74U3H4Ui_SKCTZsfqfa5zC0T4xCPuTqFNiP7LpEsi5NCEKk8KnMbTz7GUcXkKOd5t1',
-      title: siteContent?.hero?.slides?.[1]?.title || t('home.hero.slide2.title'),
-      subtitle: siteContent?.hero?.slides?.[1]?.subtitle || t('home.hero.slide2.subtitle'),
-      tagline: siteContent?.hero?.slides?.[1]?.tagline || t('home.hero.slide2.tagline'),
-      badge: siteContent?.hero?.slides?.[1]?.badge || t('home.hero.slide2.badge')
+      title: language === 'ta'
+        ? (siteContent?.hero?.slides?.[1]?.titleTa || t('home.hero.slide2.title'))
+        : (siteContent?.hero?.slides?.[1]?.title || t('home.hero.slide2.title')),
+      subtitle: language === 'ta'
+        ? (siteContent?.hero?.slides?.[1]?.subtitleTa || t('home.hero.slide2.subtitle'))
+        : (siteContent?.hero?.slides?.[1]?.subtitle || t('home.hero.slide2.subtitle')),
+      tagline: language === 'ta'
+        ? (siteContent?.hero?.slides?.[1]?.taglineTa || t('home.hero.slide2.tagline'))
+        : (siteContent?.hero?.slides?.[1]?.tagline || t('home.hero.slide2.tagline')),
+      badge: language === 'ta'
+        ? (siteContent?.hero?.slides?.[1]?.badgeTa || t('home.hero.slide2.badge'))
+        : (siteContent?.hero?.slides?.[1]?.badge || t('home.hero.slide2.badge'))
     },
     {
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYKfiwAnr8tSFNjZj_XSzajQQvnAVzDU79fw73VK9DcbcAJAz2le3lr5e6XhpkbK0bStuz2LU6hPoCoBytCVOO1Id0NA5xI_ye_kSutkyrbLNS86LKr68hdy6Z5EW5Chlp5Y4BhprAchhgtOexFV6eWL5-WSI7RYWV96iLGl5czosEa5AlEQR6Cro_id1zSO760qRM0awrOHnTn5aGlACqvBLkccoIBSTozM-SoG1s7yG5I_T_T7KbRDPh8-Tl0xs_QPlVrXdxEq8w',
-      title: siteContent?.hero?.slides?.[2]?.title || t('home.hero.slide3.title'),
-      subtitle: siteContent?.hero?.slides?.[2]?.subtitle || t('home.hero.slide3.subtitle'),
-      tagline: siteContent?.hero?.slides?.[2]?.tagline || t('home.hero.slide3.tagline'),
-      badge: siteContent?.hero?.slides?.[2]?.badge || t('home.hero.slide3.badge')
+      title: language === 'ta'
+        ? (siteContent?.hero?.slides?.[2]?.titleTa || t('home.hero.slide3.title'))
+        : (siteContent?.hero?.slides?.[2]?.title || t('home.hero.slide3.title')),
+      subtitle: language === 'ta'
+        ? (siteContent?.hero?.slides?.[2]?.subtitleTa || t('home.hero.slide3.subtitle'))
+        : (siteContent?.hero?.slides?.[2]?.subtitle || t('home.hero.slide3.subtitle')),
+      tagline: language === 'ta'
+        ? (siteContent?.hero?.slides?.[2]?.taglineTa || t('home.hero.slide3.tagline'))
+        : (siteContent?.hero?.slides?.[2]?.tagline || t('home.hero.slide3.tagline')),
+      badge: language === 'ta'
+        ? (siteContent?.hero?.slides?.[2]?.badgeTa || t('home.hero.slide3.badge'))
+        : (siteContent?.hero?.slides?.[2]?.badge || t('home.hero.slide3.badge'))
     }
   ];
 

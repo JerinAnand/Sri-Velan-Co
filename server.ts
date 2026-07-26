@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+import { generateSitemapXml } from "./src/lib/sitemapGenerator";
 
 dotenv.config();
 
@@ -276,6 +277,28 @@ async function startServer() {
       res.status(500).json({ error: err.message || "Internal server error during email dispatch." });
     }
   };
+
+  // Dynamic XML Sitemap Generator endpoint for search engine crawlers
+  const handleSitemapRequest = (req: express.Request, res: express.Response) => {
+    try {
+      const host = req.headers.host || "srivelan.co";
+      const protocol = (req.headers["x-forwarded-proto"] as string) || req.protocol || "https";
+      const baseUrl = `${protocol}://${host}`;
+
+      const xml = generateSitemapXml(baseUrl);
+
+      res.setHeader("Content-Type", "application/xml; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=86400");
+      res.status(200).send(xml);
+    } catch (err: any) {
+      console.error("[Sitemap Generator] Severe failure during XML output generation:", err);
+      res.status(500).send("Error generating sitemap.xml");
+    }
+  };
+
+  app.get("/sitemap.xml", handleSitemapRequest);
+  app.get("/api/sitemap", handleSitemapRequest);
+  app.get("/.netlify/functions/sitemap", handleSitemapRequest);
 
   // Support both endpoint paths to ensure complete backwards compatibility
   app.post("/.netlify/functions/generate", handleAiGeneration);

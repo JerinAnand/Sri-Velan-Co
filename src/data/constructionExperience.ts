@@ -1,10 +1,10 @@
 import { ConstructionCategory } from '../types';
 
-import pwdImg from '../assets/images/construction/pwd-buildings.jpg';
-import wrdImg from '../assets/images/construction/wrd-works.jpg';
-import ruralImg from '../assets/images/construction/rural-department.jpg';
-import hrceImg from '../assets/images/construction/hrce-works.jpg';
-import specialImg from '../assets/images/construction/special-projects.jpg';
+const pwdImg = '/src/assets/images/construction/pwd-buildings.jpg';
+const wrdImg = '/src/assets/images/construction/wrd-works.jpg';
+const ruralImg = '/src/assets/images/construction/rural-department.jpg';
+const hrceImg = '/src/assets/images/construction/hrce-works.jpg';
+const specialImg = '/src/assets/images/construction/special-projects.jpg';
 
 export const INITIAL_CONSTRUCTION_EXPERIENCE: ConstructionCategory[] = [
   {

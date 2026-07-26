@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ActiveView } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -30,23 +30,21 @@ export default function App() {
   const location = useLocation();
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const pathMap: Record<string, ActiveView> = {
-    '/': 'home',
-    '/about': 'about',
-    '/chennai': 'chennai',
-    '/equipments': 'equipments',
-    '/projects': 'projects',
-    '/hydraulic-broomer': 'hydraulic-broomer',
-    '/contact': 'contact'
-  };
+  let activeView: ActiveView = 'home';
+  if (location.pathname === '/' || location.pathname === '') activeView = 'home';
+  else if (location.pathname.startsWith('/about')) activeView = 'about';
+  else if (location.pathname.startsWith('/chennai') || location.pathname.startsWith('/relief-operations')) activeView = 'chennai';
+  else if (location.pathname.startsWith('/equipments')) activeView = 'equipments';
+  else if (location.pathname.startsWith('/projects') || location.pathname.startsWith('/services') || location.pathname.startsWith('/construction-experience')) activeView = 'projects';
+  else if (location.pathname.startsWith('/hydraulic-broomer')) activeView = 'hydraulic-broomer';
+  else if (location.pathname.startsWith('/contact')) activeView = 'contact';
 
-  const activeView = pathMap[location.pathname] || 'home';
   const isAdminDashboard = location.pathname.startsWith('/admin');
   const isCapabilityStatement = location.pathname === '/capability-statement';
 
-  const setActiveView = (view: ActiveView) => {
+  const setActiveView = useCallback((view: ActiveView) => {
     navigate(view === 'home' ? '/' : '/' + view);
-  };
+  }, [navigate]);
 
   // Synchronize SEO Meta Details & Document Titles Dynamically
   useEffect(() => {
@@ -158,8 +156,13 @@ export default function App() {
               <Route path="/" element={<HomeView setActiveView={setActiveView} />} />
               <Route path="/about" element={<AboutView />} />
               <Route path="/chennai" element={<ChennaiView />} />
+              <Route path="/relief-operations/*" element={<ChennaiView />} />
               <Route path="/equipments" element={<EquipmentsView />} />
+              <Route path="/equipments/*" element={<EquipmentsView />} />
               <Route path="/projects" element={<ProjectsView />} />
+              <Route path="/projects/*" element={<ProjectsView />} />
+              <Route path="/services/*" element={<ProjectsView />} />
+              <Route path="/construction-experience/*" element={<ProjectsView />} />
               <Route path="/hydraulic-broomer" element={<HydraulicBroomer />} />
               <Route path="/contact" element={<ContactView />} />
               <Route path="/capability-statement" element={<CapabilityStatement />} />

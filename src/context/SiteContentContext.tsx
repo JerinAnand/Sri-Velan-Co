@@ -12,6 +12,10 @@ export interface HeroSlide {
   title: string;
   subtitle: string;
   tagline: string;
+  badgeTa?: string;
+  titleTa?: string;
+  subtitleTa?: string;
+  taglineTa?: string;
 }
 
 export interface HeroContent {
