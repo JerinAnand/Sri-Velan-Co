@@ -32,7 +32,7 @@ export const COMPANY_DETAILS = {
       name: 'Mr. S. Vetrivel',
       role: 'Managing Director',
       bio: "Mr. Vetrivel S serves as the Managing Director of Sri Velan & Co, overseeing the company's operations across both Chennai and Villupuram project locations. He plays a key role in managing GCC (Greater Chennai Corporation) tenders and CMRL (Chennai Metro Rail Limited) tenders, ensuring compliance, timely execution, and quality delivery across all government engineering projects. With a strong focus on operational efficiency and stakeholder coordination, he bridges strategic planning with on-ground execution across the company's multi-city presence.",
-      image: '/src/assets/images/regenerated_image_1785163761993.jpg'
+      image: '/src/assets/images/vetrivel-md.jpg'
     }
   }
 };

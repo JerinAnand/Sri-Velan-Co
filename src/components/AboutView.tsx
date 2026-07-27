@@ -440,7 +440,7 @@ export const AboutView: React.FC = () => {
             {/* Left Col: High Fidelity Image */}
             <div className="md:col-span-5 h-80 md:h-auto overflow-hidden relative">
               <img 
-                src={COMPANY_DETAILS.leadership.managingDirector.image} 
+                src={vetrivelImg || COMPANY_DETAILS.leadership.managingDirector.image} 
                 alt="Mr. Vetrivel S - Managing Director"
                 className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 filter brightness-95"
                 referrerPolicy="no-referrer"
