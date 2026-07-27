@@ -34,7 +34,7 @@ import {
   Navigation
 } from 'lucide-react';
 
-import { INITIAL_CONSTRUCTION_EXPERIENCE } from '../data/constructionExperience';
+import { INITIAL_CONSTRUCTION_EXPERIENCE, CONSTRUCTION_IMAGES_MAP } from '../data/constructionExperience';
 import { ConstructionCategory } from '../types';
 import { PROJECTS, CYCLONE_RELIEF_TIMELINE, SERVICE_CATEGORIES } from '../data';
 import { ProjectItem } from '../types';
@@ -521,6 +521,9 @@ export const ProjectsView: React.FC = () => {
             {constructionCategories.map((cat: ConstructionCategory) => {
               const catTitle = cat.title?.[language] || cat.title?.en || cat.id;
               const projectList = cat.projects || [];
+              const catImg = (cat.image && (cat.image.startsWith('http://') || cat.image.startsWith('https://') || cat.image.startsWith('data:')))
+                ? cat.image
+                : (CONSTRUCTION_IMAGES_MAP[cat.id] || cat.image);
 
               return (
                 <div
@@ -530,7 +533,7 @@ export const ProjectsView: React.FC = () => {
                   {/* Category Card Header Image */}
                   <div className="relative h-48 overflow-hidden bg-neutral-950 shrink-0">
                     <img
-                      src={cat.image}
+                      src={catImg}
                       alt={catTitle}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       onError={(e) => {

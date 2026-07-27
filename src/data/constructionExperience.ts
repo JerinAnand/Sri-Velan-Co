@@ -6,6 +6,14 @@ const ruralImg = '/src/assets/images/construction/rural-department.jpg';
 const hrceImg = '/src/assets/images/construction/hrce-works.jpg';
 const specialImg = '/src/assets/images/construction/special-projects.jpg';
 
+export const CONSTRUCTION_IMAGES_MAP: Record<string, string> = {
+  'pwd-buildings': pwdImg,
+  'wrd-works': wrdImg,
+  'rural-department': ruralImg,
+  'hrce-works': hrceImg,
+  'special-projects': specialImg,
+};
+
 export const INITIAL_CONSTRUCTION_EXPERIENCE: ConstructionCategory[] = [
   {
     id: 'pwd-buildings',
