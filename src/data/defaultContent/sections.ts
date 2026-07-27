@@ -41,9 +41,11 @@ export const defaultAbout = {
   "yearEstablished": 2006,
   "founderName": "Mr. G. Selva Kumar",
   "companyDescription": "Founded in 2006 in Villupuram, Tamil Nadu, Sri Velan & Co has grown into a leading contracting and infrastructure enterprise accredited by state departments, delivering complex civil contracts, water resource networks, and state-of-the-art heavy dewatering services.",
-  "visionText": "To be South India’s most dependable infrastructure partner for municipal disaster management, rapid dewatering, and state public works.",
+  "visionText": "To be South India's most dependable infrastructure partner for municipal disaster management, rapid dewatering, and state public works.",
+  "visionTextTa": "நகராட்சி பேரிடர் மேலாண்மை, அதிவேக நீர் வெளியேற்றம் மற்றும் மாநில பொதுப்பணித் துறைகளுக்கான தென்னிந்தியாவின் மிக நம்பகமான உள்கட்டமைப்பு பங்காளியாகத் திகழ்வது.",
   "civilContractorText": "Class I Registered Government Civil Contractor",
-  "missionText": "Deliver resilient public infrastructure, emergency flood relief, and robust civil works across Tamil Nadu with uncompromised engineering precision."
+  "missionText": "Deliver resilient public infrastructure, emergency flood relief, and robust civil works across Tamil Nadu with uncompromising engineering precision.",
+  "missionTextTa": "தமிழ்நாடு முழுவதும் சமரசமற்ற பொறியியல் துல்லியத்துடன் மீள்தன்மை கொண்ட பொது உள்கட்டமைப்பு, அவசரகால வெள்ள நிவாரணம் மற்றும் வலுவான சிவில் பணிகளை வழங்குவது."
 };
 
 export const defaultStats = {

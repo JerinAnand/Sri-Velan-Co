@@ -32,7 +32,9 @@ export interface AboutContent {
   founderName: string;
   civilContractorText: string;
   missionText: string;
+  missionTextTa?: string;
   visionText: string;
+  visionTextTa?: string;
 }
 
 export interface StatsContent {

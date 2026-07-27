@@ -111,28 +111,62 @@ export const AboutTab: React.FC<AboutTabProps> = ({ content, updateSection }) =>
           />
         </div>
 
-        <div className="md:col-span-2">
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Mission Statement
-          </label>
-          <textarea
-            rows={3}
-            value={formData.missionText}
-            onChange={(e) => setFormData({ ...formData, missionText: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
+        <div className="md:col-span-2 space-y-4 pt-2 border-t border-white/10">
+          <h3 className="text-xs font-mono font-bold text-brand-gold-400 uppercase tracking-wider">Mission Statement</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
+                English Mission Statement
+              </label>
+              <textarea
+                rows={3}
+                value={formData.missionText || ''}
+                onChange={(e) => setFormData({ ...formData, missionText: e.target.value })}
+                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
+                Tamil Mission Statement (தமிழ் நோக்கம்)
+              </label>
+              <textarea
+                rows={3}
+                value={formData.missionTextTa || ''}
+                onChange={(e) => setFormData({ ...formData, missionTextTa: e.target.value })}
+                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
+                placeholder="தமிழ் நோக்கம்..."
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="md:col-span-2">
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Vision Statement
-          </label>
-          <textarea
-            rows={3}
-            value={formData.visionText}
-            onChange={(e) => setFormData({ ...formData, visionText: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
+        <div className="md:col-span-2 space-y-4 pt-2 border-t border-white/10">
+          <h3 className="text-xs font-mono font-bold text-brand-gold-400 uppercase tracking-wider">Vision Statement</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
+                English Vision Statement
+              </label>
+              <textarea
+                rows={3}
+                value={formData.visionText || ''}
+                onChange={(e) => setFormData({ ...formData, visionText: e.target.value })}
+                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
+                Tamil Vision Statement (தமிழ் தொலைநோக்கு பார்வை)
+              </label>
+              <textarea
+                rows={3}
+                value={formData.visionTextTa || ''}
+                onChange={(e) => setFormData({ ...formData, visionTextTa: e.target.value })}
+                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
+                placeholder="தமிழ் தொலைநோக்கு பார்வை..."
+              />
+            </div>
+          </div>
         </div>
       </div>
     </form>

@@ -382,7 +382,10 @@ export const AboutView: React.FC = () => {
                 </div>
                 <h3 className="font-display font-black text-xl text-white tracking-tight uppercase">{t('about.visionMission.vision.title')}</h3>
                 <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                  {siteContent?.about?.visionText || t('about.visionMission.vision.desc')}
+                  {language === 'ta'
+                    ? (siteContent?.about?.visionTextTa || t('about.visionMission.vision.desc'))
+                    : (siteContent?.about?.visionText || t('about.visionMission.vision.desc'))
+                  }
                 </p>
               </div>
               <div className="h-1 w-20 bg-brand-gold-500 rounded mt-4" />
@@ -396,7 +399,10 @@ export const AboutView: React.FC = () => {
                 </div>
                 <h3 className="font-display font-black text-xl text-white tracking-tight uppercase">{t('about.visionMission.mission.title')}</h3>
                 <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans font-light">
-                  {siteContent?.about?.missionText || t('about.visionMission.mission.desc')}
+                  {language === 'ta'
+                    ? (siteContent?.about?.missionTextTa || t('about.visionMission.mission.desc'))
+                    : (siteContent?.about?.missionText || t('about.visionMission.mission.desc'))
+                  }
                 </p>
               </div>
               <div className="h-1 w-20 bg-brand-blue-600 rounded mt-4" />

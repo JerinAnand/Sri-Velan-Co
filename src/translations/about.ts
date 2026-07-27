@@ -69,11 +69,11 @@ export const en = {
   visionMission: {
     vision: {
       title: 'Our Strategic Vision',
-      desc: 'To remain the premier, most reliable civil engineering provider in South India by continuously expanding our rapid mobilization pumping fleets, implementing progressive environmental standards, and delivering resilient municipal systems that stand the test of seasonal storm shifts and heavy water movements.'
+      desc: "To be South India's most dependable infrastructure partner for municipal disaster management, rapid dewatering, and state public works."
     },
     mission: {
       title: 'Our Core Mission',
-      desc: 'To serve community utilities with absolute operational integrity. We achieve this by procuring high-grade engineered concrete mix matrices, maintaining fully functional hydraulic and suction pumps on constant status alert, and deploying seasoned technical crews capable of sealing broken embankments and draining waterlogged populations safely in minimum time frames.'
+      desc: 'Deliver resilient public infrastructure, emergency flood relief, and robust civil works across Tamil Nadu with uncompromising engineering precision.'
     }
   },
   leadership: {
@@ -181,11 +181,11 @@ export const ta = {
   visionMission: {
     vision: {
       title: 'எங்கள் மூலோபாய தொலைநோக்கு பார்வை',
-      desc: 'அதிவேக நீர் வெளியேற்றும் பம்புகளைத் தொடர்ந்து விரிவுபடுத்துதல், சுற்றுச்சூழல் தரநிலைகளை நடைமுறைப்படுத்துதல் மற்றும் புயல் மற்றும் வெள்ள பாதிப்புகளைத் தாங்கும் நகராட்சி அமைப்புகளை வழங்குவதன் மூலம் தென்னிந்தியாவின் முதன்மையான சிவில் பொறியியல் வழங்குநராகத் திகழ்வது.'
+      desc: 'நகராட்சி பேரிடர் மேலாண்மை, அதிவேக நீர் வெளியேற்றம் மற்றும் மாநில பொதுப்பணித் துறைகளுக்கான தென்னிந்தியாவின் மிக நம்பகமான உள்கட்டமைப்பு பங்காளியாகத் திகழ்வது.'
     },
     mission: {
       title: 'எங்கள் முக்கிய நோக்கம்',
-      desc: 'முழுமையான செயல்பாட்டுத் நேர்மையுடன் சமூகப் பயன்பாடுகளுக்குச் சேவை செய்தல். உயர்தர கான்கிரீட் கலவைகளைப் பயன்படுத்துதல், ஹைட்ராலிக் மற்றும் உறிஞ்சும் பம்புகளை எப்போதும் தயார் நிலையில் வைத்திருத்தல் மற்றும் உடைந்த கரைகளை அடைத்து வெள்ளநீரை விரைவாக வெளியேற்றும் திறமையான தொழில்நுட்பக் குழுக்களைப் பணியமர்த்துவதன் மூலம் இதை நாங்கள் அடைகிறோம்.'
+      desc: 'தமிழ்நாடு முழுவதும் சமரசமற்ற பொறியியல் துல்லியத்துடன் மீள்தன்மை கொண்ட பொது உள்கட்டமைப்பு, அவசரகால வெள்ள நிவாரணம் மற்றும் வலுவான சிவில் பணிகளை வழங்குவது.'
     }
   },
   leadership: {
