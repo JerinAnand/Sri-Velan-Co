@@ -168,6 +168,22 @@ export const defaultClients = {
 };
 
 export const defaultGoverningBoard = {
+  "featuredProfiles": {
+    "governingPartner": {
+      "name": "Mr. G. Selva Kumar",
+      "role": "Founder & Governing Partner",
+      "photoUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuDtJTJScjD1s9E1gXlzJfWddGbDvVSX1Eh7cDvjCoMr81sYw4pZArZnM0ZZ5oUtaoYur4V-yYXukv1kqHT3iECpg-9uMT3_3nK--tX8irTP9bA1AqCrBte1YO4Y6B6N4nWLywI4REBwFYf3jWP06osetab2iwqHgbxlAtMw28gMhwsSOAPOYu6PUop4hoFmfDsOOKpzbR2ap4Vddzy_0StLNZTEukavQNu0eoyvd2lzSCIIPGj-1VOMPHDnK5ZNDb3ZvNYdJARXSVjN",
+      "bioEn": "With over two decades of robust experience in civil contracting and disaster dewatering services across Tamil Nadu, Mr. Selva Kumar leads the engineering team with a relentless commitment to execution precision, compliance, and rapid community rescue response during environmental emergencies.",
+      "bioTa": "தமிழ்நாடு முழுவதும் சிவில் ஒப்பந்தப் பணிகள் மற்றும் பேரிடர் கால நீர் வெளியேற்றும் சேவைகளில் இரண்டு தசாப்தங்களுக்கும் மேலான வலுவான அனுபவத்துடன், திரு. செல்வா குமார் அவர்கள் சுற்றுச்சூழல் அவசரநிலைகளின் போது துல்லியமான செயல்பாடுகள், இணக்கங்கள் மற்றும் விரைவான சமூக மீட்புப் பணிகளுக்கான அசைக்க முடியாத அர்ப்பணிப்புடன் பொறியியல் குழுவை வழிநடத்துகிறார்."
+    },
+    "managingDirector": {
+      "name": "Mr. S. Vetrivel",
+      "role": "Managing Director",
+      "photoUrl": "/src/assets/images/vetrivel-md.jpg",
+      "bioEn": "Mr. Vetrivel S serves as the Managing Director of Sri Velan & Co, overseeing the company's operations across both Chennai and Villupuram project locations. He plays a key role in managing GCC (Greater Chennai Corporation) tenders and CMRL (Chennai Metro Rail Limited) tenders, ensuring compliance, timely execution, and quality delivery across all government engineering projects. With a strong focus on operational efficiency and stakeholder coordination, he bridges strategic planning with on-ground execution across the company's multi-city presence.",
+      "bioTa": "ஸ்ரீ வேலன் & கோ நிறுவனத்தின் நிர்வாக இயக்குநராக திரு. வெற்றிவேல் எஸ் அவர்கள் பணியாற்றுகிறார், சென்னை மற்றும் விழுப்புரம் ஆகிய இரு திட்ட இடங்களிலும் நிறுவனத்தின் செயல்பாடுகளை மேற்பார்வையிடுகிறார். அனைத்து அரசு பொறியியல் திட்டங்களிலும் இணக்கம், சரியான நேரத்தில் செயல்படுத்துதல் மற்றும் தரமான விநியோகம் ஆகியவற்றை உறுதி செய்யும் வகையில், ஜிசிசி (பெருநகர சென்னை மாநகராட்சி) மற்றும் சிஎம்ஆர்எல் (சென்னை மெட்ரோ இரயில் நிறுவனம்) ஒப்பந்தப்புள்ளிகளை (டெண்டர்கள்) நிர்வகிப்பதில் அவர் முக்கிய பங்கு வகிக்கிறார். செயல்பாட்டுத் திறன் மற்றும் பங்குதாரர்களின் ஒருங்கிணைப்பில் வலுவான கவனத்துடன், நிறுவனத்தின் பல நகர உள்கட்டமைப்புகளில் மூலோபாய திட்டமிடலை கள செயல்பாட்டுடன் இணைக்கும் பாலமாக அவர் திகழ்கிறார்."
+    }
+  },
   "boardMembers": [
     {
       "bio": "Directs strategic multi-district rescue logistics and civil contracts in Tamil Nadu.",

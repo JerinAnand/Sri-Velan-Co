@@ -33,7 +33,7 @@ import {
   Code2
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
-import { useSiteContent } from '../context/SiteContentContext';
+import { useSiteContent, DEFAULT_SITE_CONTENT } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
 
 export const getRoleIcon = (designation: string) => {
@@ -57,6 +57,40 @@ export const AboutView: React.FC = () => {
   const { t, language } = useTranslation();
   const { siteContent } = useSiteContent();
   const [activeTab, setActiveTab] = useState<'profile' | 'credentials' | 'milestones'>('profile');
+
+  // Featured profiles resolution
+  const defaultGP = DEFAULT_SITE_CONTENT.governingBoard.featuredProfiles?.governingPartner || {
+    name: COMPANY_DETAILS.leadership.governingPartner.name,
+    role: COMPANY_DETAILS.leadership.governingPartner.role,
+    photoUrl: COMPANY_DETAILS.leadership.governingPartner.image,
+    bioEn: t('about.leadership.gpBio'),
+    bioTa: t('about.leadership.gpBio'),
+  };
+
+  const defaultMD = DEFAULT_SITE_CONTENT.governingBoard.featuredProfiles?.managingDirector || {
+    name: COMPANY_DETAILS.leadership.managingDirector.name,
+    role: COMPANY_DETAILS.leadership.managingDirector.role,
+    photoUrl: vetrivelImg || COMPANY_DETAILS.leadership.managingDirector.image,
+    bioEn: t('about.leadership.mdBio'),
+    bioTa: t('about.leadership.mdBio'),
+  };
+
+  const gpProfile = siteContent?.governingBoard?.featuredProfiles?.governingPartner || defaultGP;
+  const mdProfile = siteContent?.governingBoard?.featuredProfiles?.managingDirector || defaultMD;
+
+  const gpName = gpProfile.name || defaultGP.name;
+  const gpRole = gpProfile.role || defaultGP.role;
+  const gpImage = gpProfile.photoUrl || defaultGP.photoUrl;
+  const gpBio = language === 'ta'
+    ? (gpProfile.bioTa || gpProfile.bioEn || t('about.leadership.gpBio'))
+    : (gpProfile.bioEn || t('about.leadership.gpBio'));
+
+  const mdName = mdProfile.name || defaultMD.name;
+  const mdRole = mdProfile.role || defaultMD.role;
+  const mdImage = mdProfile.photoUrl || defaultMD.photoUrl;
+  const mdBio = language === 'ta'
+    ? (mdProfile.bioTa || mdProfile.bioEn || t('about.leadership.mdBio'))
+    : (mdProfile.bioEn || t('about.leadership.mdBio'));
 
   // Strategic milestones structured from the incorporation history
   const corporateMilestones = [
@@ -391,8 +425,8 @@ export const AboutView: React.FC = () => {
             {/* Left Col: High Fidelity Image */}
             <div className="md:col-span-5 h-80 md:h-auto overflow-hidden relative">
               <img 
-                src={COMPANY_DETAILS.leadership.governingPartner.image} 
-                alt={COMPANY_DETAILS.leadership.governingPartner.name}
+                src={gpImage} 
+                alt={gpName}
                 className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 filter brightness-95"
                 referrerPolicy="no-referrer"
                 loading="lazy"
@@ -410,23 +444,23 @@ export const AboutView: React.FC = () => {
                 </div>
                 
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
-                  {COMPANY_DETAILS.leadership.governingPartner.name}
+                  {gpName}
                 </h3>
                 <p className="text-xs sm:text-sm text-brand-gold-500 font-mono tracking-wider uppercase leading-none font-semibold">
-                  {COMPANY_DETAILS.leadership.governingPartner.role}
+                  {gpRole}
                 </p>
               </div>
 
               <div className="h-px bg-brand-blue-800/60 w-full" />
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
-                "{t('about.leadership.gpBio')}"
+                "{gpBio}"
               </p>
 
               <div className="pt-2 flex items-center gap-3">
                 <span className="text-[10px] text-neutral-400 uppercase font-mono">{t('about.leadership.signAuthority')}</span>
                 <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">
-                  G. Selva Kumar
+                  {gpName.replace(/^(Mr\.|Er\.|Dr\.|திரு\.)\s*/i, '')}
                 </span>
               </div>
             </div>
@@ -440,8 +474,8 @@ export const AboutView: React.FC = () => {
             {/* Left Col: High Fidelity Image */}
             <div className="md:col-span-5 h-80 md:h-auto overflow-hidden relative">
               <img 
-                src={vetrivelImg || COMPANY_DETAILS.leadership.managingDirector.image} 
-                alt="Mr. Vetrivel S - Managing Director"
+                src={mdImage} 
+                alt={mdName}
                 className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500 filter brightness-95"
                 referrerPolicy="no-referrer"
                 loading="lazy"
@@ -460,23 +494,23 @@ export const AboutView: React.FC = () => {
                 </div>
                 
                 <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
-                  {COMPANY_DETAILS.leadership.managingDirector.name}
+                  {mdName}
                 </h3>
                 <p className="text-xs sm:text-sm text-brand-gold-500 font-mono tracking-wider uppercase leading-none font-semibold">
-                  {COMPANY_DETAILS.leadership.managingDirector.role}
+                  {mdRole}
                 </p>
               </div>
 
               <div className="h-px bg-brand-blue-800/60 w-full" />
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-sans font-light italic">
-                "{t('about.leadership.mdBio')}"
+                "{mdBio}"
               </p>
 
               <div className="pt-2 flex items-center gap-3">
                 <span className="text-[10px] text-neutral-400 uppercase font-mono">{t('about.leadership.signAuthority')}</span>
                 <span className="text-brand-gold-500 font-serif italic text-base block sm:text-lg tracking-wide">
-                  Vetrivel S
+                  {mdName.replace(/^(Mr\.|Er\.|Dr\.|திரு\.)\s*/i, '')}
                 </span>
               </div>
             </div>

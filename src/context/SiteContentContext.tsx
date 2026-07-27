@@ -76,8 +76,20 @@ export interface BoardMemberItem {
   bio: string;
 }
 
+export interface FeaturedLeaderProfile {
+  name: string;
+  role: string;
+  photoUrl: string;
+  bioEn: string;
+  bioTa: string;
+}
+
 export interface GoverningBoardContent {
   boardMembers: BoardMemberItem[];
+  featuredProfiles?: {
+    governingPartner: FeaturedLeaderProfile;
+    managingDirector: FeaturedLeaderProfile;
+  };
 }
 
 export interface ProjectItem {
