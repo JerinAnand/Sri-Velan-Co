@@ -4,6 +4,9 @@
  */
 
 import React, { useState } from 'react';
+import vetrivelImg from '../assets/images/vetrivel-md.jpg';
+import dhinakaravelImg from '../assets/images/regenerated_image_1784682133184.png';
+import jerinAnandImg from '../assets/images/regenerated_image_1784683266108.jpg';
 import { motion } from 'motion/react';
 import { 
   Target, 
@@ -517,10 +520,19 @@ export const AboutView: React.FC = () => {
                     else if (member.id === 'jerin_anand' || displayName.includes('ஜெரின்')) displayBio = 'நிறுவன தொழில்நுட்ப இணையதளங்கள், பாதுகாப்பான டிஜிட்டல் பதிவுகள் மற்றும் டிஜிட்டல் அடையாளத்தை பராமரிக்கிறார்.';
                   }
 
+                  let photoSrc = member.photoUrl || (member as any).imageUrl;
+                  if (member.id === 'vetrivel_s' || member.name?.includes('Vetrivel') || (member as any).taName?.includes('வெற்றிவேல்')) {
+                    photoSrc = vetrivelImg;
+                  } else if ((member.id === 'dhinakaravel' || member.name?.includes('Dhinakaravel')) && (!photoSrc || photoSrc.includes('regenerated_image'))) {
+                    photoSrc = dhinakaravelImg;
+                  } else if ((member.id === 'jerin_anand' || member.name?.includes('Jerin Anand')) && (!photoSrc || photoSrc.includes('regenerated_image'))) {
+                    photoSrc = jerinAnandImg;
+                  }
+
                   return (
                     <div key={member.id} className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-gold-500/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-gold-500/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                      {(member.photoUrl || (member as any).imageUrl) ? (
-                        <img src={member.photoUrl || (member as any).imageUrl} alt={displayName} className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
+                      {photoSrc ? (
+                        <img src={photoSrc} alt={displayName} className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
                       ) : (
                         <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                           {(member as any).initials || member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
@@ -563,9 +575,7 @@ export const AboutView: React.FC = () => {
 
                   {/* Mr. S. Vetrivel */}
                   <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                    <div className="w-16 h-16 rounded-full bg-brand-blue-900 text-brand-gold-400 flex items-center justify-center font-display font-extrabold tracking-wider text-lg border border-brand-blue-800 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
-                      VV
-                    </div>
+                    <img src={vetrivelImg} alt="Mr. S. Vetrivel" className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
                     <div className="space-y-1">
                       <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. S. Vetrivel' : 'திரு. எஸ். வெற்றிவேல்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-700 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">
@@ -582,7 +592,7 @@ export const AboutView: React.FC = () => {
 
                   {/* Mr. S. Dhinakaravel */}
                   <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-neutral-400/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-neutral-300 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                    <img src={new URL('../assets/images/regenerated_image_1784682133184.png', import.meta.url).href} alt="Mr. S. Dhinakaravel" className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
+                    <img src={dhinakaravelImg} alt="Mr. S. Dhinakaravel" className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
                     <div className="space-y-1">
                       <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. S. Dhinakaravel' : 'திரு. எஸ். தினகரவேல்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-emerald-700 font-mono uppercase tracking-wide font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/50">
@@ -599,7 +609,7 @@ export const AboutView: React.FC = () => {
 
                   {/* Mr. Jerin Anand */}
                   <div className="bg-neutral-50 border border-neutral-200/85 rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-blue-900/5 hover:-translate-y-1.5 hover:scale-[1.02] hover:border-brand-blue-900/20 transition-all duration-300 flex flex-col items-center text-center space-y-4 group">
-                    <img src={new URL('../assets/images/regenerated_image_1784683266108.jpg', import.meta.url).href} alt="Mr. Jerin Anand" className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
+                    <img src={jerinAnandImg} alt="Mr. Jerin Anand" className="w-16 h-16 rounded-full object-cover border border-brand-blue-800 shadow-inner group-hover:scale-110 transition-all duration-300" />
                     <div className="space-y-1">
                       <h4 className="font-display font-black text-sm sm:text-base text-brand-blue-950">{language === 'en' ? 'Mr. Jerin Anand' : 'திரு. ஜெரின் ஆனந்த்'}</h4>
                       <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-blue-600 font-mono uppercase tracking-wide font-bold bg-brand-blue-50 px-2.5 py-1 rounded-full border border-brand-blue-200/50">

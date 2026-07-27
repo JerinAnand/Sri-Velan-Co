@@ -179,7 +179,7 @@ export const defaultGoverningBoard = {
     {
       "designation": "Managing Director",
       "bio": "Oversees active fleet engineering, team mobilizations, and regional yards management.",
-      "photoUrl": "https://srivelan.vercel.app/assets/vetrivel-md-51g0mCAE.jpg",
+      "photoUrl": "/src/assets/images/vetrivel-md.jpg",
       "id": "vetrivel_s",
       "name": "Mr. S. Vetrivel"
     },

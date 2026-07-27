@@ -184,19 +184,17 @@ export const WeatherAlertBanner: React.FC = () => {
     if (!autoRefresh) return;
     
     const interval = setInterval(() => {
-      setCountdown((prev) => prev - 1);
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          fetchAlerts();
+          return 300;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [autoRefresh]);
-
-  useEffect(() => {
-    if (!autoRefresh) return;
-    if (countdown <= 0) {
-      fetchAlerts();
-      setCountdown(300);
-    }
-  }, [countdown, autoRefresh, fetchAlerts]);
+  }, [autoRefresh, fetchAlerts]);
 
   const handleManualRefresh = () => {
     fetchAlerts();

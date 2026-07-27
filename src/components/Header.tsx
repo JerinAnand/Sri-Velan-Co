@@ -32,6 +32,7 @@ export const Header: React.FC = () => {
 
   // Align tagline right edge precisely with title right edge via letter-spacing
   useEffect(() => {
+    let animationFrameId: number | null = null;
     const updateTaglineSpacing = () => {
       if (!titleRef.current || !taglineRef.current) return;
 
@@ -52,32 +53,28 @@ export const Header: React.FC = () => {
       }
     };
 
-    updateTaglineSpacing();
+    const scheduledUpdate = () => {
+      if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(updateTaglineSpacing);
+    };
+
+    scheduledUpdate();
 
     // Re-calculate when fonts finish loading
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(updateTaglineSpacing);
-    }
-
-    // Observe size changes on title element
-    let resizeObserver: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined' && titleRef.current) {
-      resizeObserver = new ResizeObserver(() => {
-        updateTaglineSpacing();
-      });
-      resizeObserver.observe(titleRef.current);
+      document.fonts.ready.then(scheduledUpdate);
     }
 
     const handleResize = () => {
-      updateTaglineSpacing();
+      scheduledUpdate();
     };
 
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (resizeObserver) {
-        resizeObserver.disconnect();
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
       }
     };
   }, [language]);
