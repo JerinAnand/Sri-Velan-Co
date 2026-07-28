@@ -32,7 +32,7 @@ export const COMPANY_DETAILS = {
       name: 'Mr. S. Vetrivel',
       role: 'Managing Director',
       bio: "Mr. Vetrivel S serves as the Managing Director of Sri Velan & Co, overseeing the company's operations across both Chennai and Villupuram project locations. He plays a key role in managing GCC (Greater Chennai Corporation) tenders and CMRL (Chennai Metro Rail Limited) tenders, ensuring compliance, timely execution, and quality delivery across all government engineering projects. With a strong focus on operational efficiency and stakeholder coordination, he bridges strategic planning with on-ground execution across the company's multi-city presence.",
-      image: '/src/assets/images/vetrivel-md.jpg'
+      image: ''
     }
   }
 };
@@ -92,7 +92,7 @@ export const SERVICE_CATEGORIES = [
     title: 'Urban Water Drainage & Multi-Utility Corridors',
     shortDescription: 'Building massive multi-chamber concrete storm water tunnels and heavy structural channels inside metropolitan rings.',
     fullDescription: 'Designing and executing reinforced concrete storm water systems beneath urban limits to prevent chronic waterlogging: placing precast heavy box conduits and casting in-situ dynamic storm trunks engineered for multi-ton vehicle traffic crossings.',
-    image: '/src/assets/images/regenerated_image_1784369432168.jpg',
+    image: '',
     highlights: ['High-Strength RCC Drain Channels', 'Precast Conduit Placements', 'Structural Manhole & Junction boxes', 'System Integration & Utility relocations']
   },
   {
@@ -100,7 +100,7 @@ export const SERVICE_CATEGORIES = [
     title: 'Disaster Relief & Heavy Dewatering Operations',
     shortDescription: 'The foremost deployment partner in South India for heavy dewatering systems, rapid canal breaching responses, and flood management.',
     fullDescription: 'Our emergency fleet operates around the clock during severe environmental storms across Chennai and coastal regions. Guided by expert technical engineers, we deploy extremely high-volume custom dewatering setups (up to 100 HP) and heavy earth movers to safeguard civilians and city grids.',
-    image: '/src/assets/images/regenerated_image_1784369789659.jpg',
+    image: '',
     highlights: ['4", 6" Air-Assist Vacuum Dewatering Pumps', 'High capacity 100 HP Submersible Dewatering Units', 'Rapid canal breach sandbagging and earthworks', 'Continuous 24/7 operator supervision']
   },
   {
@@ -119,7 +119,7 @@ export const PROJECTS: ProjectItem[] = [
     title: 'HR & CE Temple Masonry and Reconstruction',
     category: 'government',
     description: 'Heritage restoration, structural lining, and brick-masonry works executed under the Tamil Nadu Government Hindu Religious and Charitable Endowments (HR & CE) standards.',
-    image: '/src/assets/images/temple_restoration_masonry_1780693655082.png',
+    image: '',
     details: [
       'Preserved centuries-old load-bearing masonry walls',
       'Employed custom mortar compositions meeting strict governmental conservation directives',

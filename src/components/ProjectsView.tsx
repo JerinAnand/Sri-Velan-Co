@@ -36,6 +36,7 @@ import {
 
 import { INITIAL_CONSTRUCTION_EXPERIENCE } from '../data/constructionExperience';
 import { CONSTRUCTION_IMAGES_MAP } from '../data/constructionImages';
+import { DATA_IMAGES_MAP } from '../data/dataImages';
 import { ConstructionCategory } from '../types';
 import { PROJECTS, CYCLONE_RELIEF_TIMELINE, SERVICE_CATEGORIES } from '../data';
 import { ProjectItem } from '../types';
@@ -80,6 +81,9 @@ export const ProjectsView: React.FC = () => {
   };
 
   const activeSvc = servicesList.find(s => s.id === selectedService) || servicesList[0] || SERVICE_CATEGORIES[0];
+  const activeSvcImg = (activeSvc.image && (activeSvc.image.startsWith('http://') || activeSvc.image.startsWith('https://') || activeSvc.image.startsWith('data:')))
+    ? activeSvc.image
+    : (DATA_IMAGES_MAP[activeSvc.id] || activeSvc.image);
   const activeTitle = activeSvc.title ? t(`services.${activeSvc.id}.title`, activeSvc.title) : 'Service';
   const activeFullDesc = activeSvc.fullDescription ? t(`services.${activeSvc.id}.fullDescription`, activeSvc.fullDescription) : activeSvc.description;
   const activeHighlights = activeSvc.highlights && activeSvc.highlights.length > 0
@@ -87,25 +91,40 @@ export const ProjectsView: React.FC = () => {
     : getTranslatedArray(`services.${activeSvc.id}.highlights`, []);
 
   const projectsList: ProjectItem[] = (siteContent?.projects?.projects && siteContent.projects.projects.length > 0)
-    ? siteContent.projects.projects.map((p: any) => ({
-        id: p.id || `proj-${p.title?.replace(/\s+/g, '-').toLowerCase()}`,
-        title: p.title || '',
-        category: (p.category as any) || 'infrastructure',
-        description: p.description || '',
-        image: p.imageUrl || p.image || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&q=80',
-        imageUrl: p.imageUrl || p.image || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&q=80',
-        year: p.year,
-        status: p.status,
-        location: p.location,
-        details: Array.isArray(p.details) && p.details.length > 0 
-          ? p.details 
-          : [
-              p.year ? `Year: ${p.year}` : 'Completed', 
-              p.location ? `Location: ${p.location}` : 'Tamil Nadu', 
-              p.status ? `Status: ${p.status}` : 'Verified'
-            ]
-      }))
-    : PROJECTS;
+    ? siteContent.projects.projects.map((p: any) => {
+        const rawImg = p.imageUrl || p.image || '';
+        const resolvedImg = (rawImg && (rawImg.startsWith('http://') || rawImg.startsWith('https://') || rawImg.startsWith('data:')))
+          ? rawImg
+          : (DATA_IMAGES_MAP[p.id] || rawImg || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&q=80');
+        return {
+          id: p.id || `proj-${p.title?.replace(/\s+/g, '-').toLowerCase()}`,
+          title: p.title || '',
+          category: (p.category as any) || 'infrastructure',
+          description: p.description || '',
+          image: resolvedImg,
+          imageUrl: resolvedImg,
+          year: p.year,
+          status: p.status,
+          location: p.location,
+          details: Array.isArray(p.details) && p.details.length > 0 
+            ? p.details 
+            : [
+                p.year ? `Year: ${p.year}` : 'Completed', 
+                p.location ? `Location: ${p.location}` : 'Tamil Nadu', 
+                p.status ? `Status: ${p.status}` : 'Verified'
+              ]
+        };
+      })
+    : PROJECTS.map(p => {
+        const resolvedImg = (p.image && (p.image.startsWith('http://') || p.image.startsWith('https://') || p.image.startsWith('data:')))
+          ? p.image
+          : (DATA_IMAGES_MAP[p.id] || p.image);
+        return {
+          ...p,
+          image: resolvedImg,
+          imageUrl: resolvedImg || p.imageUrl
+        };
+      });
 
   const constructionCategories: ConstructionCategory[] = siteContent?.constructionExperience?.categories?.length
     ? siteContent.constructionExperience.categories
@@ -306,7 +325,7 @@ export const ProjectsView: React.FC = () => {
                   {/* Service Photo with accent card */}
                   <div className="h-64 sm:h-80 w-full rounded-2xl overflow-hidden border border-neutral-200 relative">
                     <img 
-                      src={activeSvc.image} 
+                      src={activeSvcImg} 
                       alt={activeTitle}
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"

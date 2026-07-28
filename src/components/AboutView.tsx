@@ -33,6 +33,7 @@ import {
   Code2
 } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from '../data';
+import { DATA_IMAGES_MAP } from '../data/dataImages';
 import { useSiteContent, DEFAULT_SITE_CONTENT } from '../context/SiteContentContext';
 import { useTranslation } from '../context/TranslationContext';
 
@@ -70,7 +71,7 @@ export const AboutView: React.FC = () => {
   const defaultMD = DEFAULT_SITE_CONTENT.governingBoard.featuredProfiles?.managingDirector || {
     name: COMPANY_DETAILS.leadership.managingDirector.name,
     role: COMPANY_DETAILS.leadership.managingDirector.role,
-    photoUrl: vetrivelImg || COMPANY_DETAILS.leadership.managingDirector.image,
+    photoUrl: DATA_IMAGES_MAP['vetrivel-md'] || vetrivelImg || COMPANY_DETAILS.leadership.managingDirector.image,
     bioEn: t('about.leadership.mdBio'),
     bioTa: t('about.leadership.mdBio'),
   };
@@ -87,7 +88,10 @@ export const AboutView: React.FC = () => {
 
   const mdName = mdProfile.name || defaultMD.name;
   const mdRole = mdProfile.role || defaultMD.role;
-  const mdImage = mdProfile.photoUrl || defaultMD.photoUrl;
+  const rawMdPhoto = mdProfile.photoUrl || defaultMD.photoUrl;
+  const mdImage = (rawMdPhoto && !rawMdPhoto.startsWith('/src/assets'))
+    ? rawMdPhoto
+    : (DATA_IMAGES_MAP['vetrivel-md'] || vetrivelImg);
   const mdBio = language === 'ta'
     ? (mdProfile.bioTa || mdProfile.bioEn || t('about.leadership.mdBio'))
     : (mdProfile.bioEn || t('about.leadership.mdBio'));
