@@ -1,24 +1,10 @@
 import { ConstructionCategory } from '../types';
 
-const pwdImg = '/src/assets/images/construction/pwd-buildings.jpg';
-const wrdImg = '/src/assets/images/construction/wrd-works.jpg';
-const ruralImg = '/src/assets/images/construction/rural-department.jpg';
-const hrceImg = '/src/assets/images/construction/hrce-works.jpg';
-const specialImg = '/src/assets/images/construction/special-projects.jpg';
-
-export const CONSTRUCTION_IMAGES_MAP: Record<string, string> = {
-  'pwd-buildings': pwdImg,
-  'wrd-works': wrdImg,
-  'rural-department': ruralImg,
-  'hrce-works': hrceImg,
-  'special-projects': specialImg,
-};
-
 export const INITIAL_CONSTRUCTION_EXPERIENCE: ConstructionCategory[] = [
   {
     id: 'pwd-buildings',
     title: { en: 'PWD Buildings', ta: 'பொதுப்பணித் துறை கட்டிடங்கள்' },
-    image: pwdImg,
+    image: 'pwd-buildings',
     projects: [
       {
         en: 'Constructed a G+1 government school building in Vikravandi, Villupuram within a short span of 5 months (2018).',
@@ -45,7 +31,7 @@ export const INITIAL_CONSTRUCTION_EXPERIENCE: ConstructionCategory[] = [
   {
     id: 'wrd-works',
     title: { en: 'WRD Works', ta: 'நீர்வளத் துறை பணிகள்' },
-    image: wrdImg,
+    image: 'wrd-works',
     projects: [
       {
         en: 'Executed dredging of the main channel connecting the lake to the Sathanur Reservoir in the Thenpennai River bed (2017).',
@@ -64,7 +50,7 @@ export const INITIAL_CONSTRUCTION_EXPERIENCE: ConstructionCategory[] = [
   {
     id: 'rural-department',
     title: { en: 'Rural Department', ta: 'ஊரக வளர்ச்சித் துறை' },
-    image: ruralImg,
+    image: 'rural-department',
     projects: [
       {
         en: 'Constructed roadways connecting villages with cement concrete (CC) and bituminous pavements, including Pillur–Pillaiyarkuppam, Pillur–Agaram, and Thirupachanur–Serndanur (2023).',
@@ -79,7 +65,7 @@ export const INITIAL_CONSTRUCTION_EXPERIENCE: ConstructionCategory[] = [
   {
     id: 'hrce-works',
     title: { en: 'HR&CE Works', ta: 'இந்து சமய அறநிலையத் துறை பணிகள்' },
-    image: hrceImg,
+    image: 'hrce-works',
     projects: [
       {
         en: 'Constructed a wedding pavilion, formerly known as Kambar Mandapam, in Thiruvennainallur (2019–2021).',
@@ -90,7 +76,7 @@ export const INITIAL_CONSTRUCTION_EXPERIENCE: ConstructionCategory[] = [
   {
     id: 'special-projects',
     title: { en: 'Special Projects', ta: 'சிறப்புத் திட்டங்கள்' },
-    image: specialImg,
+    image: 'special-projects',
     projects: [
       {
         en: 'During the COVID-19 pandemic, we converted classrooms into hospital ward rooms for patients, and ensured their cleaning and maintenance.',

@@ -34,7 +34,8 @@ import {
   Navigation
 } from 'lucide-react';
 
-import { INITIAL_CONSTRUCTION_EXPERIENCE, CONSTRUCTION_IMAGES_MAP } from '../data/constructionExperience';
+import { INITIAL_CONSTRUCTION_EXPERIENCE } from '../data/constructionExperience';
+import { CONSTRUCTION_IMAGES_MAP } from '../data/constructionImages';
 import { ConstructionCategory } from '../types';
 import { PROJECTS, CYCLONE_RELIEF_TIMELINE, SERVICE_CATEGORIES } from '../data';
 import { ProjectItem } from '../types';
