@@ -106,7 +106,7 @@ export const defaultServices = {
         "Structural Manhole & Junction boxes",
         "System Integration & Utility relocations"
       ],
-      "image": "https://srivelan.vercel.app/assets/regenerated_image_1784369432168-BJHyOYnu.jpg",
+      "image": "",
       "id": "urban-development",
       "title": "Urban Water Drainage & Multi-Utility Corridors",
       "description": "Designing and executing reinforced concrete storm water systems beneath urban limits to prevent chronic waterlogging: placing precast heavy box conduits and casting in-situ dynamic storm trunks engineered for multi-ton vehicle traffic crossings.",
@@ -119,7 +119,7 @@ export const defaultServices = {
         "Rapid canal breach sandbagging and earthworks",
         "Continuous 24/7 operator supervision"
       ],
-      "image": "https://srivelan.vercel.app/assets/regenerated_image_1784369789659-CfpWkI3Q.jpg",
+      "image": "",
       "title": "Disaster Relief & Heavy Dewatering Operations",
       "id": "flood-relief",
       "badge": "Certified Capability",
