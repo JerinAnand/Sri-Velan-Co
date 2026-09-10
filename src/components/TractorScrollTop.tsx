@@ -17,12 +17,16 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
   const [isDriving, setIsDriving] = useState(false);
   const [driveProgress, setDriveProgress] = useState(0); // 0 (bottom) -> 1 (top of screen)
   const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [viewportHeight, setViewportHeight] = useState(
     typeof window !== 'undefined' ? window.innerHeight : 800
   );
 
   const animationFrameRef = useRef<number | null>(null);
   const isDrivingRef = useRef(false);
+
+  // Engine start interaction is active on hover or keyboard focus (when not already driving)
+  const isEngaged = (isHovered || isFocused) && !isDriving;
 
   // Keep window height updated for dynamic upward travel
   useEffect(() => {
@@ -134,18 +138,16 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
   /**
    * Strictly 90-Degree Vertical Orientation:
-   * - Zero diagonal tilt: Perfectly parallel to the vertical edge of the page at all times.
-   * - Idle state: exactly 90°.
-   * - Hover state: exactly 90°.
-   * - Climbing state: exactly 90°.
+   * Body axis stays locked at exactly 90 degrees (pointing straight up)
+   * in both idle and climbing states with zero diagonal lean.
    */
   const currentRotation = 90;
 
   return (
     <>
-      {/* Scoped CSS Keyframes: Slower, synchronized mechanical cadence */}
+      {/* Scoped CSS Keyframes: Slower mechanical cadence + subtle idle engine vibration */}
       <style>{`
-        /* Realistic Differential Wheel Spin */
+        /* Full Driving Differential Wheel Spin (Climbing Speed) */
         @keyframes tractor-rear-spin-slow {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
@@ -156,35 +158,74 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
           100% { transform: rotate(490deg); }
         }
 
-        /* Pure Vertical Mechanical Suspension Pulse (Aligned along vertical climb axis) */
-        @keyframes tractor-suspension-vertical {
+        /* Gentle Idle Wheel Creep (Hover/Focus - ~4x slower than driving) */
+        @keyframes tractor-rear-spin-idle {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        @keyframes tractor-front-spin-idle {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(490deg); }
+        }
+
+        /* Heavy Diesel Incline Suspension Rumble (Climbing under heavy load) */
+        @keyframes tractor-suspension-climb {
           0%, 100% { transform: translateX(0px); }
-          50% { transform: translateX(1.2px); }
+          50% { transform: translateX(1.3px); }
         }
 
-        /* Exhaust Flap (Rain Cap) Fluttering with Steady Diesel Pulses */
-        @keyframes exhaust-flap-flutter-slow {
+        /* Subtle Engine Start Chassis Jitter (Hover/Focus - Fast, Low-Amplitude Diesel Vibration) */
+        @keyframes tractor-engine-idle-jitter {
+          0%, 100% { transform: translate(0px, 0px); }
+          20% { transform: translate(0.35px, -0.25px); }
+          40% { transform: translate(-0.3px, 0.25px); }
+          60% { transform: translate(0.25px, 0.2px); }
+          80% { transform: translate(-0.25px, -0.3px); }
+        }
+
+        /* Exhaust Flap (Rain Cap) - Fluttering Open Under Full Power */
+        @keyframes exhaust-flap-flutter-climb {
           0%, 100% { transform: rotate(-24deg); }
-          50% { transform: rotate(-38deg); }
+          50% { transform: rotate(-40deg); }
         }
 
-        /* Diesel Exhaust Smoke Puffs (Billowing straight down behind vertical tractor) */
-        @keyframes diesel-smoke-vertical-1 {
+        /* Exhaust Flap (Rain Cap) - Delicate Engine Idle Chatter */
+        @keyframes exhaust-flap-flutter-idle {
+          0%, 100% { transform: rotate(-8deg); }
+          50% { transform: rotate(-16deg); }
+        }
+
+        /* Heavy Diesel Exhaust Smoke Puffs (Full Climb) */
+        @keyframes diesel-smoke-climb-1 {
           0% { transform: translate(0, 0) scale(0.35); opacity: 0.95; }
           50% { opacity: 0.8; }
           100% { transform: translate(32px, 0px) scale(2.6); opacity: 0; }
         }
 
-        @keyframes diesel-smoke-vertical-2 {
+        @keyframes diesel-smoke-climb-2 {
           0% { transform: translate(0, 0) scale(0.28); opacity: 0.9; }
           60% { opacity: 0.7; }
           100% { transform: translate(38px, 1px) scale(3.2); opacity: 0; }
         }
 
-        @keyframes diesel-smoke-vertical-3 {
+        @keyframes diesel-smoke-climb-3 {
           0% { transform: translate(0, 0) scale(0.22); opacity: 0.85; }
           70% { opacity: 0.6; }
           100% { transform: translate(44px, -1px) scale(3.6); opacity: 0; }
+        }
+
+        /* Faint Engine Idle Exhaust Puff (Hover/Focus - Subtle Wisps Drifting Backward) */
+        @keyframes diesel-smoke-idle-wisp-1 {
+          0% { transform: translate(0, 0) scale(0.3); opacity: 0.7; }
+          50% { opacity: 0.45; }
+          100% { transform: translate(16px, 0px) scale(1.5); opacity: 0; }
+        }
+
+        @keyframes diesel-smoke-idle-wisp-2 {
+          0% { transform: translate(0, 0) scale(0.25); opacity: 0.65; }
+          60% { opacity: 0.35; }
+          100% { transform: translate(22px, 0.5px) scale(1.8); opacity: 0; }
         }
 
         /* Tire Soil / Dust Spray straight down from the bottom rear drive tire */
@@ -193,47 +234,73 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
           100% { transform: translate(24px, 0px) scale(1.6); opacity: 0; }
         }
 
-        /* Gentle Idle Vertical Float */
-        @keyframes tractor-idle-thrum {
+        /* Gentle Resting Float */
+        @keyframes tractor-resting-thrum {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-1.5px); }
         }
 
-        .animate-tractor-rear {
+        /* Animation classes */
+        .animate-wheel-drive-rear {
           animation: tractor-rear-spin-slow 0.92s linear infinite;
         }
 
-        .animate-tractor-front {
+        .animate-wheel-drive-front {
           animation: tractor-front-spin-slow 0.70s linear infinite;
         }
 
-        .animate-tractor-suspension {
-          animation: tractor-suspension-vertical 0.42s ease-in-out infinite;
+        .animate-wheel-idle-rear {
+          animation: tractor-rear-spin-idle 3.8s linear infinite;
         }
 
-        .animate-flap-open {
-          animation: exhaust-flap-flutter-slow 0.30s ease-in-out infinite;
+        .animate-wheel-idle-front {
+          animation: tractor-front-spin-idle 2.8s linear infinite;
+        }
+
+        .animate-chassis-climb {
+          animation: tractor-suspension-climb 0.42s ease-in-out infinite;
+        }
+
+        .animate-chassis-idle {
+          animation: tractor-engine-idle-jitter 0.09s ease-in-out infinite;
+        }
+
+        .animate-flap-climb {
+          animation: exhaust-flap-flutter-climb 0.30s ease-in-out infinite;
+          transform-origin: 30px 14.5px;
+        }
+
+        .animate-flap-idle {
+          animation: exhaust-flap-flutter-idle 0.16s ease-in-out infinite;
           transform-origin: 30px 14.5px;
         }
 
         .animate-diesel-1 {
-          animation: diesel-smoke-vertical-1 1.15s ease-out infinite;
+          animation: diesel-smoke-climb-1 1.15s ease-out infinite;
         }
 
         .animate-diesel-2 {
-          animation: diesel-smoke-vertical-2 1.15s ease-out 0.38s infinite;
+          animation: diesel-smoke-climb-2 1.15s ease-out 0.38s infinite;
         }
 
         .animate-diesel-3 {
-          animation: diesel-smoke-vertical-3 1.15s ease-out 0.76s infinite;
+          animation: diesel-smoke-climb-3 1.15s ease-out 0.76s infinite;
+        }
+
+        .animate-idle-wisp-1 {
+          animation: diesel-smoke-idle-wisp-1 1.5s ease-out infinite;
+        }
+
+        .animate-idle-wisp-2 {
+          animation: diesel-smoke-idle-wisp-2 1.5s ease-out 0.75s infinite;
         }
 
         .animate-dirt {
           animation: tire-dirt-vertical 0.75s ease-out infinite;
         }
 
-        .animate-idle-thrum {
-          animation: tractor-idle-thrum 2.2s ease-in-out infinite;
+        .animate-resting-thrum {
+          animation: tractor-resting-thrum 2.2s ease-in-out infinite;
         }
       `}</style>
 
@@ -251,12 +318,12 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
               transition={{ duration: 0.32, ease: 'easeOut' }}
               className="relative group"
             >
-              {/* Tooltip on Hover */}
+              {/* Tooltip on Hover / Focus */}
               <div
                 role="tooltip"
                 id="tractor-scroll-tooltip"
                 className={`absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-200 ease-out whitespace-nowrap bg-brand-blue-950/95 backdrop-blur-md text-brand-gold-400 border border-brand-gold-500/30 text-xs font-display font-semibold px-3 py-1.5 rounded-xl shadow-2xl flex items-center gap-2 ${
-                  isHovered && !isDriving
+                  isEngaged
                     ? 'opacity-100 translate-x-0'
                     : 'opacity-0 -translate-x-2'
                 }`}
@@ -267,8 +334,9 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
               {/*
                 Pure Transparent Tractor Button:
+                - Accessible via Mouse (hover) and Keyboard (focus)
                 - Perfectly parallel to the vertical edge of the screen (90° body axis)
-                - No diagonal tilt in idle or while driving
+                - Triggers realistic diesel engine start on hover/focus
               */}
               <button
                 type="button"
@@ -279,6 +347,11 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                 onKeyDown={handleKeyDown}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                onTouchStart={() => setIsHovered(true)}
+                onTouchEnd={() => setIsHovered(false)}
+                onTouchCancel={() => setIsHovered(false)}
                 disabled={isDriving}
                 className="relative bg-transparent border-none p-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue-950 rounded-2xl cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95"
                 style={{
@@ -291,6 +364,8 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                   className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-2.5 bg-black/45 rounded-full blur-[2.5px] pointer-events-none transition-all duration-300 ${
                     isDriving
                       ? 'opacity-15 scale-75'
+                      : isEngaged
+                      ? 'opacity-85 scale-100'
                       : 'opacity-65 group-hover:opacity-85'
                   }`}
                 />
@@ -299,7 +374,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                 <svg
                   viewBox="0 0 68 68"
                   className={`w-15 h-15 sm:w-17 sm:h-17 relative z-10 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] overflow-visible ${
-                    !isDriving ? 'animate-idle-thrum' : ''
+                    !isDriving && !isEngaged ? 'animate-resting-thrum' : ''
                   }`}
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -309,21 +384,45 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                     transform={`rotate(${currentRotation} 34 34)`}
                     className="transition-transform duration-200"
                   >
-                    {/* Headlight Beam: Projects straight up into the page ahead */}
+                    {/* Headlight Beam: Full high-power projection while climbing */}
                     {isDriving && (
                       <polygon
                         points="18,30 -6,18 -6,44 18,32"
                         fill="url(#headlight-beam-gradient)"
-                        opacity="0.8"
+                        opacity="0.85"
                       />
                     )}
 
+                    {/* Headlight Idle Spill: Gentle warm forward glow cone when engine starts (Hover/Focus) */}
+                    <polygon
+                      points="17.2,30.5 4,24 4,38.5 17.2,32"
+                      fill="url(#headlight-idle-spill)"
+                      className="transition-opacity duration-300 pointer-events-none"
+                      opacity={isEngaged ? 0.6 : 0}
+                    />
+
                     {/* Gradient Definitions */}
                     <defs>
+                      {/* Full Driving Beam Gradient */}
                       <linearGradient id="headlight-beam-gradient" x1="18" y1="31" x2="-6" y2="31" gradientUnits="userSpaceOnUse">
                         <stop offset="0%" stopColor="#fef08a" stopOpacity="0.88" />
                         <stop offset="100%" stopColor="#fef08a" stopOpacity="0" />
                       </linearGradient>
+
+                      {/* Engine Start Idle Light Spill Gradient */}
+                      <linearGradient id="headlight-idle-spill" x1="17.2" y1="31.25" x2="4" y2="31.25" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="#fef08a" stopOpacity="0.75" />
+                        <stop offset="100%" stopColor="#fef08a" stopOpacity="0" />
+                      </linearGradient>
+
+                      {/* Soft Radial Glow Halo around the Headlight Lens */}
+                      <radialGradient id="headlight-lens-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                        <stop offset="45%" stopColor="#fef08a" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#fef08a" stopOpacity="0" />
+                      </radialGradient>
+
+                      {/* Tractor Gold Body Paint */}
                       <linearGradient id="tractor-hood-gold" x1="38" y1="26" x2="18" y2="36" gradientUnits="userSpaceOnUse">
                         <stop offset="0%" stopColor="#f59e0b" />
                         <stop offset="55%" stopColor="#e6b325" />
@@ -331,12 +430,20 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       </linearGradient>
                     </defs>
 
-                    {/* Diesel Exhaust Smoke Puffs (Billowing straight down behind vertical tractor) */}
+                    {/* Diesel Exhaust Smoke Puffs (Full Heavy Smoke Under Load while Climbing) */}
                     {isDriving && (
                       <g className="smoke-cluster">
                         <circle cx="30" cy="12" r="2.8" fill="#f1f5f9" fillOpacity="0.88" className="animate-diesel-1" />
                         <circle cx="32" cy="11" r="3.6" fill="#e2e8f0" fillOpacity="0.78" className="animate-diesel-2" />
                         <circle cx="34" cy="10" r="4.2" fill="#cbd5e1" fillOpacity="0.68" className="animate-diesel-3" />
+                      </g>
+                    )}
+
+                    {/* Faint Diesel Exhaust Idle Puffs (Subtle Wisps while Hovered/Focused) */}
+                    {isEngaged && (
+                      <g className="idle-smoke-cluster transition-opacity duration-300">
+                        <circle cx="30" cy="13" r="1.6" fill="#f8fafc" fillOpacity="0.75" className="animate-idle-wisp-1" />
+                        <circle cx="31" cy="12.5" r="2.2" fill="#e2e8f0" fillOpacity="0.6" className="animate-idle-wisp-2" />
                       </g>
                     )}
 
@@ -348,8 +455,21 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       </g>
                     )}
 
-                    {/* Tractor Chassis, Cabin, Hood & Stack (Mechanical rumble under load) */}
-                    <g className={isDriving ? 'animate-tractor-suspension' : ''}>
+                    {/*
+                      Tractor Chassis, Cabin, Hood & Stack:
+                      - Climbing under load: .animate-chassis-climb (heavy vertical suspension rumble)
+                      - Hovered/Focused: .animate-chassis-idle (rapid, low-amplitude engine jitter)
+                      - Resting: clean steady rest
+                    */}
+                    <g
+                      className={
+                        isDriving
+                          ? 'animate-chassis-climb'
+                          : isEngaged
+                          ? 'animate-chassis-idle'
+                          : ''
+                      }
+                    >
                       {/* Rear Heavy Lugged Fender / Mudguard (Mirrored to right side) */}
                       <path
                         d="M 56 37 A 12 12 0 0 0 34.5 36 L 34.5 38.5 A 10 10 0 0 1 54 38.5 Z"
@@ -428,30 +548,78 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       {/* Muffler Expansion Canister */}
                       <rect x="28.7" y="18.5" width="2.3" height="5.2" rx="0.8" fill="#1e293b" />
 
-                      {/* Hinged Rain Cap Flap (Flutters open under power) */}
+                      {/*
+                        Hinged Rain Cap Flap:
+                        - Full climb: .animate-flap-climb (flutters open under high diesel boost)
+                        - Hovered/Focused: .animate-flap-idle (gentle idle chatter)
+                        - Rest: resting closed
+                      */}
                       <line
                         x1="30"
                         y1="14.5"
-                        x2={isDriving ? '27.2' : '26.8'}
-                        y2={isDriving ? '11.8' : '14'}
+                        x2={isDriving ? '27.2' : isEngaged ? '28.0' : '26.8'}
+                        y2={isDriving ? '11.8' : isEngaged ? '13.2' : '14'}
                         stroke="#94a3b8"
                         strokeWidth="1.2"
                         strokeLinecap="round"
-                        className={isDriving ? 'animate-flap-open' : ''}
+                        className={
+                          isDriving
+                            ? 'animate-flap-climb'
+                            : isEngaged
+                            ? 'animate-flap-idle'
+                            : ''
+                        }
                       />
 
-                      {/* High-Intensity Halogen Front Headlight */}
+                      {/*
+                        Interactive Headlight:
+                        - Idle/Rest: Dim off-amber (#a16207 at 45% opacity)
+                        - Hover/Focus (Engine Start) & Climbing: Bright luminous yellow (#ffffff / #fef08a)
+                          with glowing halo transition
+                      */}
+                      {/* Soft radial glow halo around lens on hover/focus/climb */}
+                      <circle
+                        cx="18"
+                        cy="31.25"
+                        r="3.8"
+                        fill="url(#headlight-lens-glow)"
+                        className="transition-opacity duration-300 pointer-events-none"
+                        opacity={isDriving ? 1 : isEngaged ? 0.9 : 0}
+                      />
+
+                      {/* Headlight Lens */}
                       <path
                         d="M 19 29.5 L 17.2 30 L 17.2 32.5 L 19 33 Z"
-                        fill="#fef08a"
-                        stroke="#ca8a04"
-                        strokeWidth="0.5"
+                        fill={isDriving || isEngaged ? '#ffffff' : '#a16207'}
+                        fillOpacity={isDriving || isEngaged ? 1 : 0.45}
+                        stroke={isDriving || isEngaged ? '#fef08a' : '#78350f'}
+                        strokeWidth={isDriving || isEngaged ? '0.8' : '0.5'}
+                        className="transition-all duration-300 ease-out"
+                        style={{
+                          filter:
+                            isDriving || isEngaged
+                              ? 'drop-shadow(0 0 3px #fef08a)'
+                              : 'none',
+                        }}
                       />
                     </g>
 
-                    {/* Rear Heavy Drive Tire (Centered at x=46, y=37, Bottom of vehicle) */}
+                    {/*
+                      Rear Heavy Drive Tire (Centered at x=46, y=37, Bottom of vehicle):
+                      - Driving: .animate-wheel-drive-rear (0.92s)
+                      - Hover/Focus: .animate-wheel-idle-rear (3.8s slow idle roll)
+                    */}
                     <g transform="translate(46, 37)">
-                      <g className={isDriving ? 'animate-tractor-rear' : ''} style={{ transformOrigin: '0 0' }}>
+                      <g
+                        className={
+                          isDriving
+                            ? 'animate-wheel-drive-rear'
+                            : isEngaged
+                            ? 'animate-wheel-idle-rear'
+                            : ''
+                        }
+                        style={{ transformOrigin: '0 0' }}
+                      >
                         {/* Outer Heavy Pneumatic Rubber Tire */}
                         <circle cx="0" cy="0" r="10.5" fill="#1e293b" stroke="#0f172a" strokeWidth="1.2" />
                         {/* Deep Chevron Tread Lugs */}
@@ -469,9 +637,22 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       </g>
                     </g>
 
-                    {/* Front Steer Wheel (Smaller, Centered at x=22, y=40, Top of vehicle) */}
+                    {/*
+                      Front Steer Wheel (Smaller, Centered at x=22, y=40, Top of vehicle):
+                      - Driving: .animate-wheel-drive-front (0.70s)
+                      - Hover/Focus: .animate-wheel-idle-front (2.8s slow idle roll)
+                    */}
                     <g transform="translate(22, 40)">
-                      <g className={isDriving ? 'animate-tractor-front' : ''} style={{ transformOrigin: '0 0' }}>
+                      <g
+                        className={
+                          isDriving
+                            ? 'animate-wheel-drive-front'
+                            : isEngaged
+                            ? 'animate-wheel-idle-front'
+                            : ''
+                        }
+                        style={{ transformOrigin: '0 0' }}
+                      >
                         {/* Outer Tire */}
                         <circle cx="0" cy="0" r="6.4" fill="#1e293b" stroke="#0f172a" strokeWidth="0.9" />
                         {/* Tread Ribs */}
