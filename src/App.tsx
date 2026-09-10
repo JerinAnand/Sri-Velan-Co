@@ -20,9 +20,10 @@ import { AdminDashboardView } from './components/AdminDashboardView';
 import { AdminLoginView } from './components/AdminLoginView';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { CapabilityStatement } from './components/CapabilityStatement';
+import { TractorScrollTop } from './components/TractorScrollTop';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom';
-import { ArrowUp, Phone, MessageCircle } from 'lucide-react';
+import { Phone, MessageCircle } from 'lucide-react';
 import { COMPANY_DETAILS, OFFICES } from './data';
 
 export default function App() {
@@ -220,25 +221,9 @@ export default function App() {
        </div>
      )}
  
-       {/* Dynamic Back to top key isolated at left bottom corner to balance layout of the application */}
-        {!isAdminDashboard && !isCapabilityStatement && (
-         <div className="fixed bottom-6 left-6 z-40">
-         <AnimatePresence>
-           {showScrollTop && (
-             <motion.button
-               initial={{ opacity: 0, scale: 0.7 }}
-               animate={{ opacity: 1, scale: 1 }}
-               exit={{ opacity: 0, scale: 0.7 }}
-               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-               className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 p-3.5 rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all text-shadow-sm flex items-center justify-center border border-brand-gold-600/20"
-               id="back-to-top-button"
-               aria-label="Back to Top Coordinates"
-             >
-               <ArrowUp className="w-5 h-5" />
-             </motion.button>
-           )}
-         </AnimatePresence>
-       </div>
+       {/* Tractor-Themed Animated Scroll-to-Top Floating Widget */}
+       {!isAdminDashboard && !isCapabilityStatement && (
+         <TractorScrollTop />
        )}
 
        {/* Offline Intelligent AI Assistant */}

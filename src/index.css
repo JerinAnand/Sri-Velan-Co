@@ -128,6 +128,91 @@ section:hover {
   will-change: background-position;
 }
 
+/* Tractor Animated Scroll-to-Top Keyframes */
+@keyframes tractor-wheel-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes tractor-wheel-spin-fast {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(540deg); }
+}
+
+@keyframes tractor-chassis-rumble {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-1.4px) rotate(-1deg); }
+  50% { transform: translateY(0.7px) rotate(0.8deg); }
+  75% { transform: translateY(-0.9px) rotate(-0.5deg); }
+}
+
+@keyframes tractor-exhaust-smoke-1 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 0.95; }
+  40% { opacity: 0.8; }
+  100% { transform: translate(-12px, 10px) scale(1.6); opacity: 0; }
+}
+
+@keyframes tractor-exhaust-smoke-2 {
+  0% { transform: translate(0, 0) scale(0.25); opacity: 0.9; }
+  50% { opacity: 0.75; }
+  100% { transform: translate(-15px, 13px) scale(1.8); opacity: 0; }
+}
+
+@keyframes tractor-exhaust-smoke-3 {
+  0% { transform: translate(0, 0) scale(0.2); opacity: 0.85; }
+  60% { opacity: 0.65; }
+  100% { transform: translate(-18px, 15px) scale(2); opacity: 0; }
+}
+
+@keyframes tractor-dust-puff {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 0.9; }
+  100% { transform: translate(-9px, 5px) scale(1.4); opacity: 0; }
+}
+
+@keyframes tractor-road-track {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -24; }
+}
+
+.animate-tractor-wheel {
+  animation: tractor-wheel-spin 0.5s linear infinite;
+  will-change: transform;
+}
+
+.animate-tractor-wheel-fast {
+  animation: tractor-wheel-spin-fast 0.5s linear infinite;
+  will-change: transform;
+}
+
+.animate-tractor-rumble {
+  animation: tractor-chassis-rumble 0.22s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-smoke-1 {
+  animation: tractor-exhaust-smoke-1 0.7s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-smoke-2 {
+  animation: tractor-exhaust-smoke-2 0.7s ease-out 0.22s infinite;
+  will-change: transform, opacity;
+}
+
+.animate-smoke-3 {
+  animation: tractor-exhaust-smoke-3 0.7s ease-out 0.44s infinite;
+  will-change: transform, opacity;
+}
+
+.animate-dust {
+  animation: tractor-dust-puff 0.45s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-road {
+  animation: tractor-road-track 0.4s linear infinite;
+}
+
 /* ==========================================================================
    HIGH-CONTRAST DARK MODE SYSTEM (CSS VARIABLES & GLOBAL OVERRIDES)
    ========================================================================== */
@@ -428,6 +513,7 @@ html.dark-high-contrast #state-districts path[fill="#f87171"] {
   #velan-chatbot-panel,
   #back-to-top-button,
   #back-to-top-container,
+  #tractor-scroll-top-container,
   #floating-emergency-dial,
   #floating-whatsapp-button,
   #floating-action-utilities,
