@@ -65,21 +65,20 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
   }, [threshold]);
 
   /**
-   * Realistic Heavy Machinery Incline Acceleration Curve:
-   * 1. Steady low-gear torque engagement (0 -> 0.20): engine engages, front lifts slightly into the grade.
-   * 2. Powerful sustained uphill momentum (0.20 -> 0.85): steady, gradual diesel pull up the slope.
-   * 3. Gentle summit cresting (0.85 -> 1.0): controlled deceleration as it reaches the peak.
+   * Realistic Heavy Machinery Vertical Acceleration Curve:
+   * 1. Low-gear torque engagement (0 -> 0.18): engine spools up, tires bite.
+   * 2. Powerful vertical climb momentum (0.18 -> 0.88): steady, controlled ascent.
+   * 3. Summit deceleration (0.88 -> 1.0): smooth ease-out at the crest.
    */
   const realisticTractorEase = (t: number): number => {
     if (t <= 0) return 0;
     if (t >= 1) return 1;
-    // Smoother, more gradual quadratic-cubic curve suited for the extended climb duration
-    return t < 0.25
-      ? 1.6 * Math.pow(t, 2)
-      : 1 - Math.pow(1 - t, 2.2) * 0.9;
+    return t < 0.22
+      ? 1.8 * Math.pow(t, 2)
+      : 1 - Math.pow(1 - t, 2.3) * 0.92;
   };
 
-  // Upward Driving Sequence with Gradual, Controlled Pacing
+  // Upward Driving Sequence with Gradual, Controlled Pacing (~2.2s to 3.2s)
   const handleDriveToTop = useCallback(() => {
     if (isDrivingRef.current) return;
 
@@ -87,7 +86,6 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
     setIsDriving(true);
 
     const startScrollY = window.scrollY || document.documentElement.scrollTop;
-    // Noticeably relaxed, gradual duration (~2.2s to 3.2s) - roughly double the previous speed
     const duration = Math.min(3200, Math.max(2200, Math.sqrt(startScrollY) * 58));
     const startTime = performance.now();
 
@@ -135,30 +133,19 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
   const currentTranslateY = -driveProgress * travelDistance;
 
   /**
-   * Distinct Incline Orientation:
-   * - Idle at rest: -48° (clearly tilted upward facing the top-right / top of screen, perched on an uphill slope).
-   * - Hovered: -53° (nose lifts slightly higher in anticipation, ready to climb).
-   * - Climbing: smoothly tilts to a steep -78° grade climb, pointing directly toward the summit.
-   * - Summit cresting: gently levels to -68° as it reaches the top edge.
+   * Strictly 90-Degree Vertical Orientation:
+   * - Zero diagonal tilt: Perfectly parallel to the vertical edge of the page at all times.
+   * - Idle state: exactly 90°.
+   * - Hover state: exactly 90°.
+   * - Climbing state: exactly 90°.
    */
-  let currentRotation = isHovered ? -53 : -48;
-  if (isDriving) {
-    if (driveProgress < 0.2) {
-      const t = driveProgress / 0.2;
-      currentRotation = -48 + t * (-78 - -48);
-    } else if (driveProgress < 0.85) {
-      currentRotation = -78;
-    } else {
-      const t = (driveProgress - 0.85) / 0.15;
-      currentRotation = -78 + t * 10; // gentle cresting angle toward level at summit
-    }
-  }
+  const currentRotation = 90;
 
   return (
     <>
-      {/* Scoped CSS Keyframes: Proportionally slowed down to match the gradual climb speed */}
+      {/* Scoped CSS Keyframes: Slower, synchronized mechanical cadence */}
       <style>{`
-        /* Realistic Heavy Wheel Spin (Cadenced to the slower, gradual scroll pace) */
+        /* Realistic Differential Wheel Spin */
         @keyframes tractor-rear-spin-slow {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
@@ -169,46 +156,44 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
           100% { transform: rotate(490deg); }
         }
 
-        /* Heavy Diesel Incline Suspension Rumble */
-        @keyframes tractor-suspension-climb {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          25% { transform: translateY(-1.5px) rotate(-1deg); }
-          50% { transform: translateY(0.7px) rotate(0.8deg); }
-          75% { transform: translateY(-0.9px) rotate(-0.5deg); }
+        /* Pure Vertical Mechanical Suspension Pulse (Aligned along vertical climb axis) */
+        @keyframes tractor-suspension-vertical {
+          0%, 100% { transform: translateX(0px); }
+          50% { transform: translateX(1.2px); }
         }
 
         /* Exhaust Flap (Rain Cap) Fluttering with Steady Diesel Pulses */
         @keyframes exhaust-flap-flutter-slow {
-          0%, 100% { transform: rotate(36deg); }
-          50% { transform: rotate(48deg); }
+          0%, 100% { transform: rotate(-24deg); }
+          50% { transform: rotate(-38deg); }
         }
 
-        /* Diesel Exhaust Smoke Puffs (Paced for gradual, majestic climb) */
-        @keyframes diesel-smoke-slow-1 {
+        /* Diesel Exhaust Smoke Puffs (Billowing straight down behind vertical tractor) */
+        @keyframes diesel-smoke-vertical-1 {
           0% { transform: translate(0, 0) scale(0.35); opacity: 0.95; }
           50% { opacity: 0.8; }
-          100% { transform: translate(-4px, 32px) scale(2.6); opacity: 0; }
+          100% { transform: translate(32px, 0px) scale(2.6); opacity: 0; }
         }
 
-        @keyframes diesel-smoke-slow-2 {
+        @keyframes diesel-smoke-vertical-2 {
           0% { transform: translate(0, 0) scale(0.28); opacity: 0.9; }
           60% { opacity: 0.7; }
-          100% { transform: translate(-8px, 38px) scale(3.2); opacity: 0; }
+          100% { transform: translate(38px, 1px) scale(3.2); opacity: 0; }
         }
 
-        @keyframes diesel-smoke-slow-3 {
+        @keyframes diesel-smoke-vertical-3 {
           0% { transform: translate(0, 0) scale(0.22); opacity: 0.85; }
           70% { opacity: 0.6; }
-          100% { transform: translate(-2px, 44px) scale(3.6); opacity: 0; }
+          100% { transform: translate(44px, -1px) scale(3.6); opacity: 0; }
         }
 
-        /* Tire Soil / Dust Spray behind the rear drive tire */
-        @keyframes tire-dirt-spray-slow {
+        /* Tire Soil / Dust Spray straight down from the bottom rear drive tire */
+        @keyframes tire-dirt-vertical {
           0% { transform: translate(0, 0) scale(0.4); opacity: 0.9; }
-          100% { transform: translate(-6px, 24px) scale(1.6); opacity: 0; }
+          100% { transform: translate(24px, 0px) scale(1.6); opacity: 0; }
         }
 
-        /* Steady Incline Idle Hover Vibration */
+        /* Gentle Idle Vertical Float */
         @keyframes tractor-idle-thrum {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-1.5px); }
@@ -223,28 +208,28 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
         }
 
         .animate-tractor-suspension {
-          animation: tractor-suspension-climb 0.42s ease-in-out infinite;
+          animation: tractor-suspension-vertical 0.42s ease-in-out infinite;
         }
 
         .animate-flap-open {
           animation: exhaust-flap-flutter-slow 0.30s ease-in-out infinite;
-          transform-origin: 36px 14px;
+          transform-origin: 30px 14.5px;
         }
 
         .animate-diesel-1 {
-          animation: diesel-smoke-slow-1 1.15s ease-out infinite;
+          animation: diesel-smoke-vertical-1 1.15s ease-out infinite;
         }
 
         .animate-diesel-2 {
-          animation: diesel-smoke-slow-2 1.15s ease-out 0.38s infinite;
+          animation: diesel-smoke-vertical-2 1.15s ease-out 0.38s infinite;
         }
 
         .animate-diesel-3 {
-          animation: diesel-smoke-slow-3 1.15s ease-out 0.76s infinite;
+          animation: diesel-smoke-vertical-3 1.15s ease-out 0.76s infinite;
         }
 
         .animate-dirt {
-          animation: tire-dirt-spray-slow 0.75s ease-out infinite;
+          animation: tire-dirt-vertical 0.75s ease-out infinite;
         }
 
         .animate-idle-thrum {
@@ -252,7 +237,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
         }
       `}</style>
 
-      {/* Floating Container: Pure Uphill Tractor Graphic with Zero Box Borders / Rails */}
+      {/* Floating Container: Perfectly Vertical Tractor with Zero Box Borders / Rails */}
       <div
         id="tractor-scroll-top-container"
         className={`fixed left-4 sm:left-6 bottom-6 z-40 select-none ${className}`}
@@ -266,7 +251,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
               transition={{ duration: 0.32, ease: 'easeOut' }}
               className="relative group"
             >
-              {/* Tooltip on Hover: Sits to the right of the inclined tractor */}
+              {/* Tooltip on Hover */}
               <div
                 role="tooltip"
                 id="tractor-scroll-tooltip"
@@ -282,9 +267,8 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
               {/*
                 Pure Transparent Tractor Button:
-                - No container box / border / background card
-                - No floating "TOP" text badge
-                - Tilted purposefully uphill at rest and steep climb when activated
+                - Perfectly parallel to the vertical edge of the screen (90° body axis)
+                - No diagonal tilt in idle or while driving
               */}
               <button
                 type="button"
@@ -302,16 +286,16 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                   transition: isDriving ? 'none' : 'transform 0.25s ease-out',
                 }}
               >
-                {/* Slanted Ground Shadow beneath the incline stance */}
+                {/* Clean Horizontal Contact Shadow directly beneath vertical tractor (no tilt) */}
                 <div
-                  className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-14 h-3 bg-black/45 rounded-full blur-[3px] pointer-events-none transition-all duration-300 ${
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-2.5 bg-black/45 rounded-full blur-[2.5px] pointer-events-none transition-all duration-300 ${
                     isDriving
-                      ? 'opacity-15 scale-75 rotate-[-25deg]'
-                      : 'opacity-70 group-hover:opacity-90 rotate-[-18deg]'
+                      ? 'opacity-15 scale-75'
+                      : 'opacity-65 group-hover:opacity-85'
                   }`}
                 />
 
-                {/* SVG Contractor Tractor Graphic */}
+                {/* SVG Contractor Tractor Graphic (Strictly Vertical at 90°) */}
                 <svg
                   viewBox="0 0 68 68"
                   className={`w-15 h-15 sm:w-17 sm:h-17 relative z-10 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] overflow-visible ${
@@ -320,68 +304,68 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  {/* Dynamic Orientation: Distinct uphill angle (-48° idle, -78° steep climb) */}
+                  {/* Exactly 90-degree body axis: Perfectly parallel to vertical edge */}
                   <g
                     transform={`rotate(${currentRotation} 34 34)`}
                     className="transition-transform duration-200"
                   >
-                    {/* Headlight Beam Projecting Forward/Upward along Incline */}
+                    {/* Headlight Beam: Projects straight up into the page ahead */}
                     {isDriving && (
                       <polygon
-                        points="50,30 72,18 72,42 50,32"
+                        points="18,30 -6,18 -6,44 18,32"
                         fill="url(#headlight-beam-gradient)"
-                        opacity="0.75"
+                        opacity="0.8"
                       />
                     )}
 
                     {/* Gradient Definitions */}
                     <defs>
-                      <linearGradient id="headlight-beam-gradient" x1="50" y1="31" x2="72" y2="31" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stopColor="#fef08a" stopOpacity="0.85" />
+                      <linearGradient id="headlight-beam-gradient" x1="18" y1="31" x2="-6" y2="31" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="#fef08a" stopOpacity="0.88" />
                         <stop offset="100%" stopColor="#fef08a" stopOpacity="0" />
                       </linearGradient>
-                      <linearGradient id="tractor-hood-gold" x1="30" y1="26" x2="50" y2="36" gradientUnits="userSpaceOnUse">
+                      <linearGradient id="tractor-hood-gold" x1="38" y1="26" x2="18" y2="36" gradientUnits="userSpaceOnUse">
                         <stop offset="0%" stopColor="#f59e0b" />
                         <stop offset="55%" stopColor="#e6b325" />
                         <stop offset="100%" stopColor="#d97706" />
                       </linearGradient>
                     </defs>
 
-                    {/* Diesel Exhaust Smoke Puffs (Billowing behind stack downward along incline) */}
+                    {/* Diesel Exhaust Smoke Puffs (Billowing straight down behind vertical tractor) */}
                     {isDriving && (
                       <g className="smoke-cluster">
-                        <circle cx="38" cy="12" r="2.8" fill="#f1f5f9" fillOpacity="0.88" className="animate-diesel-1" />
-                        <circle cx="36" cy="11" r="3.6" fill="#e2e8f0" fillOpacity="0.78" className="animate-diesel-2" />
+                        <circle cx="30" cy="12" r="2.8" fill="#f1f5f9" fillOpacity="0.88" className="animate-diesel-1" />
+                        <circle cx="32" cy="11" r="3.6" fill="#e2e8f0" fillOpacity="0.78" className="animate-diesel-2" />
                         <circle cx="34" cy="10" r="4.2" fill="#cbd5e1" fillOpacity="0.68" className="animate-diesel-3" />
                       </g>
                     )}
 
-                    {/* Soil & Dust Particles Spraying Backward from Drive Tire */}
+                    {/* Soil & Dust Particles Spraying Straight Down from Bottom Rear Drive Tire */}
                     {isDriving && (
                       <g className="dirt-spray">
-                        <circle cx="13" cy="43" r="1.6" fill="#78350f" fillOpacity="0.9" className="animate-dirt" />
-                        <circle cx="10" cy="45" r="1.9" fill="#92400e" fillOpacity="0.8" className="animate-dirt" style={{ animationDelay: '0.35s' }} />
+                        <circle cx="55" cy="43" r="1.6" fill="#78350f" fillOpacity="0.9" className="animate-dirt" />
+                        <circle cx="58" cy="45" r="1.9" fill="#92400e" fillOpacity="0.8" className="animate-dirt" style={{ animationDelay: '0.35s' }} />
                       </g>
                     )}
 
-                    {/* Tractor Chassis, Cabin, Hood & Exhaust Stack (Suspension bounce under power) */}
+                    {/* Tractor Chassis, Cabin, Hood & Stack (Mechanical rumble under load) */}
                     <g className={isDriving ? 'animate-tractor-suspension' : ''}>
-                      {/* Rear Heavy Lugged Mudguard / Protective Fender */}
+                      {/* Rear Heavy Lugged Fender / Mudguard (Mirrored to right side) */}
                       <path
-                        d="M 12 37 A 12 12 0 0 1 33.5 36 L 33.5 38.5 A 10 10 0 0 0 14 38.5 Z"
+                        d="M 56 37 A 12 12 0 0 0 34.5 36 L 34.5 38.5 A 10 10 0 0 1 54 38.5 Z"
                         fill="url(#tractor-hood-gold)"
                         stroke="#92400e"
                         strokeWidth="0.8"
                       />
 
                       {/* ROPS Cabin Heavy Roll-Cage Pillars */}
-                      <line x1="16" y1="29" x2="18" y2="15" stroke="#0e2954" strokeWidth="2" strokeLinecap="round" />
-                      <line x1="30" y1="29" x2="28" y2="15" stroke="#0e2954" strokeWidth="2" strokeLinecap="round" />
-                      <line x1="17" y1="21.5" x2="29" y2="21.5" stroke="#0e2954" strokeWidth="1.3" />
+                      <line x1="52" y1="29" x2="50" y2="15" stroke="#0e2954" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="38" y1="29" x2="40" y2="15" stroke="#0e2954" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="51" y1="21.5" x2="39" y2="21.5" stroke="#0e2954" strokeWidth="1.3" />
 
                       {/* Cabin Protective Canopy Roof */}
                       <path
-                        d="M 14 15 L 31 15 L 30 13 L 15 13 Z"
+                        d="M 54 15 L 37 15 L 38 13 L 53 13 Z"
                         fill="#0e2954"
                         stroke="#e6b325"
                         strokeWidth="0.7"
@@ -389,7 +373,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
                       {/* Tinted Safety Glass Windshield */}
                       <polygon
-                        points="18.5,16 27.5,16 29.5,27.5 16.5,27.5"
+                        points="49.5,16 40.5,16 38.5,27.5 51.5,27.5"
                         fill="#38bdf8"
                         fillOpacity="0.45"
                         stroke="#bae6fd"
@@ -397,9 +381,9 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       />
                       {/* Specular White Glare on Windshield */}
                       <line
-                        x1="20"
+                        x1="48"
                         y1="17"
-                        x2="26"
+                        x2="42"
                         y2="26.5"
                         stroke="#ffffff"
                         strokeWidth="1.1"
@@ -408,47 +392,47 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       />
 
                       {/* Operator Seat Backrest */}
-                      <rect x="19" y="23" width="3.6" height="7.8" rx="1.3" fill="#0f172a" />
+                      <rect x="45.4" y="23" width="3.6" height="7.8" rx="1.3" fill="#0f172a" />
 
                       {/* Steering Column & Wheel */}
-                      <line x1="28" y1="23" x2="30" y2="25.5" stroke="#020617" strokeWidth="1.7" strokeLinecap="round" />
-                      <line x1="29" y1="24.5" x2="31" y2="29" stroke="#334155" strokeWidth="1.2" />
+                      <line x1="40" y1="23" x2="38" y2="25.5" stroke="#020617" strokeWidth="1.7" strokeLinecap="round" />
+                      <line x1="39" y1="24.5" x2="37" y2="29" stroke="#334155" strokeWidth="1.2" />
 
-                      {/* Main Engine Hood (Golden Chassis) */}
+                      {/* Main Engine Hood (Golden Chassis, mirrored facing left) */}
                       <path
-                        d="M 30 27 L 49 29 L 49 36.5 L 30 36.5 Z"
+                        d="M 38 27 L 19 29 L 19 36.5 L 38 36.5 Z"
                         fill="url(#tractor-hood-gold)"
                         stroke="#92400e"
                         strokeWidth="0.8"
                       />
                       {/* Hood Upper Highlight */}
-                      <path d="M 30 27 L 49 29 L 48.5 30.5 L 30 28.5 Z" fill="#fde68a" />
+                      <path d="M 38 27 L 19 29 L 19.5 30.5 L 38 28.5 Z" fill="#fde68a" />
                       {/* Sri Velan Corporate Navy Accent Stripe */}
-                      <rect x="33" y="31" width="12.5" height="1.8" rx="0.5" fill="#0e2954" />
+                      <rect x="22.5" y="31" width="12.5" height="1.8" rx="0.5" fill="#0e2954" />
 
                       {/* Front Radiator Grille Cooling Slats */}
-                      <line x1="47" y1="31" x2="47" y2="35.5" stroke="#78350f" strokeWidth="1.1" />
-                      <line x1="45" y1="31" x2="45" y2="35.5" stroke="#78350f" strokeWidth="1.1" />
+                      <line x1="21" y1="31" x2="21" y2="35.5" stroke="#78350f" strokeWidth="1.1" />
+                      <line x1="23" y1="31" x2="23" y2="35.5" stroke="#78350f" strokeWidth="1.1" />
 
                       {/* Engine Transmission & Differential Lower Casting */}
-                      <rect x="31" y="36.5" width="14" height="4.5" fill="#334155" stroke="#1e293b" strokeWidth="0.6" />
+                      <rect x="23" y="36.5" width="14" height="4.5" fill="#334155" stroke="#1e293b" strokeWidth="0.6" />
 
                       {/* Vertical Exhaust Stack with Muffler */}
                       <path
-                        d="M 38 27 L 38 14.5"
+                        d="M 30 27 L 30 14.5"
                         fill="none"
                         stroke="#475569"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
                       {/* Muffler Expansion Canister */}
-                      <rect x="37" y="18.5" width="2.3" height="5.2" rx="0.8" fill="#1e293b" />
+                      <rect x="28.7" y="18.5" width="2.3" height="5.2" rx="0.8" fill="#1e293b" />
 
                       {/* Hinged Rain Cap Flap (Flutters open under power) */}
                       <line
-                        x1="38"
+                        x1="30"
                         y1="14.5"
-                        x2={isDriving ? '40.8' : '41.2'}
+                        x2={isDriving ? '27.2' : '26.8'}
                         y2={isDriving ? '11.8' : '14'}
                         stroke="#94a3b8"
                         strokeWidth="1.2"
@@ -458,19 +442,19 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
                       {/* High-Intensity Halogen Front Headlight */}
                       <path
-                        d="M 49 29.5 L 50.8 30 L 50.8 32.5 L 49 33 Z"
+                        d="M 19 29.5 L 17.2 30 L 17.2 32.5 L 19 33 Z"
                         fill="#fef08a"
                         stroke="#ca8a04"
                         strokeWidth="0.5"
                       />
                     </g>
 
-                    {/* Rear Heavy Drive Tire (Centered at x=22, y=37) */}
-                    <g transform="translate(22, 37)">
+                    {/* Rear Heavy Drive Tire (Centered at x=46, y=37, Bottom of vehicle) */}
+                    <g transform="translate(46, 37)">
                       <g className={isDriving ? 'animate-tractor-rear' : ''} style={{ transformOrigin: '0 0' }}>
                         {/* Outer Heavy Pneumatic Rubber Tire */}
                         <circle cx="0" cy="0" r="10.5" fill="#1e293b" stroke="#0f172a" strokeWidth="1.2" />
-                        {/* Deep Chevron Tread Lugs for Incline Grip */}
+                        {/* Deep Chevron Tread Lugs */}
                         <circle cx="0" cy="0" r="9" fill="none" stroke="#0f172a" strokeWidth="3" strokeDasharray="3.2 3.8" />
                         {/* Steel Wheel Rim */}
                         <circle cx="0" cy="0" r="6.4" fill="#e6b325" stroke="#b45309" strokeWidth="0.8" />
@@ -485,8 +469,8 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       </g>
                     </g>
 
-                    {/* Front Steer Wheel (Smaller, Centered at x=46, y=40) */}
-                    <g transform="translate(46, 40)">
+                    {/* Front Steer Wheel (Smaller, Centered at x=22, y=40, Top of vehicle) */}
+                    <g transform="translate(22, 40)">
                       <g className={isDriving ? 'animate-tractor-front' : ''} style={{ transformOrigin: '0 0' }}>
                         {/* Outer Tire */}
                         <circle cx="0" cy="0" r="6.4" fill="#1e293b" stroke="#0f172a" strokeWidth="0.9" />
