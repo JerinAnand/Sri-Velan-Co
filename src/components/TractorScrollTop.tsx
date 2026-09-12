@@ -1,32 +1,571 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Wrench } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 interface TractorScrollTopProps {
-  /** Scroll threshold in px to reveal the tractor */
+  /** Scroll threshold in px to reveal the tractor (default: 400px) */
   threshold?: number;
   /** Optional custom CSS class */
   className?: string;
+  /** Explicit maintenance / in-service mode (defaults to checking admin routes) */
+  isMaintenance?: boolean;
+}
+
+/**
+ * High-Performance Preloaded Audio Engine for Tractor Acoustics:
+ * - Preloads and caches starter, rhythmic diesel idle, and climbing audio buffers in RAM.
+ * - Warm AudioContext queue eliminates any first-interaction stutter/latency.
+ * - Authentic multi-layer heavy machinery sound design: starter crank, 4-stroke diesel idle, and turbo spool.
+ */
+class TractorAudioPreloadEngine {
+  private ctx: AudioContext | null = null;
+  private isPreloaded = false;
+  private isPreloading = false;
+
+  // Cached AudioBuffers in memory
+  private starterBuffer: AudioBuffer | null = null;
+  private idleBuffer: AudioBuffer | null = null;
+  private driveBuffer: AudioBuffer | null = null;
+
+  // Active playing nodes
+  private starterSource: AudioBufferSourceNode | null = null;
+  private idleSource: AudioBufferSourceNode | null = null;
+  private idleGain: GainNode | null = null;
+  private driveSource: AudioBufferSourceNode | null = null;
+  private driveGain: GainNode | null = null;
+
+  private getContext(): AudioContext | null {
+    if (typeof window === 'undefined') return null;
+    try {
+      if (!this.ctx) {
+        const AudioCtx =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext })
+            .webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().catch(() => {});
+      }
+      return this.ctx;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Preload Queue: Wakes AudioContext and pre-synthesizes high-fidelity diesel audio buffers.
+   * Called on early page interaction or when tractor becomes visible.
+   */
+  preload() {
+    if (this.isPreloaded || this.isPreloading) return;
+    this.isPreloading = true;
+
+    try {
+      const ctx = this.getContext();
+      if (!ctx) {
+        this.isPreloading = false;
+        return;
+      }
+
+      // Warm up the hardware audio thread with a silent 1-sample buffer
+      const silentBuffer = ctx.createBuffer(1, 1, 22050);
+      const silentSource = ctx.createBufferSource();
+      silentSource.buffer = silentBuffer;
+      silentSource.connect(ctx.destination);
+      silentSource.start(0);
+
+      const sampleRate = ctx.sampleRate || 44100;
+
+      // 1. Synthesize Starter Crank Buffer (~0.52s)
+      // Two mechanical compression strokes followed by diesel ignition catch
+      const starterLength = Math.floor(sampleRate * 0.52);
+      const starterBuf = ctx.createBuffer(1, starterLength, sampleRate);
+      const sData = starterBuf.getChannelData(0);
+
+      for (let i = 0; i < starterLength; i++) {
+        const t = i / sampleRate;
+        let val = 0;
+
+        // Stroke 1 (0.02s - 0.12s) - Starter motor compression pulse
+        if (t >= 0.02 && t < 0.14) {
+          const env = Math.sin(((t - 0.02) / 0.12) * Math.PI);
+          val += Math.sin(2 * Math.PI * 62 * (t - 0.02)) * env * 0.7;
+          val += (Math.random() * 2 - 1) * 0.12 * env; // Starter gear tooth rasp
+        }
+
+        // Stroke 2 (0.16s - 0.28s) - Second compression pulse
+        if (t >= 0.16 && t < 0.28) {
+          const env = Math.sin(((t - 0.16) / 0.12) * Math.PI);
+          val += Math.sin(2 * Math.PI * 66 * (t - 0.16)) * env * 0.85;
+          val += (Math.random() * 2 - 1) * 0.15 * env;
+        }
+
+        // Ignition Catch (0.30s - 0.52s) - Diesel cylinders fire and spool to idle
+        if (t >= 0.30) {
+          const env = Math.exp(-(t - 0.30) * 5.2);
+          const freq = 78 - (t - 0.30) * 45;
+          val += Math.sin(2 * Math.PI * freq * (t - 0.30)) * env * 0.9;
+          val += Math.sin(2 * Math.PI * (freq * 2) * (t - 0.30)) * env * 0.45;
+        }
+
+        sData[i] = val * 0.45; // Soft mastered level
+      }
+      this.starterBuffer = starterBuf;
+
+      // 2. Synthesize Seamless Looping 4-Stroke Diesel Idle Buffer (1.0s exact period)
+      // Exactly 46.0 fundamental cycles ensures 0 click on loop seam
+      const idleLength = Math.floor(sampleRate * 1.0);
+      const idleBuf = ctx.createBuffer(1, idleLength, sampleRate);
+      const iData = idleBuf.getChannelData(0);
+
+      for (let i = 0; i < idleLength; i++) {
+        const t = i / sampleRate;
+        // Fundamental heavy cylinder thump (46Hz)
+        const fundamental = Math.sin(2 * Math.PI * 46 * t);
+        // Rich warm harmonics
+        const h2 = Math.sin(2 * Math.PI * 92 * t) * 0.45;
+        const h3 = Math.sin(2 * Math.PI * 138 * t) * 0.22;
+        // 4-Stroke firing cadence (11.5Hz = 4 pulses per 1.0s)
+        const strokeCadence = 0.75 + 0.25 * Math.sin(2 * Math.PI * 11.5 * t);
+        // Subtle mechanical diesel chuff flutter
+        const flutter = (Math.sin(2 * Math.PI * 23 * t) > 0.4 ? 0.08 : -0.05) * 0.3;
+
+        iData[i] = (fundamental + h2 + h3 + flutter) * strokeCadence * 0.35;
+      }
+      this.idleBuffer = idleBuf;
+
+      // 3. Synthesize Climbing Turbo-Diesel Buffer (4.8s duration)
+      // Accelerating diesel torque swell + faint turbocharger spool whistle
+      const driveLength = Math.floor(sampleRate * 4.8);
+      const driveBuf = ctx.createBuffer(1, driveLength, sampleRate);
+      const dData = driveBuf.getChannelData(0);
+
+      for (let i = 0; i < driveLength; i++) {
+        const t = i / sampleRate;
+        const progress = Math.min(1, t / 4.2);
+
+        // Accelerating cylinder firing frequency: 48Hz -> 78Hz
+        const baseFreq = 48 + progress * 30;
+        const cylinder = Math.sin(2 * Math.PI * baseFreq * t);
+        const subHarmonic = Math.sin(2 * Math.PI * (baseFreq * 2) * t) * 0.4;
+
+        // Faint high-register turbocharger spool (360Hz -> 520Hz)
+        const turboFreq = 360 + progress * 160;
+        const turboWhistle = Math.sin(2 * Math.PI * turboFreq * t) * 0.045 * progress;
+
+        // Mechanical transmission gear-mesh texture
+        const gearMesh = (Math.random() * 2 - 1) * 0.035 * (0.5 + progress * 0.5);
+
+        // Smooth envelope: gentle entry, strong climb, soft summit fade
+        let env = 1;
+        if (t < 0.25) env = t / 0.25;
+        else if (t > 4.2) env = Math.max(0, (4.8 - t) / 0.6);
+
+        dData[i] = (cylinder + subHarmonic + turboWhistle + gearMesh) * env * 0.42;
+      }
+      this.driveBuffer = driveBuf;
+
+      this.isPreloaded = true;
+      this.isPreloading = false;
+    } catch {
+      this.isPreloading = false;
+    }
+  }
+
+  /**
+   * Start Engine: Instantly plays the pre-synthesized starter crank,
+   * then rolls smoothly into the seamless rhythmic diesel idle loop.
+   */
+  startIdle(volume = 0.038) {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      this.stopAll();
+
+      // Ensure preloaded buffers exist
+      if (!this.isPreloaded) {
+        this.preload();
+      }
+
+      const now = ctx.currentTime;
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume), now + 0.12);
+
+      // Lowpass filter for smooth, deep diesel resonance
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(210, now);
+
+      master.connect(filter);
+      filter.connect(ctx.destination);
+
+      // 1. Play starter sequence if buffered
+      if (this.starterBuffer) {
+        const starter = ctx.createBufferSource();
+        starter.buffer = this.starterBuffer;
+        starter.connect(master);
+        starter.start(now);
+        this.starterSource = starter;
+      }
+
+      // 2. Play continuous rhythmic idle loop
+      if (this.idleBuffer) {
+        const idle = ctx.createBufferSource();
+        idle.buffer = this.idleBuffer;
+        idle.loop = true;
+        idle.connect(master);
+        // Start idle immediately, with starter layered on top
+        idle.start(now);
+        this.idleSource = idle;
+      }
+
+      this.idleGain = master;
+    } catch {
+      // Gracefully silent if blocked by browser
+    }
+  }
+
+  stopIdle() {
+    try {
+      if (this.idleGain && this.ctx) {
+        const now = this.ctx.currentTime;
+        this.idleGain.gain.setValueAtTime(this.idleGain.gain.value, now);
+        this.idleGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+
+        const idle = this.idleSource;
+        const starter = this.starterSource;
+        setTimeout(() => {
+          try {
+            idle?.stop();
+            starter?.stop();
+            idle?.disconnect();
+            starter?.disconnect();
+          } catch {}
+        }, 200);
+
+        this.idleGain = null;
+        this.idleSource = null;
+        this.starterSource = null;
+      }
+    } catch {}
+  }
+
+  /**
+   * Start Climbing Sound: Plays the preloaded accelerating turbo-diesel audio buffer
+   */
+  startDriving(durationMs: number, volume = 0.052) {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      this.stopAll();
+
+      if (!this.isPreloaded) {
+        this.preload();
+      }
+
+      const now = ctx.currentTime;
+      const durationSec = durationMs / 1000;
+
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume), now + 0.25);
+      master.gain.setValueAtTime(volume, now + Math.max(0.1, durationSec - 0.5));
+      master.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(280, now);
+      filter.frequency.linearRampToValueAtTime(420, now + durationSec * 0.75);
+
+      master.connect(filter);
+      filter.connect(ctx.destination);
+
+      if (this.driveBuffer) {
+        const drive = ctx.createBufferSource();
+        drive.buffer = this.driveBuffer;
+        drive.connect(master);
+        // Playback rate scaled gently to match dynamic duration
+        const normalDuration = this.driveBuffer.duration;
+        drive.playbackRate.value = Math.max(0.85, Math.min(1.25, normalDuration / durationSec));
+        drive.start(now);
+        drive.stop(now + durationSec + 0.1);
+        this.driveSource = drive;
+      }
+
+      this.driveGain = master;
+    } catch {}
+  }
+
+  stopAll() {
+    this.stopIdle();
+    try {
+      if (this.driveGain && this.ctx) {
+        const now = this.ctx.currentTime;
+        this.driveGain.gain.setValueAtTime(this.driveGain.gain.value, now);
+        this.driveGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+        const drive = this.driveSource;
+        setTimeout(() => {
+          try {
+            drive?.stop();
+            drive?.disconnect();
+          } catch {}
+        }, 110);
+        this.driveGain = null;
+        this.driveSource = null;
+      }
+    } catch {}
+  }
+
+  /**
+   * Play realistic pneumatic parking brake release hiss and mechanical latch click
+   */
+  playParkingBrake(volume = 0.04) {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      // 1. Short air-brake pneumatic hiss
+      const sampleRate = ctx.sampleRate;
+      const bufferSize = Math.floor(sampleRate * 0.22);
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (sampleRate * 0.065));
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1600, now);
+      filter.Q.setValueAtTime(2.2, now);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      noise.start(now);
+
+      // 2. Mechanical handbrake ratchet / latch click
+      const osc = ctx.createOscillator();
+      const oscGain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(360, now);
+      osc.frequency.exponentialRampToValueAtTime(90, now + 0.035);
+      oscGain.gain.setValueAtTime(volume * 0.7, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+      osc.connect(oscGain);
+      oscGain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.04);
+    } catch {}
+  }
 }
 
 export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
-  threshold = 260,
+  threshold = 400, // Default 400px entrance threshold
   className = '',
+  isMaintenance,
 }) => {
+  const location = useLocation();
+
+  // Maintenance / In-Service Mode: explicitly passed or detected on admin dashboard
+  const isServiceMode = isMaintenance ?? location.pathname.startsWith('/admin');
+
   const [isVisible, setIsVisible] = useState(false);
   const [isDriving, setIsDriving] = useState(false);
   const [driveProgress, setDriveProgress] = useState(0); // 0 (bottom) -> 1 (top of screen)
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [isParked, setIsParked] = useState(false); // Auto-park state when inactive > 10s
+  const [isBrakeSettling, setIsBrakeSettling] = useState(false); // Brief settling suspension animation
   const [viewportHeight, setViewportHeight] = useState(
     typeof window !== 'undefined' ? window.innerHeight : 800
   );
 
+  // Sound preference: Respect system preferences (prefers-reduced-motion) & user localStorage
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const saved = localStorage.getItem('tractor_sound_enabled');
+    if (saved !== null) {
+      return saved === 'true';
+    }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return !prefersReducedMotion;
+  });
+
+  const soundEngineRef = useRef<TractorAudioPreloadEngine | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const isDrivingRef = useRef(false);
+  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const brakeSettlingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Engine start interaction is active on hover or keyboard focus (when not already driving)
-  const isEngaged = (isHovered || isFocused) && !isDriving;
+  // Listen to system prefers-reduced-motion changes if user hasn't explicitly set a preference
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handlePrefChange = (e: MediaQueryListEvent) => {
+      const saved = localStorage.getItem('tractor_sound_enabled');
+      if (saved === null) {
+        setSoundEnabled(!e.matches);
+      }
+    };
+    mediaQuery.addEventListener?.('change', handlePrefChange);
+    return () => mediaQuery.removeEventListener?.('change', handlePrefChange);
+  }, []);
+
+  // Initialize and preload audio queue on mount
+  useEffect(() => {
+    const engine = new TractorAudioPreloadEngine();
+    soundEngineRef.current = engine;
+
+    // Early interaction warmup to eliminate first-interaction audio lag
+    const handleEarlyWarmup = () => {
+      engine.preload();
+      window.removeEventListener('pointerdown', handleEarlyWarmup);
+      window.removeEventListener('mousemove', handleEarlyWarmup);
+      window.removeEventListener('scroll', handleEarlyWarmup);
+      window.removeEventListener('keydown', handleEarlyWarmup);
+    };
+
+    window.addEventListener('pointerdown', handleEarlyWarmup, { passive: true, once: true });
+    window.addEventListener('mousemove', handleEarlyWarmup, { passive: true, once: true });
+    window.addEventListener('scroll', handleEarlyWarmup, { passive: true, once: true });
+    window.addEventListener('keydown', handleEarlyWarmup, { passive: true, once: true });
+
+    return () => {
+      engine.stopAll();
+      window.removeEventListener('pointerdown', handleEarlyWarmup);
+      window.removeEventListener('mousemove', handleEarlyWarmup);
+      window.removeEventListener('scroll', handleEarlyWarmup);
+      window.removeEventListener('keydown', handleEarlyWarmup);
+    };
+  }, []);
+
+  // Preload immediately when tractor becomes visible
+  useEffect(() => {
+    if (isVisible) {
+      soundEngineRef.current?.preload();
+    }
+  }, [isVisible]);
+
+  // Persist sound toggle preference
+  const toggleSound = useCallback(() => {
+    setSoundEnabled((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('tractor_sound_enabled', String(next));
+      } catch {}
+      if (!next) {
+        soundEngineRef.current?.stopAll();
+      }
+      return next;
+    });
+  }, []);
+
+  // Auto-Park Feature: 10-Second Inactivity Detector
+  // Engages parking brake animation and powers engine off in place if user is inactive > 10s
+  useEffect(() => {
+    // If not visible or actively driving up, don't trigger auto-park
+    if (!isVisible || isDriving) {
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+        inactivityTimerRef.current = null;
+      }
+      if (brakeSettlingTimeoutRef.current) {
+        clearTimeout(brakeSettlingTimeoutRef.current);
+        brakeSettlingTimeoutRef.current = null;
+      }
+      return;
+    }
+
+    const resetInactivity = () => {
+      // Wake up from parked state on any user activity
+      setIsParked(false);
+      setIsBrakeSettling(false);
+      if (brakeSettlingTimeoutRef.current) {
+        clearTimeout(brakeSettlingTimeoutRef.current);
+        brakeSettlingTimeoutRef.current = null;
+      }
+
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+
+      // Start 10-second inactivity countdown
+      inactivityTimerRef.current = setTimeout(() => {
+        setIsParked(true);
+        setIsBrakeSettling(true);
+        soundEngineRef.current?.stopAll();
+        // Play subtle pneumatic parking brake hiss & click if sound is enabled
+        soundEngineRef.current?.playParkingBrake();
+
+        // Let the brief parking brake settling animation play (subtle dip into suspension)
+        if (brakeSettlingTimeoutRef.current) {
+          clearTimeout(brakeSettlingTimeoutRef.current);
+        }
+        brakeSettlingTimeoutRef.current = setTimeout(() => {
+          setIsBrakeSettling(false);
+        }, 680);
+      }, 10000);
+    };
+
+    // Initialize the countdown
+    resetInactivity();
+
+    const userActivityEvents: Array<keyof WindowEventMap> = [
+      'mousemove',
+      'mousedown',
+      'keydown',
+      'scroll',
+      'touchstart',
+      'wheel',
+    ];
+
+    const handleActivity = () => {
+      resetInactivity();
+    };
+
+    userActivityEvents.forEach((ev) => {
+      window.addEventListener(ev, handleActivity, { passive: true });
+    });
+
+    return () => {
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+        inactivityTimerRef.current = null;
+      }
+      if (brakeSettlingTimeoutRef.current) {
+        clearTimeout(brakeSettlingTimeoutRef.current);
+        brakeSettlingTimeoutRef.current = null;
+      }
+      userActivityEvents.forEach((ev) => {
+        window.removeEventListener(ev, handleActivity);
+      });
+    };
+  }, [isVisible, isDriving]);
+
+  // Engine start interaction is active on hover or keyboard focus (when not already driving and not parked)
+  const isEngaged = (isHovered || isFocused) && !isDriving && !isParked;
+
+  // Trigger soft preloaded engine start sound when tractor is hovered/focused
+  useEffect(() => {
+    if (isEngaged && soundEnabled && !isParked) {
+      soundEngineRef.current?.startIdle();
+    } else {
+      soundEngineRef.current?.stopIdle();
+    }
+  }, [isEngaged, soundEnabled, isParked]);
 
   // Keep window height updated for dynamic upward travel
   useEffect(() => {
@@ -37,7 +576,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Monitor scroll position with high-performance passive listener
+  // Monitor scroll position with high-performance passive listener (threshold: 400px)
   useEffect(() => {
     let ticking = false;
 
@@ -70,8 +609,8 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
   /**
    * Realistic Heavy Machinery Vertical Acceleration Curve:
-   * 1. Low-gear torque engagement (0 -> 0.18): engine spools up, tires bite.
-   * 2. Powerful vertical climb momentum (0.18 -> 0.88): steady, controlled ascent.
+   * 1. Low-gear torque engagement (0 -> 0.20): engine spools up, tires bite.
+   * 2. Powerful vertical climb momentum (0.20 -> 0.88): steady, controlled ascent.
    * 3. Summit deceleration (0.88 -> 1.0): smooth ease-out at the crest.
    */
   const realisticTractorEase = (t: number): number => {
@@ -82,16 +621,26 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
       : 1 - Math.pow(1 - t, 2.3) * 0.92;
   };
 
-  // Upward Driving Sequence with Gradual, Controlled Pacing (~2.2s to 3.2s)
+  /**
+   * Slower, More Gradual & Controlled Scroll Duration:
+   * Paced comfortably (~3.8s to 5.4s) so the mechanical animations and soft sounds
+   * can be fully appreciated without rushing.
+   */
   const handleDriveToTop = useCallback(() => {
     if (isDrivingRef.current) return;
 
+    setIsParked(false);
     isDrivingRef.current = true;
     setIsDriving(true);
 
     const startScrollY = window.scrollY || document.documentElement.scrollTop;
-    const duration = Math.min(3200, Math.max(2200, Math.sqrt(startScrollY) * 58));
+    const duration = Math.min(5400, Math.max(3800, Math.sqrt(startScrollY) * 95));
     const startTime = performance.now();
+
+    // Trigger preloaded climbing sound if sound is enabled (instant 0ms playback)
+    if (soundEnabled) {
+      soundEngineRef.current?.startDriving(duration);
+    }
 
     const animateClimb = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -117,12 +666,13 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
           setIsDriving(false);
           isDrivingRef.current = false;
           setDriveProgress(0);
+          soundEngineRef.current?.stopAll();
         }, 500);
       }
     };
 
     animationFrameRef.current = requestAnimationFrame(animateClimb);
-  }, []);
+  }, [soundEnabled]);
 
   // Keyboard activation (Enter / Space)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -145,9 +695,9 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
   return (
     <>
-      {/* Scoped CSS Keyframes: Slower mechanical cadence + subtle idle engine vibration */}
+      {/* Scoped CSS Keyframes */}
       <style>{`
-        /* Full Driving Differential Wheel Spin (Climbing Speed) */
+        /* Slower Driving Differential Wheel Spin (Climbing Speed) */
         @keyframes tractor-rear-spin-slow {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
@@ -240,13 +790,19 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
           50% { transform: translateY(-1.5px); }
         }
 
-        /* Animation classes */
+        /* Maintenance Wrench Glow Pulse */
+        @keyframes wrench-badge-glow {
+          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5)); }
+          50% { transform: scale(1.08); filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.9)); }
+        }
+
+        /* Synchronized animation classes */
         .animate-wheel-drive-rear {
-          animation: tractor-rear-spin-slow 0.92s linear infinite;
+          animation: tractor-rear-spin-slow 1.42s linear infinite;
         }
 
         .animate-wheel-drive-front {
-          animation: tractor-front-spin-slow 0.70s linear infinite;
+          animation: tractor-front-spin-slow 1.08s linear infinite;
         }
 
         .animate-wheel-idle-rear {
@@ -258,7 +814,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
         }
 
         .animate-chassis-climb {
-          animation: tractor-suspension-climb 0.42s ease-in-out infinite;
+          animation: tractor-suspension-climb 0.62s ease-in-out infinite;
         }
 
         .animate-chassis-idle {
@@ -266,7 +822,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
         }
 
         .animate-flap-climb {
-          animation: exhaust-flap-flutter-climb 0.30s ease-in-out infinite;
+          animation: exhaust-flap-flutter-climb 0.42s ease-in-out infinite;
           transform-origin: 30px 14.5px;
         }
 
@@ -276,15 +832,15 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
         }
 
         .animate-diesel-1 {
-          animation: diesel-smoke-climb-1 1.15s ease-out infinite;
+          animation: diesel-smoke-climb-1 1.75s ease-out infinite;
         }
 
         .animate-diesel-2 {
-          animation: diesel-smoke-climb-2 1.15s ease-out 0.38s infinite;
+          animation: diesel-smoke-climb-2 1.75s ease-out 0.58s infinite;
         }
 
         .animate-diesel-3 {
-          animation: diesel-smoke-climb-3 1.15s ease-out 0.76s infinite;
+          animation: diesel-smoke-climb-3 1.75s ease-out 1.16s infinite;
         }
 
         .animate-idle-wisp-1 {
@@ -296,15 +852,42 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
         }
 
         .animate-dirt {
-          animation: tire-dirt-vertical 0.75s ease-out infinite;
+          animation: tire-dirt-vertical 1.15s ease-out infinite;
         }
 
         .animate-resting-thrum {
           animation: tractor-resting-thrum 2.2s ease-in-out infinite;
         }
+
+        .animate-service-wrench {
+          animation: wrench-badge-glow 2.5s ease-in-out infinite;
+        }
+
+        /* Parking Brake Settling Movement (Subtle Dip into Suspension & Recoil when Auto-Park Triggers) */
+        @keyframes parking-brake-settle {
+          0% {
+            transform: translateY(0) rotate(0deg);
+          }
+          20% {
+            transform: translateY(-2px) rotate(-1.2deg);
+          }
+          50% {
+            transform: translateY(3.5px) rotate(0.8deg);
+          }
+          75% {
+            transform: translateY(1.5px) rotate(-0.3deg);
+          }
+          100% {
+            transform: translateY(2px) rotate(0deg);
+          }
+        }
+
+        .animate-parking-brake {
+          animation: parking-brake-settle 0.68s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
       `}</style>
 
-      {/* Floating Container: Perfectly Vertical Tractor with Zero Box Borders / Rails */}
+      {/* Floating Container: Fixed at bottom-left in the exact same place (avoids AI chatbot on bottom-right) */}
       <div
         id="tractor-scroll-top-container"
         className={`fixed left-4 sm:left-6 bottom-6 z-40 select-none ${className}`}
@@ -312,58 +895,154 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
         <AnimatePresence>
           {isVisible && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.7, y: 25 }}
+              /* Gentle pop-in & fade-in spring animation when appearing after 400px scroll */
+              initial={{ opacity: 0, scale: 0.68, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.7, y: 25 }}
-              transition={{ duration: 0.32, ease: 'easeOut' }}
+              exit={{ opacity: 0, scale: 0.75, y: 22 }}
+              transition={{
+                type: 'spring',
+                stiffness: 220,
+                damping: 19,
+                mass: 0.85,
+              }}
               className="relative group"
             >
-              {/* Tooltip on Hover / Focus */}
+              {/* Tooltip on Hover / Focus directly above the Tractor button */}
               <div
                 role="tooltip"
                 id="tractor-scroll-tooltip"
-                className={`absolute left-full ml-3 top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-200 ease-out whitespace-nowrap bg-brand-blue-950/95 backdrop-blur-md text-brand-gold-400 border border-brand-gold-500/30 text-xs font-display font-semibold px-3 py-1.5 rounded-xl shadow-2xl flex items-center gap-2 ${
-                  isEngaged
-                    ? 'opacity-100 translate-x-0'
-                    : 'opacity-0 -translate-x-2'
+                className={`absolute -top-10 left-0 transition-all duration-200 ease-out whitespace-nowrap bg-brand-blue-950/95 backdrop-blur-md text-brand-gold-400 border border-brand-gold-500/30 text-xs font-display font-semibold px-3 py-1.5 rounded-xl shadow-2xl flex items-center gap-2.5 z-50 ${
+                  isEngaged || isHovered || isFocused
+                    ? 'opacity-100 translate-y-0 pointer-events-auto'
+                    : 'opacity-0 translate-y-2 pointer-events-none'
                 }`}
               >
-                <span>Drive to top</span>
-                <ArrowUp className="w-3.5 h-3.5 text-brand-gold-300 animate-bounce" />
+                {isParked ? (
+                  <span className="flex items-center gap-1.5 text-slate-300">
+                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-slate-800 text-[10px] font-bold text-amber-300 border border-amber-400/40">
+                      P
+                    </span>
+                    <span>Auto-Parked • Brake Set</span>
+                    <ArrowUp className="w-3.5 h-3.5 text-slate-400" />
+                  </span>
+                ) : isServiceMode ? (
+                  <span className="flex items-center gap-1.5 text-amber-300">
+                    <Wrench className="w-3.5 h-3.5 text-amber-400" />
+                    <span>In Service • Top</span>
+                    <ArrowUp className="w-3.5 h-3.5 text-amber-300 animate-bounce" />
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <span>Drive to top</span>
+                    <ArrowUp className="w-3.5 h-3.5 text-brand-gold-300 animate-bounce" />
+                  </span>
+                )}
               </div>
 
               {/*
                 Pure Transparent Tractor Button:
                 - Accessible via Mouse (hover) and Keyboard (focus)
+                - Displays 'In Service' / 'Maintenance' wrench icon on Admin Dashboard
                 - Perfectly parallel to the vertical edge of the screen (90° body axis)
-                - Triggers realistic diesel engine start on hover/focus
+                - Auto-parks in-place with brief settling suspension animation after 10s inactivity
+                - Triggers zero-lag preloaded diesel engine start on hover/focus
               */}
               <button
                 type="button"
                 id="back-to-top-button"
-                aria-label="Scroll to top of page"
+                aria-label={
+                  isParked
+                    ? 'Auto-Parked: Click to wake and drive to top'
+                    : isServiceMode
+                    ? 'In Service: Scroll to top of page'
+                    : 'Scroll to top of page'
+                }
                 aria-describedby="tractor-scroll-tooltip"
                 onClick={handleDriveToTop}
                 onKeyDown={handleKeyDown}
-                onMouseEnter={() => setIsHovered(true)}
+                onMouseEnter={() => {
+                  setIsHovered(true);
+                  setIsParked(false);
+                }}
                 onMouseLeave={() => setIsHovered(false)}
-                onFocus={() => setIsFocused(true)}
+                onFocus={() => {
+                  setIsFocused(true);
+                  setIsParked(false);
+                }}
                 onBlur={() => setIsFocused(false)}
-                onTouchStart={() => setIsHovered(true)}
+                onTouchStart={() => {
+                  setIsHovered(true);
+                  setIsParked(false);
+                }}
                 onTouchEnd={() => setIsHovered(false)}
                 onTouchCancel={() => setIsHovered(false)}
                 disabled={isDriving}
-                className="relative bg-transparent border-none p-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue-950 rounded-2xl cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95"
+                className={`relative bg-transparent border-none p-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue-950 rounded-2xl cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 ${
+                  isBrakeSettling ? 'animate-parking-brake' : ''
+                }`}
                 style={{
-                  transform: `translateY(${currentTranslateY}px)`,
-                  transition: isDriving ? 'none' : 'transform 0.25s ease-out',
+                  transform: isDriving
+                    ? `translateY(${currentTranslateY}px)`
+                    : isParked && !isBrakeSettling
+                    ? 'translateY(2px)'
+                    : 'translateY(0px)',
+                  transition: isDriving || isBrakeSettling ? 'none' : 'transform 0.25s ease-out',
                 }}
               >
+                {/* Tiny Dashboard LED: Glows green when Active, dims/turns off when Auto-Parked */}
+                <div
+                  id="tractor-dashboard-led"
+                  className="absolute -top-1.5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-slate-950/90 border border-slate-700/60 shadow-md backdrop-blur-xs pointer-events-none transition-all duration-300"
+                  title={!isParked ? 'Tractor Status: Active (Engine Ready)' : 'Tractor Status: Auto-Parked (Engine Off)'}
+                  aria-label={!isParked ? 'Status: Active' : 'Status: Auto-Parked'}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                      !isParked
+                        ? 'bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse'
+                        : 'bg-slate-600 opacity-40 shadow-none'
+                    }`}
+                  />
+                  <span
+                    className={`text-[8px] font-mono tracking-wider font-bold transition-colors duration-300 ${
+                      !isParked ? 'text-emerald-400' : 'text-slate-500'
+                    }`}
+                  >
+                    {!isParked ? 'ACT' : 'OFF'}
+                  </span>
+                </div>
+
+                {/* Visual State: 'In Service' / 'Maintenance' Wrench Badge on Admin Dashboard */}
+                {isServiceMode && (
+                  <div
+                    id="tractor-service-wrench-badge"
+                    className="absolute -top-1.5 -right-1 z-30 flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 border-2 border-brand-blue-950 shadow-md shadow-amber-500/40 animate-service-wrench transition-transform duration-200 group-hover:scale-110"
+                    title="In Service / Fleet Maintenance Mode"
+                    aria-label="In Service / Maintenance Mode"
+                  >
+                    <Wrench className="w-3.5 h-3.5 stroke-[2.6]" />
+                  </div>
+                )}
+
+                {/* Visual State: Auto-Parked (Engine Off) 'P' Badge */}
+                {isParked && (
+                  <div
+                    id="tractor-auto-parked-badge"
+                    className="absolute -top-1.5 -left-1.5 z-30 flex items-center justify-center w-5 h-5 rounded-full bg-slate-900/90 text-amber-300 border border-amber-500/50 shadow-md font-bold text-[10px] tracking-tight transition-transform duration-200"
+                    title="Auto-Parked: Parking Brake Set • Engine Off (Inactive > 10s)"
+                    aria-label="Auto-Parked: Parking Brake Set"
+                  >
+                    P
+                  </div>
+                )}
+
                 {/* Clean Horizontal Contact Shadow directly beneath vertical tractor (no tilt) */}
                 <div
                   className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-2.5 bg-black/45 rounded-full blur-[2.5px] pointer-events-none transition-all duration-300 ${
                     isDriving
                       ? 'opacity-15 scale-75'
+                      : isParked
+                      ? 'opacity-35 scale-95'
                       : isEngaged
                       ? 'opacity-85 scale-100'
                       : 'opacity-65 group-hover:opacity-85'
@@ -374,7 +1053,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                 <svg
                   viewBox="0 0 68 68"
                   className={`w-15 h-15 sm:w-17 sm:h-17 relative z-10 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] overflow-visible ${
-                    !isDriving && !isEngaged ? 'animate-resting-thrum' : ''
+                    !isDriving && !isEngaged && !isParked ? 'animate-resting-thrum' : ''
                   }`}
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -491,6 +1170,15 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                         strokeWidth="0.7"
                       />
 
+                      {/* In-Service Fleet Flashing Beacon on Canopy in Maintenance Mode */}
+                      {isServiceMode && (
+                        <g className="service-beacon-indicator">
+                          <circle cx="45.5" cy="11.5" r="2.2" fill="#f59e0b" className="animate-pulse" />
+                          <circle cx="45.5" cy="11.5" r="1.2" fill="#fef08a" />
+                          <rect x="44.2" y="12.7" width="2.6" height="1.2" fill="#0e2954" rx="0.3" />
+                        </g>
+                      )}
+
                       {/* Tinted Safety Glass Windshield */}
                       <polygon
                         points="49.5,16 40.5,16 38.5,27.5 51.5,27.5"
@@ -517,6 +1205,25 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       {/* Steering Column & Wheel */}
                       <line x1="40" y1="23" x2="38" y2="25.5" stroke="#020617" strokeWidth="1.7" strokeLinecap="round" />
                       <line x1="39" y1="24.5" x2="37" y2="29" stroke="#334155" strokeWidth="1.2" />
+
+                      {/* Tiny Dashboard Instrument LED: Glows green when Active, dims/turns off when Auto-Parked */}
+                      <circle
+                        cx="38.5"
+                        cy="26.8"
+                        r="1.2"
+                        fill={!isParked ? '#22c55e' : '#334155'}
+                        className="transition-colors duration-300"
+                      />
+                      {!isParked && (
+                        <circle
+                          cx="38.5"
+                          cy="26.8"
+                          r="2.6"
+                          fill="#4ade80"
+                          fillOpacity="0.6"
+                          className="animate-pulse pointer-events-none"
+                        />
+                      )}
 
                       {/* Main Engine Hood (Golden Chassis, mirrored facing left) */}
                       <path
@@ -606,7 +1313,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
                     {/*
                       Rear Heavy Drive Tire (Centered at x=46, y=37, Bottom of vehicle):
-                      - Driving: .animate-wheel-drive-rear (0.92s)
+                      - Driving: .animate-wheel-drive-rear (1.42s synchronized slower)
                       - Hover/Focus: .animate-wheel-idle-rear (3.8s slow idle roll)
                     */}
                     <g transform="translate(46, 37)">
@@ -639,7 +1346,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
                     {/*
                       Front Steer Wheel (Smaller, Centered at x=22, y=40, Top of vehicle):
-                      - Driving: .animate-wheel-drive-front (0.70s)
+                      - Driving: .animate-wheel-drive-front (1.08s synchronized slower)
                       - Hover/Focus: .animate-wheel-idle-front (2.8s slow idle roll)
                     */}
                     <g transform="translate(22, 40)">

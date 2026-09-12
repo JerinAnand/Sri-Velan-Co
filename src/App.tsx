@@ -220,10 +220,10 @@ export default function App() {
          </a>
        </div>
      )}
- 
-       {/* Tractor-Themed Animated Scroll-to-Top Floating Widget */}
-       {!isAdminDashboard && !isCapabilityStatement && (
-         <TractorScrollTop />
+
+       {/* Tractor-Themed Animated Scroll-to-Top Floating Widget (With In-Service / Maintenance mode on Admin Dashboard) */}
+       {!isCapabilityStatement && (
+         <TractorScrollTop isMaintenance={isAdminDashboard} />
        )}
 
        {/* Offline Intelligent AI Assistant */}
