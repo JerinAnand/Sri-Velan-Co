@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUp, Wrench } from 'lucide-react';
+import { ArrowUp, Megaphone, Wrench } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 interface TractorScrollTopProps {
@@ -10,6 +10,8 @@ interface TractorScrollTopProps {
   className?: string;
   /** Explicit maintenance / in-service mode (defaults to checking admin routes) */
   isMaintenance?: boolean;
+  /** Optional override for the tractor honk sound effect on click */
+  enableHonk?: boolean;
 }
 
 /**
@@ -370,12 +372,70 @@ class TractorAudioPreloadEngine {
       osc.stop(now + 0.04);
     } catch {}
   }
+
+  /**
+   * Play a warm, playful dual-tone tractor horn ("HONK-HONK!")
+   * Synchronized with the quick jump animation when clicking the tractor.
+   */
+  playHonk(volume = 0.085, singleToot = false) {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      const playBlast = (startOffset: number, duration: number) => {
+        const t0 = now + startOffset;
+        const tEnd = t0 + duration;
+
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(0.0001, t0);
+        master.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume), t0 + 0.015);
+        master.gain.setValueAtTime(volume * 0.92, Math.max(t0 + 0.02, tEnd - 0.045));
+        master.gain.exponentialRampToValueAtTime(0.0001, tEnd);
+
+        // Warm brass horn resonance filter
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1180, t0);
+        filter.Q.setValueAtTime(1.8, t0);
+
+        master.connect(filter);
+        filter.connect(ctx.destination);
+
+        // Dual harmonized diaphragm horn tones (C#4 + F4 major-third interval)
+        const freqs = [277.18, 349.23];
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const oscGain = ctx.createGain();
+          osc.type = idx === 0 ? 'sawtooth' : 'triangle';
+
+          // Subtle air-pressure pitch scoop on attack
+          osc.frequency.setValueAtTime(freq * 0.95, t0);
+          osc.frequency.exponentialRampToValueAtTime(freq, t0 + 0.028);
+
+          oscGain.gain.setValueAtTime(idx === 0 ? 0.52 : 0.65, t0);
+          osc.connect(oscGain);
+          oscGain.connect(master);
+
+          osc.start(t0);
+          osc.stop(tEnd + 0.02);
+        });
+      };
+
+      // Quick first toot, followed by a cheerful second honk
+      playBlast(0, 0.11);
+      if (!singleToot) {
+        playBlast(0.155, 0.195);
+      }
+    } catch {}
+  }
 }
 
 export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
   threshold = 400, // Default 400px entrance threshold
   className = '',
   isMaintenance,
+  enableHonk,
 }) => {
   const location = useLocation();
 
@@ -384,6 +444,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
   const [isVisible, setIsVisible] = useState(false);
   const [isDriving, setIsDriving] = useState(false);
+  const [isJumping, setIsJumping] = useState(false); // Quick playful jump animation on click
   const [driveProgress, setDriveProgress] = useState(0); // 0 (bottom) -> 1 (top of screen)
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -404,11 +465,25 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
     return !prefersReducedMotion;
   });
 
+  // Optional, user-activated tractor honk preference (persisted in localStorage, opt-in by default)
+  const [honkEnabled, setHonkEnabled] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      return localStorage.getItem('tractor_honk_enabled') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const isHonkActive = enableHonk ?? honkEnabled;
+
   const soundEngineRef = useRef<TractorAudioPreloadEngine | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const isDrivingRef = useRef(false);
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const brakeSettlingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const jumpTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const driveDelayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Listen to system prefers-reduced-motion changes if user hasn't explicitly set a preference
   useEffect(() => {
@@ -445,6 +520,8 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
     return () => {
       engine.stopAll();
+      if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
+      if (driveDelayTimeoutRef.current) clearTimeout(driveDelayTimeoutRef.current);
       window.removeEventListener('pointerdown', handleEarlyWarmup);
       window.removeEventListener('mousemove', handleEarlyWarmup);
       window.removeEventListener('scroll', handleEarlyWarmup);
@@ -459,19 +536,36 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
     }
   }, [isVisible]);
 
-  // Persist sound toggle preference
-  const toggleSound = useCallback(() => {
-    setSoundEnabled((prev) => {
+  // Trigger quick playful jump animation (synchronized with honk)
+  const triggerJumpAnimation = useCallback(() => {
+    if (jumpTimeoutRef.current) {
+      clearTimeout(jumpTimeoutRef.current);
+    }
+    setIsJumping(false);
+    // Double-rAF ensures CSS animation reliably restarts if triggered consecutively
+    requestAnimationFrame(() => {
+      setIsJumping(true);
+      jumpTimeoutRef.current = setTimeout(() => {
+        setIsJumping(false);
+      }, 420);
+    });
+  }, []);
+
+  // Toggle optional user-activated tractor honk effect
+  const toggleHonk = useCallback(() => {
+    soundEngineRef.current?.preload();
+    setHonkEnabled((prev) => {
       const next = !prev;
       try {
-        localStorage.setItem('tractor_sound_enabled', String(next));
+        localStorage.setItem('tractor_honk_enabled', String(next));
       } catch {}
-      if (!next) {
-        soundEngineRef.current?.stopAll();
+      if (next) {
+        soundEngineRef.current?.playHonk(0.065, true);
+        triggerJumpAnimation();
       }
       return next;
     });
-  }, []);
+  }, [triggerJumpAnimation]);
 
   // Auto-Park Feature: 10-Second Inactivity Detector
   // Engages parking brake animation and powers engine off in place if user is inactive > 10s
@@ -631,48 +725,65 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
 
     setIsParked(false);
     isDrivingRef.current = true;
-    setIsDriving(true);
 
-    const startScrollY = window.scrollY || document.documentElement.scrollTop;
-    const duration = Math.min(5400, Math.max(3800, Math.sqrt(startScrollY) * 95));
-    const startTime = performance.now();
-
-    // Trigger preloaded climbing sound if sound is enabled (instant 0ms playback)
-    if (soundEnabled) {
-      soundEngineRef.current?.startDriving(duration);
+    // Play optional user-activated tractor honk synchronized with quick playful jump animation
+    if (isHonkActive) {
+      soundEngineRef.current?.playHonk(0.085, false);
     }
+    triggerJumpAnimation();
 
-    const animateClimb = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const linearRatio = Math.min(1, elapsed / duration);
-      const eased = realisticTractorEase(linearRatio);
+    const startClimb = () => {
+      setIsDriving(true);
 
-      // Synchronize vehicle climb & page scroll
-      setDriveProgress(eased);
+      const startScrollY = window.scrollY || document.documentElement.scrollTop;
+      const duration = Math.min(5400, Math.max(3800, Math.sqrt(startScrollY) * 95));
+      const startTime = performance.now();
 
-      const targetScroll = startScrollY * (1 - eased);
-      window.scrollTo(0, targetScroll);
-
-      if (linearRatio < 1) {
-        animationFrameRef.current = requestAnimationFrame(animateClimb);
-      } else {
-        // Summit reached: drive cleanly past the top of the viewport
-        window.scrollTo(0, 0);
-        setDriveProgress(1.15);
-
-        // Gentle pause before resetting back to rest position
-        setTimeout(() => {
-          setIsVisible(false);
-          setIsDriving(false);
-          isDrivingRef.current = false;
-          setDriveProgress(0);
-          soundEngineRef.current?.stopAll();
-        }, 500);
+      // Trigger preloaded climbing sound if sound is enabled (instant 0ms playback)
+      if (soundEnabled) {
+        soundEngineRef.current?.startDriving(duration);
       }
+
+      const animateClimb = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const linearRatio = Math.min(1, elapsed / duration);
+        const eased = realisticTractorEase(linearRatio);
+
+        // Synchronize vehicle climb & page scroll
+        setDriveProgress(eased);
+
+        const targetScroll = startScrollY * (1 - eased);
+        window.scrollTo(0, targetScroll);
+
+        if (linearRatio < 1) {
+          animationFrameRef.current = requestAnimationFrame(animateClimb);
+        } else {
+          // Summit reached: drive cleanly past the top of the viewport
+          window.scrollTo(0, 0);
+          setDriveProgress(1.15);
+
+          // Gentle pause before resetting back to rest position
+          setTimeout(() => {
+            setIsVisible(false);
+            setIsDriving(false);
+            setIsHovered(false);
+            setIsFocused(false);
+            isDrivingRef.current = false;
+            setDriveProgress(0);
+            soundEngineRef.current?.stopAll();
+          }, 500);
+        }
+      };
+
+      animationFrameRef.current = requestAnimationFrame(animateClimb);
     };
 
-    animationFrameRef.current = requestAnimationFrame(animateClimb);
-  }, [soundEnabled]);
+    // Synchronize launch with the playful jump & honk beat (320ms hop before climb)
+    if (driveDelayTimeoutRef.current) {
+      clearTimeout(driveDelayTimeoutRef.current);
+    }
+    driveDelayTimeoutRef.current = setTimeout(startClimb, 320);
+  }, [soundEnabled, isHonkActive, triggerJumpAnimation]);
 
   // Keyboard activation (Enter / Space)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -885,6 +996,82 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
         .animate-parking-brake {
           animation: parking-brake-settle 0.68s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
+
+        /* Quick Playful Jump Animation Synchronized with Tractor Honk */
+        @keyframes tractor-playful-jump {
+          0% {
+            transform: translateY(0) scale(1, 1) rotate(0deg);
+          }
+          14% {
+            transform: translateY(3px) scale(1.08, 0.88) rotate(0deg);
+          }
+          42% {
+            transform: translateY(-19px) scale(0.94, 1.09) rotate(-5deg);
+          }
+          60% {
+            transform: translateY(-9px) scale(0.98, 1.03) rotate(3deg);
+          }
+          78% {
+            transform: translateY(2.5px) scale(1.06, 0.92) rotate(-1deg);
+          }
+          90% {
+            transform: translateY(-2.5px) scale(0.99, 1.02) rotate(0.5deg);
+          }
+          100% {
+            transform: translateY(0) scale(1, 1) rotate(0deg);
+          }
+        }
+
+        .animate-tractor-jump {
+          animation: tractor-playful-jump 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          transform-origin: center bottom;
+        }
+
+        @keyframes tractor-jump-shadow {
+          0% {
+            transform: scale(1);
+            opacity: 0.75;
+          }
+          14% {
+            transform: scale(1.08);
+            opacity: 0.85;
+          }
+          42% {
+            transform: scale(0.56);
+            opacity: 0.22;
+          }
+          78% {
+            transform: scale(1.06);
+            opacity: 0.85;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 0.75;
+          }
+        }
+
+        .animate-tractor-jump-shadow {
+          animation: tractor-jump-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes honk-soundwave {
+          0% {
+            transform: translateY(0) scale(0.5);
+            opacity: 0.95;
+          }
+          100% {
+            transform: translateY(-14px) scale(1.35);
+            opacity: 0;
+          }
+        }
+
+        .animate-honk-wave-1 {
+          animation: honk-soundwave 0.34s ease-out forwards;
+        }
+
+        .animate-honk-wave-2 {
+          animation: honk-soundwave 0.34s ease-out 0.14s forwards;
+        }
       `}</style>
 
       {/* Floating Container: Fixed at bottom-left in the exact same place (avoids AI chatbot on bottom-right) */}
@@ -906,37 +1093,89 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                 mass: 0.85,
               }}
               className="relative group"
+              onMouseEnter={() => {
+                setIsHovered(true);
+                setIsParked(false);
+              }}
+              onMouseLeave={() => setIsHovered(false)}
             >
-              {/* Tooltip on Hover / Focus directly above the Tractor button */}
+              {/* Tooltip on Hover / Focus directly above the Tractor button (hover-bridged with pb-2) */}
               <div
-                role="tooltip"
-                id="tractor-scroll-tooltip"
-                className={`absolute -top-10 left-0 transition-all duration-200 ease-out whitespace-nowrap bg-brand-blue-950/95 backdrop-blur-md text-brand-gold-400 border border-brand-gold-500/30 text-xs font-display font-semibold px-3 py-1.5 rounded-xl shadow-2xl flex items-center gap-2.5 z-50 ${
-                  isEngaged || isHovered || isFocused
+                className={`absolute bottom-full left-0 pb-2 z-50 transition-all duration-200 ease-out ${
+                  !isDriving && (isEngaged || isHovered || isFocused)
                     ? 'opacity-100 translate-y-0 pointer-events-auto'
                     : 'opacity-0 translate-y-2 pointer-events-none'
                 }`}
               >
-                {isParked ? (
-                  <span className="flex items-center gap-1.5 text-slate-300">
-                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-slate-800 text-[10px] font-bold text-amber-300 border border-amber-400/40">
-                      P
+                <div
+                  role="tooltip"
+                  id="tractor-scroll-tooltip"
+                  className="whitespace-nowrap bg-brand-blue-950/95 backdrop-blur-md text-brand-gold-400 border border-brand-gold-500/30 text-xs font-display font-semibold px-3 py-1.5 rounded-xl shadow-2xl flex items-center gap-2.5"
+                >
+                  {isParked ? (
+                    <span className="flex items-center gap-1.5 text-slate-300">
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-slate-800 text-[10px] font-bold text-amber-300 border border-amber-400/40">
+                        P
+                      </span>
+                      <span>Auto-Parked • Brake Set</span>
+                      <ArrowUp className="w-3.5 h-3.5 text-slate-400" />
                     </span>
-                    <span>Auto-Parked • Brake Set</span>
-                    <ArrowUp className="w-3.5 h-3.5 text-slate-400" />
-                  </span>
-                ) : isServiceMode ? (
-                  <span className="flex items-center gap-1.5 text-amber-300">
-                    <Wrench className="w-3.5 h-3.5 text-amber-400" />
-                    <span>In Service • Top</span>
-                    <ArrowUp className="w-3.5 h-3.5 text-amber-300 animate-bounce" />
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5">
-                    <span>Drive to top</span>
-                    <ArrowUp className="w-3.5 h-3.5 text-brand-gold-300 animate-bounce" />
-                  </span>
-                )}
+                  ) : isServiceMode ? (
+                    <span className="flex items-center gap-1.5 text-amber-300">
+                      <Wrench className="w-3.5 h-3.5 text-amber-400" />
+                      <span>In Service • Top</span>
+                      <ArrowUp className="w-3.5 h-3.5 text-amber-300 animate-bounce" />
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5">
+                      <span>Drive to top</span>
+                      <ArrowUp className="w-3.5 h-3.5 text-brand-gold-300 animate-bounce" />
+                    </span>
+                  )}
+
+                  {/* Optional User-Activated Tractor Honk Toggle (only shown when not forced via prop) */}
+                  {enableHonk === undefined && (
+                    <>
+                      <span className="w-px h-3.5 bg-brand-gold-500/30" />
+                      <button
+                        type="button"
+                        id="tractor-honk-toggle"
+                        aria-pressed={isHonkActive}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleHonk();
+                        }}
+                        onBlur={(e) => {
+                          if (!e.currentTarget.closest('.group')?.contains(e.relatedTarget as Node)) {
+                            setIsFocused(false);
+                          }
+                        }}
+                        className={`flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[11px] font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold-400 cursor-pointer ${
+                          isHonkActive
+                            ? 'bg-brand-gold-500/20 border-brand-gold-400/50 text-brand-gold-300 shadow-[0_0_8px_rgba(230,179,37,0.25)]'
+                            : 'bg-slate-900/60 border-slate-700/70 text-slate-400 hover:text-brand-gold-300 hover:border-brand-gold-500/30'
+                        }`}
+                        title={
+                          isHonkActive
+                            ? 'Tractor honk active on click (Click to disable)'
+                            : 'Activate tractor honk on click'
+                        }
+                        aria-label={
+                          isHonkActive
+                            ? 'Disable tractor honk sound'
+                            : 'Enable tractor honk sound'
+                        }
+                      >
+                        <Megaphone
+                          className={`w-3 h-3 transition-transform duration-150 ${
+                            isHonkActive ? 'text-brand-gold-300 -rotate-12 scale-110' : 'text-slate-400'
+                          }`}
+                        />
+                        <span>{isHonkActive ? 'Honk On' : 'Honk'}</span>
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
 
               {/*
@@ -946,6 +1185,7 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                 - Perfectly parallel to the vertical edge of the screen (90° body axis)
                 - Auto-parks in-place with brief settling suspension animation after 10s inactivity
                 - Triggers zero-lag preloaded diesel engine start on hover/focus
+                - Triggers playful jump animation (with optional user-activated tractor honk) on click
               */}
               <button
                 type="button"
@@ -960,23 +1200,23 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                 aria-describedby="tractor-scroll-tooltip"
                 onClick={handleDriveToTop}
                 onKeyDown={handleKeyDown}
-                onMouseEnter={() => {
-                  setIsHovered(true);
-                  setIsParked(false);
-                }}
-                onMouseLeave={() => setIsHovered(false)}
                 onFocus={() => {
                   setIsFocused(true);
                   setIsParked(false);
                 }}
-                onBlur={() => setIsFocused(false)}
+                onBlur={(e) => {
+                  // Keep tooltip visible if focus moves inside the tooltip's honk toggle
+                  if (!e.currentTarget.parentElement?.contains(e.relatedTarget as Node)) {
+                    setIsFocused(false);
+                  }
+                }}
                 onTouchStart={() => {
                   setIsHovered(true);
                   setIsParked(false);
                 }}
                 onTouchEnd={() => setIsHovered(false)}
                 onTouchCancel={() => setIsHovered(false)}
-                disabled={isDriving}
+                disabled={isDriving || isJumping}
                 className={`relative bg-transparent border-none p-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue-950 rounded-2xl cursor-pointer transition-transform duration-200 hover:scale-105 active:scale-95 ${
                   isBrakeSettling ? 'animate-parking-brake' : ''
                 }`}
@@ -1036,10 +1276,37 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                   </div>
                 )}
 
+                {/* Playful Acoustic Horn Soundwave Arcs synchronized with Honk & Jump */}
+                {isJumping && isHonkActive && (
+                  <div
+                    aria-hidden="true"
+                    className="absolute -top-4 left-1/2 -translate-x-1/2 pointer-events-none z-30 flex flex-col items-center"
+                  >
+                    <svg width="28" height="16" viewBox="0 0 28 16" fill="none" className="overflow-visible">
+                      <path
+                        d="M 8 12 Q 14 6 20 12"
+                        stroke="#fde047"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        className="animate-honk-wave-1"
+                      />
+                      <path
+                        d="M 4 8 Q 14 0 24 8"
+                        stroke="#f59e0b"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        className="animate-honk-wave-2"
+                      />
+                    </svg>
+                  </div>
+                )}
+
                 {/* Clean Horizontal Contact Shadow directly beneath vertical tractor (no tilt) */}
                 <div
                   className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-2.5 bg-black/45 rounded-full blur-[2.5px] pointer-events-none transition-all duration-300 ${
-                    isDriving
+                    isJumping
+                      ? 'animate-tractor-jump-shadow'
+                      : isDriving
                       ? 'opacity-15 scale-75'
                       : isParked
                       ? 'opacity-35 scale-95'
@@ -1049,15 +1316,16 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                   }`}
                 />
 
-                {/* SVG Contractor Tractor Graphic (Strictly Vertical at 90°) */}
-                <svg
-                  viewBox="0 0 68 68"
-                  className={`w-15 h-15 sm:w-17 sm:h-17 relative z-10 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] overflow-visible ${
-                    !isDriving && !isEngaged && !isParked ? 'animate-resting-thrum' : ''
-                  }`}
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                {/* Playful Jump Wrapper + SVG Contractor Tractor Graphic (Strictly Vertical at 90°) */}
+                <div className={isJumping ? 'animate-tractor-jump' : ''}>
+                  <svg
+                    viewBox="0 0 68 68"
+                    className={`w-15 h-15 sm:w-17 sm:h-17 relative z-10 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] overflow-visible ${
+                      !isDriving && !isEngaged && !isParked && !isJumping ? 'animate-resting-thrum' : ''
+                    }`}
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                   {/* Exactly 90-degree body axis: Perfectly parallel to vertical edge */}
                   <g
                     transform={`rotate(${currentRotation} 34 34)`}
@@ -1375,7 +1643,8 @@ export const TractorScrollTop: React.FC<TractorScrollTopProps> = ({
                       </g>
                     </g>
                   </g>
-                </svg>
+                  </svg>
+                </div>
               </button>
             </motion.div>
           )}
