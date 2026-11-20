@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { useTheme } from '../context/ThemeContext';
 import { 
@@ -59,6 +59,110 @@ const FALLBACK_TELEMETRY: TelemetryRecord[] = [
 ];
 
 const OPENSHEET_API_URL = 'https://opensheet.elk.sh/1sieBEWWOANHTRj23dRI6Fd_bCLgAoP0XeCPB7dc0Txw/1';
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: any[];
+  isDark: boolean;
+}
+
+const CustomTooltip: React.FC<CustomTooltipProps> = React.memo(({ active, payload, isDark }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload as TelemetryRecord;
+    return (
+      <div
+        className={`border p-4 rounded-xl shadow-2xl space-y-2 text-xs text-left ${
+          isDark
+            ? 'bg-neutral-900 border-neutral-850 text-white'
+            : 'bg-white border-neutral-200 text-neutral-900'
+        }`}
+      >
+        <p className={`font-display font-black text-sm ${isDark ? 'text-brand-gold-400' : 'text-brand-blue-900'}`}>
+          {data.zone}: {data.areas}
+        </p>
+        <p className={`font-mono text-[10px] ${isDark ? 'text-neutral-400' : 'text-neutral-500'}`}>
+          Wards Scope: {data.wardRange}
+        </p>
+        <div className={`h-px my-1 ${isDark ? 'bg-neutral-800' : 'bg-neutral-150'}`} />
+        <div className="space-y-1">
+          <div className="flex justify-between gap-6">
+            <span className={isDark ? 'text-neutral-400' : 'text-neutral-600'}>Active Pumps:</span>
+            <span className={`font-mono font-bold ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
+              {data.activePumps} / {data.totalPumps}
+            </span>
+          </div>
+          <div className="flex justify-between gap-6">
+            <span className={isDark ? 'text-neutral-400' : 'text-neutral-600'}>On-field Crews:</span>
+            <span className={`font-mono font-bold ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
+              {data.staffCount} Staff
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+});
+
+CustomTooltip.displayName = 'CustomTooltip';
+
+const TelemetryBarChart: React.FC<{ telemetry: TelemetryRecord[]; isDark: boolean }> = React.memo(
+  ({ telemetry, isDark }) => {
+    const chartMargin = useMemo(() => ({ top: 10, right: 10, left: -15, bottom: 5 }), []);
+    const xAxisTick = useMemo(
+      () => ({ fontSize: 10, fontWeight: 600, fill: isDark ? '#a3a3a3' : '#4b5563' }),
+      [isDark]
+    );
+    const yAxisTick = useMemo(
+      () => ({ fontSize: 10, fontWeight: 500, fill: isDark ? '#a3a3a3' : '#4b5563' }),
+      [isDark]
+    );
+    const axisLineStyle = useMemo(
+      () => ({ stroke: isDark ? '#262626' : '#e5e7eb' }),
+      [isDark]
+    );
+    const legendWrapperStyle = useMemo(
+      () => ({
+        fontSize: '11px',
+        fontWeight: 600,
+        color: isDark ? '#ffffff' : '#0e2954',
+      }),
+      [isDark]
+    );
+    const tooltipContent = useCallback(
+      (tooltipProps: any) => <CustomTooltip {...tooltipProps} isDark={isDark} />,
+      [isDark]
+    );
+
+    return (
+      <ResponsiveContainer width="100%" height={350} debounce={50}>
+        <BarChart data={telemetry} margin={chartMargin} barGap={4}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? '#262626' : '#f0f0f0'} />
+          <XAxis dataKey="zone" tick={xAxisTick} axisLine={axisLineStyle} />
+          <YAxis width={42} tick={yAxisTick} axisLine={axisLineStyle} />
+          <Tooltip content={tooltipContent} />
+          <Legend verticalAlign="top" height={36} iconSize={10} wrapperStyle={legendWrapperStyle} />
+          <Bar
+            name="Active Dewatering Pumps"
+            dataKey="activePumps"
+            fill={isDark ? '#3b82f6' : '#0e2954'}
+            radius={[4, 4, 0, 0]}
+            barSize={16}
+          />
+          <Bar
+            name="On-field Crew Members"
+            dataKey="staffCount"
+            fill={isDark ? '#fbbf24' : '#e6b325'}
+            radius={[4, 4, 0, 0]}
+            barSize={16}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  }
+);
+
+TelemetryBarChart.displayName = 'TelemetryBarChart';
 
 export const ServiceAreaTelemetry: React.FC = () => {
   const { theme } = useTheme();
@@ -164,7 +268,6 @@ export const ServiceAreaTelemetry: React.FC = () => {
     const targetInterval = isBackingOff ? 60 : 30;
     if (secondsAgo >= targetInterval) {
       fetchTelemetry(true);
-      setSecondsAgo(0);
     }
   }, [secondsAgo, isBackingOff, fetchTelemetry]);
 
@@ -188,43 +291,6 @@ export const ServiceAreaTelemetry: React.FC = () => {
         text: 'Critical' 
       };
     }
-  };
-
-  // Recharts custom interactive tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload as TelemetryRecord;
-      return (
-        <div className={`border p-4 rounded-xl shadow-2xl space-y-2 text-xs text-left ${
-          isDark 
-            ? 'bg-neutral-900 border-neutral-850 text-white' 
-            : 'bg-white border-neutral-200 text-neutral-900'
-        }`}>
-          <p className={`font-display font-black text-sm ${isDark ? 'text-brand-gold-400' : 'text-brand-blue-900'}`}>
-            {data.zone}: {data.areas}
-          </p>
-          <p className={`font-mono text-[10px] ${isDark ? 'text-neutral-400' : 'text-neutral-500'}`}>
-            Wards Scope: {data.wardRange}
-          </p>
-          <div className={`h-px my-1 ${isDark ? 'bg-neutral-800' : 'bg-neutral-150'}`} />
-          <div className="space-y-1">
-            <div className="flex justify-between gap-6">
-              <span className={isDark ? 'text-neutral-400' : 'text-neutral-600'}>Active Pumps:</span>
-              <span className={`font-mono font-bold ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
-                {data.activePumps} / {data.totalPumps}
-              </span>
-            </div>
-            <div className="flex justify-between gap-6">
-              <span className={isDark ? 'text-neutral-400' : 'text-neutral-600'}>On-field Crews:</span>
-              <span className={`font-mono font-bold ${isDark ? 'text-neutral-100' : 'text-neutral-900'}`}>
-                {data.staffCount} Staff
-              </span>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return null;
   };
 
   // Shimmering skeleton loader structure
@@ -408,49 +474,7 @@ export const ServiceAreaTelemetry: React.FC = () => {
         {/* Horizontal scroll container with scrollbar styling and touch scrolling support */}
         <div className="w-full overflow-x-auto no-scrollbar scroll-smooth">
           <div className="min-w-[850px] lg:min-w-0 lg:w-full h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={telemetry}
-                margin={{ top: 10, right: 10, left: -15, bottom: 5 }}
-                barGap={4}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? '#262626' : '#f0f0f0'} />
-                <XAxis 
-                  dataKey="zone" 
-                  tick={{ fontSize: 10, fontWeight: 600, fill: isDark ? '#a3a3a3' : '#4b5563' }}
-                  axisLine={{ stroke: isDark ? '#262626' : '#e5e7eb' }}
-                />
-                <YAxis 
-                  tick={{ fontSize: 10, fontWeight: 500, fill: isDark ? '#a3a3a3' : '#4b5563' }}
-                  axisLine={{ stroke: isDark ? '#262626' : '#e5e7eb' }}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend 
-                  verticalAlign="top" 
-                  height={36} 
-                  iconSize={10}
-                  wrapperStyle={{ 
-                    fontSize: '11px', 
-                    fontWeight: 600,
-                    color: isDark ? '#ffffff' : '#0e2954'
-                  }} 
-                />
-                <Bar 
-                  name="Active Dewatering Pumps" 
-                  dataKey="activePumps" 
-                  fill={isDark ? '#3b82f6' : '#0e2954'} 
-                  radius={[4, 4, 0, 0]} 
-                  barSize={16}
-                />
-                <Bar 
-                  name="On-field Crew Members" 
-                  dataKey="staffCount" 
-                  fill={isDark ? '#fbbf24' : '#e6b325'} 
-                  radius={[4, 4, 0, 0]} 
-                  barSize={16}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            <TelemetryBarChart telemetry={telemetry} isDark={isDark} />
           </div>
         </div>
         

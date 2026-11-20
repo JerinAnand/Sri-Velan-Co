@@ -84,11 +84,15 @@ export const HydraulicBroomerTab: React.FC<HydraulicBroomerTabProps> = ({
     value: 'Specification Value',
   });
 
-  const specsWithId = (formData.specs || []).map((s, idx) => ({
-    id: (s as any).id || `spec_${idx}`,
-    label: s.label,
-    value: s.value,
-  }));
+  const specsWithId = useMemo(
+    () =>
+      (formData.specs || []).map((s, idx) => ({
+        id: (s as any).id || `spec_${idx}`,
+        label: s.label,
+        value: s.value,
+      })),
+    [formData.specs]
+  );
 
   return (
     <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Layers } from 'lucide-react';
 import { RepeaterItem } from './RepeaterItem';
 import { EmptyState } from './SectionCard';
@@ -16,10 +16,12 @@ interface EditableItemListProps<T extends { id: string }> {
   emptyStateText?: string;
 }
 
+const EMPTY_ITEMS: never[] = [];
+
 export function EditableItemList<T extends { id: string }>({
   title,
   description,
-  items = [],
+  items = EMPTY_ITEMS as T[],
   onUpdateItems,
   createNewItem,
   renderItemFields,
@@ -28,15 +30,22 @@ export function EditableItemList<T extends { id: string }>({
   addButtonText = 'Add item',
   emptyStateText = 'No items added yet. Click below to add your first entry.',
 }: EditableItemListProps<T>) {
+  const itemKeys = useMemo(
+    () => items.map((item, idx) => item.id || String(idx)),
+    [items]
+  );
+  const itemKeysSignature = itemKeys.join('|');
+  const firstKey = itemKeys[0] ?? null;
+
   // Only one item expanded by default (the first item if available)
-  const [expandedId, setExpandedId] = useState<string | null>(() => items[0]?.id ?? null);
+  const [expandedId, setExpandedId] = useState<string | null>(() => firstKey);
 
   // If items change and expandedId no longer exists, keep collapsed or select first
   useEffect(() => {
-    if (expandedId && !items.some((i) => i.id === expandedId)) {
-      setExpandedId(items[0]?.id ?? null);
+    if (expandedId && !itemKeys.includes(expandedId)) {
+      setExpandedId(firstKey);
     }
-  }, [items, expandedId]);
+  }, [itemKeysSignature, expandedId, firstKey, itemKeys]);
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
@@ -45,15 +54,21 @@ export function EditableItemList<T extends { id: string }>({
   const handleAddItem = () => {
     const newItem = createNewItem();
     onUpdateItems([...items, newItem]);
-    setExpandedId(newItem.id);
+    setExpandedId(newItem.id || String(items.length));
   };
 
   const handleRemoveItem = (index: number) => {
     const next = [...items];
     const [removed] = next.splice(index, 1);
     onUpdateItems(next);
-    if (removed && removed.id === expandedId) {
-      setExpandedId(next[index]?.id ?? next[index - 1]?.id ?? null);
+    const removedKey = removed ? removed.id || String(index) : null;
+    if (removedKey && removedKey === expandedId) {
+      const nextExpanded = next[index]
+        ? next[index].id || String(index)
+        : next[index - 1]
+          ? next[index - 1].id || String(index - 1)
+          : null;
+      setExpandedId(nextExpanded);
     }
   };
 

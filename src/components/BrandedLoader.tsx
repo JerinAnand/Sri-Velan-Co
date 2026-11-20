@@ -263,14 +263,9 @@ export const BrandedLoader: React.FC = () => {
                   </span>
                   
                   {/* Percentage Counter Indicator */}
-                  <motion.span
-                    key={loadingProgress}
-                    initial={{ opacity: 0.6 }}
-                    animate={{ opacity: 1 }}
-                    className="text-brand-gold-400 font-bold tabular-nums"
-                  >
+                  <span className="text-brand-gold-400 font-bold tabular-nums">
                     {loadingProgress}%
-                  </motion.span>
+                  </span>
                 </div>
 
                 {/* Progress bar tracks with sleek inner shimmer gradients */}
@@ -290,14 +285,9 @@ export const BrandedLoader: React.FC = () => {
 
                 {/* Typing status loader terminal texts */}
                 <div className="min-h-[30px] flex items-center justify-center px-2">
-                  <motion.p
-                    key={loadingMessage}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 0.85, y: 0 }}
-                    className="text-neutral-300 font-mono text-[9.5px] uppercase tracking-wider text-center leading-relaxed"
-                  >
+                  <p className="text-neutral-300 font-mono text-[9.5px] uppercase tracking-wider text-center leading-relaxed opacity-85 transition-opacity duration-200">
                     {loadingMessage}
-                  </motion.p>
+                  </p>
                 </div>
               </div>
             </motion.div>
