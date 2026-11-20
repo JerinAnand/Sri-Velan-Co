@@ -1,17 +1,53 @@
-import React, { useState } from 'react';
-import { Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { FileText } from 'lucide-react';
 import { FullSiteContent, FooterContent } from '../../context/SiteContentContext';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  CharacterCounter,
+  HelperText,
+  inputBaseClasses,
+  textareaBaseClasses,
+} from './SectionCard';
 
 interface FooterTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const FooterTab: React.FC<FooterTabProps> = ({ content, updateSection }) => {
+export const FooterTab: React.FC<FooterTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
   const [formData, setFormData] = useState<FooterContent>({ ...content.footer });
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const initialRef = useRef<string>(JSON.stringify(content.footer));
+  const footerJson = JSON.stringify(content.footer);
+
+  useEffect(() => {
+    setFormData({ ...content.footer });
+    initialRef.current = footerJson;
+  }, [footerJson]);
+
+  const isDirty = useMemo(() => JSON.stringify(formData) !== initialRef.current, [formData]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +57,10 @@ export const FooterTab: React.FC<FooterTabProps> = ({ content, updateSection }) 
 
     try {
       await updateSection('footer', formData);
+      initialRef.current = JSON.stringify(formData);
+      onDirtyChange?.(false);
       setSaveSuccess(true);
+      onSaveToast?.('Footer content saved successfully.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error saving Footer section:', err);
@@ -32,85 +71,85 @@ export const FooterTab: React.FC<FooterTabProps> = ({ content, updateSection }) 
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white">Footer Content</h2>
-          <p className="text-xs text-neutral-400">Manage footer description, copyright line, social media links, and brochure download URLs.</p>
-        </div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : 'Save Footer'}
-        </button>
-      </div>
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="Footer Content"
+        description="Manage footer description, copyright notice, social links, and corporate brochure download URLs."
+        icon={<FileText className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save Footer"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess ? 'Footer content updated and synced live.' : null}
+        errorMsg={errorMsg}
+      />
 
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          Footer content updated successfully in Firestore real-time!
-        </div>
-      )}
+      <SectionCard
+        title="Brand summary & legal notice"
+        description="Displayed in the global site footer across every public route."
+      >
+        <div className="space-y-5">
+          <div>
+            <FieldLabel
+              htmlFor="footer-description"
+              label="Footer summary description"
+              rightSlot={<CharacterCounter value={formData.description || ''} recommendedMax={240} />}
+            />
+            <textarea
+              id="footer-description"
+              rows={3}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className={textareaBaseClasses}
+              placeholder="e.g. Class-I civil engineering, heavy dewatering, and municipal infrastructure partner serving Tamil Nadu since 2006."
+            />
+          </div>
 
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {errorMsg}
+          <div>
+            <FieldLabel htmlFor="footer-copyright" label="Copyright notice line" />
+            <input
+              id="footer-copyright"
+              type="text"
+              value={formData.copyright}
+              onChange={(e) => setFormData({ ...formData, copyright: e.target.value })}
+              className={inputBaseClasses}
+              placeholder="e.g. © 2026 Sri Velan & Co. All rights reserved."
+            />
+          </div>
         </div>
-      )}
+      </SectionCard>
 
-      <div className="space-y-4">
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Footer Summary Description
-          </label>
-          <textarea
-            rows={3}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
+      <SectionCard
+        title="External links & downloads"
+        description="Configure social profile and corporate capability brochure links."
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <FieldLabel htmlFor="footer-instagram" label="Instagram URL" />
+            <input
+              id="footer-instagram"
+              type="text"
+              value={formData.instagramUrl}
+              onChange={(e) => setFormData({ ...formData, instagramUrl: e.target.value })}
+              className={`${inputBaseClasses} font-mono`}
+              placeholder="https://instagram.com/srivelanco"
+            />
+            <HelperText>Full URL including https:// for the social icon link.</HelperText>
+          </div>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Copyright Notice Line
-          </label>
-          <input
-            type="text"
-            value={formData.copyright}
-            onChange={(e) => setFormData({ ...formData, copyright: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
+          <div>
+            <FieldLabel htmlFor="footer-brochure" label="Corporate brochure link / PDF URL" />
+            <input
+              id="footer-brochure"
+              type="text"
+              value={formData.brochureUrl}
+              onChange={(e) => setFormData({ ...formData, brochureUrl: e.target.value })}
+              className={`${inputBaseClasses} font-mono`}
+              placeholder="/brochure.pdf or https://..."
+            />
+            <HelperText>Relative path or external PDF link for brochure downloads.</HelperText>
+          </div>
         </div>
-
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Instagram URL
-          </label>
-          <input
-            type="text"
-            value={formData.instagramUrl}
-            onChange={(e) => setFormData({ ...formData, instagramUrl: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Corporate Brochure Link / PDF URL
-          </label>
-          <input
-            type="text"
-            value={formData.brochureUrl}
-            onChange={(e) => setFormData({ ...formData, brochureUrl: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-      </div>
+      </SectionCard>
     </form>
   );
 };

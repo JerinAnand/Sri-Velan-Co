@@ -1,21 +1,68 @@
-import React, { useState } from 'react';
-import { Save, CheckCircle2, AlertCircle, Plus, Trash2, Layers } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Layers, Plus } from 'lucide-react';
 import { FullSiteContent } from '../../context/SiteContentContext';
-import { ConstructionCategory, ConstructionProjectEntry } from '../../types';
+import { ConstructionCategory } from '../../types';
 import { ImageField } from './ImageField';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  CharacterCounter,
+  EmptyState,
+  inputBaseClasses,
+  textareaBaseClasses,
+} from './SectionCard';
+import { LanguageTabs, EditorLanguage } from './LanguageTabs';
+import { RepeaterItem } from './RepeaterItem';
 
 interface ConstructionExperienceTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const ConstructionExperienceTab: React.FC<ConstructionExperienceTabProps> = ({ content, updateSection }) => {
+export const ConstructionExperienceTab: React.FC<ConstructionExperienceTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
   const [categories, setCategories] = useState<ConstructionCategory[]>(
     content.constructionExperience?.categories || []
   );
+  const [activeCategoryIdx, setActiveCategoryIdx] = useState(0);
+  const [expandedEntryIdx, setExpandedEntryIdx] = useState<number | null>(0);
+  const [activeLang, setActiveLang] = useState<EditorLanguage>('en');
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const initialRef = useRef<string>(
+    JSON.stringify(content.constructionExperience?.categories || [])
+  );
+  const expJson = JSON.stringify(content.constructionExperience?.categories);
+
+  useEffect(() => {
+    const next = content.constructionExperience?.categories || [];
+    setCategories(next);
+    initialRef.current = JSON.stringify(next);
+  }, [expJson]);
+
+  const isDirty = useMemo(() => JSON.stringify(categories) !== initialRef.current, [categories]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
+
+  const safeCatIdx = Math.min(activeCategoryIdx, Math.max(0, categories.length - 1));
+  const activeCategory = categories[safeCatIdx];
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +72,10 @@ export const ConstructionExperienceTab: React.FC<ConstructionExperienceTabProps>
 
     try {
       await updateSection('constructionExperience', { categories });
+      initialRef.current = JSON.stringify(categories);
+      onDirtyChange?.(false);
       setSaveSuccess(true);
+      onSaveToast?.('Construction experience saved successfully.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error saving Construction Experience section:', err);
@@ -77,6 +127,7 @@ export const ConstructionExperienceTab: React.FC<ConstructionExperienceTabProps>
   };
 
   const addProjectEntry = (catIdx: number) => {
+    const newLength = (categories[catIdx]?.projects.length || 0) + 1;
     setCategories((prev) => {
       const next = [...prev];
       const updatedProjects = [
@@ -89,6 +140,7 @@ export const ConstructionExperienceTab: React.FC<ConstructionExperienceTabProps>
       };
       return next;
     });
+    setExpandedEntryIdx(newLength - 1);
   };
 
   const deleteProjectEntry = (catIdx: number, projIdx: number) => {
@@ -101,159 +153,249 @@ export const ConstructionExperienceTab: React.FC<ConstructionExperienceTabProps>
       };
       return next;
     });
+    setExpandedEntryIdx((prev) => (prev === projIdx ? null : prev));
+  };
+
+  const moveProjectEntry = (catIdx: number, projIdx: number, dir: -1 | 1) => {
+    const list = categories[catIdx]?.projects || [];
+    const target = projIdx + dir;
+    if (target < 0 || target >= list.length) return;
+    setCategories((prev) => {
+      const next = [...prev];
+      const updated = [...next[catIdx].projects];
+      const temp = updated[target];
+      updated[target] = updated[projIdx];
+      updated[projIdx] = temp;
+      next[catIdx] = { ...next[catIdx], projects: updated };
+      return next;
+    });
+    setExpandedEntryIdx(target);
+  };
+
+  const handleCopyEnToTa = () => {
+    if (!activeCategory) return;
+    setCategories((prev) => {
+      const next = [...prev];
+      const cat = next[safeCatIdx];
+      next[safeCatIdx] = {
+        ...cat,
+        title: {
+          ...cat.title,
+          ta: cat.title?.ta?.trim() ? cat.title.ta : cat.title?.en || '',
+        },
+        projects: cat.projects.map((p) => ({
+          ...p,
+          ta: p.ta?.trim() ? p.ta : p.en || '',
+        })),
+      };
+      return next;
+    });
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <Layers className="w-5 h-5 text-brand-gold-400" />
-            Construction Experience (Brochure Records)
-          </h2>
-          <p className="text-xs text-neutral-400">
-            Edit department categories, bilingual titles (English & Tamil), brochure photos, and project bullet entries displayed on the /projects page.
-          </p>
-        </div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : 'Save Construction Experience'}
-        </button>
-      </div>
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="Construction Experience"
+        description="Edit department brochure categories, bilingual titles, cover photos, and project records shown on the Projects page."
+        icon={<Layers className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save Construction Experience"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess ? 'Construction experience updated successfully.' : null}
+        errorMsg={errorMsg}
+      />
 
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          Construction Experience updated successfully in Firestore real-time!
-        </div>
-      )}
+      {categories.length === 0 ? (
+        <SectionCard>
+          <EmptyState
+            title="No construction categories configured"
+            description="Brochure experience categories will appear here once loaded."
+            icon={<Layers className="w-5 h-5" />}
+          />
+        </SectionCard>
+      ) : (
+        <>
+          {/* Category Tabs + Language Toggle */}
+          <SectionCard
+            title="Department categories"
+            description="Select a department category to edit its cover photo and bilingual project records."
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#050d1a] border border-white/10 rounded-xl">
+                {categories.map((cat, idx) => {
+                  const isCurrent = idx === safeCatIdx;
+                  return (
+                    <button
+                      key={cat.id || idx}
+                      type="button"
+                      onClick={() => {
+                        setActiveCategoryIdx(idx);
+                        setExpandedEntryIdx(0);
+                      }}
+                      className={`h-8 px-3 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
+                        isCurrent
+                          ? 'bg-brand-gold-500 text-brand-blue-950 font-semibold shadow-sm'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <span className="truncate max-w-[180px]">
+                        {cat.title?.en || `Category ${idx + 1}`}
+                      </span>
+                      <span
+                        className={`text-[11px] font-mono tabular-nums ${
+                          isCurrent ? 'text-brand-blue-950/80' : 'text-slate-500'
+                        }`}
+                      >
+                        {cat.projects.length}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {errorMsg}
-        </div>
-      )}
-
-      <div className="space-y-8">
-        {categories.map((cat, catIdx) => (
-          <div key={cat.id || catIdx} className="bg-neutral-900 border border-white/10 rounded-2xl p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <span className="text-xs font-mono font-bold text-brand-gold-400 uppercase tracking-widest">
-                Category #{catIdx + 1}: {cat.id}
-              </span>
-              <span className="text-[10px] font-mono text-neutral-400">
-                {cat.projects.length} Project Entries
-              </span>
+              <LanguageTabs
+                activeLang={activeLang}
+                onChange={setActiveLang}
+                onCopyEnToTa={handleCopyEnToTa}
+                copyLabel="Copy EN to empty TA"
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                  Category Title (English)
-                </label>
-                <input
-                  type="text"
-                  value={cat.title?.en || ''}
-                  onChange={(e) => updateCategoryTitle(catIdx, 'en', e.target.value)}
-                  className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-                  required
-                />
-              </div>
+            {activeCategory && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-white/10">
+                <div className="md:col-span-2">
+                  {activeLang === 'en' ? (
+                    <div>
+                      <FieldLabel htmlFor={`exp-title-en-${safeCatIdx}`} label="Category title (English)" required />
+                      <input
+                        id={`exp-title-en-${safeCatIdx}`}
+                        type="text"
+                        value={activeCategory.title?.en || ''}
+                        onChange={(e) => updateCategoryTitle(safeCatIdx, 'en', e.target.value)}
+                        className={inputBaseClasses}
+                        required
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <FieldLabel htmlFor={`exp-title-ta-${safeCatIdx}`} label="Category title (Tamil)" required />
+                      <input
+                        id={`exp-title-ta-${safeCatIdx}`}
+                        type="text"
+                        value={activeCategory.title?.ta || ''}
+                        onChange={(e) => updateCategoryTitle(safeCatIdx, 'ta', e.target.value)}
+                        className={inputBaseClasses}
+                        required
+                      />
+                    </div>
+                  )}
+                </div>
 
-              <div>
-                <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                  Category Title (Tamil) / தலைப்பு (தமிழ்)
-                </label>
-                <input
-                  type="text"
-                  value={cat.title?.ta || ''}
-                  onChange={(e) => updateCategoryTitle(catIdx, 'ta', e.target.value)}
-                  className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-                  required
-                />
+                <div className="md:col-span-2">
+                  <ImageField
+                    label="Category cover image"
+                    value={activeCategory.image || ''}
+                    onChange={(url) => updateCategoryImage(safeCatIdx, url)}
+                    section="construction"
+                  />
+                </div>
               </div>
+            )}
+          </SectionCard>
 
-              <div className="md:col-span-2">
-                <ImageField
-                  label="Category Cover Image Path / URL"
-                  value={cat.image || ''}
-                  onChange={(url) => updateCategoryImage(catIdx, url)}
-                  section="construction"
-                />
-              </div>
-            </div>
-
-            {/* Project entries list for this category */}
-            <div className="space-y-4 pt-2 border-t border-white/10">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-                  Project Bullet Entries ({cat.projects.length})
-                </h4>
+          {activeCategory && (
+            <SectionCard
+              title="Project bullet entries"
+              description={`Recorded civil & dewatering works under "${activeCategory.title?.en || activeCategory.id}".`}
+              headerAction={
                 <button
                   type="button"
-                  onClick={() => addProjectEntry(catIdx)}
-                  className="bg-white/10 hover:bg-white/20 text-brand-gold-300 hover:text-brand-gold-200 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer font-mono"
+                  onClick={() => addProjectEntry(safeCatIdx)}
+                  className="h-9 px-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-brand-gold-300 border border-brand-gold-500/30 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  Add Project Entry
+                  <Plus className="w-4 h-4" />
+                  <span>Add Project Entry</span>
                 </button>
-              </div>
-
-              <div className="space-y-4">
-                {cat.projects.map((proj, projIdx) => (
-                  <div key={projIdx} className="bg-neutral-950 border border-white/5 p-4 rounded-xl space-y-3 relative group">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-neutral-400 border-b border-white/5 pb-2">
-                      <span>Entry #{projIdx + 1}</span>
-                      <button
-                        type="button"
-                        onClick={() => deleteProjectEntry(catIdx, projIdx)}
-                        className="text-red-400 hover:text-red-300 transition-colors p-1 flex items-center gap-1 cursor-pointer"
-                        title="Delete project entry"
+              }
+            >
+              {activeCategory.projects.length === 0 ? (
+                <EmptyState
+                  title="No project entries in this category"
+                  description="Add a record to display under this construction experience category."
+                  actionLabel="Add Project Entry"
+                  onAction={() => addProjectEntry(safeCatIdx)}
+                  icon={<Layers className="w-5 h-5" />}
+                />
+              ) : (
+                <div className="space-y-2.5">
+                  {activeCategory.projects.map((proj, projIdx) => {
+                    const isExpanded = expandedEntryIdx === projIdx;
+                    const displayTitle =
+                      (activeLang === 'en' ? proj.en : proj.ta) ||
+                      proj.en ||
+                      `Entry #${projIdx + 1}`;
+                    return (
+                      <RepeaterItem
+                        key={projIdx}
+                        index={projIdx}
+                        total={activeCategory.projects.length}
+                        title={displayTitle}
+                        isExpanded={isExpanded}
+                        onToggle={() =>
+                          setExpandedEntryIdx((prev) => (prev === projIdx ? null : projIdx))
+                        }
+                        onMoveUp={() => moveProjectEntry(safeCatIdx, projIdx, -1)}
+                        onMoveDown={() => moveProjectEntry(safeCatIdx, projIdx, 1)}
+                        onRemove={() => deleteProjectEntry(safeCatIdx, projIdx)}
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>Delete</span>
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[10px] font-mono text-neutral-400 uppercase mb-1">
-                          Description (English)
-                        </label>
-                        <textarea
-                          rows={2}
-                          value={proj.en || ''}
-                          onChange={(e) => updateProjectEntry(catIdx, projIdx, 'en', e.target.value)}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[10px] font-mono text-neutral-400 uppercase mb-1">
-                          Description (Tamil / தமிழ்)
-                        </label>
-                        <textarea
-                          rows={2}
-                          value={proj.ta || ''}
-                          onChange={(e) => updateProjectEntry(catIdx, projIdx, 'ta', e.target.value)}
-                          className="w-full bg-neutral-900 border border-white/10 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+                        {activeLang === 'en' ? (
+                          <div>
+                            <FieldLabel
+                              htmlFor={`exp-entry-en-${safeCatIdx}-${projIdx}`}
+                              label="Project entry description (English)"
+                              required
+                              rightSlot={<CharacterCounter value={proj.en || ''} recommendedMax={260} />}
+                            />
+                            <textarea
+                              id={`exp-entry-en-${safeCatIdx}-${projIdx}`}
+                              rows={3}
+                              value={proj.en || ''}
+                              onChange={(e) =>
+                                updateProjectEntry(safeCatIdx, projIdx, 'en', e.target.value)
+                              }
+                              className={textareaBaseClasses}
+                              required
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <FieldLabel
+                              htmlFor={`exp-entry-ta-${safeCatIdx}-${projIdx}`}
+                              label="Project entry description (Tamil)"
+                              required
+                              rightSlot={<CharacterCounter value={proj.ta || ''} recommendedMax={280} />}
+                            />
+                            <textarea
+                              id={`exp-entry-ta-${safeCatIdx}-${projIdx}`}
+                              rows={3}
+                              value={proj.ta || ''}
+                              onChange={(e) =>
+                                updateProjectEntry(safeCatIdx, projIdx, 'ta', e.target.value)
+                              }
+                              className={textareaBaseClasses}
+                              required
+                            />
+                          </div>
+                        )}
+                      </RepeaterItem>
+                    );
+                  })}
+                </div>
+              )}
+            </SectionCard>
+          )}
+        </>
+      )}
     </form>
   );
 };

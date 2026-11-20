@@ -1,20 +1,60 @@
-import React, { useState } from 'react';
-import { Save, CheckCircle2, AlertCircle, FileText } from 'lucide-react';
-import { FullSiteContent, CapabilityStatementContent, CertificationItem } from '../../context/SiteContentContext';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { FileText } from 'lucide-react';
+import {
+  FullSiteContent,
+  CapabilityStatementContent,
+  CertificationItem,
+} from '../../context/SiteContentContext';
 import { EditableItemList } from './EditableItemList';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  CharacterCounter,
+  HelperText,
+  inputBaseClasses,
+  textareaBaseClasses,
+} from './SectionCard';
 
 interface CapabilityStatementTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const CapabilityStatementTab: React.FC<CapabilityStatementTabProps> = ({ content, updateSection }) => {
+export const CapabilityStatementTab: React.FC<CapabilityStatementTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
   const [formData, setFormData] = useState<CapabilityStatementContent>({
     ...content.capabilityStatement,
   });
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const initialRef = useRef<string>(JSON.stringify(content.capabilityStatement));
+  const capJson = JSON.stringify(content.capabilityStatement);
+
+  useEffect(() => {
+    setFormData({ ...content.capabilityStatement });
+    initialRef.current = capJson;
+  }, [capJson]);
+
+  const isDirty = useMemo(() => JSON.stringify(formData) !== initialRef.current, [formData]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +64,10 @@ export const CapabilityStatementTab: React.FC<CapabilityStatementTabProps> = ({ 
 
     try {
       await updateSection('capabilityStatement', formData);
+      initialRef.current = JSON.stringify(formData);
+      onDirtyChange?.(false);
       setSaveSuccess(true);
+      onSaveToast?.('Capability statement saved successfully.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error saving Capability Statement section:', err);
@@ -42,125 +85,117 @@ export const CapabilityStatementTab: React.FC<CapabilityStatementTabProps> = ({ 
   });
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <FileText className="w-5 h-5 text-brand-gold-400" />
-            Capability Statement
-          </h2>
-          <p className="text-xs text-neutral-400">Manage capability document headline, summary, certifications, and download PDF link.</p>
-        </div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : 'Save Capability Statement'}
-        </button>
-      </div>
-
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          Capability Statement updated successfully in Firestore real-time!
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {errorMsg}
-        </div>
-      )}
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Document Headline
-          </label>
-          <input
-            type="text"
-            value={formData.headline}
-            onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Executive Summary
-          </label>
-          <textarea
-            rows={3}
-            value={formData.summary}
-            onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Direct Download PDF Link (Optional override)
-          </label>
-          <input
-            type="text"
-            value={formData.downloadUrl}
-            onChange={(e) => setFormData({ ...formData, downloadUrl: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-            placeholder="https://example.com/capability-statement.pdf"
-          />
-        </div>
-      </div>
-
-      <EditableItemList<CertificationItem>
-        title="Accreditations & Certifications"
-        items={formData.certifications || []}
-        onUpdateItems={(certs) => setFormData({ ...formData, certifications: certs })}
-        createNewItem={createNewCert}
-        getItemTitle={(item) => `${item.name} (${item.issuer})`}
-        addButtonText="Add Certification"
-        renderItemFields={(item, idx, updateItem) => (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Certificate Name
-              </label>
-              <input
-                type="text"
-                value={item.name}
-                onChange={(e) => updateItem({ ...item, name: e.target.value })}
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Year Issued
-              </label>
-              <input
-                type="text"
-                value={item.year}
-                onChange={(e) => updateItem({ ...item, year: e.target.value })}
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-
-            <div className="md:col-span-3">
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Issuing Department / Agency
-              </label>
-              <input
-                type="text"
-                value={item.issuer}
-                onChange={(e) => updateItem({ ...item, issuer: e.target.value })}
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-          </div>
-        )}
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="Capability Statement"
+        description="Manage capability document headline, executive summary, certifications, and optional PDF download link."
+        icon={<FileText className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save Capability Statement"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess ? 'Capability statement updated successfully.' : null}
+        errorMsg={errorMsg}
       />
+
+      <SectionCard
+        title="Document overview"
+        description="Headline, summary text, and optional direct PDF override URL."
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <FieldLabel htmlFor="cap-headline" label="Document headline" />
+            <input
+              id="cap-headline"
+              type="text"
+              value={formData.headline}
+              onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
+              className={inputBaseClasses}
+              placeholder="e.g. Corporate Civil Engineering & Dewatering Capability"
+            />
+          </div>
+
+          <div>
+            <FieldLabel htmlFor="cap-download" label="Direct download PDF link (optional)" />
+            <input
+              id="cap-download"
+              type="text"
+              value={formData.downloadUrl}
+              onChange={(e) => setFormData({ ...formData, downloadUrl: e.target.value })}
+              className={`${inputBaseClasses} font-mono text-xs`}
+              placeholder="https://example.com/capability-statement.pdf"
+            />
+            <HelperText>Leave empty to use the built-in printable capability statement view.</HelperText>
+          </div>
+
+          <div className="md:col-span-2">
+            <FieldLabel
+              htmlFor="cap-summary"
+              label="Executive summary"
+              rightSlot={<CharacterCounter value={formData.summary || ''} recommendedMax={450} />}
+            />
+            <textarea
+              id="cap-summary"
+              rows={3}
+              value={formData.summary}
+              onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+              className={textareaBaseClasses}
+              placeholder="Concise overview of engineering qualifications, fleet capacity, and government compliance..."
+            />
+          </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard>
+        <EditableItemList<CertificationItem>
+          title="Accreditations & certifications"
+          description="Official registrations, licenses, and empaneled contractor credentials."
+          items={formData.certifications || []}
+          onUpdateItems={(certs) => setFormData({ ...formData, certifications: certs })}
+          createNewItem={createNewCert}
+          getItemTitle={(item) => item.name || 'Untitled certification'}
+          getItemSubtitle={(item) => `${item.issuer} · ${item.year}`}
+          addButtonText="Add Certification"
+          renderItemFields={(item, idx, updateItem) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <FieldLabel htmlFor={`cert-name-${idx}`} label="Certificate name" required />
+                <input
+                  id={`cert-name-${idx}`}
+                  type="text"
+                  value={item.name}
+                  onChange={(e) => updateItem({ ...item, name: e.target.value })}
+                  className={inputBaseClasses}
+                  placeholder="e.g. Class-I Civil Contractor Registration"
+                />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor={`cert-year-${idx}`} label="Year issued" />
+                <input
+                  id={`cert-year-${idx}`}
+                  type="text"
+                  value={item.year}
+                  onChange={(e) => updateItem({ ...item, year: e.target.value })}
+                  className={`${inputBaseClasses} tabular-nums`}
+                  placeholder="2024"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <FieldLabel htmlFor={`cert-issuer-${idx}`} label="Issuing department / agency" />
+                <input
+                  id={`cert-issuer-${idx}`}
+                  type="text"
+                  value={item.issuer}
+                  onChange={(e) => updateItem({ ...item, issuer: e.target.value })}
+                  className={inputBaseClasses}
+                  placeholder="e.g. Public Works Department (PWD), Tamil Nadu"
+                />
+              </div>
+            </div>
+          )}
+        />
+      </SectionCard>
     </form>
   );
 };

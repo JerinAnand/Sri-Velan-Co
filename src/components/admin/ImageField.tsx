@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import { Upload, Link as LinkIcon, Image as ImageIcon, Loader2, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../lib/firebase';
+import { FieldLabel, HelperText, inputBaseClasses } from './SectionCard';
 
 interface ImageFieldProps {
   label: string;
@@ -9,6 +10,7 @@ interface ImageFieldProps {
   onChange: (url: string) => void;
   section?: string;
   placeholder?: string;
+  helperText?: string;
   className?: string;
 }
 
@@ -17,9 +19,11 @@ export const ImageField: React.FC<ImageFieldProps> = ({
   value,
   onChange,
   section = 'general',
-  placeholder = 'https://example.com/image.jpg or upload file below...',
+  placeholder = 'https://example.com/image.jpg or upload an image file',
+  helperText,
   className = '',
 }) => {
+  const inputId = useId();
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -67,18 +71,16 @@ export const ImageField: React.FC<ImageFieldProps> = ({
   };
 
   return (
-    <div className={`space-y-2 ${className}`}>
-      <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider">
-        {label}
-      </label>
+    <div className={className}>
+      <FieldLabel htmlFor={inputId} label={label} />
 
-      {/* Input controls layout */}
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         <div className="relative flex items-center">
-          <div className="absolute left-3 text-neutral-500">
+          <div className="absolute left-3.5 text-slate-500 pointer-events-none">
             <LinkIcon className="w-4 h-4" />
           </div>
           <input
+            id={inputId}
             type="text"
             value={value}
             onChange={(e) => {
@@ -86,21 +88,21 @@ export const ImageField: React.FC<ImageFieldProps> = ({
               onChange(e.target.value);
             }}
             placeholder={placeholder}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl pl-9 pr-24 py-2.5 text-xs text-neutral-100 placeholder-neutral-600 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
+            className={`${inputBaseClasses} pl-10 pr-28`}
           />
           {value && (
             <button
               type="button"
               onClick={() => onChange('')}
-              className="absolute right-20 p-1 text-neutral-500 hover:text-red-400 transition-colors"
-              title="Clear Image URL"
+              className="absolute right-24 p-1.5 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+              title="Clear image URL"
+              aria-label="Clear image URL"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
           )}
 
-          {/* File Upload Button */}
-          <label className="absolute right-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/10 px-2.5 py-1.5 rounded-lg text-[11px] font-mono flex items-center gap-1.5 cursor-pointer transition-all shadow-sm">
+          <label className="absolute right-1.5 h-8 bg-white/10 hover:bg-white/15 text-slate-100 border border-white/10 px-3 rounded-lg text-xs font-medium flex items-center gap-1.5 cursor-pointer transition-colors duration-150">
             <Upload className="w-3.5 h-3.5 text-brand-gold-400" />
             <span>Upload</span>
             <input
@@ -113,17 +115,20 @@ export const ImageField: React.FC<ImageFieldProps> = ({
           </label>
         </div>
 
-        {/* Upload Progress Bar */}
+        {helperText && <HelperText>{helperText}</HelperText>}
+
         {uploading && (
-          <div className="space-y-1 bg-neutral-950/80 border border-brand-gold-500/30 rounded-lg p-2 text-xs">
-            <div className="flex items-center justify-between text-[11px] font-mono text-neutral-300">
+          <div className="space-y-1.5 bg-[#050d1a] border border-brand-gold-500/30 rounded-xl p-3 text-xs">
+            <div className="flex items-center justify-between text-slate-300">
               <span className="flex items-center gap-1.5">
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-gold-400" />
-                Uploading to Firebase Storage...
+                Uploading image to Firebase Storage...
               </span>
-              <span className="text-brand-gold-400 font-bold">{progress}%</span>
+              <span className="text-brand-gold-400 font-mono tabular-nums font-semibold">
+                {progress}%
+              </span>
             </div>
-            <div className="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
               <div
                 className="bg-brand-gold-400 h-full transition-all duration-200 rounded-full"
                 style={{ width: `${progress}%` }}
@@ -132,36 +137,33 @@ export const ImageField: React.FC<ImageFieldProps> = ({
           </div>
         )}
 
-        {/* Error message */}
         {uploadError && (
-          <p className="text-[11px] font-mono text-red-400 flex items-center gap-1">
-            <AlertCircle className="w-3.5 h-3.5" />
-            {uploadError}
+          <p className="text-xs text-red-400 flex items-center gap-1.5">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+            <span>{uploadError}</span>
           </p>
         )}
 
-        {/* Image Preview Thumbnail */}
         {value && !uploading && (
-          <div className="flex items-center gap-3 p-2 bg-neutral-950/60 border border-white/5 rounded-xl">
-            <div className="w-12 h-12 rounded-lg bg-neutral-900 overflow-hidden border border-white/10 flex items-center justify-center shrink-0 relative">
+          <div className="flex items-center gap-3 p-2.5 bg-[#050d1a] border border-white/10 rounded-xl">
+            <div className="w-12 h-12 rounded-lg bg-[#091529] overflow-hidden border border-white/10 flex items-center justify-center shrink-0">
               {!imgError ? (
                 <img
                   src={value}
                   alt={label}
+                  referrerPolicy="no-referrer"
                   onError={() => setImgError(true)}
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="text-center p-1 text-neutral-600">
-                  <ImageIcon className="w-5 h-5 mx-auto" />
-                </div>
+                <ImageIcon className="w-5 h-5 text-slate-500" />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-mono text-neutral-300 truncate">{value}</p>
-              <p className="text-[10px] text-emerald-400 flex items-center gap-1 mt-0.5">
-                <CheckCircle2 className="w-3 h-3" />
-                Valid preview URL
+              <p className="text-xs font-mono text-slate-300 truncate">{value}</p>
+              <p className="text-xs text-emerald-400 flex items-center gap-1 mt-0.5">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>{imgError ? 'Preview unavailable (check URL)' : 'Image preview loaded'}</span>
               </p>
             </div>
           </div>

@@ -1,25 +1,98 @@
-import React, { useState } from 'react';
-import { Save, CheckCircle2, AlertCircle, Globe } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Globe, CheckCircle2, AlertCircle } from 'lucide-react';
 import { FullSiteContent } from '../../context/SiteContentContext';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  HelperText,
+  textareaBaseClasses,
+} from './SectionCard';
+import { LanguageTabs, EditorLanguage } from './LanguageTabs';
 
 interface TranslationsTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const TranslationsTab: React.FC<TranslationsTabProps> = ({ content, updateSection }) => {
-  const [activeLang, setActiveLang] = useState<'en' | 'ta'>('en');
-  const [translations, setTranslations] = useState<Record<string, any>>({ ...content.translations });
-  const [jsonText, setJsonText] = useState<string>(
-    JSON.stringify(content.translations[activeLang] || {}, null, 2)
+export const TranslationsTab: React.FC<TranslationsTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
+  const [activeLang, setActiveLang] = useState<EditorLanguage>('en');
+  const [enJsonText, setEnJsonText] = useState<string>(() =>
+    JSON.stringify(content.translations?.en || {}, null, 2)
+  );
+  const [taJsonText, setTaJsonText] = useState<string>(() =>
+    JSON.stringify(content.translations?.ta || {}, null, 2)
   );
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleSwitchLang = (lang: 'en' | 'ta') => {
-    setActiveLang(lang);
-    setJsonText(JSON.stringify(translations[lang] || {}, null, 2));
+  const initialRef = useRef<string>(
+    JSON.stringify({
+      en: JSON.stringify(content.translations?.en || {}, null, 2),
+      ta: JSON.stringify(content.translations?.ta || {}, null, 2),
+    })
+  );
+  const translationsJson = JSON.stringify(content.translations);
+
+  useEffect(() => {
+    const nextEn = JSON.stringify(content.translations?.en || {}, null, 2);
+    const nextTa = JSON.stringify(content.translations?.ta || {}, null, 2);
+    setEnJsonText(nextEn);
+    setTaJsonText(nextTa);
+    initialRef.current = JSON.stringify({ en: nextEn, ta: nextTa });
+  }, [translationsJson]);
+
+  const isDirty = useMemo(
+    () => JSON.stringify({ en: enJsonText, ta: taJsonText }) !== initialRef.current,
+    [enJsonText, taJsonText]
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
+
+  const currentText = activeLang === 'en' ? enJsonText : taJsonText;
+  const setCurrentText = (val: string) => {
+    if (activeLang === 'en') {
+      setEnJsonText(val);
+    } else {
+      setTaJsonText(val);
+    }
+  };
+
+  const validation = useMemo(() => {
+    try {
+      const parsed = JSON.parse(currentText);
+      const keyCount =
+        parsed && typeof parsed === 'object' ? Object.keys(parsed).length : 0;
+      return { valid: true, keyCount, error: null as string | null };
+    } catch (err: any) {
+      return { valid: false, keyCount: 0, error: err.message as string };
+    }
+  }, [currentText]);
+
+  const handleFormatJson = () => {
+    try {
+      const parsed = JSON.parse(currentText);
+      setCurrentText(JSON.stringify(parsed, null, 2));
+      setErrorMsg(null);
+    } catch (err: any) {
+      setErrorMsg(`Cannot format ${activeLang.toUpperCase()} JSON: ${err.message}`);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -29,15 +102,34 @@ export const TranslationsTab: React.FC<TranslationsTabProps> = ({ content, updat
     setErrorMsg(null);
 
     try {
-      const parsed = JSON.parse(jsonText);
+      let parsedEn: any;
+      let parsedTa: any;
+      try {
+        parsedEn = JSON.parse(enJsonText);
+      } catch (err: any) {
+        throw new Error(`Invalid English (EN) JSON: ${err.message}`);
+      }
+      try {
+        parsedTa = JSON.parse(taJsonText);
+      } catch (err: any) {
+        throw new Error(`Invalid Tamil (TA) JSON: ${err.message}`);
+      }
+
       const updatedTranslations = {
-        ...translations,
-        [activeLang]: parsed,
+        ...content.translations,
+        en: parsedEn,
+        ta: parsedTa,
       };
 
       await updateSection('translations', updatedTranslations);
-      setTranslations(updatedTranslations);
+      const formattedEn = JSON.stringify(parsedEn, null, 2);
+      const formattedTa = JSON.stringify(parsedTa, null, 2);
+      setEnJsonText(formattedEn);
+      setTaJsonText(formattedTa);
+      initialRef.current = JSON.stringify({ en: formattedEn, ta: formattedTa });
+      onDirtyChange?.(false);
       setSaveSuccess(true);
+      onSaveToast?.('Translation dictionaries saved successfully.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error saving Translations section:', err);
@@ -48,79 +140,71 @@ export const TranslationsTab: React.FC<TranslationsTabProps> = ({ content, updat
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <Globe className="w-5 h-5 text-brand-gold-400" />
-            Language Translations Editor
-          </h2>
-          <p className="text-xs text-neutral-400">Edit English & Tamil dictionaries in real-time JSON format.</p>
-        </div>
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="Translations (EN/TA)"
+        description="Edit English and Tamil UI translation dictionaries in structured JSON format."
+        icon={<Globe className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save Dictionaries"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess ? 'Translation dictionaries updated and synced live.' : null}
+        errorMsg={errorMsg}
+      />
 
-        <div className="flex items-center gap-2">
-          <div className="flex bg-neutral-900 border border-white/10 p-1 rounded-xl">
-            <button
-              type="button"
-              onClick={() => handleSwitchLang('en')}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
-                activeLang === 'en'
-                  ? 'bg-brand-gold-500 text-brand-blue-950 font-bold shadow'
-                  : 'text-neutral-400 hover:text-white'
-              }`}
-            >
-              English (EN)
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSwitchLang('ta')}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
-                activeLang === 'ta'
-                  ? 'bg-brand-gold-500 text-brand-blue-950 font-bold shadow'
-                  : 'text-neutral-400 hover:text-white'
-              }`}
-            >
-              Tamil (தமிழ்)
-            </button>
-          </div>
-
+      <SectionCard
+        title="Dictionary JSON editor"
+        description="Switch between English and Tamil JSON payloads. Both dictionaries are validated before saving."
+        headerAction={
           <button
-            type="submit"
-            disabled={saving}
-            className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
+            type="button"
+            onClick={handleFormatJson}
+            className="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 border border-white/15 text-xs font-medium transition-colors cursor-pointer"
           >
-            <Save className="w-4 h-4" />
-            {saving ? 'Saving...' : `Save ${activeLang.toUpperCase()} Dictionary`}
+            Format JSON
           </button>
-        </div>
-      </div>
+        }
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <LanguageTabs activeLang={activeLang} onChange={setActiveLang} />
 
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          Translation dictionary updated successfully in Firestore real-time!
+          <div className="flex items-center gap-2 text-xs font-mono">
+            {validation.valid ? (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                Valid JSON ({validation.keyCount} root keys)
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/25 text-red-300">
+                <AlertCircle className="w-3.5 h-3.5" />
+                Syntax error
+              </span>
+            )}
+          </div>
         </div>
-      )}
 
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {errorMsg}
+        <div>
+          <FieldLabel
+            htmlFor="translations-json-editor"
+            label={`${activeLang === 'en' ? 'English (EN)' : 'Tamil (தமிழ்)'} translation JSON`}
+          />
+          <textarea
+            id="translations-json-editor"
+            rows={18}
+            value={currentText}
+            onChange={(e) => setCurrentText(e.target.value)}
+            className={`${textareaBaseClasses} font-mono text-xs text-emerald-300 leading-relaxed`}
+            spellCheck={false}
+          />
+          {!validation.valid && validation.error ? (
+            <p className="mt-1.5 text-xs font-mono text-red-400">{validation.error}</p>
+          ) : (
+            <HelperText>
+              Preserve existing JSON keys when editing values so public site labels resolve accurately.
+            </HelperText>
+          )}
         </div>
-      )}
-
-      <div>
-        <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-          {activeLang === 'en' ? 'English (EN)' : 'Tamil (தமிழ்)'} Translation JSON Object
-        </label>
-        <textarea
-          rows={18}
-          value={jsonText}
-          onChange={(e) => setJsonText(e.target.value)}
-          className="w-full bg-neutral-950 border border-white/10 rounded-xl p-4 text-xs font-mono text-emerald-400 focus:outline-none focus:border-brand-gold-500/80 transition-all leading-relaxed"
-          spellCheck={false}
-        />
-      </div>
+      </SectionCard>
     </form>
   );
 };

@@ -1,17 +1,63 @@
-import React, { useState } from 'react';
-import { Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Info } from 'lucide-react';
 import { FullSiteContent, AboutContent } from '../../context/SiteContentContext';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  CharacterCounter,
+  HelperText,
+  inputBaseClasses,
+  textareaBaseClasses,
+} from './SectionCard';
+import { LanguageTabs, EditorLanguage } from './LanguageTabs';
 
 interface AboutTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const AboutTab: React.FC<AboutTabProps> = ({ content, updateSection }) => {
+export const AboutTab: React.FC<AboutTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
   const [formData, setFormData] = useState<AboutContent>({ ...content.about });
+  const [activeLang, setActiveLang] = useState<EditorLanguage>('en');
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const initialRef = useRef<string>(JSON.stringify(content.about));
+  const aboutJson = JSON.stringify(content.about);
+
+  useEffect(() => {
+    setFormData({ ...content.about });
+    initialRef.current = aboutJson;
+  }, [aboutJson]);
+
+  const isDirty = useMemo(() => JSON.stringify(formData) !== initialRef.current, [formData]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
+
+  const handleCopyEnToTa = () => {
+    setFormData((prev) => ({
+      ...prev,
+      missionTextTa: prev.missionTextTa?.trim() ? prev.missionTextTa : prev.missionText,
+      visionTextTa: prev.visionTextTa?.trim() ? prev.visionTextTa : prev.visionText,
+    }));
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +67,10 @@ export const AboutTab: React.FC<AboutTabProps> = ({ content, updateSection }) =>
 
     try {
       await updateSection('about', formData);
+      initialRef.current = JSON.stringify(formData);
+      onDirtyChange?.(false);
       setSaveSuccess(true);
+      onSaveToast?.('About Us section saved successfully.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error saving About section:', err);
@@ -32,143 +81,161 @@ export const AboutTab: React.FC<AboutTabProps> = ({ content, updateSection }) =>
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white">About Section</h2>
-          <p className="text-xs text-neutral-400">Manage company history, founder details, mission, and vision statements.</p>
-        </div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : 'Save About Content'}
-        </button>
-      </div>
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="About Us"
+        description="Manage company history, founder details, accreditation tagline, mission, and vision statements."
+        icon={<Info className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save About Content"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess ? 'About section updated successfully.' : null}
+        errorMsg={errorMsg}
+      />
 
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          About section updated successfully in Firestore real-time!
-        </div>
-      )}
+      <SectionCard
+        title="Company profile & history"
+        description="Core corporate facts displayed in the About Us overview."
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <FieldLabel htmlFor="about-year" label="Year established" />
+            <input
+              id="about-year"
+              type="number"
+              value={formData.yearEstablished}
+              onChange={(e) =>
+                setFormData({ ...formData, yearEstablished: parseInt(e.target.value, 10) || 2006 })
+              }
+              className={`${inputBaseClasses} tabular-nums`}
+              placeholder="2006"
+            />
+          </div>
 
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {errorMsg}
-        </div>
-      )}
+          <div>
+            <FieldLabel htmlFor="about-founder" label="Founder name" />
+            <input
+              id="about-founder"
+              type="text"
+              value={formData.founderName}
+              onChange={(e) => setFormData({ ...formData, founderName: e.target.value })}
+              className={inputBaseClasses}
+              placeholder="e.g. Mr. G. Selva Kumar"
+            />
+          </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Year Established
-          </label>
-          <input
-            type="number"
-            value={formData.yearEstablished}
-            onChange={(e) => setFormData({ ...formData, yearEstablished: parseInt(e.target.value) || 2006 })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
+          <div className="md:col-span-2">
+            <FieldLabel htmlFor="about-badge" label="Civil contractor badge text" />
+            <input
+              id="about-badge"
+              type="text"
+              value={formData.civilContractorText}
+              onChange={(e) => setFormData({ ...formData, civilContractorText: e.target.value })}
+              className={inputBaseClasses}
+              placeholder="e.g. Class-I Civil & Dewatering Contractor"
+            />
+          </div>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Founder Name
-          </label>
-          <input
-            type="text"
-            value={formData.founderName}
-            onChange={(e) => setFormData({ ...formData, founderName: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
+          <div className="md:col-span-2">
+            <FieldLabel
+              htmlFor="about-history"
+              label="Company incorporation & history"
+              rightSlot={<CharacterCounter value={formData.companyDescription || ''} recommendedMax={600} />}
+            />
+            <textarea
+              id="about-history"
+              rows={4}
+              value={formData.companyDescription}
+              onChange={(e) => setFormData({ ...formData, companyDescription: e.target.value })}
+              className={textareaBaseClasses}
+              placeholder="Summarize company incorporation, engineering heritage, and Tamil Nadu public sector track record..."
+            />
+          </div>
         </div>
+      </SectionCard>
 
-        <div className="md:col-span-2">
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Civil Contractor Tag / Badge Text
-          </label>
-          <input
-            type="text"
-            value={formData.civilContractorText}
-            onChange={(e) => setFormData({ ...formData, civilContractorText: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
+      <SectionCard
+        title="Mission & vision statements"
+        description="Switch between English and Tamil to edit bilingual corporate statements."
+      >
+        <LanguageTabs
+          activeLang={activeLang}
+          onChange={setActiveLang}
+          onCopyEnToTa={handleCopyEnToTa}
+          copyLabel="Copy EN to empty TA fields"
+        />
 
-        <div className="md:col-span-2">
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Company Incorporation & History Text
-          </label>
-          <textarea
-            rows={4}
-            value={formData.companyDescription}
-            onChange={(e) => setFormData({ ...formData, companyDescription: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-
-        <div className="md:col-span-2 space-y-4 pt-2 border-t border-white/10">
-          <h3 className="text-xs font-mono font-bold text-brand-gold-400 uppercase tracking-wider">Mission Statement</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {activeLang === 'en' ? (
+          <div className="space-y-5">
             <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-                English Mission Statement
-              </label>
+              <FieldLabel
+                htmlFor="about-mission-en"
+                label="Mission statement (English)"
+                rightSlot={<CharacterCounter value={formData.missionText || ''} recommendedMax={320} />}
+              />
               <textarea
+                id="about-mission-en"
                 rows={3}
                 value={formData.missionText || ''}
                 onChange={(e) => setFormData({ ...formData, missionText: e.target.value })}
-                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
+                className={textareaBaseClasses}
+                placeholder="Our mission is to execute resilient public infrastructure and dewatering projects..."
               />
             </div>
-            <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-                Tamil Mission Statement (தமிழ் நோக்கம்)
-              </label>
-              <textarea
-                rows={3}
-                value={formData.missionTextTa || ''}
-                onChange={(e) => setFormData({ ...formData, missionTextTa: e.target.value })}
-                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-                placeholder="தமிழ் நோக்கம்..."
-              />
-            </div>
-          </div>
-        </div>
 
-        <div className="md:col-span-2 space-y-4 pt-2 border-t border-white/10">
-          <h3 className="text-xs font-mono font-bold text-brand-gold-400 uppercase tracking-wider">Vision Statement</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-                English Vision Statement
-              </label>
+              <FieldLabel
+                htmlFor="about-vision-en"
+                label="Vision statement (English)"
+                rightSlot={<CharacterCounter value={formData.visionText || ''} recommendedMax={320} />}
+              />
               <textarea
+                id="about-vision-en"
                 rows={3}
                 value={formData.visionText || ''}
                 onChange={(e) => setFormData({ ...formData, visionText: e.target.value })}
-                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
+                className={textareaBaseClasses}
+                placeholder="To be Tamil Nadu's most dependable civil and flood-response partner..."
               />
             </div>
+          </div>
+        ) : (
+          <div className="space-y-5">
             <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-                Tamil Vision Statement (தமிழ் தொலைநோக்கு பார்வை)
-              </label>
+              <FieldLabel
+                htmlFor="about-mission-ta"
+                label="Mission statement (Tamil)"
+                rightSlot={<CharacterCounter value={formData.missionTextTa || ''} recommendedMax={360} />}
+              />
               <textarea
+                id="about-mission-ta"
+                rows={3}
+                value={formData.missionTextTa || ''}
+                onChange={(e) => setFormData({ ...formData, missionTextTa: e.target.value })}
+                className={textareaBaseClasses}
+                placeholder="தமிழ் நோக்கம்..."
+              />
+              <HelperText>Displayed when visitors select Tamil (தமிழ்) on the About Us page.</HelperText>
+            </div>
+
+            <div>
+              <FieldLabel
+                htmlFor="about-vision-ta"
+                label="Vision statement (Tamil)"
+                rightSlot={<CharacterCounter value={formData.visionTextTa || ''} recommendedMax={360} />}
+              />
+              <textarea
+                id="about-vision-ta"
                 rows={3}
                 value={formData.visionTextTa || ''}
                 onChange={(e) => setFormData({ ...formData, visionTextTa: e.target.value })}
-                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
+                className={textareaBaseClasses}
                 placeholder="தமிழ் தொலைநோக்கு பார்வை..."
               />
             </div>
           </div>
-        </div>
-      </div>
+        )}
+      </SectionCard>
     </form>
   );
 };

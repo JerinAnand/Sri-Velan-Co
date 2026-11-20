@@ -1,21 +1,61 @@
-import React, { useState } from 'react';
-import { Save, CheckCircle2, AlertCircle, Wrench } from 'lucide-react';
-import { FullSiteContent, HydraulicBroomerContent, HydraulicBroomerSpec } from '../../context/SiteContentContext';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Wrench } from 'lucide-react';
+import {
+  FullSiteContent,
+  HydraulicBroomerContent,
+  HydraulicBroomerSpec,
+} from '../../context/SiteContentContext';
 import { EditableItemList } from './EditableItemList';
 import { ImageField } from './ImageField';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  CharacterCounter,
+  HelperText,
+  inputBaseClasses,
+  textareaBaseClasses,
+} from './SectionCard';
 
 interface HydraulicBroomerTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const HydraulicBroomerTab: React.FC<HydraulicBroomerTabProps> = ({ content, updateSection }) => {
+export const HydraulicBroomerTab: React.FC<HydraulicBroomerTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
   const [formData, setFormData] = useState<HydraulicBroomerContent>({
     ...content.hydraulicBroomer,
   });
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const initialRef = useRef<string>(JSON.stringify(content.hydraulicBroomer));
+  const broomerJson = JSON.stringify(content.hydraulicBroomer);
+
+  useEffect(() => {
+    setFormData({ ...content.hydraulicBroomer });
+    initialRef.current = broomerJson;
+  }, [broomerJson]);
+
+  const isDirty = useMemo(() => JSON.stringify(formData) !== initialRef.current, [formData]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +65,10 @@ export const HydraulicBroomerTab: React.FC<HydraulicBroomerTabProps> = ({ conten
 
     try {
       await updateSection('hydraulicBroomer', formData);
+      initialRef.current = JSON.stringify(formData);
+      onDirtyChange?.(false);
       setSaveSuccess(true);
+      onSaveToast?.('Hydraulic broomer page saved successfully.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error saving Hydraulic Broomer section:', err);
@@ -41,7 +84,6 @@ export const HydraulicBroomerTab: React.FC<HydraulicBroomerTabProps> = ({ conten
     value: 'Specification Value',
   });
 
-  // Wrap specs with temporary id if needed for EditableItemList
   const specsWithId = (formData.specs || []).map((s, idx) => ({
     id: (s as any).id || `spec_${idx}`,
     label: s.label,
@@ -49,125 +91,119 @@ export const HydraulicBroomerTab: React.FC<HydraulicBroomerTabProps> = ({ conten
   }));
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <Wrench className="w-5 h-5 text-brand-gold-400" />
-            Hydraulic Broomer Machine Page
-          </h2>
-          <p className="text-xs text-neutral-400">Manage title, description, technical specification table, product photo, and video demo URL.</p>
-        </div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : 'Save Hydraulic Broomer'}
-        </button>
-      </div>
-
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          Hydraulic Broomer section updated successfully in Firestore real-time!
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {errorMsg}
-        </div>
-      )}
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Page Title
-          </label>
-          <input
-            type="text"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Description
-          </label>
-          <textarea
-            rows={3}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-
-        <ImageField
-          label="Broomer Machine Main Image"
-          value={formData.imageUrl}
-          onChange={(url) => setFormData({ ...formData, imageUrl: url })}
-          section="broomer"
-        />
-
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Product Video Demo Link (YouTube / MP4 URL)
-          </label>
-          <input
-            type="text"
-            value={formData.videoUrl || ''}
-            onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-            placeholder="https://www.youtube.com/embed/..."
-          />
-        </div>
-      </div>
-
-      <EditableItemList<HydraulicBroomerSpec & { id: string }>
-        title="Technical Specifications Matrix"
-        items={specsWithId}
-        onUpdateItems={(updated) =>
-          setFormData({
-            ...formData,
-            specs: updated.map(({ label, value }) => ({ label, value })),
-          })
-        }
-        createNewItem={createNewSpec}
-        getItemTitle={(item) => `${item.label}: ${item.value}`}
-        addButtonText="Add Specification Row"
-        renderItemFields={(item, idx, updateItem) => (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Specification Name
-              </label>
-              <input
-                type="text"
-                value={item.label}
-                onChange={(e) => updateItem({ ...item, label: e.target.value })}
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Specification Value
-              </label>
-              <input
-                type="text"
-                value={item.value}
-                onChange={(e) => updateItem({ ...item, value: e.target.value })}
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono text-brand-gold-400 font-bold"
-              />
-            </div>
-          </div>
-        )}
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="Hydraulic Broomer"
+        description="Manage machine overview, technical specification table, product photography, and video demo URL."
+        icon={<Wrench className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save Hydraulic Broomer"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess ? 'Hydraulic broomer updated successfully.' : null}
+        errorMsg={errorMsg}
       />
+
+      <SectionCard
+        title="Machine overview & media"
+        description="Headline, catalog summary, product photograph, and optional video demo."
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <FieldLabel htmlFor="broomer-title" label="Page title" />
+            <input
+              id="broomer-title"
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className={inputBaseClasses}
+              placeholder="e.g. Tractor-Mounted Hydraulic Road Broomer"
+            />
+          </div>
+
+          <div>
+            <FieldLabel htmlFor="broomer-video" label="Product video demo URL" />
+            <input
+              id="broomer-video"
+              type="text"
+              value={formData.videoUrl || ''}
+              onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+              className={`${inputBaseClasses} font-mono text-xs`}
+              placeholder="https://www.youtube.com/embed/..."
+            />
+            <HelperText>Accepts a YouTube embed URL or direct MP4 stream link.</HelperText>
+          </div>
+
+          <div className="md:col-span-2">
+            <FieldLabel
+              htmlFor="broomer-desc"
+              label="Description"
+              rightSlot={<CharacterCounter value={formData.description || ''} recommendedMax={380} />}
+            />
+            <textarea
+              id="broomer-desc"
+              rows={3}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className={textareaBaseClasses}
+              placeholder="Describe sweeping width, hydraulic drive assembly, and road maintenance applications..."
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <ImageField
+              label="Broomer machine main image"
+              value={formData.imageUrl}
+              onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+              section="broomer"
+            />
+          </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard>
+        <EditableItemList<HydraulicBroomerSpec & { id: string }>
+          title="Technical specifications matrix"
+          description="Key-value rows rendered in the specification table."
+          items={specsWithId}
+          onUpdateItems={(updated) =>
+            setFormData({
+              ...formData,
+              specs: updated.map(({ label, value }) => ({ label, value })),
+            })
+          }
+          createNewItem={createNewSpec}
+          getItemTitle={(item) => item.label || 'Specification'}
+          getItemSubtitle={(item) => item.value}
+          addButtonText="Add Specification Row"
+          renderItemFields={(item, idx, updateItem) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <FieldLabel htmlFor={`spec-name-${idx}`} label="Specification name" />
+                <input
+                  id={`spec-name-${idx}`}
+                  type="text"
+                  value={item.label}
+                  onChange={(e) => updateItem({ ...item, label: e.target.value })}
+                  className={inputBaseClasses}
+                  placeholder="e.g. Sweeping Width"
+                />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor={`spec-val-${idx}`} label="Specification value" />
+                <input
+                  id={`spec-val-${idx}`}
+                  type="text"
+                  value={item.value}
+                  onChange={(e) => updateItem({ ...item, value: e.target.value })}
+                  className={`${inputBaseClasses} text-brand-gold-300 font-semibold`}
+                  placeholder="e.g. 2100 mm (7 Feet)"
+                />
+              </div>
+            </div>
+          )}
+        />
+      </SectionCard>
     </form>
   );
 };

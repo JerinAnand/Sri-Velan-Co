@@ -1,20 +1,55 @@
-import React, { useState } from 'react';
-import { Save, CheckCircle2, AlertCircle, Bot } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Bot } from 'lucide-react';
 import { FullSiteContent, ChatbotContent } from '../../context/SiteContentContext';
 import { ImageField } from './ImageField';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  CharacterCounter,
+  HelperText,
+  textareaBaseClasses,
+} from './SectionCard';
 
 interface ChatbotTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const ChatbotTab: React.FC<ChatbotTabProps> = ({ content, updateSection }) => {
+export const ChatbotTab: React.FC<ChatbotTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
   const [formData, setFormData] = useState<ChatbotContent>({
     ...content.chatbot,
   });
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const initialRef = useRef<string>(JSON.stringify(content.chatbot));
+  const chatbotJson = JSON.stringify(content.chatbot);
+
+  useEffect(() => {
+    setFormData({ ...content.chatbot });
+    initialRef.current = chatbotJson;
+  }, [chatbotJson]);
+
+  const isDirty = useMemo(() => JSON.stringify(formData) !== initialRef.current, [formData]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +59,10 @@ export const ChatbotTab: React.FC<ChatbotTabProps> = ({ content, updateSection }
 
     try {
       await updateSection('chatbot', formData);
+      initialRef.current = JSON.stringify(formData);
+      onDirtyChange?.(false);
       setSaveSuccess(true);
+      onSaveToast?.('VELAN AI Chatbot settings saved.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error saving Chatbot section:', err);
@@ -35,85 +73,97 @@ export const ChatbotTab: React.FC<ChatbotTabProps> = ({ content, updateSection }
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
-            <Bot className="w-5 h-5 text-brand-gold-400" />
-            VELAN AI Assistant Settings
-          </h2>
-          <p className="text-xs text-neutral-400">Manage floating chatbot greeting message, custom system prompt overrides, avatar image, and widget visibility.</p>
-        </div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : 'Save Chatbot Configuration'}
-        </button>
-      </div>
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="VELAN AI Chatbot"
+        description="Manage floating assistant visibility, welcome greeting, avatar image, and custom operational instructions."
+        icon={<Bot className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save Chatbot Settings"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess ? 'VELAN AI chatbot settings updated and synced live.' : null}
+        errorMsg={errorMsg}
+      />
 
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          VELAN AI chatbot settings updated successfully in Firestore real-time!
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {errorMsg}
-        </div>
-      )}
-
-      <div className="space-y-4">
-        <div className="flex items-center gap-3 bg-neutral-950 p-4 border border-white/10 rounded-2xl">
-          <input
-            type="checkbox"
-            id="chatbot-enabled"
-            checked={formData.enabled}
-            onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
-            className="w-4 h-4 accent-brand-gold-500 rounded cursor-pointer"
-          />
-          <label htmlFor="chatbot-enabled" className="text-xs font-mono font-medium text-white cursor-pointer select-none">
-            Enable Floating VELAN AI Chat Widget
+      <SectionCard
+        title="Widget visibility & avatar"
+        description="Control whether the floating VELAN AI assistant appears for public visitors."
+      >
+        <div className="space-y-5">
+          <label
+            htmlFor="chatbot-enabled"
+            className="flex items-start gap-3 p-4 rounded-xl bg-[#050d1a] border border-white/15 hover:border-white/25 cursor-pointer transition-colors"
+          >
+            <input
+              type="checkbox"
+              id="chatbot-enabled"
+              checked={formData.enabled}
+              onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
+              className="mt-0.5 w-4 h-4 accent-brand-gold-500 rounded cursor-pointer"
+            />
+            <div className="space-y-0.5">
+              <span className="block text-sm font-medium text-white">
+                Enable floating VELAN AI chat widget
+              </span>
+              <span className="block text-xs text-slate-400">
+                Shows the interactive engineering & inquiry assistant in the bottom corner of the site.
+              </span>
+            </div>
           </label>
-        </div>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Initial Welcome Greeting Message
-          </label>
-          <textarea
-            rows={3}
-            value={formData.greetingMessage}
-            onChange={(e) => setFormData({ ...formData, greetingMessage: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl p-3 text-xs font-mono text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all"
+          <ImageField
+            label="Chatbot avatar / icon image (optional)"
+            value={formData.avatarUrl || ''}
+            onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
+            section="chatbot"
+            helperText="Square image recommended (at least 128×128px). Leave blank for the default VELAN icon."
           />
         </div>
+      </SectionCard>
 
-        <ImageField
-          label="Chatbot Avatar / Icon Image (Optional)"
-          value={formData.avatarUrl || ''}
-          onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
-          section="chatbot"
-        />
+      <SectionCard
+        title="Greeting & prompt behavior"
+        description="Customize the opening message and optional instructions passed to the assistant."
+      >
+        <div className="space-y-5">
+          <div>
+            <FieldLabel
+              htmlFor="chatbot-greeting"
+              label="Initial welcome greeting message"
+              rightSlot={<CharacterCounter value={formData.greetingMessage || ''} recommendedMax={220} />}
+            />
+            <textarea
+              id="chatbot-greeting"
+              rows={3}
+              value={formData.greetingMessage}
+              onChange={(e) => setFormData({ ...formData, greetingMessage: e.target.value })}
+              className={textareaBaseClasses}
+              placeholder="e.g. Vanakkam! I am VELAN AI. Ask me about our 100 HP dewatering fleet, CMRL experience, or tender capabilities."
+            />
+          </div>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            System Prompt / Knowledge Override (Optional)
-          </label>
-          <textarea
-            rows={4}
-            value={formData.systemPromptOverride || ''}
-            onChange={(e) => setFormData({ ...formData, systemPromptOverride: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl p-3 text-xs font-mono text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all"
-            placeholder="Custom operational guidelines or additional company instructions for VELAN AI..."
-          />
+          <div>
+            <FieldLabel
+              htmlFor="chatbot-prompt-override"
+              label="System prompt / knowledge override (optional)"
+              rightSlot={<CharacterCounter value={formData.systemPromptOverride || ''} />}
+            />
+            <textarea
+              id="chatbot-prompt-override"
+              rows={4}
+              value={formData.systemPromptOverride || ''}
+              onChange={(e) =>
+                setFormData({ ...formData, systemPromptOverride: e.target.value })
+              }
+              className={textareaBaseClasses}
+              placeholder="Custom operational guidelines, emergency contact reminders, or fleet updates for VELAN AI..."
+            />
+            <HelperText>
+              Optional text appended to the assistant's guidance to reflect seasonal dispatches or newly awarded contracts.
+            </HelperText>
+          </div>
         </div>
-      </div>
+      </SectionCard>
     </form>
   );
 };

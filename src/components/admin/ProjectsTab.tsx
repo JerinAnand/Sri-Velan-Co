@@ -1,19 +1,56 @@
-import React, { useState, useCallback } from 'react';
-import { Save, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { FolderKanban } from 'lucide-react';
 import { FullSiteContent, ProjectItem } from '../../context/SiteContentContext';
 import { EditableItemList } from './EditableItemList';
 import { ImageField } from './ImageField';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  CharacterCounter,
+  HelperText,
+  inputBaseClasses,
+  textareaBaseClasses,
+} from './SectionCard';
 
 interface ProjectsTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, updateSection }) => {
+export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
   const [projects, setProjects] = useState<ProjectItem[]>([...(content.projects?.projects || [])]);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const initialRef = useRef<string>(JSON.stringify(content.projects?.projects || []));
+  const projectsJson = JSON.stringify(content.projects?.projects);
+
+  useEffect(() => {
+    const next = [...(content.projects?.projects || [])];
+    setProjects(next);
+    initialRef.current = JSON.stringify(next);
+  }, [projectsJson]);
+
+  const isDirty = useMemo(() => JSON.stringify(projects) !== initialRef.current, [projects]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +58,6 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
     setSaveSuccess(null);
     setErrorMsg(null);
 
-    // Schema Validation for Projects
     if (!projects || projects.length === 0) {
       setErrorMsg('At least one project entry is required.');
       setSaving(false);
@@ -38,7 +74,6 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
       return;
     }
 
-    // Cleaned payload compliant with Firestore schema
     const cleanedProjects: ProjectItem[] = projects.map((proj) => ({
       id: proj.id || `project_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       title: proj.title.trim(),
@@ -49,15 +84,19 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
       year: proj.year ? String(proj.year).trim() : '2025',
       status: proj.status ? String(proj.status).trim() : 'Completed',
       location: proj.location ? String(proj.location).trim() : 'Tamil Nadu Region',
-      details: Array.isArray(proj.details) && proj.details.length > 0
-        ? proj.details.map((d) => d.trim()).filter(Boolean)
-        : ['Verified engineering execution'],
+      details:
+        Array.isArray(proj.details) && proj.details.length > 0
+          ? proj.details.map((d) => d.trim()).filter(Boolean)
+          : ['Verified engineering execution'],
     }));
 
     try {
       await updateSection('projects', { projects: cleanedProjects });
+      initialRef.current = JSON.stringify(cleanedProjects);
+      onDirtyChange?.(false);
       const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      setSaveSuccess(`Projects showcase portfolio updated successfully at ${now}!`);
+      setSaveSuccess(`Projects showcase portfolio updated at ${now}.`);
+      onSaveToast?.('Projects portfolio saved successfully.');
       setTimeout(() => setSaveSuccess(null), 4000);
     } catch (err: any) {
       console.error('Error saving Projects section:', err);
@@ -84,160 +123,142 @@ export const ProjectsTabComponent: React.FC<ProjectsTabProps> = ({ content, upda
   );
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white">Projects Showcase</h2>
-          <p className="text-xs text-neutral-400">
-            Manage featured projects, categories, descriptions, execution photos, locations, status, and detail bullet points.
-          </p>
-        </div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
-        >
-          {saving ? <Loader2 className="w-4 h-4 animate-spin text-brand-blue-950" /> : <Save className="w-4 h-4" />}
-          {saving ? 'Saving...' : 'Save Projects'}
-        </button>
-      </div>
-
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-          {saveSuccess}
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
-          {errorMsg}
-        </div>
-      )}
-
-      <EditableItemList<ProjectItem>
-        title="Project Showcase Portfolio"
-        items={projects}
-        onUpdateItems={setProjects}
-        createNewItem={createNewProject}
-        getItemTitle={(item) => item.title || 'Untitled Project'}
-        addButtonText="Add New Project"
-        renderItemFields={(item, idx, updateItem) => (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Project Title *
-              </label>
-              <input
-                type="text"
-                value={item.title}
-                onChange={(e) => updateItem({ ...item, title: e.target.value })}
-                placeholder="e.g. Major Highway Dewatering Work"
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Project Category *
-              </label>
-              <select
-                value={item.category || 'infrastructure'}
-                onChange={(e) => updateItem({ ...item, category: e.target.value as any })}
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              >
-                <option value="government">Government & Public Sector</option>
-                <option value="water-resource">Water Resource Department (WRD)</option>
-                <option value="infrastructure">Infrastructure & Metro Rail</option>
-                <option value="emergency-relief">Emergency Disaster Relief</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Execution Year
-              </label>
-              <input
-                type="text"
-                value={item.year || ''}
-                onChange={(e) => updateItem({ ...item, year: e.target.value })}
-                placeholder="2025"
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Status (e.g. Completed, In Progress)
-              </label>
-              <input
-                type="text"
-                value={item.status || ''}
-                onChange={(e) => updateItem({ ...item, status: e.target.value })}
-                placeholder="Completed"
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Location
-              </label>
-              <input
-                type="text"
-                value={item.location || ''}
-                onChange={(e) => updateItem({ ...item, location: e.target.value })}
-                placeholder="Chennai / Tamil Nadu"
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <ImageField
-                label="Project Execution Image"
-                value={item.imageUrl || item.image || ''}
-                onChange={(url) => updateItem({ ...item, imageUrl: url, image: url })}
-                section="projects"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Full Description & Engineering Specs *
-              </label>
-              <textarea
-                rows={3}
-                value={item.description}
-                onChange={(e) => updateItem({ ...item, description: e.target.value })}
-                placeholder="Details of machinery, execution timeline, and volume handled..."
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-1">
-                Project Highlights / Bullet Points (One per line)
-              </label>
-              <textarea
-                rows={3}
-                value={(item.details || []).join('\n')}
-                onChange={(e) =>
-                  updateItem({
-                    ...item,
-                    details: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
-                  })
-                }
-                placeholder="Enter each project detail bullet point on a new line..."
-                className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-gold-500/80 font-mono"
-              />
-            </div>
-          </div>
-        )}
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="Projects"
+        description="Manage featured infrastructure projects, categories, execution photography, locations, and highlight details."
+        icon={<FolderKanban className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save Projects"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess}
+        errorMsg={errorMsg}
       />
+
+      <SectionCard>
+        <EditableItemList<ProjectItem>
+          title="Project showcase portfolio"
+          description="Click any project row to expand and edit its details."
+          items={projects}
+          onUpdateItems={setProjects}
+          createNewItem={createNewProject}
+          getItemTitle={(item) => item.title || 'Untitled project'}
+          getItemSubtitle={(item) => `${item.location || 'Tamil Nadu'} · ${item.year || '2025'} · ${item.status || 'Completed'}`}
+          addButtonText="Add New Project"
+          renderItemFields={(item, idx, updateItem) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <FieldLabel htmlFor={`proj-title-${idx}`} label="Project title" required />
+                <input
+                  id={`proj-title-${idx}`}
+                  type="text"
+                  value={item.title}
+                  onChange={(e) => updateItem({ ...item, title: e.target.value })}
+                  placeholder="e.g. Major Highway Dewatering Work"
+                  className={inputBaseClasses}
+                />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor={`proj-cat-${idx}`} label="Project category" required />
+                <select
+                  id={`proj-cat-${idx}`}
+                  value={item.category || 'infrastructure'}
+                  onChange={(e) => updateItem({ ...item, category: e.target.value as ProjectItem['category'] })}
+                  className={inputBaseClasses}
+                >
+                  <option value="government">Government & Public Sector</option>
+                  <option value="water-resource">Water Resource Department (WRD)</option>
+                  <option value="infrastructure">Infrastructure & Metro Rail</option>
+                  <option value="emergency-relief">Emergency Disaster Relief</option>
+                </select>
+              </div>
+
+              <div>
+                <FieldLabel htmlFor={`proj-year-${idx}`} label="Execution year" />
+                <input
+                  id={`proj-year-${idx}`}
+                  type="text"
+                  value={item.year || ''}
+                  onChange={(e) => updateItem({ ...item, year: e.target.value })}
+                  placeholder="2025"
+                  className={`${inputBaseClasses} tabular-nums`}
+                />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor={`proj-status-${idx}`} label="Status" />
+                <input
+                  id={`proj-status-${idx}`}
+                  type="text"
+                  value={item.status || ''}
+                  onChange={(e) => updateItem({ ...item, status: e.target.value })}
+                  placeholder="e.g. Completed, In Progress"
+                  className={inputBaseClasses}
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <FieldLabel htmlFor={`proj-loc-${idx}`} label="Location" />
+                <input
+                  id={`proj-loc-${idx}`}
+                  type="text"
+                  value={item.location || ''}
+                  onChange={(e) => updateItem({ ...item, location: e.target.value })}
+                  placeholder="e.g. Chennai / Tamil Nadu"
+                  className={inputBaseClasses}
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <ImageField
+                  label="Project execution image"
+                  value={item.imageUrl || item.image || ''}
+                  onChange={(url) => updateItem({ ...item, imageUrl: url, image: url })}
+                  section="projects"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <FieldLabel
+                  htmlFor={`proj-desc-${idx}`}
+                  label="Description & engineering scope"
+                  required
+                  rightSlot={<CharacterCounter value={item.description || ''} recommendedMax={360} />}
+                />
+                <textarea
+                  id={`proj-desc-${idx}`}
+                  rows={3}
+                  value={item.description}
+                  onChange={(e) => updateItem({ ...item, description: e.target.value })}
+                  placeholder="Details of machinery, execution timeline, and dewatering volume handled..."
+                  className={textareaBaseClasses}
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <FieldLabel htmlFor={`proj-details-${idx}`} label="Project highlights (one per line)" />
+                <textarea
+                  id={`proj-details-${idx}`}
+                  rows={3}
+                  value={(item.details || []).join('\n')}
+                  onChange={(e) =>
+                    updateItem({
+                      ...item,
+                      details: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
+                    })
+                  }
+                  placeholder="24/7 continuous pump operation&#10;State PWD/WRD compliant"
+                  className={textareaBaseClasses}
+                />
+                <HelperText>Enter each bullet point on a separate line.</HelperText>
+              </div>
+            </div>
+          )}
+        />
+      </SectionCard>
     </form>
   );
 };
 
 export const ProjectsTab = React.memo(ProjectsTabComponent);
-

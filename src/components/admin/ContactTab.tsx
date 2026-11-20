@@ -1,17 +1,53 @@
-import React, { useState } from 'react';
-import { Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { PhoneCall } from 'lucide-react';
 import { FullSiteContent, ContactContent } from '../../context/SiteContentContext';
+import {
+  SectionCard,
+  SectionHeader,
+  FieldLabel,
+  CharacterCounter,
+  HelperText,
+  inputBaseClasses,
+  textareaBaseClasses,
+} from './SectionCard';
 
 interface ContactTabProps {
   content: FullSiteContent;
   updateSection: <K extends keyof FullSiteContent>(key: K, data: FullSiteContent[K]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSavingChange?: (saving: boolean) => void;
+  onSaveToast?: (msg: string) => void;
 }
 
-export const ContactTab: React.FC<ContactTabProps> = ({ content, updateSection }) => {
+export const ContactTab: React.FC<ContactTabProps> = ({
+  content,
+  updateSection,
+  onDirtyChange,
+  onSavingChange,
+  onSaveToast,
+}) => {
   const [formData, setFormData] = useState<ContactContent>({ ...content.contact });
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const initialRef = useRef<string>(JSON.stringify(content.contact));
+  const contactJson = JSON.stringify(content.contact);
+
+  useEffect(() => {
+    setFormData({ ...content.contact });
+    initialRef.current = contactJson;
+  }, [contactJson]);
+
+  const isDirty = useMemo(() => JSON.stringify(formData) !== initialRef.current, [formData]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onSavingChange?.(saving);
+  }, [saving, onSavingChange]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +57,10 @@ export const ContactTab: React.FC<ContactTabProps> = ({ content, updateSection }
 
     try {
       await updateSection('contact', formData);
+      initialRef.current = JSON.stringify(formData);
+      onDirtyChange?.(false);
       setSaveSuccess(true);
+      onSaveToast?.('Contact & office details saved successfully.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error saving Contact section:', err);
@@ -32,133 +71,136 @@ export const ContactTab: React.FC<ContactTabProps> = ({ content, updateSection }
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-lg font-display font-bold text-white">Contact & Office Locations</h2>
-          <p className="text-xs text-neutral-400">Manage primary hotlines, emails, office addresses, and WhatsApp dispatch numbers.</p>
-        </div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-brand-gold-500 hover:bg-brand-gold-400 text-brand-blue-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : 'Save Contact Details'}
-        </button>
-      </div>
+    <form id="cms-active-section-form" onSubmit={handleSave} className="space-y-6">
+      <SectionHeader
+        title="Contact & Offices"
+        description="Manage primary hotlines, official emails, WhatsApp dispatch numbers, and regional office addresses."
+        icon={<PhoneCall className="w-5 h-5" />}
+        saving={saving}
+        saveLabel="Save Contact Details"
+        isDirty={isDirty}
+        saveSuccess={saveSuccess ? 'Contact information updated and synced live.' : null}
+        errorMsg={errorMsg}
+      />
 
-      {saveSuccess && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2 font-mono">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          Contact information updated successfully in Firestore real-time!
-        </div>
-      )}
+      <SectionCard
+        title="Hotlines & digital dispatch"
+        description="Phone numbers, email addresses, and operating hours displayed in the header, footer, and contact pages."
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <FieldLabel htmlFor="contact-phone-primary" label="Primary hotline phone" required />
+            <input
+              id="contact-phone-primary"
+              type="text"
+              value={formData.phonePrimary}
+              onChange={(e) => setFormData({ ...formData, phonePrimary: e.target.value })}
+              className={`${inputBaseClasses} tabular-nums`}
+              placeholder="+91 94433 00000"
+            />
+          </div>
 
-      {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-400 flex items-center gap-2 font-mono">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {errorMsg}
-        </div>
-      )}
+          <div>
+            <FieldLabel htmlFor="contact-phone-secondary" label="Secondary hotline phone" />
+            <input
+              id="contact-phone-secondary"
+              type="text"
+              value={formData.phoneSecondary}
+              onChange={(e) => setFormData({ ...formData, phoneSecondary: e.target.value })}
+              className={`${inputBaseClasses} tabular-nums`}
+              placeholder="+91 94433 00001"
+            />
+          </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Primary Hotline Phone
-          </label>
-          <input
-            type="text"
-            value={formData.phonePrimary}
-            onChange={(e) => setFormData({ ...formData, phonePrimary: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
+          <div>
+            <FieldLabel htmlFor="contact-email-primary" label="Primary email address" required />
+            <input
+              id="contact-email-primary"
+              type="email"
+              value={formData.emailPrimary}
+              onChange={(e) => setFormData({ ...formData, emailPrimary: e.target.value })}
+              className={`${inputBaseClasses} font-mono`}
+              placeholder="info@srivelanco.com"
+            />
+          </div>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Secondary Hotline Phone
-          </label>
-          <input
-            type="text"
-            value={formData.phoneSecondary}
-            onChange={(e) => setFormData({ ...formData, phoneSecondary: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
+          <div>
+            <FieldLabel htmlFor="contact-email-secondary" label="Secondary email address" />
+            <input
+              id="contact-email-secondary"
+              type="email"
+              value={formData.emailSecondary}
+              onChange={(e) => setFormData({ ...formData, emailSecondary: e.target.value })}
+              className={`${inputBaseClasses} font-mono`}
+              placeholder="tenders@srivelanco.com"
+            />
+          </div>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Primary Email Address
-          </label>
-          <input
-            type="text"
-            value={formData.emailPrimary}
-            onChange={(e) => setFormData({ ...formData, emailPrimary: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
+          <div>
+            <FieldLabel htmlFor="contact-whatsapp" label="WhatsApp contact number" />
+            <input
+              id="contact-whatsapp"
+              type="text"
+              value={formData.whatsappNumber}
+              onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
+              className={`${inputBaseClasses} font-mono tabular-nums`}
+              placeholder="919443300000"
+            />
+            <HelperText>Include country code without spaces or plus sign for direct WhatsApp links (e.g. 919443300000).</HelperText>
+          </div>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Secondary Email Address
-          </label>
-          <input
-            type="text"
-            value={formData.emailSecondary}
-            onChange={(e) => setFormData({ ...formData, emailSecondary: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
+          <div>
+            <FieldLabel htmlFor="contact-hours" label="Working hours" />
+            <input
+              id="contact-hours"
+              type="text"
+              value={formData.workingHours}
+              onChange={(e) => setFormData({ ...formData, workingHours: e.target.value })}
+              className={inputBaseClasses}
+              placeholder="e.g. Mon – Sat: 9:00 AM – 6:30 PM (24/7 Emergency)"
+            />
+          </div>
         </div>
+      </SectionCard>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            WhatsApp Contact Number
-          </label>
-          <input
-            type="text"
-            value={formData.whatsappNumber}
-            onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
+      <SectionCard
+        title="Office locations"
+        description="Full postal addresses for the Villupuram headquarters and Chennai regional operations desk."
+      >
+        <div className="space-y-5">
+          <div>
+            <FieldLabel
+              htmlFor="contact-addr-villupuram"
+              label="Villupuram headquarters address"
+              rightSlot={<CharacterCounter value={formData.addressVillupuram || ''} recommendedMax={220} />}
+            />
+            <textarea
+              id="contact-addr-villupuram"
+              rows={2}
+              value={formData.addressVillupuram}
+              onChange={(e) => setFormData({ ...formData, addressVillupuram: e.target.value })}
+              className={textareaBaseClasses}
+              placeholder="Registered head office address in Villupuram..."
+            />
+          </div>
 
-        <div>
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Working Hours
-          </label>
-          <input
-            type="text"
-            value={formData.workingHours}
-            onChange={(e) => setFormData({ ...formData, workingHours: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
+          <div>
+            <FieldLabel
+              htmlFor="contact-addr-chennai"
+              label="Chennai regional office address"
+              rightSlot={<CharacterCounter value={formData.addressChennai || ''} recommendedMax={220} />}
+            />
+            <textarea
+              id="contact-addr-chennai"
+              rows={2}
+              value={formData.addressChennai}
+              onChange={(e) => setFormData({ ...formData, addressChennai: e.target.value })}
+              className={textareaBaseClasses}
+              placeholder="Chennai operations & metro dewatering branch address..."
+            />
+          </div>
         </div>
-
-        <div className="md:col-span-2">
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Villupuram Headquarters Address
-          </label>
-          <textarea
-            rows={2}
-            value={formData.addressVillupuram}
-            onChange={(e) => setFormData({ ...formData, addressVillupuram: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="block text-xs font-mono font-medium text-neutral-300 uppercase tracking-wider mb-2">
-            Chennai Regional Office Address
-          </label>
-          <textarea
-            rows={2}
-            value={formData.addressChennai}
-            onChange={(e) => setFormData({ ...formData, addressChennai: e.target.value })}
-            className="w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-100 focus:outline-none focus:border-brand-gold-500/80 transition-all font-mono"
-          />
-        </div>
-      </div>
+      </SectionCard>
     </form>
   );
 };
